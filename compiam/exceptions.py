@@ -1,0 +1,2 @@
+class ModelNotFoundError(Exception):
+	pass

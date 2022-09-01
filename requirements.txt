@@ -1,0 +1,11 @@
+# Not sure if to have a separate requirements for each section or one requirements?
+
+# 4 way tabla transcription
+numpy==1.18.5
+librosa==0.8.0
+SoundFile==0.10.3.post1
+joblib==0.17.0
+pathlib==1.0.1
+pytsmod==0.3.3
+scipy==1.4.1
+torch==1.8.0
