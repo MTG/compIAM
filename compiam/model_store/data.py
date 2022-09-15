@@ -16,7 +16,7 @@ models_dict = {
 		'filepath': 'models/rhythm/4wayTabla/4way/',
 		'wrapper': fourWayTabla,
 		'kwargs': {}
-	}
+	},
 	'melody:ftanet-carnatic': {
 		'filepath': 'models/melody/ftanet/carnatic/',
 		'wrapper': ftanetCarnatic,
