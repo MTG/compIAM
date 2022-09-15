@@ -11,23 +11,27 @@ time_scale(in_path, out_dir, fs, ts, params, n_jobs=n_jobs)
 attack_remix(in_path, out_dir, fs, G, winDur, hopDur, params, n_jobs=n_jobs)
 
 # Train
-
+# TODO
 
 # Evaluate  
-
+# TODO
 
 # Predict
-from compiam.rhythm.tabla_transcription.models import classify_strokes
+# Predict
+from compiam.utils.core import load_model
 
-onsets, labels = classify_strokes(path_to_audio, predict_thresh, saved_model_dir, device)
+model = load_model('rhythm:4way-tabla')
+
+path_to_audio = '/Volumes/Shruti/asplab2/4way-tabla-transcription/dataset/test/audios/binati_SRC.wav'
+onsets, labels = model.predict(path_to_audio)
 
 # Visualise
 from compiam.visualisation.audio import plot_waveform
 
 plot_waveform(path_to_audio, t1, t2, dict(zip(onsets, labels)))
 
+
 # Output
-with open(out_file, 'w') as f:
-	for o,l in zip(onsets, labels):
-		writer = csv.writer(f)
-		writer.writerow(row)
+from compiam.io import write_csv
+
+write_csv([onsets, labels], out_path, header=['onset','label'])

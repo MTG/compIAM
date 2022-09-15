@@ -1,7 +1,7 @@
 # Not sure if to have a separate requirements for each section or one requirements?
 
 # 4 way tabla transcription
-maptlotlib
+matplotlib
 numpy==1.18.5
 librosa==0.8.0
 SoundFile==0.10.3.post1

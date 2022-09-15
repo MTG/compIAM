@@ -7,75 +7,9 @@ import torch.nn as nn
 import torch
 
 from compiam.exceptions import ModelNotFoundError
-from compiam.utils.core import get_logger
-from compiam.rhythm.tabla_transcription.__paths import models_paths_dict as paths_dict
+#from compiam.utils.core import get_logger
 
-logger = get_logger(__name__)
-
-def load_model(name):
-	if name not in path_dict:
-		raise ModelNotFoundError(f"Model name not recognised, available models: {path_dict.values()}")
-
-	model_dict = path_dict[name]
-	path = model_dict['path']
-	model = model_dict['model']
-
-	_, file_extension = os.path.splitext(path)
-
-	if file_extension == '.pt':\
-		logger.info(f'Loading model, {name} at {path}...')
-		device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-		model = model.double().to(device)
-		model.load_state_dict(torch.load(path, map_location=device))
-		model.eval()
-
-		return model
-
-
-def classify_strokes(path_to_audio, predict_thresh, saved_model_dir, device):
-	categories = ['D', 'RT', 'RB', 'B']
-	model_names = {'D': onsetCNN_D(), 'RT': onsetCNN_RT(), 'RB': onsetCNN(), 'B': onsetCNN()}
-	n_folds = 3
-	seq_length = 15
-	hop_dur = 10e-3
-
-	#get log-mel-spectrogram of audio
-	melgrams = gen_melgrams(path_to_audio)
-
-	#get frame-wise onset predictions
-	n_frames = melgrams.shape[-1]-seq_length
-	odf = dict(zip(categories, [np.zeros(n_frames)]*4))
-
-	for i_frame in np.arange(0,n_frames):
-		x = torch.tensor(melgrams[:,:,i_frame:i_frame+seq_length]).double().to(device)
-		x = x.unsqueeze(0)
-
-		for cat in categories:
-			y=0
-			for fold in range(n_folds):
-				saved_model_path = os.path.join(saved_model_dir, cat, 'saved_model_%d.pt'%fold)
-				model = model_names[cat].double().to(device)
-				model.load_state_dict(torch.load(saved_model_path, map_location=device))
-				model.eval()
-
-				y += model(x).squeeze().cpu().detach().numpy()
-			odf[cat][i_frame] = y/n_folds
-
-	#pick peaks in predicted activations
-	odf_peaks = dict(zip(categories, []*4))
-	for cat in categories:
-		odf_peaks[cat] = peakPicker(odf[cat], predict_thresh)
-
-	onsets = np.concatenate([odf_peaks[cat] for cat in odf_peaks])
-	onsets = np.array(onsets*hop_dur, dtype=float)
-	labels = np.concatenate([[cat]*len(odf_peaks[cat]) for cat in odf_peaks])
-
-	sorted_order = onsets.argsort()
-	onsets = onsets[sorted_order]
-	labels = labels[sorted_order]
-
-	return onsets, labels
-
+#logger = get_logger(__name__)
 
 # model definition for resonant bass and resonant both categories
 class onsetCNN(nn.Module):
@@ -168,7 +102,7 @@ def peakPicker(data, peakThresh):
 
 
 #generate log-mel-spectrograms given path to audio
-def gen_melgrams(path_to_audio):
+def gen_melgrams(path_to_audio, stats):
 	#analysis parameters
 	fs=16000
 	hopDur=10e-3
@@ -185,7 +119,6 @@ def gen_melgrams(path_to_audio):
 	duration=2*contextlen+1
 
 	#data stats for normalization
-	stats=np.load('./means_stds.npy')
 	means=stats[0]
 	stds=stats[1]
 
