@@ -13,7 +13,7 @@ except: # for pip <= 9.0.3
 from setuptools import find_packages, setup
 
 setup(
-    name='compIAM',
+    name='compiam',
     version="1.0",
     packages=find_packages(),
     author_email=['thomas.nuttall@upf.edu','genis.plaja@upf.edu'],

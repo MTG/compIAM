@@ -1,8 +1,8 @@
-from augment_data_ar import augment_data_attack_remix
-from augment_data_ps import augment_data_pitch_shift
-from augment_data_sf import augment_data_spectral_shape
-from augment_data_sr import augment_data_stroke_remix
-from augment_data_ts import augment_data_time_scale
+from compiam.utils.augmentation.augment_data_ar import augment_data_attack_remix
+from compiam.utils.augmentation.augment_data_ps import augment_data_pitch_shift
+from compiam.utils.augmentation.augment_data_sf import augment_data_spectral_shape
+#from compiam.utils.augmentation.augment_data_sr import augment_data_stroke_remix
+from compiam.utils.augmentation.augment_data_ts import augment_data_time_scale
 
 # TODO: think about global variables like this
 n_jobs = 4
