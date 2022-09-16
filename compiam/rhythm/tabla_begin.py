@@ -18,7 +18,7 @@ attack_remix(in_path, out_dir, fs, G, winDur, hopDur, params, n_jobs=n_jobs)
 
 # Predict
 # Predict
-from compiam.utils import load_model
+from compiam import load_model
 
 model = load_model('rhythm:4way-tabla')
 
