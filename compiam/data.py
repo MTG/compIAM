@@ -20,3 +20,8 @@ models_dict = {
 		'kwargs': {'filepath': 'models/melody/ftanet/carnatic/'}
 	}
 }
+
+###############
+# Datasets List
+###############
+datasets_list = ['saraga_carnatic', 'saraga_hindustani', 'mridangam_stroke']
