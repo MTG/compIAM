@@ -4,7 +4,10 @@ import numpy as np
 import torch
 
 from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN, gen_melgrams, peakPicker
-from compiam.exceptions import modelNotTrainedError
+from compiam.exceptions import ModelNotTrainedError
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 class fourWayTabla:
 
