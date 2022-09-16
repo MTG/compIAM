@@ -8,17 +8,14 @@ from compiam.rhythm import fourWayTabla
 
 models_dict = {
 	'rhythm:1way-tabla': {
-		'filepath': 'models/rhythm/4wayTabla/1way/',
 		'wrapper': fourWayTabla,
-		'kwargs': {}
+		'kwargs': {'filepath': 'models/rhythm/4wayTabla/1way/'}
 	},
 	'rhythm:4way-tabla': {
-		'filepath': 'models/rhythm/4wayTabla/4way/',
 		'wrapper': fourWayTabla,
-		'kwargs': {}
-},
+		'kwargs': {'filepath': 'models/rhythm/4wayTabla/4way/'}
+	},
 	'melody:ftanet-carnatic': {
-		'filepath': 'models/melody/ftanet/carnatic/',
 		'wrapper': None,#ftanetCarnatic,
 		'kwargs': {}
 	}
