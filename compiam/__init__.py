@@ -1,4 +1,4 @@
-from compiam.model_store.data import models_dict
+from compiam.data import models_dict
 from compiam.exceptions import ModelNotDefinedError
 
 def load_model(model_name, models_dict=models_dict):
