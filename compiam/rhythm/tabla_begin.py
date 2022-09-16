@@ -30,7 +30,8 @@ from compiam.visualisation.audio import plot_waveform
 
 plot_waveform(path_to_audio, 0, 3, dict(zip(onsets, labels)), filepath='test.png')
 
+
 # Output
 from compiam.io import write_csv
 
-write_csv([onsets, labels], out_path, header=['onset','label'])
+write_csv([onsets, labels], 'test.csv', header=['onset','label'])

@@ -15,10 +15,6 @@ class fourWayTabla:
         
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        
-        self.filepath = filepath
-        if self.filepath:
-            self.load_model(filepath, self.device)
 
         self.categories = ['D', 'RT', 'RB', 'B']
         self.model_names = {'D': onsetCNN_D(), 'RT': onsetCNN_RT(), 'RB': onsetCNN(), 'B': onsetCNN()}
@@ -27,8 +23,13 @@ class fourWayTabla:
         self.n_folds = n_folds
         self.seq_length = seq_length
         self.hop_dur = hop_dur
+        
+        # Load model if passed
+        self.filepath = filepath
+        if self.filepath:
+            self.load_model(filepath)
 
-    def load_model(self, filepath, device=self.device):
+    def load_model(self, filepath):
         stats_path = os.path.join(filepath, 'means_stds.npy')
         self.stats = np.load(stats_path)
         for cat in self.categories:
@@ -36,8 +37,8 @@ class fourWayTabla:
             y=0
             for fold in range(self.n_folds):
                 saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
-                model = self.model_names[cat].double().to(device)
-                model.load_state_dict(torch.load(saved_model_path, map_location=device))
+                model = self.model_names[cat].double().to(self.device)
+                model.load_state_dict(torch.load(saved_model_path, map_location=self.device))
                 model.eval()
 
                 self.models[cat][fold] = model
@@ -47,7 +48,7 @@ class fourWayTabla:
             logger.warning("Model is already initalised, overwriting with new data")
         pass
 
-    def predict(self, path_to_audio, predict_thresh=0.3, device=self.device):
+    def predict(self, path_to_audio, predict_thresh=0.3):
         if not self.models:
             raise ModelNotTrainedError('Please load or train model before predicting')
 
@@ -59,7 +60,7 @@ class fourWayTabla:
         odf = dict(zip(self.categories, [np.zeros(n_frames)]*4))
 
         for i_frame in np.arange(0, n_frames):
-            x = torch.tensor(melgrams[:,:,i_frame:i_frame + self.seq_length]).double().to(device)
+            x = torch.tensor(melgrams[:,:,i_frame:i_frame + self.seq_length]).double().to(self.device)
             x = x.unsqueeze(0)
 
             for cat in self.categories:
@@ -84,3 +85,4 @@ class fourWayTabla:
         labels = labels[sorted_order]
 
         return onsets, labels
+        

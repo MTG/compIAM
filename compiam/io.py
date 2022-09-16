@@ -1,10 +1,11 @@
 import csv
 
 def write_csv(data, out_path, header=None):
-	with open(out_file, 'w') as f:
+	D = list(zip(*data))
+	with open(out_path, 'w') as f:
 		writer = csv.writer(f)
 		if header:
-			assert len(header) == len(row), "Header and row length mismatch"
+			assert len(header) == len(D[0]), "Header and row length mismatch"
 			writer.writerow(header)
-		for row in zip(*data):
+		for row in D:
 			writer.writerow(row)
