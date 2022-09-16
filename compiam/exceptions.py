@@ -3,3 +3,6 @@ class ModelNotFoundError(Exception):
 
 class ModelNotDefinedError(Exception):
 	pass
+
+class ModelNotTrainedError(Exception):
+	pass
