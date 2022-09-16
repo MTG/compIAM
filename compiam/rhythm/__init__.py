@@ -46,7 +46,7 @@ class fourWayTabla:
 
     def predict(self, path_to_audio, predict_thresh=0.3, device=self.device):
         if not self.models:
-            raise modelNotTrainedError('Please load or train model before predicting')
+            raise ModelNotTrainedError('Please load or train model before predicting')
 
         #get log-mel-spectrogram of audio
         melgrams = gen_melgrams(path_to_audio, stats=self.stats)
