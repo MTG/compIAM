@@ -9,7 +9,7 @@ def load_model(model_name, models_dict=models_dict):
 
     m_dict = models_dict[model_name]
 
-    return m_dict['wrapper'](m_dict['filepath'], **m_dict['kwargs'])
+    return m_dict['wrapper'](**m_dict['kwargs'])
 
 
 def load_dataset():
