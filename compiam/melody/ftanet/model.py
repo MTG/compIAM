@@ -5,13 +5,13 @@ from tensorflow.keras.layers import Dense, Conv2D, BatchNormalization, Lambda, \
         Softmax, Reshape, UpSampling2D, Conv1D
 
 
-class FTANet(object):
+class FTANet:
     """FTA-Net predominant melody extraction
     """
     def __init__(self):
         """FTA-Net predominant melody extraction init method
         """
-        self.ftanet = self.create_ftanet()
+        pass
 
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
@@ -92,7 +92,7 @@ class FTANet(object):
 
         return x_r, x_t, x_f
 
-    def create_ftanet(self, input_shape=(320, 128, 3)):
+    def load_model(self, input_shape=(320, 128, 3)):
         """TODO
         Args:
             TODO

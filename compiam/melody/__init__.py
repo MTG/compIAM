@@ -7,7 +7,7 @@ from compiam.melody.ftanet.model import FTANet
 class ftanetCarnatic:
     def __init__(self, filepath):
         self.filepath = filepath
-        self.model = FTANet
+        self.model = FTANet().load_model()
         self.model.load_weights(filepath)
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
