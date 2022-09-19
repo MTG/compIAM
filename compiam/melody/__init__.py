@@ -78,113 +78,59 @@ class ftanetCarnatic:
 class Melodia:
     """Melodia predominant melody extraction
     """
-    def __init__(self):
+    def __init__(self, binResolution=10, filterIterations=3, frameSize=2048, guessUnvoiced=False,
+                 harmonicWeight=0.8, hopSize=128, magnitudeCompression=1, magnitudeThreshold=40,
+                 maxFrequency=20000, minDuration=100, minFrequency=80, numberHarmonics=20, 
+                 peakDistributionThreshold=0.9, peakFrameThreshold=0.9, pitchContinuity=27.5625,
+                 referenceFrequency=55, sampleRate=44100, timeContinuity=100, voiceVibrato=False,
+                 voicingTolerance=0.2):
         """Melodia predominant melody extraction init method
         """
-        self.parameters = {
-            'binResolution': 10,
-            'filterIterations': 3,
-            'frameSize': 2048,
-            'guessUnvoiced':  False,
-            'harmonicWeight': 0.8,
-            'hopSize': 128,
-            'magnitudeCompression': 1,
-            'magnitudeThreshold': 40,
-            'maxFrequency': 20000,
-            'minDuration': 100,
-            'minFrequency': 80,
-            'numberHarmonics': 20,
-            'peakDistributionThreshold': 0.9,
-            'peakFrameThreshold': 0.9,
-            'pitchContinuity': 27.5625,
-            'referenceFrequency': 55,
-            'sampleRate': 44100,
-            'timeContinuity': 100,
-            'voiceVibrato': False,
-            'voicingTolerance': 0.2}
-        self.extractor = estd.PredominantPitchMelodia(
-            binResolution=self.parameters['binResolution'],
-            filterIterations=self.parameters['filterIterations'],
-            frameSize=self.parameters['frameSize'], 
-            guessUnvoiced=self.parameters['guessUnvoiced'],
-            harmonicWeight=self.parameters['harmonicWeight'],
-            hopSize=self.parameters['hopSize'],
-            magnitudeCompression=self.parameters['magnitudeCompression'], 
-            magnitudeThreshold=self.parameters['magnitudeThreshold'],
-            maxFrequency=self.parameters['maxFrequency'],
-            minDuration=self.parameters['minDuration'],
-            minFrequency=self.parameters['minFrequency'], 
-            numberHarmonics=self.parameters['numberHarmonics'],
-            peakDistributionThreshold=self.parameters['peakDistributionThreshold'],
-            peakFrameThreshold=self.parameters['peakFrameThreshold'], 
-            pitchContinuity=self.parameters['pitchContinuity'],
-            referenceFrequency=self.parameters['referenceFrequency'],
-            sampleRate=self.parameters['sampleRate'], 
-            timeContinuity=self.parameters['timeContinuity'],
-            voiceVibrato=self.parameters['voiceVibrato'],
-            voicingTolerance=self.parameters['voicingTolerance'])
-
-    def get_parameters(self):
-        """Returns the current parameters to run the method
-        """
-        return self.parameters
-    
-    def update_parameters(self, binResolution=10, filterIterations=3, frameSize=2048, guessUnvoiced=False, 
-                          harmonicWeight=0.8, hopSize=128, magnitudeCompression=1, magnitudeThreshold=40,
-                          maxFrequency=20000, minDuration=100, minFrequency=80, numberHarmonics=20, 
-                          peakDistributionThreshold=0.9, peakFrameThreshold=0.9, pitchContinuity=27.5625,
-                          referenceFrequency=55, sampleRate=44100, timeContinuity=100, voiceVibrato=False,
-                          voicingTolerance=0.2):
-        """Update the parameters and re-initialize method
-        Args:
-            Melodia parameters
-        """
-        self.parameters = {
-            'binResolution': binResolution,
-            'filterIterations': filterIterations,
-            'frameSize': frameSize,
-            'guessUnvoiced':  guessUnvoiced,
-            'harmonicWeight': harmonicWeight,
-            'hopSize': hopSize,
-            'magnitudeCompression': magnitudeCompression,
-            'magnitudeThreshold': magnitudeThreshold,
-            'maxFrequency': maxFrequency,
-            'minDuration': minDuration,
-            'minFrequency': minFrequency,
-            'numberHarmonics': numberHarmonics,
-            'peakDistributionThreshold': peakDistributionThreshold,
-            'peakFrameThreshold': peakFrameThreshold,
-            'pitchContinuity': pitchContinuity,
-            'referenceFrequency': referenceFrequency,
-            'sampleRate': sampleRate,
-            'timeContinuity': timeContinuity,
-            'voiceVibrato': voiceVibrato,
-            'voicingTolerance': voicingTolerance}
-        self.extractor = estd.PredominantPitchMelodia(
-            binResolution=self.parameters['binResolution'],
-            filterIterations=self.parameters['filterIterations'],
-            frameSize=self.parameters['frameSize'], 
-            guessUnvoiced=self.parameters['guessUnvoiced'],
-            harmonicWeight=self.parameters['harmonicWeight'],
-            hopSize=self.parameters['hopSize'],
-            magnitudeCompression=self.parameters['magnitudeCompression'], 
-            magnitudeThreshold=self.parameters['magnitudeThreshold'],
-            maxFrequency=self.parameters['maxFrequency'],
-            minDuration=self.parameters['minDuration'],
-            minFrequency=self.parameters['minFrequency'], 
-            numberHarmonics=self.parameters['numberHarmonics'],
-            peakDistributionThreshold=self.parameters['peakDistributionThreshold'],
-            peakFrameThreshold=self.parameters['peakFrameThreshold'], 
-            pitchContinuity=self.parameters['pitchContinuity'],
-            referenceFrequency=self.parameters['referenceFrequency'],
-            sampleRate=self.parameters['sampleRate'], 
-            timeContinuity=self.parameters['timeContinuity'],
-            voiceVibrato=self.parameters['voiceVibrato'],
-            voicingTolerance=self.parameters['voicingTolerance'])
+        self.binResolution = binResolution
+        self.filterIterations = filterIterations
+        self.frameSize = frameSize
+        self.guessUnvoiced = guessUnvoiced
+        self.harmonicWeight = harmonicWeight
+        self.hopSize = hopSize
+        self.magnitudeCompression = magnitudeCompression
+        self.magnitudeThreshold = magnitudeThreshold
+        self.maxFrequency = maxFrequency
+        self.minDuration = minDuration
+        self.minFrequency = minFrequency
+        self.numberHarmonics = numberHarmonics
+        self.peakDistributionThreshold = peakDistributionThreshold
+        self.peakFrameThreshold = peakFrameThreshold
+        self.pitchContinuity = pitchContinuity
+        self.referenceFrequency = referenceFrequency
+        self.sampleRate = sampleRate
+        self.timeContinuity = timeContinuity
+        self.voiceVibrato = voiceVibrato
+        self.voicingTolerance = voicingTolerance
 
     def extract(self, filename):
         audio = estd.EqloudLoader(filename=filename)()
-        pitch, _ = self.extractor(audio)
+        extractor = estd.PredominantPitchMelodia(
+            binResolution=self.binResolution,
+            filterIterations=self.filterIterations,
+            frameSize=self.frameSize, 
+            guessUnvoiced=self.guessUnvoiced,
+            harmonicWeight=self.harmonicWeight,
+            hopSize=self.hopSize,
+            magnitudeCompression=self.magnitudeCompression, 
+            magnitudeThreshold=self.magnitudeThreshold,
+            maxFrequency=self.maxFrequency,
+            minDuration=self.minDuration,
+            minFrequency=self.minFrequency,
+            numberHarmonics=self.numberHarmonics,
+            peakDistributionThreshold=self.peakDistributionThreshold,
+            peakFrameThreshold=self.peakFrameThreshold,
+            pitchContinuity=self.pitchContinuity,
+            referenceFrequency=self.referenceFrequency,
+            sampleRate=self.sampleRate,
+            timeContinuity=self.timeContinuity,
+            voiceVibrato=self.voiceVibrato,
+            voicingTolerance=self.voicingTolerance)
+        pitch, _ = extractor(audio)
         TStamps = np.array(range(0, len(pitch))) * np.float(self.parameters['hopSize']) / self.parameters['sampleRate']
         return np.array([TStamps, pitch]).transpose().toList()
 
@@ -192,71 +138,22 @@ class Melodia:
 class TonicIndianMultiPitch:
     """MultiPitch approach to extract the tonic from IAM music signals
     """
-    def __init__(self):
+    def __init__(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128,
+                 magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
+                 minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, sampleRate=44100):
         """MultiPitch approach to extract the tonic from IAM music signals init method
         """
-        self.parameters = {
-            'binResolution': 10,
-            'frameSize': 2048,
-            'harmonicWeight': 0.8,
-            'hopSize': 128,
-            'magnitudeCompression': 1,
-            'magnitudeThreshold': 40,
-            'maxTonicFrequency': 375,
-            'minTonicFrequency': 100,
-            'numberHarmonics': 20,
-            'referenceFrequency': 55,
-            'sampleRate': 44100}
-        self.extractor = estd.TonicIndianArtMusic(
-            binResolution=self.parameters['binResolution'],
-            frameSize=self.parameters['frameSize'], 
-            harmonicWeight=self.parameters['harmonicWeight'],
-            hopSize=self.parameters['hopSize'],
-            magnitudeCompression=self.parameters['magnitudeCompression'], 
-            magnitudeThreshold=self.parameters['magnitudeThreshold'],
-            maxTonicFrequency=self.parameters['maxTonicFrequency'],
-            minTonicFrequency=self.parameters['minTonicFrequency'],
-            numberHarmonics=self.parameters['numberHarmonics'],
-            referenceFrequency=self.parameters['referenceFrequency'],
-            sampleRate=self.parameters['sampleRate'])
-
-    def get_parameters(self):
-        """Returns the current parameters to run the method
-        """
-        return self.parameters
-    
-    def update_parameters(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128, 
-                          magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
-                          minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, 
-                          sampleRate=44100):
-        """Update the parameters and re-initialize method
-        Args:
-            TonicIndianArtMusic parameters
-        """
-        self.parameters = {
-            'binResolution': binResolution,
-            'frameSize': frameSize,
-            'harmonicWeight': harmonicWeight,
-            'hopSize': hopSize,
-            'magnitudeCompression': magnitudeCompression,
-            'magnitudeThreshold': magnitudeThreshold,
-            'maxTonicFrequency': maxTonicFrequency,
-            'minTonicFrequency': minTonicFrequency,
-            'numberHarmonics': numberHarmonics,
-            'referenceFrequency': referenceFrequency,
-            'sampleRate': sampleRate}
-        self.extractor = estd.PredominantPitchMelodia(
-            binResolution=self.parameters['binResolution'],
-            frameSize=self.parameters['frameSize'], 
-            harmonicWeight=self.parameters['harmonicWeight'],
-            hopSize=self.parameters['hopSize'],
-            magnitudeCompression=self.parameters['magnitudeCompression'], 
-            magnitudeThreshold=self.parameters['magnitudeThreshold'],
-            maxTonicFrequency=self.parameters['maxTonicFrequency'],
-            minTonicFrequency=self.parameters['minTonicFrequency'],
-            numberHarmonics=self.parameters['numberHarmonics'],
-            referenceFrequency=self.parameters['referenceFrequency'],
-            sampleRate=self.parameters['sampleRate'])
+        self.binResolution = binResolution
+        self.frameSize = frameSize
+        self.harmonicWeight = harmonicWeight
+        self.hopSize = hopSize
+        self.magnitudeCompression = magnitudeCompression
+        self.magnitudeThreshold = magnitudeThreshold
+        self.maxTonicFrequency = maxTonicFrequency
+        self.minTonicFrequency = minTonicFrequency
+        self.numberHarmonics = numberHarmonics
+        self.referenceFrequency = referenceFrequency
+        self.sampleRate = sampleRate
 
     def extract(self, filename):
         """Extract tonic from filename
@@ -264,4 +161,16 @@ class TonicIndianMultiPitch:
             filename (str): path to file to extract
         """
         audio = estd.MonoLoader(filename=filename)()
-        return self.extractor(audio)
+        extractor = estd.TonicIndianArtMusic(
+            binResolution=self.binResolution,
+            frameSize=self.frameSize,
+            harmonicWeight=self.harmonicWeight,
+            hopSize=self.hopSize,
+            magnitudeCompression=self.magnitudeCompression, 
+            magnitudeThreshold=self.magnitudeThreshold,
+            maxTonicFrequency=self.maxTonicFrequency,
+            minTonicFrequency=self.minTonicFrequency,
+            numberHarmonics=self.numberHarmonics,
+            referenceFrequency=self.referenceFrequency,
+            sampleRate=self.sampleRate)
+        return extractor(audio)
