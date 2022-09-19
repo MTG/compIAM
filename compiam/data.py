@@ -28,3 +28,9 @@ models_dict = {
         'kwargs': {}
     }
 }
+
+
+###############
+# Datasets List
+###############
+datasets_list = ['saraga_carnatic', 'saraga_hindustani', 'mridangam_stroke']
