@@ -71,7 +71,7 @@ class fourWayTabla:
                     y += model(x).squeeze().cpu().detach().numpy()
                 odf[cat][i_frame] = y/self.n_folds
 
-        #pick peaks in predicted activations
+        # pick peaks in predicted activations
         odf_peaks = dict(zip(self.categories, []*4))
         for cat in self.categories:
             odf_peaks[cat] = peakPicker(odf[cat], predict_thresh)
@@ -85,4 +85,4 @@ class fourWayTabla:
         labels = labels[sorted_order]
 
         return onsets, labels
-        
+  
