@@ -30,8 +30,8 @@
 """
 import numpy as np
 
-from NMFtoolbox.NEMA import NEMA
-from NMFtoolbox.utils import EPS
+from compiam.utils.NMFtoolbox.NEMA import NEMA
+from compiam.utils.NMFtoolbox.utils import EPS
 
 
 def initActivations(parameter, strategy):

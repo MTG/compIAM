@@ -33,7 +33,15 @@ def apply_nmf_separation(x, fs, hopSize, nFFT, W):
 	paramSTFT['numSamples'] = len(x)
 
 	# STFT computation
-	X, A, P = forwardSTFT(x, paramSTFT)
+	#X, A, P = forwardSTFT(x, paramSTFT)
+	X = librosa.stft(x, n_fft=nFFT, hop_length=hopSize, win_length=blockSize, window='hann', center=True, pad_mode='reflect')
+
+	# compute derived matrices
+    # get magnitude
+    A = np.abs(X)
+
+    # get phase
+    P = np.angle(X)
 
 	# get dimensions and time and freq resolutions
 	numBins, numFrames = X.shape

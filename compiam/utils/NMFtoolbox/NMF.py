@@ -33,7 +33,7 @@ import numpy as np
 from copy import deepcopy
 from tqdm import tnrange
 
-from NMFtoolbox.utils import EPS
+from compiam.utils.NMFtoolbox.utils import EPS
 
 
 def NMF(V, parameter):

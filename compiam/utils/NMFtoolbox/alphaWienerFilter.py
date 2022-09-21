@@ -31,7 +31,7 @@
 
 import numpy as np
 
-from NMFtoolbox.utils import EPS
+from compiam.utils.NMFtoolbox.utils import EPS
 
 
 def alphaWienerFilter(mixtureX, sourceA, alpha=1.2, binarize=False):
