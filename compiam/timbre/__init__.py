@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -81,6 +82,9 @@ class MridangamStrokeClassification:
         """
         if self.model is None:
             raise ModelNotTrainedError("The model is not trained. Please run train_model().")
+
+        if not isinstance(file_list, list):
+            file_list = [file_list]
 
         list_of_feats = []
         for input_file in file_list:
