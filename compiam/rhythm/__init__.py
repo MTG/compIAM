@@ -9,12 +9,17 @@ from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
+
 class fourWayTabla:
 
     def __init__(self, filepath=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):
         
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        self.filepath = filepath
+        if self.filepath:
+            self.load_model(filepath, self.device)
 
         self.categories = ['D', 'RT', 'RB', 'B']
         self.model_names = {'D': onsetCNN_D(), 'RT': onsetCNN_RT(), 'RB': onsetCNN(), 'B': onsetCNN()}
