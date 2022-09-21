@@ -5,6 +5,7 @@
 #	{'filepath': '<path_to_model>', 'wrapper': model wrapper}
 from compiam.melody import ftanetCarnatic, Melodia, TonicIndianMultiPitch
 from compiam.rhythm import fourWayTabla
+from compiam.timbre import MridangamStrokeClassification
 
 models_dict = {
     'rhythm:1way-tabla': {
@@ -26,9 +27,12 @@ models_dict = {
     'melody:tonic-multipitch': {
         'wrapper': TonicIndianMultiPitch,
         'kwargs': {}
-    }
+    },
+    'timbre:mridangam-stroke': {
+        'wrapper': MridangamStrokeClassification,
+        'kwargs': {}
+    },
 }
-
 
 ###############
 # Datasets List

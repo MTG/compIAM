@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN, gen_melgrams, peakPicker
-from compiam.exceptions import modelNotTrainedError
+from compiam.exceptions import ModelNotTrainedError
 
 class fourWayTabla:
 
@@ -25,7 +25,7 @@ class fourWayTabla:
         self.seq_length = seq_length
         self.hop_dur = hop_dur
 
-    def load_model(self, filepath, device=self.device):
+    def load_model(self, filepath):
         stats_path = os.path.join(filepath, 'means_stds.npy')
         self.stats = np.load(stats_path)
         for cat in self.categories:
@@ -33,7 +33,7 @@ class fourWayTabla:
             y=0
             for fold in range(self.n_folds):
                 saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
-                model = self.model_names[cat].double().to(device)
+                model = self.model_names[cat].double().to(self.device)
                 model.load_state_dict(torch.load(saved_model_path, map_location=device))
                 model.eval()
 
@@ -44,9 +44,9 @@ class fourWayTabla:
             logger.warning("Model is already initalised, overwriting with new data")
         pass
 
-    def predict(self, path_to_audio, predict_thresh=0.3, device=self.device):
+    def predict(self, path_to_audio, predict_thresh=0.3):
         if not self.models:
-            raise modelNotTrainedError('Please load or train model before predicting')
+            raise ModelNotTrainedError('Please load or train model before predicting')
 
         #get log-mel-spectrogram of audio
         melgrams = gen_melgrams(path_to_audio, stats=self.stats)
@@ -56,7 +56,7 @@ class fourWayTabla:
         odf = dict(zip(self.categories, [np.zeros(n_frames)]*4))
 
         for i_frame in np.arange(0, n_frames):
-            x = torch.tensor(melgrams[:,:,i_frame:i_frame + self.seq_length]).double().to(device)
+            x = torch.tensor(melgrams[:,:,i_frame:i_frame + self.seq_length]).double().to(self.device)
             x = x.unsqueeze(0)
 
             for cat in self.categories:
