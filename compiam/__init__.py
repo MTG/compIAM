@@ -1,5 +1,6 @@
 import mirdata
-from compiam.data import models_dict, datasets_list
+from compiam.dunya import Corpora
+from compiam.data import models_dict, datasets_list, corpora_list
 from compiam.exceptions import ModelNotDefinedError
 
 def load_model(model_name, models_dict=models_dict):
@@ -27,6 +28,27 @@ def load_dataset(dataset_name, data_home=None, version="default"):
     if dataset_name not in datasets_list:
         raise ValueError("Invalid dataset {}".format(dataset_name)) 
     return mirdata.initialize(dataset_name=dataset_name, data_home=data_home, version=version)
+
+def load_corpora(tradition, cc=True, token=None):
+    """Alias function to load a mirdata Dataset class
+    Args:
+        tradition (str): carnatic or hindustani
+    Returns:
+        Corpora: a compiam.Corpora object
+    """
+    if tradition not in list(corpora_list.keys()):
+        raise ValueError("Please enter a valid tradition in {}".format(list(corpora_list.keys())))
+    if not isinstance(cc, bool):
+        raise ValueError("""Parameter cc must be a boolean to indicate whether to load the open or 
+            the restricted portion of the corpora.
+        """)
+    if token is None:
+        raise ImportError("""Please initialize the Corpora introducing your Dunya API token as parameter. 
+            To get your token, first register to https://dunya.compmusic.upf.edu/ and then go to your user 
+            page by clicking at your username at te right top of the webpage. You will find the API token 
+            in the "API Access" section. Request restricted access if needed. Thanks.
+        """)
+    return Corpora(tradition=tradition, cc=cc, token=token)
 
 def list_datasets():
     """Get a list of all mirdata dataset names
