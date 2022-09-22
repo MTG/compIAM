@@ -38,3 +38,43 @@ models_dict = {
 # Datasets List
 ###############
 datasets_list = ['saraga_carnatic', 'saraga_hindustani', 'mridangam_stroke']
+
+
+##############
+# Corpora List
+##############
+corpora_list = {
+    'carnatic': {
+        'dunya-carnatic': {
+            'name': 'Dunya Carnatic',
+            'description': 'Dunya Carnatic',
+            'slug': 'dunya-carnatic',
+            'root_directory': '/incoming/Carnatic/',
+            'id': 7,
+        },
+        'dunya-carnatic-cc': {
+            'name': 'Dunya Carnatic CC',
+            'description': 'Dunya CC collection in musicbrainz (basically the same as Saraga)',
+            'slug': 'dunya-carnatic-cc',
+            'root_directory': '/incoming/CarnaticCC',
+            'id': 18,
+        },
+    },
+    'hindustani': {
+        'dunya-hindustani-cc': {
+            'name': 'Dunya Hindustani CC',
+            'description': 'Creative commons licensed Hindustani music',
+            'slug': 'dunya-hindustani-cc',
+            'root_directory': '/incoming/HindustaniCC',
+            'id': 19,
+        },
+        'dunya-hindustani': {
+            'name': 'Dunya Hindustani',
+            'description': 'Commercial Hindustani recordings',
+            'slug': 'dunya-hindustani',
+            'root_directory': '/incoming/Hindustani',
+            'id': 15,
+        },
+    },
+}
+
