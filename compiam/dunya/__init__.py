@@ -178,19 +178,25 @@ class Corpora:
 
     @staticmethod
     def get_annotation(recordingid, thetype, subtype=None, part=None, version=None):
-        """Return the available source filetypes for a Musicbrainz recording.
+        """Alias function of _file_for_document in the Corpora class.
         :param recordingid: Musicbrainz recording ID
-        TODO
-        :returns: TODO
+        :param thetype: the computed filetype
+        :param subtype: a subtype if the module has one
+        :param part: the file part if the module has one
+        :param version: a specific version, otherwise the most recent one will be used
+        :returns: The contents of the most recent version of the derived file
         """
         return _file_for_document(recordingid, thetype, subtype=subtype, part=part, version=version)
 
     @staticmethod
     def save_annotation(recordingid, thetype, location, subtype=None, part=None, version=None):
-        """Get the available source filetypes for a Musicbrainz recording.
+        """A version of get_annotation that writes the parsed data into a file
         :param recordingid: Musicbrainz recording ID
-        TODO
-        :returns: TODO
+        :param thetype: the computed filetype
+        :param subtype: a subtype if the module has one
+        :param part: the file part if the module has one
+        :param version: a specific version, otherwise the most recent one will be used
+        :returns: None (a file containing the parsed data is written)
         """
         data = _file_for_document(recordingid, thetype, subtype=subtype, part=part, version=version)
         if ('tonic' in subtype) or ('aksharaPeriod' in subtype):
