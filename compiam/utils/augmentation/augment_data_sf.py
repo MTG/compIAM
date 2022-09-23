@@ -43,7 +43,7 @@ def augment_data_spectral_shape(audio_path, out_dir, fs, gain_curve_params, winD
 
 	# apply hps
 	components = ['harm', 'perc']
-	S = librosa.stft(x, n_fft=nFFT, hop_length=hopSize, win_length=winSize, window='hann', center=True,pad_mode='reflect')
+	S = librosa.stft(x, n_fft=nFFT, hop_length=hopSize, win_length=winSize, window='hann', center=True, pad_mode='reflect')
 	S = dict(zip(components, librosa.decompose.hpss(S, kernel_size=31, power=1.0, mask=False, margin=1.0)))
 
 	x = {}; x_stft={}; x_resyn=[]

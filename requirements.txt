@@ -10,6 +10,7 @@ pathlib==1.0.1
 pytsmod==0.3.3
 scipy==1.4.1
 torch==1.8.0
+tqdm==4.64.1
 
 # Datasets
 #mirdata==0.6.3

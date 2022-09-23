@@ -5,6 +5,10 @@ import torch
 
 from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN, gen_melgrams, peakPicker
 from compiam.exceptions import ModelNotTrainedError
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
 
 class fourWayTabla:
 
@@ -24,6 +28,11 @@ class fourWayTabla:
         self.n_folds = n_folds
         self.seq_length = seq_length
         self.hop_dur = hop_dur
+        
+        # Load model if passed
+        self.filepath = filepath
+        if self.filepath:
+            self.load_model(filepath)
 
     def load_model(self, filepath):
         stats_path = os.path.join(filepath, 'means_stds.npy')
@@ -34,7 +43,7 @@ class fourWayTabla:
             for fold in range(self.n_folds):
                 saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
                 model = self.model_names[cat].double().to(self.device)
-                model.load_state_dict(torch.load(saved_model_path, map_location=device))
+                model.load_state_dict(torch.load(saved_model_path, map_location=self.device))
                 model.eval()
 
                 self.models[cat][fold] = model
@@ -67,7 +76,7 @@ class fourWayTabla:
                     y += model(x).squeeze().cpu().detach().numpy()
                 odf[cat][i_frame] = y/self.n_folds
 
-        #pick peaks in predicted activations
+        # pick peaks in predicted activations
         odf_peaks = dict(zip(self.categories, []*4))
         for cat in self.categories:
             odf_peaks[cat] = peakPicker(odf[cat], predict_thresh)
@@ -81,3 +90,4 @@ class fourWayTabla:
         labels = labels[sorted_order]
 
         return onsets, labels
+  
