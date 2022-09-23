@@ -7,22 +7,20 @@ from joblib import Parallel, delayed
 from pathlib import PurePath
 import argparse
 
-sys.path.append('./NMFtoolbox/python')
-from NMFtoolbox.forwardSTFT import forwardSTFT
-from NMFtoolbox.inverseSTFT import inverseSTFT
-from NMFtoolbox.initTemplates import initTemplates
-from NMFtoolbox.initActivations import initActivations
-from NMFtoolbox.NMF import NMF
-from NMFtoolbox.NMF import NMF
-from NMFtoolbox.alphaWienerFilter import alphaWienerFilter
-from NMFtoolbox.utils import make_monaural, pcmInt16ToFloat32Numpy, EPS
+from compiam.utils.NMFtoolbox.forwardSTFT import forwardSTFT
+from compiam.utils.NMFtoolbox.inverseSTFT import inverseSTFT
+from compiam.utils.NMFtoolbox.initTemplates import initTemplates
+from compiam.utils.NMFtoolbox.initActivations import initActivations
+from compiam.utils.NMFtoolbox.NMF import NMF
+from compiam.utils.NMFtoolbox.alphaWienerFilter import alphaWienerFilter
+from compiam.utils.NMFtoolbox.utils import make_monaural, pcmInt16ToFloat32Numpy, EPS
 
 def tuple_list(s):
     try:
         x, y, z = map(float, s.split(','))
         return x, y, z
     except:
-        raise argparse.ArgumentTypeError("params must be x,y,z")
+        raise argparse.ArgumentTypeError("params must be x, y, z")
 
 def apply_nmf_separation(x, fs, hopSize, nFFT, W):
 	# spectral parameters
@@ -35,7 +33,15 @@ def apply_nmf_separation(x, fs, hopSize, nFFT, W):
 	paramSTFT['numSamples'] = len(x)
 
 	# STFT computation
-	X, A, P = forwardSTFT(x, paramSTFT)
+	#X, A, P = forwardSTFT(x, paramSTFT)
+	X = librosa.stft(x, n_fft=nFFT, hop_length=hopSize, win_length=blockSize, window='hann', center=True, pad_mode='reflect')
+
+	# compute derived matrices
+    # get magnitude
+    A = np.abs(X)
+
+    # get phase
+    P = np.angle(X)
 
 	# get dimensions and time and freq resolutions
 	numBins, numFrames = X.shape
