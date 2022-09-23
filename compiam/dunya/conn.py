@@ -34,9 +34,9 @@ session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
 
 def set_hostname(hostname):
     """ Change the hostname of the dunya API endpoint.
-    Arguments:
-        hostname: The new dunya hostname to set. If you want to access over http or a different port,
+    :param hostname: The new dunya hostname to set. If you want to access over http or a different port,
          include them in the hostname, e.g. `http://localhost:8000`
+    :returns: None
     """
     global HOSTNAME
     HOSTNAME = hostname
@@ -44,9 +44,8 @@ def set_hostname(hostname):
 
 def set_token(token):
     """ Set an access token. You must call this before you can make
-    any other calls.
-    Arguments:
-        token: your access token
+    :param token: your access token
+    :returns: None
     """
     global TOKEN
     TOKEN = token
