@@ -19,7 +19,7 @@ import os
 import errno
 
 from .conn import _get_paged_json, _dunya_query_json, _get_paged_json, get_mp3, _file_for_document, set_token
-from .writing_utils import write_1d_data, write_2d_data, write_json_data, write_scalar_data
+from compiam.io import write_1d_csv, write_2d_csv, write_json, write_scalar_txt
 
 class Corpora:
     def __init__(self, tradition, cc, token):
@@ -200,13 +200,13 @@ class Corpora:
         """
         data = _file_for_document(recordingid, thetype, subtype=subtype, part=part, version=version)
         if ('tonic' in subtype) or ('aksharaPeriod' in subtype):
-            write_scalar_data(data, location)
+            write_scalar_txt(data, location)
         elif 'section' in subtype:
-            write_json_data(data, location)
+            write_json(data, location)
         elif 'APcurve' in subtype:
-            write_2d_data(data, location)
+            write_2d_csv(data, location)
         elif ('pitch' in subtype) or ('aksharaTicks' in subtype):
-            write_1d_data(data, location)
+            write_1d_csv(data, location)
         else:
             raise ValueError("No writing method available for data type: {} and {}", thetype, subtype)
 
