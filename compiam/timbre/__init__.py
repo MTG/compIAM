@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -13,11 +12,9 @@ from compiam.exceptions import ModelNotTrainedError
 class MridangamStrokeClassification:
     """Mridangam stroke classification 
     """
-
     def __init__(self):
         """ Mridangam stroke classification init method
         """
-        
         self.dataset = None
         self.generic_model = StrokeClassification()
         self.model = None

@@ -122,7 +122,8 @@ def _make_url(path, **kwargs):
 
 
 def _dunya_query_json(path, **kwargs):
-    """Make a query to dunya and expect the results to be JSON"""
+    """ Make a query to dunya and expect the results to be JSON
+    """
     g = _dunya_url_query(_make_url(path, **kwargs))
     return g.json() if g else None
 
@@ -140,7 +141,7 @@ def _dunya_query_file(path, **kwargs):
         return
 
 def _file_for_document(recordingid, thetype, subtype=None, part=None, version=None):
-    """Get the most recent derived file given a filetype.
+    """ Get the most recent derived file given a filetype.
     :param recordingid: Musicbrainz recording ID
     :param thetype: the computed filetype
     :param subtype: a subtype if the module has one
@@ -160,8 +161,7 @@ def _file_for_document(recordingid, thetype, subtype=None, part=None, version=No
 
 
 def get_mp3(recordingid):
-    """Get a mp3 from a specific mbid
-    
+    """ Get a mp3 from a specific mbid
     :param recordingid: Musicbrainz recording ID
     """
     return _file_for_document(recordingid, "mp3")
