@@ -34,15 +34,20 @@ models_dict = {
     },
 }
 
+
 ###############
 # Datasets List
 ###############
+# Make sure you:
+#   1. create a dataset loader in mirdata (https://github.com/mir-dataset-loaders/mirdata) 
+#   2. add the dataset identifier in this list
 datasets_list = ['saraga_carnatic', 'saraga_hindustani', 'mridangam_stroke']
 
 
 ##############
 # Corpora List
 ##############
+
 corpora_list = {
     'carnatic': {
         'dunya-carnatic': {
