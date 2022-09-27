@@ -6,20 +6,21 @@ from tensorflow.keras.layers import Dense, Conv2D, BatchNormalization, Lambda, \
 
 
 class FTANet:
-    """FTA-Net predominant melody extraction
+    """ FTA-Net predominant melody extraction
     """
     def __init__(self):
-        """FTA-Net predominant melody extraction init method
+        """ FTA-Net predominant melody extraction init method
         """
         pass
 
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
-        """TODO
-        Args:
-            TODO
-        Returns:
-            TODO
+        """ Selection and fusion module
+        :param x_list: list of tensor inputs
+        :param n_channel: number of feature channels
+        :param reduction: the rate to which the data is compressed
+        :param limitation: setting a compressing limit
+        :returns: a tensor with the fused and selected feature map
         """
         ## Split
         fused = None
@@ -55,11 +56,13 @@ class FTANet:
 
     @staticmethod
     def FTA_Module(x, shape, kt, kf):
-        """TODO
-        Args:
-            TODO
-        Returns:
-            TODO
+        """ Selection and fusion module
+        :param x: input tensor
+        :param shape: the shape of the input tensor
+        :param kt: kernel size for time attention
+        :param kf: kernel size for frequency attention
+        :returns: the resized input, the time-attention map, 
+            and the frequency-attention map
         """
         x = BatchNormalization()(x)
 
@@ -93,11 +96,9 @@ class FTANet:
         return x_r, x_t, x_f
 
     def load_model(self, input_shape=(320, 128, 3)):
-        """TODO
-        Args:
-            TODO
-        Returns:
-            TODO
+        """ Building the entire FTA-Net
+        :param input_shape: input shape
+        :returns: a tensorflow Model instance of the FTA-Net
         """
         visible = Input(shape=input_shape)
         x = BatchNormalization()(visible)
