@@ -6,3 +6,9 @@ class ModelNotDefinedError(Exception):
 
 class ModelNotTrainedError(Exception):
 	pass
+
+class HTTPError(Exception):
+    pass
+
+class ConnectionError(Exception):
+    pass
