@@ -1,7 +1,7 @@
 # Not sure if to have a separate requirements for each section or one requirements?
 
 # 4 way tabla transcription
-matplotlib
+matplotlib==3.4.2
 numpy==1.18.5
 librosa==0.8.0
 SoundFile==0.10.3.post1
@@ -13,4 +13,9 @@ torch==1.8.0
 tqdm==4.64.1
 
 # Datasets
-#mirdata==0.6.3
+mirdata==0.3.6
+
+# Essentia
+essentia
+
+# Should Tensorflow and PyTorch be installed as optional dependencies?

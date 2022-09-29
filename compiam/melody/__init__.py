@@ -1,3 +1,4 @@
+import os
 import math
 
 import numpy as np
@@ -7,16 +8,33 @@ from compiam.melody.ftanet.model import FTANet
 
 
 class ftanetCarnatic:
-    def __init__(self, filepath):
-        self.filepath = filepath
+    """FTA-Net melody extraction tuned to Carnatic Music
+    """
+    def __init__(self, model_path):
+        """ FTA-Net melody extraction init method
+        :param model_path: path to file to the model weights
+        """
+        if not os.path.exists(model_path):
+            raise ValueError("""
+                Given path to model weights not found. Make sure you enter the path correctly.
+                A training process for the FTA-Net tuned to Carnatic is under development right
+                now and will be added to the library soon. Meanwhile, we provide the weights in the
+                latest repository version (https://github.com/MTG/compIAM) so make sure you have these
+                available before loading the Carnatic FTA-Net.
+            """)
+        self.model_path = model_path
         self.model = FTANet().load_model()
-        self.model.load_weights(filepath)
-
+        self.model.load_weights(model_path)
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
-        """Extract melody from filename
-        Args:
-            filename (str): path to file to extract
+        """ Extract melody from filename
+        :param filename: path to file to extract
+        :param sample_rate: sample rate of extraction process
+        :param hop_size: hop size between frequency estimations
+        :param batch_size: batches of seconds that are passed through the model 
+            (defaulted to 5, increase if enough computational power, reduce if
+            needed)
+        :returns: a 2-D list with time-stamps and pitch values per timestamp
         """
         from ftanet.pitch_processing import batchize_test, get_est_arr
         from ftanet.cfp import cfp_process
@@ -57,26 +75,21 @@ class ftanetCarnatic:
         ### TODO: Write code to re-sample in case sampling frequency is initialized different than 8k
         return np.array([TStamps, freqs]).transpose().toList()
 
-    def normalise_pitch(self, pitch, tonic, bins_per_octave=120, max_value=4):
-        """Normalize pitch given a tonic
-        Args:
-            pitch (list): list of pitch values and time-stamps
-            tonic (float): TODO
-            bins_per_octave (int): cents per bin
-            max_value (int): TODO
+    def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
+        """ Normalize pitch given a tonic
+        :param pitch: a 2-D list with time-stamps and pitch values per timestamp
+        :param tonic: recording tonic to normalize the pitch to
+        :param bins_per_octave: number of frequency bins per octave
+        :param max_value: maximum value to clip the normalized pitch to
+        :returns: a 2-D list with time-stamps and normalized to a given tonic 
+            pitch values per timestamp
         """
-        pitch_values = pitch[:, 1]
-        eps = np.finfo(np.float).eps
-        normalised_pitch = bins_per_octave * np.log2(2.0 * (pitch_values + eps) / tonic)
-        indexes = np.where(normalised_pitch <= 0)
-        normalised_pitch[indexes] = 0
-        indexes = np.where(normalised_pitch > max_value)
-        normalised_pitch[indexes] = max_value
-        return np.array([pitch[:, 0], normalised_pitch]).transpose().toList()
+        return _normalise_pitch(
+            pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)
 
 
 class Melodia:
-    """Melodia predominant melody extraction
+    """ Melodia predominant melody extraction
     """
     def __init__(self, binResolution=10, filterIterations=3, frameSize=2048, guessUnvoiced=False,
                  harmonicWeight=0.8, hopSize=128, magnitudeCompression=1, magnitudeThreshold=40,
@@ -84,7 +97,9 @@ class Melodia:
                  peakDistributionThreshold=0.9, peakFrameThreshold=0.9, pitchContinuity=27.5625,
                  referenceFrequency=55, sampleRate=44100, timeContinuity=100, voiceVibrato=False,
                  voicingTolerance=0.2):
-        """Melodia predominant melody extraction init method
+        """ Melodia predominant melody extraction init method
+        For a complete and detailed list of the parameters see the documentation on the 
+        following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
         """
         self.binResolution = binResolution
         self.filterIterations = filterIterations
@@ -108,6 +123,10 @@ class Melodia:
         self.voicingTolerance = voicingTolerance
 
     def extract(self, filename):
+        """ Extract the melody from a given file
+        :param filename: path to file to extract
+        :returns: a 2-D list with time-stamps and pitch values per timestamp
+        """
         audio = estd.EqloudLoader(filename=filename)()
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,
@@ -134,14 +153,28 @@ class Melodia:
         TStamps = np.array(range(0, len(pitch))) * np.float(self.parameters['hopSize']) / self.parameters['sampleRate']
         return np.array([TStamps, pitch]).transpose().toList()
 
+    def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
+        """ Normalize pitch given a tonic
+        :param pitch: a 2-D list with time-stamps and pitch values per timestamp
+        :param tonic: recording tonic to normalize the pitch to
+        :param bins_per_octave: number of frequency bins per octave
+        :param max_value: maximum value to clip the normalized pitch to
+        :returns: a 2-D list with time-stamps and normalized to a given tonic 
+            pitch values per timestamp
+        """
+        return _normalise_pitch(
+            pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)
+
 
 class TonicIndianMultiPitch:
-    """MultiPitch approach to extract the tonic from IAM music signals
+    """ MultiPitch approach to extract the tonic from IAM music signals
     """
     def __init__(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128,
                  magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
                  minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, sampleRate=44100):
-        """MultiPitch approach to extract the tonic from IAM music signals init method
+        """ Tonic extraction init method
+        For a complete and detailed list of the parameters see the documentation on the 
+        following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html
         """
         self.binResolution = binResolution
         self.frameSize = frameSize
@@ -156,9 +189,9 @@ class TonicIndianMultiPitch:
         self.sampleRate = sampleRate
 
     def extract(self, filename):
-        """Extract tonic from filename
-        Args:
-            filename (str): path to file to extract
+        """ Extract the tonic from a given file
+        :param filename: path to file to extract
+        :returns: a floating point number representing the tonic of the input recording
         """
         audio = estd.MonoLoader(filename=filename)()
         extractor = estd.TonicIndianArtMusic(
@@ -174,3 +207,25 @@ class TonicIndianMultiPitch:
             referenceFrequency=self.referenceFrequency,
             sampleRate=self.sampleRate)
         return extractor(audio)
+
+
+###############
+# Melody utils
+###############
+def _normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
+    """ Normalize pitch given a tonic
+    :param pitch: a 2-D list with time-stamps and pitch values per timestamp
+    :param tonic: recording tonic to normalize the pitch to
+    :param bins_per_octave: number of frequency bins per octave
+    :param max_value: maximum value to clip the normalized pitch to
+    :returns: a 2-D list with time-stamps and normalized to a given tonic 
+        pitch values per timestamp
+    """
+    pitch_values = pitch[:, 1]
+    eps = np.finfo(np.float).eps
+    normalised_pitch = bins_per_octave * np.log2(2.0 * (pitch_values + eps) / tonic)
+    indexes = np.where(normalised_pitch <= 0)
+    normalised_pitch[indexes] = 0
+    indexes = np.where(normalised_pitch > max_value)
+    normalised_pitch[indexes] = max_value
+    return np.array([pitch[:, 0], normalised_pitch]).transpose().toList()
