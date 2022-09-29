@@ -9,7 +9,7 @@ setup(
     include_package_data=True,
     long_description=open('README.md').read(),
     install_requires = [
-        "matplotlib==3.4.2",
+        "matplotlib>=3.0.0",
         "numpy==1.18.5",
         "librosa==0.8.0",
         "SoundFile==0.10.3.post1",
