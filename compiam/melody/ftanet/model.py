@@ -1,9 +1,14 @@
-from tensorflow.keras import backend as K
-from tensorflow.keras import Input, Model
-from tensorflow.keras.layers import Dense, Conv2D, BatchNormalization, Lambda, \
+try:
+    from tensorflow.keras import backend as K
+    from tensorflow.keras import Input, Model
+    from tensorflow.keras.layers import Dense, Conv2D, BatchNormalization, Lambda, \
     GlobalAveragePooling2D, MaxPooling2D, Concatenate, Add, Multiply, \
         Softmax, Reshape, UpSampling2D, Conv1D
-
+except ImportError as E:
+    raise E(
+        "In order to use this tool you need to have tensorflow installed. "
+        "Please reinstall compiam using `pip install 'compiam[tensorflow]'"
+    )
 
 class FTANet:
     """ FTA-Net predominant melody extraction

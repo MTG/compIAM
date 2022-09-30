@@ -1,7 +1,14 @@
 import os
 
 import numpy as np
-import torch
+
+try:
+    import torch
+except ImportError as E:
+    raise E(
+        "In order to use this tool you need to have torch installed. "
+        "Please reinstall compiam using `pip install 'compiam[torch]'"
+    )
 
 from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN, gen_melgrams, peakPicker
 from compiam.exceptions import ModelNotTrainedError

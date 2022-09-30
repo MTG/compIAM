@@ -1,12 +1,18 @@
 import os
-
 import librosa
 import torch
-import numpy as np
-import torch.nn as nn
-import torch
 
-from compiam.exceptions import ModelNotFoundError
+import numpy as np
+
+try:
+    import torch.nn as nn
+    import torch
+except ImportError as E:
+    raise E(
+        "In order to use this tool you need to have torch installed. "
+        "Please reinstall compiam using `pip install 'compiam[torch]'"
+    )
+
 #from compiam.utils.core import get_logger
 
 #logger = get_logger(__name__)
