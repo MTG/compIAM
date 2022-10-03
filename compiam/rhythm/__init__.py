@@ -1,7 +1,5 @@
 import numpy as np
 
-from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN, \
-    gen_melgrams, peakPicker, get_odf, load_models, check_cuda
 from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger
 
@@ -14,6 +12,8 @@ class fourWayTabla:
     def __init__(self, filepath=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):
         """TODO
         """
+        from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN
+        from compiam.rhythm.tabla_transcription.models import load_models, check_cuda
         if not device:
             self.device = check_cuda(device)
 
@@ -40,6 +40,7 @@ class fourWayTabla:
     def predict(self, path_to_audio, predict_thresh=0.3):
         """TODO
         """
+        from compiam.rhythm.tabla_transcription.models import gen_melgrams, peakPicker, get_odf
         if not self.models:
             raise ModelNotTrainedError('Please load or train model before predicting')
 
