@@ -18,7 +18,7 @@ models_dict = {
     },
     "melody:ftanet-carnatic": {
         "wrapper": ftanetCarnatic,
-        "kwargs": {"filepath": "models/melody/ftanet/carnatic/"}
+        "kwargs": {"filepath": "models/melody/ftanet/carnatic/OA"}
     },
     "melody:melodia": {
         "wrapper": Melodia,
