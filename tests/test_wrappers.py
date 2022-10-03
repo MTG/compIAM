@@ -7,7 +7,7 @@ from compiam import list_models, load_dataset, load_corpora, \
 def test_load_dataset():
     dataset = load_dataset("mridangam_stroke")
     dataset_mirdata = mirdata.initialize("mridangam_stroke")
-    assert dataset == dataset_mirdata
+    assert type(dataset) == type(dataset_mirdata)
     with pytest.raises(ValueError):
         load_dataset("hola")
 
