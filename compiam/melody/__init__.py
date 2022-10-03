@@ -4,9 +4,6 @@ import math
 import numpy as np
 import essentia.standard as estd
 
-from compiam.melody.ftanet.model import FTANet
-
-
 class ftanetCarnatic:
     """FTA-Net melody extraction tuned to Carnatic Music
     """
@@ -22,6 +19,7 @@ class ftanetCarnatic:
                 latest repository version (https://github.com/MTG/compIAM) so make sure you have these
                 available before loading the Carnatic FTA-Net.
             """)
+        from compiam.melody.ftanet.model import FTANet
         self.model_path = model_path
         self.model = FTANet().load_model()
         self.model.load_weights(model_path)
