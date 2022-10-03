@@ -4,5 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests",
+    "tests/required_deps",
+    "tests/optional_deps",
 ]
