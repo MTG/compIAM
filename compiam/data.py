@@ -3,6 +3,10 @@
 #############
 # Each model should be stored in models_dict using <name>:<d> where <d> is:
 #	{"filepath": "<path_to_model>", "wrapper": model wrapper}
+import os
+from pathlib import Path
+WORKDIR = os.path.dirname(Path().absolute())
+
 from compiam.melody import ftanetCarnatic, Melodia, TonicIndianMultiPitch
 from compiam.rhythm import fourWayTabla
 from compiam.timbre import MridangamStrokeClassification
@@ -10,15 +14,15 @@ from compiam.timbre import MridangamStrokeClassification
 models_dict = {
     "rhythm:1way-tabla": {
         "wrapper": fourWayTabla,
-        "kwargs": {"filepath": "models/rhythm/4wayTabla/1way/"}
+        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
         "wrapper": fourWayTabla,
-        "kwargs": {"filepath": "models/rhythm/4wayTabla/4way/"}
+        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
         "wrapper": ftanetCarnatic,
-        "kwargs": {"filepath": "models/melody/ftanet/carnatic/OA"}
+        "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
         "wrapper": Melodia,
