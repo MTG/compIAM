@@ -7,11 +7,11 @@ import essentia.standard as estd
 class ftanetCarnatic:
     """FTA-Net melody extraction tuned to Carnatic Music
     """
-    def __init__(self, model_path):
+    def __init__(self, filepath):
         """ FTA-Net melody extraction init method
         :param model_path: path to file to the model weights
         """
-        if not os.path.exists(model_path):
+        if not os.path.exists(filepath):
             raise ValueError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
                 A training process for the FTA-Net tuned to Carnatic is under development right
@@ -20,9 +20,9 @@ class ftanetCarnatic:
                 available before loading the Carnatic FTA-Net.
             """)
         from compiam.melody.ftanet.model import FTANet
-        self.model_path = model_path
+        self.filepath = filepath
         self.model = FTANet().load_model()
-        self.model.load_weights(model_path)
+        self.model.load_weights(filepath)
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
         """ Extract melody from filename

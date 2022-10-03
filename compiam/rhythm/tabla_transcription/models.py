@@ -6,14 +6,13 @@ import numpy as np
 try:
     import torch
     import torch.nn as nn
-except ImportError as E:
-    raise E(
+except:
+    raise ImportError(
         "In order to use this tool you need to have torch installed. "
-        "Please reinstall compiam using `pip install 'compiam[torch]'"
+        "Please reinstall compiam using `pip install compiam[torch]`"
     )
 
 #from compiam.utils.core import get_logger
-
 #logger = get_logger(__name__)
 
 # model definition for resonant bass and resonant both categories
