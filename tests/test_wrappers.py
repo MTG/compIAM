@@ -28,7 +28,7 @@ def test_lists():
     assert "hindustani" in list_corpora()
 
 @pytest.mark.tensorflow
-def test_load_models():
+def test_load_tensorflow_models():
     from compiam import load_model
     from compiam.melody import ftanetCarnatic
     melodia = load_model("melody:melodia")
@@ -36,7 +36,7 @@ def test_load_models():
     assert type(ftanet) == ftanetCarnatic
 
 @pytest.mark.torch
-def test_load_models():
+def test_load_torch_models():
     from compiam import load_model
     from compiam.rhythm import fourWayTabla
     tabla_class = load_model("rhythm:4way-tabla")
