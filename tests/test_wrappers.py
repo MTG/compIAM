@@ -26,3 +26,20 @@ def test_lists():
     assert "melody:melodia" in list_models()
     assert "saraga_carnatic" in list_datasets()
     assert "hindustani" in list_corpora()
+
+@pytest.mark.tensorflow
+def test_load_models():
+    from compiam import load_model
+    from compiam.melody import ftanetCarnatic
+    melodia = load_model("melody:melodia")
+    ftanet = load_model("melody:ftanet-carnatic")
+    assert type(ftanet) == ftanetCarnatic
+
+@pytest.mark.torch
+def test_load_models():
+    from compiam import load_model
+    from compiam.rhythm import fourWayTabla
+    tabla_class = load_model("rhythm:4way-tabla")
+    assert type(tabla_class) == fourWayTabla
+
+
