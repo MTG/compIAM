@@ -28,7 +28,8 @@ class fourWayTabla:
         # Load model if passed
         self.filepath = filepath
         if self.filepath:
-            self.models, self.stats = load_models(filepath)
+            self.models, self.stats = load_models(
+                filepath, self.model_names, self.categories, self.n_folds, self.device)
 
     def train(self):
         """TODO
