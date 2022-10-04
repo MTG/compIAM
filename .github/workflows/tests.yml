@@ -19,13 +19,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox tox-gh-actions pytest pytest-cov
+        pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
-    - name: Build coverage file
-        run: |
-          pytest --cache-clear --cov=compiam tests/ > pytest-coverage.txt
-    - name: Comment coverage
-      uses: coroo/pytest-coverage-commentator@v1.0.2
-      with:
-        pytest-coverage: pytest-coverage.txt
