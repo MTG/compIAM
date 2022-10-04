@@ -47,10 +47,9 @@ class FourWayTabla:
         self.stats = np.load(stats_path)
         for cat in self.categories:
             self.models[cat] = {}
-            y=0
             for fold in range(self.n_folds):
                 saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
-                model = self.self.model_names[cat].double().to(self.device)
+                model = self.model_names[cat].double().to(self.device)
                 model.load_state_dict(torch.load(saved_model_path, map_location=self.device))
                 model.eval()
 
