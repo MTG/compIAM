@@ -30,16 +30,16 @@ def test_lists():
 @pytest.mark.tensorflow
 def test_load_tensorflow_models():
     from compiam import load_model
-    from compiam.melody import ftanetCarnatic
+    from compiam.melody import FTANetCarnatic
     melodia = load_model("melody:melodia")
     ftanet = load_model("melody:ftanet-carnatic")
-    assert type(ftanet) == ftanetCarnatic
+    assert type(ftanet) == FTANetCarnatic
 
 @pytest.mark.torch
 def test_load_torch_models():
     from compiam import load_model
-    from compiam.rhythm import fourWayTabla
+    from compiam.rhythm import FourWayTabla
     tabla_class = load_model("rhythm:4way-tabla")
-    assert type(tabla_class) == fourWayTabla
+    assert type(tabla_class) == FourWayTabla
 
 

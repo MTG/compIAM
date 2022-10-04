@@ -4,7 +4,7 @@ import math
 import numpy as np
 import essentia.standard as estd
 
-class ftanetCarnatic:
+class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music
     """
     def __init__(self, filepath):

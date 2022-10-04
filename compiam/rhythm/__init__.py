@@ -6,7 +6,7 @@ from compiam.utils import get_logger
 logger = get_logger(__name__)
 
 
-class fourWayTabla:
+class FourWayTabla:
     """TODO
     """
     def __init__(self, filepath=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):

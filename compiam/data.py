@@ -7,21 +7,21 @@ import os
 from pathlib import Path
 WORKDIR = Path().absolute()
 
-from compiam.melody import ftanetCarnatic, Melodia, TonicIndianMultiPitch
-from compiam.rhythm import fourWayTabla
+from compiam.melody import FTANetCarnatic, Melodia, TonicIndianMultiPitch
+from compiam.rhythm import FourWayTabla
 from compiam.timbre import MridangamStrokeClassification
 
 models_dict = {
     "rhythm:1way-tabla": {
-        "wrapper": fourWayTabla,
+        "wrapper": FourWayTabla,
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
-        "wrapper": fourWayTabla,
+        "wrapper": FourWayTabla,
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
-        "wrapper": ftanetCarnatic,
+        "wrapper": FTANetCarnatic,
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
