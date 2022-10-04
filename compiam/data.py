@@ -5,7 +5,7 @@
 #	{"filepath": "<path_to_model>", "wrapper": model wrapper}
 import os
 from pathlib import Path
-WORKDIR = os.path.dirname(Path().absolute())
+WORKDIR = Path().absolute()
 
 from compiam.melody import ftanetCarnatic, Melodia, TonicIndianMultiPitch
 from compiam.rhythm import fourWayTabla
