@@ -5,16 +5,17 @@ import numpy as np
 import essentia.standard as estd
 
 from compiam.melody.ftanet.model import FTANet
+from compiam.melody.ftanet.pitch_processing import batchize_test, get_est_arr
+from compiam.melody.ftanet.cfp import cfp_process
 
-
-class ftanetCarnatic:
+class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music
     """
-    def __init__(self, model_path):
+    def __init__(self, filepath):
         """ FTA-Net melody extraction init method
         :param model_path: path to file to the model weights
         """
-        if not os.path.exists(model_path):
+        if not os.path.exists(filepath + '.data-00000-of-00001'):
             raise ValueError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
                 A training process for the FTA-Net tuned to Carnatic is under development right
@@ -22,9 +23,9 @@ class ftanetCarnatic:
                 latest repository version (https://github.com/MTG/compIAM) so make sure you have these
                 available before loading the Carnatic FTA-Net.
             """)
-        self.model_path = model_path
+        self.filepath = filepath
         self.model = FTANet().load_model()
-        self.model.load_weights(model_path)
+        self.model.load_weights(filepath).expect_partial()
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
         """ Extract melody from filename
@@ -36,8 +37,6 @@ class ftanetCarnatic:
             needed)
         :returns: a 2-D list with time-stamps and pitch values per timestamp
         """
-        from ftanet.pitch_processing import batchize_test, get_est_arr
-        from ftanet.cfp import cfp_process
         xlist = []
         timestamps = []
         print('CFP process in {}'.format(path_to_audio))
