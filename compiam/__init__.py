@@ -1,4 +1,7 @@
 import mirdata
+
+from importlib import import_module
+
 from compiam.dunya import Corpora
 from compiam.data import models_dict, datasets_list, corpora_list
 from compiam.exceptions import ModelNotDefinedError
@@ -11,12 +14,14 @@ def load_model(model_name, models_dict=models_dict):
     """
     if not model_name in models_dict:
         raise ModelNotDefinedError(
-            (f'Model, {model_name} does not exist in compiam.model_store.models_dict, please follow ' 
-                'instructions for adding new model to the model_store in model_store documentation'))
+            (f"Model, {model_name} does not exist in compiam.data.models_dict, please follow " 
+                "instructions for adding new model to in ``data.py`` documentation"))
 
     m_dict = models_dict[model_name]
-
-    return m_dict['wrapper'](**m_dict['kwargs'])
+    module = getattr(
+        import_module("compiam." + model_name.split(":")[0]),
+        m_dict["class_name"])
+    return module(**m_dict["kwargs"])
 
 def load_dataset(dataset_name, data_home=None, version="default"):
     """ Wrapper/alias function to load a mirdata Dataset class

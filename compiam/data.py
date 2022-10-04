@@ -1,39 +1,37 @@
-#############
-# Models Dict
-#############
-# Each model should be stored in models_dict using <name>:<d> where <d> is:
-#	{"filepath": "<path_to_model>", "wrapper": model wrapper}
 import os
 from pathlib import Path
 WORKDIR = Path().absolute()
 
-from compiam.melody import FTANetCarnatic, Melodia, TonicIndianMultiPitch
-from compiam.rhythm import FourWayTabla
-from compiam.timbre import MridangamStrokeClassification
+#############
+# Models Dict
+#############
+# Each model should be stored in models_dict using 
+#   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
+#	    {"class_name": "<name of the model class>", "filepath": "<path_to_model if any>"}
 
 models_dict = {
     "rhythm:1way-tabla": {
-        "wrapper": FourWayTabla,
+        "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
-        "wrapper": FourWayTabla,
+        "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
-        "wrapper": FTANetCarnatic,
+        "class_name": "FTANetCarnatic",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
-        "wrapper": Melodia,
+        "class_name": "Melodia",
         "kwargs": {}
     },
     "melody:tonic-multipitch": {
-        "wrapper": TonicIndianMultiPitch,
+        "class_name": "TonicIndianMultiPitch",
         "kwargs": {}
     },
     "timbre:mridangam-stroke": {
-        "wrapper": MridangamStrokeClassification,
+        "class_name": "MridangamStrokeClassification",
         "kwargs": {}
     },
 }
@@ -52,6 +50,7 @@ datasets_list = ["saraga_carnatic", "saraga_hindustani", "mridangam_stroke"]
 ##############
 # Corpora List
 ##############
+# Do not edit these dict: it is fixed in Dunya and no additional corpus is scheduled at the moment.
 
 corpora_list = {
     "carnatic": {

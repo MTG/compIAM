@@ -4,6 +4,10 @@ import math
 import numpy as np
 import essentia.standard as estd
 
+from compiam.melody.ftanet.model import FTANet
+from compiam.melody.ftanet.pitch_processing import batchize_test, get_est_arr
+from compiam.melody.ftanet.cfp import cfp_process
+
 class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music
     """
@@ -19,7 +23,6 @@ class FTANetCarnatic(object):
                 latest repository version (https://github.com/MTG/compIAM) so make sure you have these
                 available before loading the Carnatic FTA-Net.
             """)
-        from compiam.melody.ftanet.model import FTANet
         self.filepath = filepath
         self.model = FTANet().load_model()
         self.model.load_weights(filepath).expect_partial()
@@ -34,8 +37,6 @@ class FTANetCarnatic(object):
             needed)
         :returns: a 2-D list with time-stamps and pitch values per timestamp
         """
-        from ftanet.pitch_processing import batchize_test, get_est_arr
-        from ftanet.cfp import cfp_process
         xlist = []
         timestamps = []
         print('CFP process in {}'.format(path_to_audio))

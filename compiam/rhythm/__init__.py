@@ -1,3 +1,13 @@
+import os
+
+try:
+    import torch
+except:
+    raise ImportError(
+        "In order to use this tool you need to have torch installed. "
+        "Please reinstall compiam using `pip install compiam[torch]`"
+    )
+
 import numpy as np
 
 from compiam.exceptions import ModelNotTrainedError
@@ -5,6 +15,8 @@ from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
+from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN
+from compiam.rhythm.tabla_transcription.models import gen_melgrams, peakPicker
 
 class FourWayTabla:
     """TODO
@@ -12,10 +24,8 @@ class FourWayTabla:
     def __init__(self, filepath=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):
         """TODO
         """
-        from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN
-        from compiam.rhythm.tabla_transcription.models import load_models, check_cuda
         if not device:
-            self.device = check_cuda(device)
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.categories = ['D', 'RT', 'RB', 'B']
         self.model_names = {'D': onsetCNN_D(), 'RT': onsetCNN_RT(), 'RB': onsetCNN(), 'B': onsetCNN()}
@@ -28,8 +38,23 @@ class FourWayTabla:
         # Load model if passed
         self.filepath = filepath
         if self.filepath:
-            self.models, self.stats = load_models(
-                filepath, self.model_names, self.categories, self.n_folds, self.device)
+            self.load_models(filepath)
+
+    def load_models(self, filepath):
+        """TODO
+        """
+        stats_path = os.path.join(filepath, 'means_stds.npy')
+        self.stats = np.load(stats_path)
+        for cat in self.categories:
+            self.models[cat] = {}
+            y=0
+            for fold in range(self.n_folds):
+                saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
+                model = self.self.model_names[cat].double().to(self.device)
+                model.load_state_dict(torch.load(saved_model_path, map_location=self.device))
+                model.eval()
+
+                self.models[cat][fold] = model
 
     def train(self):
         """TODO
@@ -41,7 +66,6 @@ class FourWayTabla:
     def predict(self, path_to_audio, predict_thresh=0.3):
         """TODO
         """
-        from compiam.rhythm.tabla_transcription.models import gen_melgrams, peakPicker, get_odf
         if not self.models:
             raise ModelNotTrainedError('Please load or train model before predicting')
 
@@ -49,7 +73,19 @@ class FourWayTabla:
         melgrams = gen_melgrams(path_to_audio, stats=self.stats)
 
         #get frame-wise onset predictions
-        odf = get_odf(self.models, melgrams, self.seq_length, self.categories, self.n_folds, self.device)
+        n_frames = melgrams.shape[-1]-self.seq_length
+        odf = dict(zip(self.categories, [np.zeros(n_frames)]*4))
+        for i_frame in np.arange(0, n_frames):
+            x = torch.tensor(melgrams[:,:,i_frame:i_frame + self.seq_length]).double().to(self.device)
+            x = x.unsqueeze(0)
+
+            for cat in self.categories:
+                y=0
+                for fold in range(self.n_folds):
+                    model = self.models[cat][fold]
+
+                    y += model(x).squeeze().cpu().detach().numpy()
+                odf[cat][i_frame] = y/self.n_folds
 
         # pick peaks in predicted activations
         odf_peaks = dict(zip(self.categories, []*4))
