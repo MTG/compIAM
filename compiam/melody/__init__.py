@@ -22,7 +22,7 @@ class ftanetCarnatic:
         from compiam.melody.ftanet.model import FTANet
         self.filepath = filepath
         self.model = FTANet().load_model()
-        self.model.load_weights(filepath)
+        self.model.load_weights(filepath).expect_partial()
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
         """ Extract melody from filename
