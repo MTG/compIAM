@@ -22,9 +22,9 @@ jobs:
         pip install tox tox-gh-actions pytest pytest-cov
     - name: Test with tox
       run: tox
-   - name: Build coverage file
-      run: |
-        pytest --cache-clear --cov=app test/ > pytest-coverage.txt
+    - name: Build coverage file
+        run: |
+          pytest --cache-clear --cov=app test/ > pytest-coverage.txt
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
       with:
