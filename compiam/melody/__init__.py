@@ -11,7 +11,7 @@ class ftanetCarnatic:
         """ FTA-Net melody extraction init method
         :param model_path: path to file to the model weights
         """
-        if not os.path.exists(filepath):
+        if not os.path.exists(filepath + '.data-00000-of-00001'):
             raise ValueError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
                 A training process for the FTA-Net tuned to Carnatic is under development right
