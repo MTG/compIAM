@@ -22,3 +22,7 @@ jobs:
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
+    - name: Generate Report
+      run: |
+        pip install coverage
+        coverage run -m unittest
