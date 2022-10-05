@@ -249,8 +249,7 @@ class PeakData:
         if len(peaks) > 0:
             peak_amps = np.array(peaks.values())
             peak_amps = peak_amps[:, 0]
-            # It is given that you'll pause here
-            # wondering why the heck we index x with peaks.keys() and
+            # Why do we index x with peaks.keys() and
             # valleys.keys(). Just recall that pos refers to indices and
             # not value corresponding to the histogram bin. If i is pos,
             # x[i] is the bin value. Tada!!
