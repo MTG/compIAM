@@ -25,7 +25,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
-    "sphinx_togglebutton",
     "sphinx.ext.extlinks",
     'sphinx.ext.githubpages',
 ]
