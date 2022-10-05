@@ -16,7 +16,7 @@ from scipy.ndimage.filters import gaussian_filter
 import compiam.visualisation.peaks.slope
 
 
-class Data:
+class PeakData:
     """
     The Data object for peak detection has methods necessary to handle the
     histogram/time-series like data.
