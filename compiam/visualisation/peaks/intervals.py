@@ -5,7 +5,7 @@ Author: Gopal Koduri
 Date: Oct 2022
 """
 import numpy as np
-from compiam.visualisaton.peaks.slope import find_nearest_index
+from compiam.visualisation.peaks.slope import find_nearest_index
 
 
 class Intervals:
