@@ -55,37 +55,37 @@ class FourWayTabla:
 
                 self.models[cat][fold] = model
 
-    def train(self, model, optimizer=torch.optim.Adam(model.parameters(), lr=1e-4), criterion=torch.nn.BCELoss(reduction='none'), training_generator):
-        """TODO
-        """
-        if self.models:
-            logger.warning("Model is already initalised, overwriting with new data")
+#    def train(self, model, optimizer=torch.optim.Adam(model.parameters(), lr=1e-4), criterion=torch.nn.BCELoss(reduction='none'), training_generator):
+#        """TODO
+#        """
+#        if self.models:
+#            logger.warning("Model is already initalised, overwriting with new data")
 
-        model.train()
-        n_batch=0
-        loss_epoch=0
-        for local_batch, local_labels, local_weights in training_generator:
-            n_batch+=1
+#        model.train()
+#        n_batch=0
+#        loss_epoch=0
+#        for local_batch, local_labels, local_weights in training_generator:
+#            n_batch+=1
 
-            #transfer to GPU
-            local_batch, local_labels, local_weights = local_batch.double().to(device), local_labels.double().to(device), local_weights.double().to(device)
+#            #transfer to GPU
+#            local_batch, local_labels, local_weights = local_batch.double().to(device), local_labels.double().to(device), local_weights.double().to(device)
 
-            #model forward pass
-            optimizer.zero_grad()
-            outs = model(local_batch).squeeze()
-            outs = outs.double()
+#            #model forward pass
+#            optimizer.zero_grad()
+#            outs = model(local_batch).squeeze()
+#            outs = outs.double()
 
-            #compute loss
-            loss = criterion(outs, local_labels)
-            loss = loss.double()
-            loss = torch.dot(loss,local_weights)
-            loss /= local_batch.size()[0]
-            loss_epoch+=loss.item()
+#            #compute loss
+#            loss = criterion(outs, local_labels)
+#            loss = loss.double()
+#            loss = torch.dot(loss,local_weights)
+#            loss /= local_batch.size()[0]
+#            loss_epoch+=loss.item()
 
-            #update weights
-            loss.backward()
-            optimizer.step()
-        return model, loss_epoch/n_batch
+#            #update weights
+#            loss.backward()
+#            optimizer.step()
+#        return model, loss_epoch/n_batch
 
     def predict(self, path_to_audio, predict_thresh=0.3):
         """TODO
