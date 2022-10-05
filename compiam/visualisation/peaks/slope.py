@@ -16,11 +16,10 @@ def find_nearest_index(arr, value):
     return index
 
 
-#the following two functions are taken from: 
-#https://gist.github.com/1178136
-
-
 def _datacheck_peakdetect(x_axis, y_axis):
+    """
+    From https://gist.github.com/1178136
+    """
     if x_axis is None:
         x_axis = range(len(y_axis))
     
@@ -36,7 +35,7 @@ def _datacheck_peakdetect(x_axis, y_axis):
 def peakdetect(y_axis, x_axis=None, lookahead=300, delta=0):
     """
     Converted from/based on a MATLAB script at: 
-    http://billauer.co.il/peakdet.html
+    http://billauer.co.il/peakdet.html. From https://gist.github.com/1178136
     
     function for detecting local maximas and minmias in a signal.
     Discovers peaks by searching for values which are surrounded by lower
