@@ -115,7 +115,7 @@ class Data:
 
         peaks = {}
         slope_peaks = {}
-        #Oh dear future me, please don't get confused with a lot of mess around
+        # Please don't get confused with a lot of mess around
         # indices around here. All indices (eg: left_index etc) refer to indices
         # of x or y (of histogram).
         if method == "slope" or method == "hybrid":
@@ -251,7 +251,7 @@ class Data:
         if len(peaks) > 0:
             peak_amps = np.array(peaks.values())
             peak_amps = peak_amps[:, 0]
-            # hello again future me, it is given that you'll pause here
+            # It is given that you'll pause here
             # wondering why the heck we index x with peaks.keys() and
             # valleys.keys(). Just recall that pos refers to indices and
             # not value corresponding to the histogram bin. If i is pos,
