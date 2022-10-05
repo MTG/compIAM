@@ -22,6 +22,7 @@ jobs:
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
-    - uses: ammaraskar/sphinx-action@master
-      with:
-        docs-folder: "docs/"
+    # - name: Test docs
+    # - uses: ammaraskar/sphinx-action@master
+    #  with:
+    #    docs-folder: "docs/"
