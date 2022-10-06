@@ -1,13 +1,17 @@
 import os
-from pathlib import Path
-WORKDIR = Path().absolute()
+import pathlib
+WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 
 #############
 # Models Dict
 #############
 # Each model should be stored in models_dict using 
 #   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
-#	    {"class_name": "<name of the model class>", "filepath": "<path_to_model if any>"}
+#	    {
+#           "module_name": "<name of the module/filename where the tool lives>",
+#           "class_name": "<name of the model class>",
+#           "filepath": "<path_to_model if any>"
+#       }
 
 models_dict = {
     "rhythm:1way-tabla": {
@@ -19,18 +23,22 @@ models_dict = {
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
+        "module_name": "ftanet_carnatic",
         "class_name": "FTANetCarnatic",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
+        "module_name": "melodia",
         "class_name": "Melodia",
         "kwargs": {}
     },
     "melody:tonic-multipitch": {
+        "module_name": "tonic_multipitch",
         "class_name": "TonicIndianMultiPitch",
         "kwargs": {}
     },
     "timbre:mridangam-stroke": {
+        "module_name": "mridangam_stroke",
         "class_name": "MridangamStrokeClassification",
         "kwargs": {}
     },
