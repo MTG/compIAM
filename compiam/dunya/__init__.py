@@ -49,9 +49,9 @@ class Corpora:
         """List the recordings in the database. This function will automatically page through API results.
 
         :param recording_detail: if True, return full details for each recording like :func:`get_recording`.
-        :returns: A list of dictionaries containing recording information::
-            {"mbid": MusicBrainz recording ID, "title": Title of the recording}
-        For additional information about each recording use :func:`get_recording`.
+        :returns: A list of dictionaries containing recording information:
+            ``{"mbid": MusicBrainz recording ID, "title": Title of the recording}``
+            For additional information about each recording use :func:`get_recording`.
         """
         args = {}
         if recording_detail:
@@ -70,9 +70,9 @@ class Corpora:
     def list_artists(self):
         """List the artists in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing artist information::
-            {"mbid": MusicBrainz artist id, "name": Name of the artist}
-        For additional information about each artist use :func:`get_artist`.
+        :returns: A list of dictionaries containing artist information:
+            ``{"mbid": MusicBrainz artist id, "name": Name of the artist}``.
+            For additional information about each artist use :func:`get_artist`.
         """
         return _get_paged_json("api/" + self.tradition + "/artist")
 
@@ -90,9 +90,9 @@ class Corpora:
     def list_concerts(self):
         """List the concerts in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing concert information::
-            {"mbid": MusicBrainz Release ID, "title": title of the concert}
-        For additional information about each concert use :func:`get_concert`
+        :returns: A list of dictionaries containing concert information:
+            ``{"mbid": MusicBrainz Release ID, "title": title of the concert}``
+            For additional information about each concert use :func:`get_concert`.
         """
         return _get_paged_json("api/" + self.tradition + "/concert")
 
@@ -109,9 +109,9 @@ class Corpora:
     def list_works(self):
         """List the works in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing work information::
-            {"mbid": MusicBrainz work ID, "name": work name}
-        For additional information about each work use :func:`get_work`.
+        :returns: A list of dictionaries containing work information:
+            ``{"mbid": MusicBrainz work ID, "name": work name}``
+            For additional information about each work use :func:`get_work`.
         """
         return _get_paged_json("api/" + self.tradition + "/work")
 
@@ -126,9 +126,9 @@ class Corpora:
     def list_raagas(self):
         """List the raagas in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing raaga information::
-            {"uuid": raaga UUID, "name": name of the raaga}
-        For additional information about each raaga use :func:`get_raaga`.
+        :returns: A list of dictionaries containing raaga information:
+            ``{"uuid": raaga UUID, "name": name of the raaga}``
+            For additional information about each raaga use :func:`get_raaga`.
         """
         return _get_paged_json("api/" + self.tradition + "/raaga")
 
@@ -145,8 +145,8 @@ class Corpora:
     def list_taalas(self):
         """List the taalas in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing taala information::
-            {"uuid": taala UUID, "name": name of the taala}
+        :returns: A list of dictionaries containing taala information:
+            ``{"uuid": taala UUID, "name": name of the taala}``
             For additional information about each taala use :func:`get_taala`.
         """
         return _get_paged_json("api/" + self.tradition + "/taala")
@@ -164,7 +164,8 @@ class Corpora:
     def list_instruments(self):
         """List the instruments in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing instrument information: `{"id": instrument id, "name": Name of the instrument}`.
+        :returns: A list of dictionaries containing instrument information: 
+            ``{"id": instrument id, "name": Name of the instrument}``
             For additional information about each instrument use :func:`get_instrument`.
         """
         return _get_paged_json("api/" + self.tradition + "/instrument")
