@@ -33,19 +33,21 @@ session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
 
 
 def set_hostname(hostname):
-    """ Change the hostname of the dunya API endpoint.
+    """Change the hostname of the dunya API endpoint.
+
     :param hostname: The new dunya hostname to set. If you want to access over http or a different port,
-         include them in the hostname, e.g. `http://localhost:8000`
-    :returns: None
+         include them in the hostname, e.g. `http://localhost:8000`.
+    :returns: None.
     """
     global HOSTNAME
     HOSTNAME = hostname
 
 
 def set_token(token):
-    """ Set an access token. You must call this before you can make
-    :param token: your access token
-    :returns: None
+    """Get an access token. You must call this before you can make.
+
+    :param token: your access token.
+    :returns: None.
     """
     global TOKEN
     TOKEN = token
@@ -122,14 +124,15 @@ def _make_url(path, **kwargs):
 
 
 def _dunya_query_json(path, **kwargs):
-    """ Make a query to dunya and expect the results to be JSON
+    """Make a query to dunya and expect the results to be JSON.
     """
     g = _dunya_url_query(_make_url(path, **kwargs))
     return g.json() if g else None
 
 
 def _dunya_query_file(path, **kwargs):
-    """Make a query to dunya and return the raw result"""
+    """Make a query to dunya and return the raw result.
+    """
     g = _dunya_url_query(_make_url(path, **kwargs))
     if g:
         cl = g.headers.get('content-length')
@@ -141,13 +144,14 @@ def _dunya_query_file(path, **kwargs):
         return
 
 def _file_for_document(recordingid, thetype, subtype=None, part=None, version=None):
-    """ Get the most recent derived file given a filetype.
-    :param recordingid: Musicbrainz recording ID
-    :param thetype: the computed filetype
-    :param subtype: a subtype if the module has one
-    :param part: the file part if the module has one
-    :param version: a specific version, otherwise the most recent one will be used
-    :returns: The contents of the most recent version of the derived file
+    """Get the most recent derived file given a filetype.
+
+    :param recordingid: Musicbrainz recording ID.
+    :param thetype: the computed filetype.
+    :param subtype: a subtype if the module has one.
+    :param part: the file part if the module has one.
+    :param version: a specific version, otherwise the most recent one will be used.
+    :returns: The contents of the most recent version of the derived file.
     """
     path = "document/by-id/%s/%s" % (recordingid, thetype)
     args = {}
@@ -161,7 +165,8 @@ def _file_for_document(recordingid, thetype, subtype=None, part=None, version=No
 
 
 def get_mp3(recordingid):
-    """ Get a mp3 from a specific mbid
-    :param recordingid: Musicbrainz recording ID
+    """Get a mp3 from a specific mbid.
+
+    :param recordingid: Musicbrainz recording ID.
     """
     return _file_for_document(recordingid, "mp3")
