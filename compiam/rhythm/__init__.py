@@ -1,8 +1,3 @@
-"""Rhythmic analysis tools
-
-    You will find in this module the tools and models for the rhythmic analysis of Indian Art Music. 
-"""
-
 import os
 
 try:
