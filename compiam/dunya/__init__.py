@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see http://www.gnu.org/licenses/
 
+"""Corpora access
+
+    Use the Corpora class to access the Indian Art Music corpora in CompMusic.
+    Please note that to access the corpora in CompMusic, you need to first
+    register and get a personal access token. Said token will be required
+    to use the functions to access the database. 
+"""
+
 import os
 import errno
 

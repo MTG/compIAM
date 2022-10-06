@@ -58,7 +58,7 @@ def est(output, CenFreq, time_arr):
     return est_arr
 
 def iseg(data):
-    """ Re-shape data.
+    """Re-shape data.
 
     :param data: input features.
     :returns: re-shaped data.
@@ -71,7 +71,7 @@ def iseg(data):
     return new_data
 
 def get_est_arr(model, x_list, y_list, batch_size):
-    """ Run the FTA-Net model in batches and construct the final pitch time-series.
+    """Run the FTA-Net model in batches and construct the final pitch time-series.
 
     :param model: built and trained model.
     :param x_list: features.

@@ -1,3 +1,9 @@
+"""Timbre analysis tools
+
+    You will find in this module the tools and models for the timbre analysis of Indian Art Music. 
+"""
+
+
 import os
 
 import numpy as np

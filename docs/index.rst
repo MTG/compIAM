@@ -1,8 +1,3 @@
-.. compiam documentation master file, created by
-   sphinx-quickstart on Wed Oct  5 17:56:27 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to compiam's documentation!
 ===================================
 
@@ -10,7 +5,8 @@ Welcome to compiam's documentation!
    :maxdepth: 1
    :titlesonly:
 
-Project introduction HERE
+compIAM is a collaborative initiative lead by the MTG and involving many researchers that aims at putting together data 
+loaders, tools, and models for the computational analysis of two main Indian Art Music traditions: Carnatic and Hindustani.
 
 .. autosummary::
 
