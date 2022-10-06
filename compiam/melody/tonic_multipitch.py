@@ -1,0 +1,44 @@
+import essentia.standard as estd
+
+class TonicIndianMultiPitch:
+    """MultiPitch approach to extract the tonic from IAM music signals.
+    """
+    def __init__(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128,
+                 magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
+                 minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, sampleRate=44100):
+        """Tonic extraction init method.
+            For a complete and detailed list of the parameters see the documentation on the 
+            following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html.
+        """
+        self.binResolution = binResolution
+        self.frameSize = frameSize
+        self.harmonicWeight = harmonicWeight
+        self.hopSize = hopSize
+        self.magnitudeCompression = magnitudeCompression
+        self.magnitudeThreshold = magnitudeThreshold
+        self.maxTonicFrequency = maxTonicFrequency
+        self.minTonicFrequency = minTonicFrequency
+        self.numberHarmonics = numberHarmonics
+        self.referenceFrequency = referenceFrequency
+        self.sampleRate = sampleRate
+
+    def extract(self, filename):
+        """Extract the tonic from a given file.
+
+        :param filename: path to file to extract.
+        :returns: a floating point number representing the tonic of the input recording.
+        """
+        audio = estd.MonoLoader(filename=filename)()
+        extractor = estd.TonicIndianArtMusic(
+            binResolution=self.binResolution,
+            frameSize=self.frameSize,
+            harmonicWeight=self.harmonicWeight,
+            hopSize=self.hopSize,
+            magnitudeCompression=self.magnitudeCompression, 
+            magnitudeThreshold=self.magnitudeThreshold,
+            maxTonicFrequency=self.maxTonicFrequency,
+            minTonicFrequency=self.minTonicFrequency,
+            numberHarmonics=self.numberHarmonics,
+            referenceFrequency=self.referenceFrequency,
+            sampleRate=self.sampleRate)
+        return extractor(audio)
