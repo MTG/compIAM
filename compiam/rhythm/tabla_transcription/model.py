@@ -1,8 +1,3 @@
-import os
-import librosa
-
-import numpy as np
-
 try:
     import torch
     import torch.nn as nn
@@ -94,54 +89,3 @@ class onsetCNN_RT(nn.Module):
 		y=self.dout2(torch.relu(self.bn3(self.fc1(y))))
 		y=torch.sigmoid(self.bn4(self.fc2(y)))
 		return y
-
-
-#pick peaks in activation signal
-def peakPicker(data, peakThresh):
-	peaks=np.array([],dtype='int')
-	for ind in range(1,len(data)-1):
-		if ((data[ind+1] < data[ind] > data[ind-1]) & (data[ind]>peakThresh)):
-			peaks=np.append(peaks,ind)
-	return peaks
-
-
-#generate log-mel-spectrograms given path to audio
-def gen_melgrams(path_to_audio, stats):
-	#analysis parameters
-	fs=16000
-	hopDur=10e-3
-	hopSize = int(np.ceil(hopDur*fs))
-	winDur_list = [23.2e-3, 46.4e-3, 92.8e-3]
-	winSize_list = [int(np.ceil(winDur*fs)) for winDur in winDur_list]
-	nFFT_list = [2**(int(np.ceil(np.log2(winSize)))) for winSize in winSize_list]
-	fMin=27.5
-	fMax=8000
-	nMels=80
-
-	#context parameters
-	contextlen=7 #+- frames
-	duration=2*contextlen+1
-
-	#data stats for normalization
-	means=stats[0]
-	stds=stats[1]
-
-	x,fs = librosa.load(path_to_audio, sr=fs)
-
-	#get mel spectrograms
-	melgram1=librosa.feature.melspectrogram(x,sr=fs,n_fft=nFFT_list[0], win_length=winSize_list[0], hop_length=hopSize, n_mels=nMels, fmin=fMin, fmax=fMax)
-	melgram2=librosa.feature.melspectrogram(x,sr=fs,n_fft=nFFT_list[1], win_length=winSize_list[1], hop_length=hopSize, n_mels=nMels, fmin=fMin, fmax=fMax)
-	melgram3=librosa.feature.melspectrogram(x,sr=fs,n_fft=nFFT_list[2], win_length=winSize_list[2], hop_length=hopSize, n_mels=nMels, fmin=fMin, fmax=fMax)
-
-	melgrams = np.array([melgram1, melgram2, melgram3])
-
-	#log scaling
-	melgrams=10*np.log10(1e-10+melgrams)
-
-	#normalize
-	melgrams = (melgrams - np.repeat(np.atleast_3d(means), melgrams.shape[2], axis=-1))/np.repeat(np.atleast_3d(stds), melgrams.shape[2], axis=-1)
-
-	#zero pad ends
-	melgrams = np.concatenate((np.zeros([melgrams.shape[0], melgrams.shape[1], contextlen]), melgrams, np.zeros([melgrams.shape[0], melgrams.shape[1], contextlen])), -1)
-
-	return melgrams
