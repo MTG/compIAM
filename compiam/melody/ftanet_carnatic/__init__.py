@@ -188,6 +188,8 @@ class FTANetCarnatic(object):
         """
         xlist = []
         timestamps = []
+        if not os.path.exists(path_to_audio):
+            raise ValueError("Target audio not found.")
         print('CFP process in {}'.format(path_to_audio))
         y, _ = librosa.load(path_to_audio, sr=sample_rate)
         audio_len = len(y)

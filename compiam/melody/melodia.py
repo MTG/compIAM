@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 
 try:
@@ -44,13 +46,15 @@ class Melodia:
         self.voiceVibrato = voiceVibrato
         self.voicingTolerance = voicingTolerance
 
-    def extract(self, filename):
+    def extract(self, path_to_audio):
         """Extract the melody from a given file.
 
         :param filename: path to file to extract.
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
-        audio = estd.EqloudLoader(filename=filename)()
+        if not os.path.exists(path_to_audio):
+            raise ValueError("Target audio not found.")
+        audio = estd.EqloudLoader(filename=path_to_audio)()
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,
             filterIterations=self.filterIterations,
