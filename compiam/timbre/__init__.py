@@ -1,3 +1,9 @@
+"""Timbre analysis tools
+
+    You will find in this module the tools and models for the timbre analysis of Indian Art Music. 
+"""
+
+
 import os
 
 import numpy as np
@@ -10,10 +16,10 @@ from .stroke_classification.feature_extraction import \
 from compiam.exceptions import ModelNotTrainedError
 
 class MridangamStrokeClassification:
-    """Mridangam stroke classification 
+    """Mridangam stroke classification.
     """
     def __init__(self):
-        """ Mridangam stroke classification init method
+        """Mridangam stroke classification init method.
         """
         self.dataset = None
         self.generic_model = StrokeClassification()
@@ -21,11 +27,12 @@ class MridangamStrokeClassification:
         self.feature_list = None
 
     def load_mridangam_dataset(self, data_home=None, version="default", download=True):
-        """ Load mirdata dataloader for mirdangam stroke
-        :param data_home: folder where the dataset is found
-        :param version: version of the dataset to use
-        :param download: if True the dataset is downloaded
-        :returns: None, but initializes the dataset of the class and the file dict of strokes
+        """Load mirdata dataloader for mirdangam stroke.
+
+        :param data_home: folder where the dataset is found.
+        :param version: version of the dataset to use.
+        :param download: if True the dataset is downloaded.
+        :returns: None, but initializes the dataset of the class and the file dict of strokes.
         """
         from compiam import load_dataset  # Importing load function here to avoid circular imports
         self.dataset = load_dataset('mridangam_stroke', data_home=data_home, version=version)
@@ -45,8 +52,9 @@ class MridangamStrokeClassification:
             self.stroke_dict[self.mridangam_data[i].stroke_name].append(self.mridangam_data[i].audio_path)
 
     def list_strokes(self):
-        """ List available mridangam strokes in the dataset
-        :returns: list of strokes in the datasets
+        """List available mridangam strokes in the dataset.
+
+        :returns: list of strokes in the datasets.
         """
         stroke_names = []
         for i in self.mridangam_ids:
@@ -54,8 +62,9 @@ class MridangamStrokeClassification:
         return np.unique(stroke_names)
 
     def dict_strokes(self):
-        """ List and convert to indexed dict the available mridangam strokes in the dataset
-        :returns: dict with strokes as values and unique integer as keys
+        """List and convert to indexed dict the available mridangam strokes in the dataset.
+
+        :returns: dict with strokes as values and unique integer as keys.
         """
         stroke_names = []
         for i in self.mridangam_ids:
@@ -73,9 +82,10 @@ class MridangamStrokeClassification:
         self.model = self.generic_model.train(df_features, self.feature_list, model_type=model_type)
 
     def predict(self, file_list):
-        """ Predict stroke type from list of files
-        :param file_list: list of files for prediction
-        :returns: dict containing filenames as keys and estimated strokes as values
+        """Predict stroke type from list of files.
+
+        :param file_list: list of files for prediction.
+        :returns: dict containing filenames as keys and estimated strokes as values.
         """
         if self.model is None:
             raise ModelNotTrainedError("The model is not trained. Please run train_model().")

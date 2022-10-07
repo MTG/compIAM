@@ -1,3 +1,9 @@
+"""Melodic analysis tools
+
+    You will find in this module the tools and models for the melodic analysis of Indian Art Music. 
+"""
+
+
 import os
 import math
 
@@ -12,8 +18,9 @@ class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music
     """
     def __init__(self, filepath):
-        """ FTA-Net melody extraction init method
-        :param model_path: path to file to the model weights
+        """FTA-Net melody extraction init method.
+
+        :param model_path: path to file to the model weights.
         """
         if not os.path.exists(filepath + '.data-00000-of-00001'):
             raise ValueError("""
@@ -28,14 +35,15 @@ class FTANetCarnatic(object):
         self.model.load_weights(filepath).expect_partial()
 
     def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
-        """ Extract melody from filename
-        :param filename: path to file to extract
-        :param sample_rate: sample rate of extraction process
-        :param hop_size: hop size between frequency estimations
+        """Extract melody from filename.
+
+        :param filename: path to file to extract.
+        :param sample_rate: sample rate of extraction process.
+        :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model 
             (defaulted to 5, increase if enough computational power, reduce if
-            needed)
-        :returns: a 2-D list with time-stamps and pitch values per timestamp
+            needed).
+        :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         xlist = []
         timestamps = []
@@ -75,20 +83,21 @@ class FTANetCarnatic(object):
         return np.array([TStamps, freqs]).transpose().toList()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
-        """ Normalize pitch given a tonic
-        :param pitch: a 2-D list with time-stamps and pitch values per timestamp
-        :param tonic: recording tonic to normalize the pitch to
-        :param bins_per_octave: number of frequency bins per octave
-        :param max_value: maximum value to clip the normalized pitch to
+        """Normalize pitch given a tonic.
+
+        :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
+        :param tonic: recording tonic to normalize the pitch to.
+        :param bins_per_octave: number of frequency bins per octave.
+        :param max_value: maximum value to clip the normalized pitch to.
         :returns: a 2-D list with time-stamps and normalized to a given tonic 
-            pitch values per timestamp
+            pitch values per timestamp.
         """
         return _normalise_pitch(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)
 
 
 class Melodia:
-    """ Melodia predominant melody extraction
+    """Melodia predominant melody extraction
     """
     def __init__(self, binResolution=10, filterIterations=3, frameSize=2048, guessUnvoiced=False,
                  harmonicWeight=0.8, hopSize=128, magnitudeCompression=1, magnitudeThreshold=40,
@@ -96,9 +105,9 @@ class Melodia:
                  peakDistributionThreshold=0.9, peakFrameThreshold=0.9, pitchContinuity=27.5625,
                  referenceFrequency=55, sampleRate=44100, timeContinuity=100, voiceVibrato=False,
                  voicingTolerance=0.2):
-        """ Melodia predominant melody extraction init method
-        For a complete and detailed list of the parameters see the documentation on the 
-        following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
+        """Melodia predominant melody extraction init method
+            For a complete and detailed list of the parameters see the documentation on the 
+            following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
         """
         self.binResolution = binResolution
         self.filterIterations = filterIterations
@@ -122,9 +131,10 @@ class Melodia:
         self.voicingTolerance = voicingTolerance
 
     def extract(self, filename):
-        """ Extract the melody from a given file
-        :param filename: path to file to extract
-        :returns: a 2-D list with time-stamps and pitch values per timestamp
+        """Extract the melody from a given file.
+
+        :param filename: path to file to extract.
+        :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         audio = estd.EqloudLoader(filename=filename)()
         extractor = estd.PredominantPitchMelodia(
@@ -153,27 +163,28 @@ class Melodia:
         return np.array([TStamps, pitch]).transpose().toList()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
-        """ Normalize pitch given a tonic
-        :param pitch: a 2-D list with time-stamps and pitch values per timestamp
-        :param tonic: recording tonic to normalize the pitch to
-        :param bins_per_octave: number of frequency bins per octave
-        :param max_value: maximum value to clip the normalized pitch to
+        """Normalize pitch given a tonic.
+
+        :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
+        :param tonic: recording tonic to normalize the pitch to.
+        :param bins_per_octave: number of frequency bins per octave.
+        :param max_value: maximum value to clip the normalized pitch to.
         :returns: a 2-D list with time-stamps and normalized to a given tonic 
-            pitch values per timestamp
+            pitch values per timestamp.
         """
         return _normalise_pitch(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)
 
 
 class TonicIndianMultiPitch:
-    """ MultiPitch approach to extract the tonic from IAM music signals
+    """MultiPitch approach to extract the tonic from IAM music signals.
     """
     def __init__(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128,
                  magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
                  minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, sampleRate=44100):
-        """ Tonic extraction init method
-        For a complete and detailed list of the parameters see the documentation on the 
-        following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html
+        """Tonic extraction init method.
+            For a complete and detailed list of the parameters see the documentation on the 
+            following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html.
         """
         self.binResolution = binResolution
         self.frameSize = frameSize
@@ -188,9 +199,10 @@ class TonicIndianMultiPitch:
         self.sampleRate = sampleRate
 
     def extract(self, filename):
-        """ Extract the tonic from a given file
-        :param filename: path to file to extract
-        :returns: a floating point number representing the tonic of the input recording
+        """Extract the tonic from a given file.
+
+        :param filename: path to file to extract.
+        :returns: a floating point number representing the tonic of the input recording.
         """
         audio = estd.MonoLoader(filename=filename)()
         extractor = estd.TonicIndianArtMusic(
@@ -212,13 +224,14 @@ class TonicIndianMultiPitch:
 # Melody utils
 ###############
 def _normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
-    """ Normalize pitch given a tonic
-    :param pitch: a 2-D list with time-stamps and pitch values per timestamp
-    :param tonic: recording tonic to normalize the pitch to
-    :param bins_per_octave: number of frequency bins per octave
-    :param max_value: maximum value to clip the normalized pitch to
+    """Normalize pitch given a tonic.
+
+    :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
+    :param tonic: recording tonic to normalize the pitch to.
+    :param bins_per_octave: number of frequency bins per octave.
+    :param max_value: maximum value to clip the normalized pitch to.
     :returns: a 2-D list with time-stamps and normalized to a given tonic 
-        pitch values per timestamp
+        pitch values per timestamp.
     """
     pitch_values = pitch[:, 1]
     eps = np.finfo(np.float).eps

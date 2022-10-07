@@ -19,10 +19,11 @@ MIX_MAX_SCALER = preprocessing.MinMaxScaler()
 
 
 def split_file(filename):
-    """ Define split boundaries based on a fixed energy threshold
-    :param filename: path to file to process
+    """ Define split boundaries based on a fixed energy threshold.
+
+    :param filename: path to file to process.
     :returns: a tuple with input file, energy threshold, split function, and 
-        start and end indexes of the detected splits
+        start and end indexes of the detected splits.
     """
     x = estd.MonoLoader(filename = filename, sampleRate = SPLIT_PARAMS.get("fs"))()
     NRG = []
@@ -50,10 +51,11 @@ def split_file(filename):
     return (x, NRG, split_decision_func, start_indexes, stop_indexes)
 
 def process_strokes(file_dict, load_computed=False):
-    """ Process and extract features from stroke files
-    :param stroke_dict: dict of files per stroke class (preferably generated through a mirdata loader)
-    :param load_computed: if True the pre-computed file is loaded
-    :returns: DataFrame with features per split, and list of computed features
+    """ Process and extract features from stroke files.
+
+    :param stroke_dict: dict of files per stroke class (preferably generated through a mirdata loader).
+    :param load_computed: if True the pre-computed file is loaded.
+    :returns: DataFrame with features per split, and list of computed features.
     """
     if not isinstance(load_computed, bool):
         raise ValueError("load_computed must be whether True or False") 
@@ -115,10 +117,11 @@ def process_strokes(file_dict, load_computed=False):
     return df_features, feature_list
 
 def normalise_features(trainig_data, feature_list=None):
-    """ Normalise feature DataFrames
-    :param trainig_data: DataFrame with no-normalised features
-    :param feature_list: list of features to prevent including the stroke label if included in the list
-    :returns: DataFrame with normalised features per split
+    """ Normalise feature DataFrames.
+
+    :param trainig_data: DataFrame with no-normalised features.
+    :param feature_list: list of features to prevent including the stroke label if included in the list.
+    :returns: DataFrame with normalised features per split.
     """
     data_modif = trainig_data.copy()
     if feature_list is None:
@@ -128,9 +131,10 @@ def normalise_features(trainig_data, feature_list=None):
     return data_modif
 
 def features_for_pred(filename):
-    """ Compute and format features for prediction
-    :param filename: path to file to extract the features from
-    :returns: DataFrame with normalised features per split
+    """ Compute and format features for prediction.
+
+    :param filename: path to file to extract the features from.
+    :returns: DataFrame with normalised features per split.
     """
     (audio, _, _, start_indexes, stop_indexes) = split_file(filename)
     if len(start_indexes) > 1:
