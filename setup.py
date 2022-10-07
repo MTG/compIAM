@@ -10,7 +10,7 @@ setup(
     long_description=open('README.md').read(),
     install_requires = [
         "matplotlib>=3.0.0",
-        "numpy==1.21.0",
+        "numpy==1.19.5",
         "librosa==0.8.0",
         "SoundFile==0.10.3.post1",
         "joblib==0.17.0",
