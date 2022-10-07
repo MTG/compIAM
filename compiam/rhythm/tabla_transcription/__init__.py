@@ -18,7 +18,7 @@ from compiam.visualisation.training import plot_losses
 
 logger = get_logger(__name__)
 
-from compiam.rhythm.tabla_transcription.models import onsetCNN_D, onsetCNN_RT, onsetCNN
+from compiam.rhythm.tabla_transcription.model import onsetCNN_D, onsetCNN_RT, onsetCNN
 from compiam.rhythm.tabla_transcription.utils import TablaDataset, gen_melgrams, peakPicker, make_train_val_split
 
 class FourWayTabla:
