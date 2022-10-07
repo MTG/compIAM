@@ -58,7 +58,7 @@ class FourWayTabla:
 
                 self.models[cat][fold] = model
 
-    def train_epoch(self, model, training_generator, criterion=torch.nn.BCELoss(reduction='none'))
+    def train_epoch(self, model, training_generator, criterion=torch.nn.BCELoss(reduction='none')):
         model.train()
         n_batch=0
         loss_epoch=0
