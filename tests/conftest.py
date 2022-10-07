@@ -1,11 +1,9 @@
 import pytest
-import warnings
-
 
 def pytest_addoption(parser):
     parser.addoption("--tensorflow", action="store_true", default=False, help="optional tensorflow dependency")
-    parser.addoption("--torch", action="store_true", default=False, help="optional tensorflow dependency")
-
+    parser.addoption("--torch", action="store_true", default=False, help="optional torch dependency")
+    parser.addoption("--essentia", action="store_true", default=False, help="optional essentia dependency")
 
 @pytest.fixture(scope="session")
 def skip_tensorflow(request):
@@ -15,57 +13,29 @@ def skip_tensorflow(request):
 def skip_torch(request):
     return request.config.getoption("--torch")
 
+@pytest.fixture(scope="session")
+def skip_essentia(request):
+    return request.config.getoption("--essentia")
 
 def pytest_configure(config):
+    config.addinivalue_line("markers", "essentia: run optional essentia tests")
     config.addinivalue_line("markers", "tensorflow: run optional tensorflow tests")
     config.addinivalue_line("markers", "torch: run optional torch tests")
 
-
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--tensorflow"):
-        if not config.getoption("--torch"):
-            skip_torch = pytest.mark.skip(reason="need --torch option to run")
-            for item in items:
-                if "torch" in item.keywords:
-                    item.add_marker(skip_torch)
-        else:
-            warnings.warn("""
-            Cannot run tensorflow and torch tests at the same time.
-            Please use the --tensorflow and --torch flags separatedly.
-            """)
-            skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
-            skip_torch = pytest.mark.skip(reason="need --torch option to run")
-            for item in items:
-                if "tensorflow" in item.keywords:
-                    item.add_marker(skip_tensorflow)
-                if "torch" in item.keywords:
-                    item.add_marker(skip_torch)
-        return
-    elif config.getoption("--torch"): 
-        if not config.getoption("--tensorflow"):
-            # --runslow given in cli: do not skip slow tests
-            skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
-            for item in items:
-                if "tensorflow" in item.keywords:
-                    item.add_marker(skip_tensorflow)
-        else:
-            warnings.warn("""
-            Cannot run tensorflow and torch tests at the same time.
-            Please use the --tensorflow and --torch flags separatedly.
-            """)
-            skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
-            skip_torch = pytest.mark.skip(reason="need --torch option to run")
-            for item in items:
-                if "tensorflow" in item.keywords:
-                    item.add_marker(skip_tensorflow)
-                if "torch" in item.keywords:
-                    item.add_marker(skip_torch)
-        return
-    else:
-        skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
-        skip_torch = pytest.mark.skip(reason="need --torch option to run")
+    if not config.getoption("--tensorflow"):
+        skip_tf = pytest.mark.skip(reason="need --tensorflow option to run")
         for item in items:
             if "tensorflow" in item.keywords:
-                item.add_marker(skip_tensorflow)
+                item.add_marker(skip_tf)
+    if not config.getoption("--torch"):
+        skip_torch = pytest.mark.skip(reason="need --torch option to run")
+        for item in items:
             if "torch" in item.keywords:
                 item.add_marker(skip_torch)
+    if not config.getoption("--essentia"):
+        skip_essentia = pytest.mark.skip(reason="need --essentia option to run")
+        for item in items:
+            if "essentia" in item.keywords:
+                item.add_marker(skip_essentia)
+    return

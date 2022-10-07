@@ -1,3 +1,4 @@
+import numpy as np
 import essentia.standard as estd
 
 from compiam.melody.utils.melody_utils import _normalise_pitch
