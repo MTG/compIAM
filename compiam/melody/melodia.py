@@ -1,7 +1,7 @@
 import numpy as np
 import essentia.standard as estd
 
-from compiam.melody.utils.melody_utils import _normalise_pitch
+from compiam.utils.pitch import pitch_normalisation
 
 class Melodia:
     """Melodia predominant melody extraction
@@ -79,5 +79,5 @@ class Melodia:
         :returns: a 2-D list with time-stamps and normalized to a given tonic 
             pitch values per timestamp.
         """
-        return _normalise_pitch(
+        return pitch_normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)

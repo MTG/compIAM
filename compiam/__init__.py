@@ -21,7 +21,7 @@ def load_model(model_name, models_dict=models_dict):
     m_dict = models_dict[model_name]
     module = getattr(
         import_module(
-            "compiam." + model_name.split(":")[0] + '.' + m_dict["module_name"]),
+            m_dict["module_name"]),
             m_dict["class_name"]
         )
     return module(**m_dict["kwargs"])

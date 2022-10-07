@@ -8,9 +8,10 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 
-from compiam.timbre.utils.stroke_features import \
+from compiam.timbre.mridangam_stroke_classification.stroke_features import \
     features_for_pred, process_strokes, features_for_pred, normalise_features
 from compiam.exceptions import ModelNotTrainedError
+from compiam.data import WORKDIR
 
 class MridangamStrokeClassification:
     """Mridangam stroke classification.

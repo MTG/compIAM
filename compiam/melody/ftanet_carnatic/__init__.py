@@ -4,9 +4,9 @@ import librosa
 
 import numpy as np
 
-from compiam.melody.utils.melody_utils import _normalise_pitch
-from compiam.melody.utils.pitch_processing import batchize_test, get_est_arr
-from compiam.melody.utils.cfp import cfp_process
+from compiam.utils.pitch import pitch_normalisation
+from compiam.melody.ftanet_carnatic.pitch_processing import batchize_test, get_est_arr
+from compiam.melody.ftanet_carnatic.cfp import cfp_process
 
 try:
     from tensorflow.keras import backend as K
@@ -224,14 +224,14 @@ class FTANetCarnatic(object):
         return np.array([TStamps, freqs]).transpose().toList()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
-        """Normalize pitch given a tonic.
+        """Normalise pitch given a tonic.
 
         :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
         :param tonic: recording tonic to normalize the pitch to.
         :param bins_per_octave: number of frequency bins per octave.
         :param max_value: maximum value to clip the normalized pitch to.
-        :returns: a 2-D list with time-stamps and normalized to a given tonic 
+        :returns: a 2-D list with time-stamps and normalised to a given tonic 
             pitch values per timestamp.
         """
-        return _normalise_pitch(
+        return pitch_normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value)

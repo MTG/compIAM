@@ -8,7 +8,7 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 # Each model should be stored in models_dict using 
 #   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
 #	    {
-#           "module_name": "<name of the module/filename where the tool lives>",
+#           "module_name": "<compiam.melody/rhythm/timbre/structure.file/folder name of model>",
 #           "class_name": "<name of the model class>",
 #           "filepath": "<path_to_model if any>"
 #       }
@@ -23,22 +23,22 @@ models_dict = {
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
-        "module_name": "ftanet_carnatic",
+        "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
-        "module_name": "melodia",
+        "module_name": "compiam.melody.melodia",
         "class_name": "Melodia",
         "kwargs": {}
     },
     "melody:tonic-multipitch": {
-        "module_name": "tonic_multipitch",
+        "module_name": "compiam.melody.tonic_multipitch",
         "class_name": "TonicIndianMultiPitch",
         "kwargs": {}
     },
     "timbre:mridangam-stroke": {
-        "module_name": "mridangam_stroke",
+        "module_name": "compiam.timbre.mridangam_stroke_classification",
         "class_name": "MridangamStrokeClassification",
         "kwargs": {}
     },
