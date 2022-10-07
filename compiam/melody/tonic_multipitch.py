@@ -1,4 +1,10 @@
-import essentia.standard as estd
+try:
+    import essentia.standard as estd
+except:
+    raise ImportError(
+        "In order to use this tool you need to have essentia installed. "
+        "Please reinstall compiam using `pip install compiam[essentia]`"
+    )
 
 class TonicIndianMultiPitch:
     """MultiPitch approach to extract the tonic from IAM music signals.

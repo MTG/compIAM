@@ -15,10 +15,12 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 
 models_dict = {
     "rhythm:1way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },

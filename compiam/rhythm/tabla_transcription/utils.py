@@ -2,8 +2,15 @@ import os
 
 import h5py as h5
 import numpy as np
-import torch
-from torch.utils import data 
+
+try:
+    import torch
+    from torch.utils import data
+except:
+    raise ImportError(
+        "In order to use this tool you need to have torch installed. "
+        "Please reinstall compiam using `pip install compiam[torch]`"
+    )
 
 #Dataloader class
 class TablaDataset(data.Dataset):

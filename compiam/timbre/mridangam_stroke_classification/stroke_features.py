@@ -3,7 +3,14 @@ import tqdm
 
 import pandas as pd
 import numpy as np
-import essentia.standard as estd
+
+try:
+    import essentia.standard as estd
+except:
+    raise ImportError(
+        "In order to use this tool you need to have essentia installed. "
+        "Please reinstall compiam using `pip install compiam[essentia]`"
+    )
 
 from compiam.data import WORKDIR
 

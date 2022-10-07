@@ -1,4 +1,5 @@
 import pytest
+import warnings
 
 def pytest_addoption(parser):
     parser.addoption("--tensorflow", action="store_true", default=False, help="optional tensorflow dependency")
@@ -24,10 +25,10 @@ def pytest_configure(config):
 
 def pytest_collection_modifyitems(config, items):
     if not config.getoption("--tensorflow"):
-        skip_tf = pytest.mark.skip(reason="need --tensorflow option to run")
+        skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
         for item in items:
             if "tensorflow" in item.keywords:
-                item.add_marker(skip_tf)
+                item.add_marker(skip_tensorflow)
     if not config.getoption("--torch"):
         skip_torch = pytest.mark.skip(reason="need --torch option to run")
         for item in items:
@@ -38,4 +39,20 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "essentia" in item.keywords:
                 item.add_marker(skip_essentia)
+    else:
+        if config.getoption("--tensorflow"):
+            warnings.warn("""
+                Installing essentia and tensorflow independently can be source of unexpected errors.
+                Please test them separatedly.
+                We have already implemented an automatic test to check how essentia and tensorflow work together.
+                Omitting tests...
+            """)
+            skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
+            for item in items:
+                if "tensorflow" in item.keywords:
+                    item.add_marker(skip_tensorflow)
+            skip_essentia = pytest.mark.skip(reason="need --essentia option to run")
+            for item in items:
+                if "essentia" in item.keywords:
+                    item.add_marker(skip_essentia)
     return

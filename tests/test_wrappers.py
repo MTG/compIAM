@@ -37,7 +37,7 @@ def test_load_tensorflow_models():
 @pytest.mark.torch
 def test_load_torch_models():
     from compiam import load_model
-    from compiam.rhythm import FourWayTabla
+    from compiam.rhythm.tabla_transcription import FourWayTabla
     tabla_class = load_model("rhythm:4way-tabla")
     assert type(tabla_class) == FourWayTabla
 

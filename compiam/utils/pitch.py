@@ -3,7 +3,7 @@ import numpy as np
 ###############
 # Melody utils
 ###############
-def _normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
+def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     """Normalize pitch given a tonic.
 
     :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
