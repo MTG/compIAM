@@ -1,4 +1,4 @@
-from matlplotlib.pyplot import plt
+from matplotlib.pyplot import plt
 
 def plot_losses(train_loss,val_loss,save_filepath):
 	plt.plot(train_loss,label='train')
