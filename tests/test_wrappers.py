@@ -83,7 +83,7 @@ def test_no_torch():
 def test_load_ess_models_ess():
     _load_ess_models()
 
-@pytest.mark.tensorflow
+@pytest.mark.essentia_tensorflow
 def test_load_ess_models_ess_tf():
     _load_ess_models()
 
