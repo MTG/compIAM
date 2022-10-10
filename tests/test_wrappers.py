@@ -74,7 +74,7 @@ def test_load_torch_models_ess_torch():
 def test_load_torch_models_full():
     _load_torch_models()
 
-@pytest.mark.torch
+@pytest.mark.tensorflow
 def test_no_torch():
     with pytest.raises(ImportError):
         from compiam.rhythm.tabla_transcription import FourWayTabla
