@@ -39,20 +39,12 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "essentia" in item.keywords:
                 item.add_marker(skip_essentia)
-    else:
-        if config.getoption("--tensorflow"):
-            warnings.warn("""
-                Installing essentia and tensorflow independently can be source of unexpected errors.
-                Please test them separatedly.
-                We have already implemented an automatic test to check how essentia and tensorflow work together.
-                Omitting tests...
-            """)
-            skip_tensorflow = pytest.mark.skip(reason="need --tensorflow option to run")
-            for item in items:
-                if "tensorflow" in item.keywords:
-                    item.add_marker(skip_tensorflow)
-            skip_essentia = pytest.mark.skip(reason="need --essentia option to run")
-            for item in items:
-                if "essentia" in item.keywords:
-                    item.add_marker(skip_essentia)
+    if config.getoption("--tensorflow") and config.getoption("--essentia"):
+        warnings.warn("Installing Essentia and TensorFlow independently may be " +
+            "source of inconsistencies. Essentia already installs TensorFlow, " +
+            "therefore we only install Essentia for this test setting.")
+        skip_tensorflow = pytest.mark.skip(reason="essentia already installs tensorflow")
+        for item in items:
+            if "tensorflow" in item.keywords:
+                item.add_marker(skip_tensorflow)
     return
