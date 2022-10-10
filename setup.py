@@ -45,7 +45,7 @@ setup(
         "tensorflow": ["tensorflow==2.5.0"],
         "torch": ["torch==1.8.0"],
         "essentia": ["essentia"],
-        "essentia-tensorflow": ["essentia"],
+        "essentia-tensorflow": ["tensorflow==2.5.0", "essentia"],
         "essentia-torch": ["essentia", "torch==1.8.0"],
         "full-ML": ["tensorflow==2.5.0", "torch==1.8.0"],
     },
