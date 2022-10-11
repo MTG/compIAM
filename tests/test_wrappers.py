@@ -4,6 +4,11 @@ from compiam.dunya import Corpora
 from compiam import list_models, load_dataset, load_corpora, \
     list_datasets, list_corpora
 
+
+######################
+# Test base operations
+######################
+
 def test_load_dataset():
     dataset = load_dataset("mridangam_stroke")
     dataset_mirdata = mirdata.initialize("mridangam_stroke")
@@ -27,6 +32,11 @@ def test_lists():
     assert "saraga_carnatic" in list_datasets()
     assert "hindustani" in list_corpora()
 
+
+########################
+# Defining wrapper utils
+########################
+
 def _load_tf_models():
     from compiam import load_model
     from compiam.melody.ftanet_carnatic import FTANetCarnatic
@@ -45,6 +55,11 @@ def _load_ess_models():
     melodia = load_model("melody:melodia")
     assert type(melodia) == Melodia
 
+
+####################
+# Tensorflow testing
+####################
+
 @pytest.mark.tensorflow
 def test_load_tf_models_tf():
     _load_tf_models()
@@ -57,10 +72,19 @@ def test_load_tf_models_ess_tf():
 def test_load_tf_models_full():
     _load_tf_models()
 
+@pytest.mark.all
+def test_load_tf_models_all():
+    _load_tf_models()
+
 @pytest.mark.torch
 def test_no_tf():
     with pytest.raises(ImportError):
         from compiam.melody.ftanet_carnatic import FTANetCarnatic
+
+
+###############
+# Torch testing
+###############
 
 @pytest.mark.torch
 def test_load_torch_models_torch():
@@ -74,10 +98,19 @@ def test_load_torch_models_ess_torch():
 def test_load_torch_models_full():
     _load_torch_models()
 
+@pytest.mark.all
+def test_load_torch_models_all():
+    _load_torch_models()
+
 @pytest.mark.tensorflow
 def test_no_torch():
     with pytest.raises(ImportError):
         from compiam.rhythm.tabla_transcription import FourWayTabla
+
+
+##################
+# Essentia testing
+##################
 
 @pytest.mark.essentia
 def test_load_ess_models_ess():
@@ -89,6 +122,10 @@ def test_load_ess_models_ess_tf():
 
 @pytest.mark.essentia_torch
 def test_load_torch_models_ess_torch():
+    _load_ess_models()
+
+@pytest.mark.all
+def test_load_torch_models_all():
     _load_ess_models()
 
 @pytest.mark.full_ml

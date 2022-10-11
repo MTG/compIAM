@@ -1,10 +1,8 @@
-from traceback import print_exception
 import pytest
-import warnings
 
 OPTIONS = [
-    "tensorflow", "torch", "essentia",
-    "essentia_tensorflow", "essentia_torch", "full_ml"]
+    "tensorflow", "torch", "essentia", "essentia_tensorflow", 
+    "essentia_torch", "full_ml", "all"]
 
 def pytest_addoption(parser):
     for option in OPTIONS:
@@ -34,6 +32,10 @@ def skip_essentia_torch(request):
 @pytest.fixture(scope="session")
 def skip_full_ml(request):
     return request.config.getoption("--full_ml")
+
+@pytest.fixture(scope="session")
+def skip_all(request):
+    return request.config.getoption("--all")
 
 def pytest_configure(config):
     for option in OPTIONS:

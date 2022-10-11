@@ -4,8 +4,7 @@ import pytest
 from compiam.data import WORKDIR
 from compiam import load_model
 
-@pytest.mark.essentia
-def test_essentia_extractors():
+def _predict_normalized_pitch():
     melodia = load_model("melody:melodia")
     with pytest.raises(ValueError):
         melodia.extract(os.path.join(WORKDIR, "tests", "resources", \
@@ -25,3 +24,19 @@ def test_essentia_extractors():
     # assert tonic here
 
     # assert normalisation here
+
+@pytest.mark.essentia
+def test_ess_extractors_ess():
+    _predict_normalized_pitch()
+
+@pytest.mark.essentia
+def test_ess_extractors_ess_tf():
+    _predict_normalized_pitch()
+
+@pytest.mark.essentia
+def test_ess_extractors_ess_torch():
+    _predict_normalized_pitch()
+
+@pytest.mark.all
+def test_ess_extractors_ess_torch():
+    _predict_normalized_pitch()
