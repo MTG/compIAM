@@ -3,8 +3,16 @@ import tqdm
 
 import pandas as pd
 import numpy as np
-import essentia.standard as estd
-from pathlib import Path
+
+try:
+    import essentia.standard as estd
+except:
+    raise ImportError(
+        "In order to use this tool you need to have essentia installed. "
+        "Please reinstall compiam using `pip install compiam[essentia]`"
+    )
+
+from compiam.data import WORKDIR
 
 SPLIT_PARAMS = {
     "fs": 44100,
@@ -106,12 +114,12 @@ def process_strokes(file_dict, load_computed=False):
         # Convert list of features to dict and write to file
         df_features = pd.DataFrame(list_of_feat, columns=columns)
         df_features.to_csv(
-            os.path.join(Path().absolute(), 'models', 'timbre', \
+            os.path.join(WORKDIR, 'models', 'timbre', \
                 'mridangam_stroke_classification', 'pre-computed_features.csv'), index=False)
     else: 
         # Load the pre-computed dict
         df_features = pd.read_csv(
-            os.path.join(Path().absolute(), 'models', 'timbre', \
+            os.path.join(WORKDIR, 'models', 'timbre', \
                 'mridangam_stroke_classification', 'pre-computed_features.csv'))
         feature_list = list(df_features.columns)
     return df_features, feature_list
