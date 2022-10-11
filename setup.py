@@ -20,7 +20,6 @@ setup(
         "scikit-learn~=0.24.2",
         "tqdm==4.64.1",
         "mirdata==0.3.6",
-        "essentia",
     ],
     extras_require={
         "tests": [
@@ -45,5 +44,9 @@ setup(
         ],
         "tensorflow": ["tensorflow==2.5.0"],
         "torch": ["torch==1.8.0"],
+        "essentia": ["essentia"],
+        "essentia-tensorflow": ["tensorflow==2.5.0", "essentia"],
+        "essentia-torch": ["essentia", "torch==1.8.0"],
+        "full-ML": ["tensorflow==2.5.0", "torch==1.8.0"],
     },
 )

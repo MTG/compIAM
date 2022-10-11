@@ -35,7 +35,7 @@ def batchize_test(data, size=430):
     return np.array(xlist)
 
 def est(output, CenFreq, time_arr):
-    """ Re-arrange FTA-Net output to a versatile pitch time-series.
+    """Re-arrange FTA-Net output to a versatile pitch time-series.
 
     :param data: input CFP features for the FTA-Net.
     :param size: size of the batches.
