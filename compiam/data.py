@@ -14,16 +14,6 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 #       }
 
 models_dict = {
-    "rhythm:1way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
-        "class_name": "FourWayTabla",
-        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
-    },
-    "rhythm:4way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
-        "class_name": "FourWayTabla",
-        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
-    },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
@@ -39,9 +29,30 @@ models_dict = {
         "class_name": "TonicIndianMultiPitch",
         "kwargs": {}
     },
+    "rhythm:1way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
+        "class_name": "FourWayTabla",
+        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
+    },
+    "rhythm:4way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
+        "class_name": "FourWayTabla",
+        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
+    },
+    "structure:dhrupad-bandish-segmentation": {
+        "module_name": "compiam.structure.dhrupad_bandish_segmentation",
+        "class_name": "MridangamStrokeClassification",
+        "kwargs": {
+            "filepath": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/pretrained_models/"),
+            "splits_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"),
+            "annotations_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/annotations/"),
+            "original_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_original/"),
+            "processed_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_sections/"),
+        }
+    },
     "timbre:mridangam-stroke": {
         "module_name": "compiam.timbre.mridangam_stroke_classification",
-        "class_name": "MridangamStrokeClassification",
+        "class_name": "DhrupadBandishSegmentation",
         "kwargs": {}
     },
 }
