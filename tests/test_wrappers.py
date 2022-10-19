@@ -46,14 +46,20 @@ def _load_tf_models():
 def _load_torch_models():
     from compiam import load_model
     from compiam.rhythm.tabla_transcription import FourWayTabla
+    from compiam.structure.dhrupad_bandish_segmentation import DhrupadBandishSegmentation
     tabla_class = load_model("rhythm:4way-tabla")
+    dhrupad_segmentation = load_model("structure:dhrupad-bandish-segmentation")
     assert type(tabla_class) == FourWayTabla
+    assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 
 def _load_ess_models():
     from compiam import load_model
     from compiam.melody.melodia import Melodia
+    from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
     melodia = load_model("melody:melodia")
+    tonic_multipitch = load_model("melody:tonic-multipitch")
     assert type(melodia) == Melodia
+    assert type(tonic_multipitch) == TonicIndianMultiPitch
 
 
 ####################
@@ -106,6 +112,7 @@ def test_load_torch_models_all():
 def test_no_torch():
     with pytest.raises(ImportError):
         from compiam.rhythm.tabla_transcription import FourWayTabla
+        from compiam.structure.dhrupad_bandish_segmentation import DhrupadBandishSegmentation
 
 
 ##################
