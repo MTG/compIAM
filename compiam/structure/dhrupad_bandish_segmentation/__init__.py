@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 try:
     import torch
     from compiam.structure.dhrupad_bandish_segmentation.audio_processing import split_audios
-    from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import extract_features
+    from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import extract_features, makechunks
     from compiam.structure.dhrupad_bandish_segmentation.model_utils import *
     from compiam.structure.dhrupad_bandish_segmentation.params import *
 except:
@@ -197,7 +197,7 @@ class DhrupadBandishSegmentation:
             #print loss in current epoch
             print("Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"%(epoch, max_epochs, train_loss_epoch[-1], train_acc_epoch[-1],val_loss_epoch[-1],val_acc_epoch[-1]))
         
-    def predict(self, path_to_file, mode="net", output_dir=None):
+    def predict_stm(self, path_to_file, mode="net", output_dir=None):
         """Dhrupad Bandish Segmentation init method.
 
         :param path_to_file: path of the input file
