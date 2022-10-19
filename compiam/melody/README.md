@@ -1,1 +1,15 @@
 # Melodic analysis tools
+
+The available melodic analysis tools in compIAM are:
+| **Tool**                  | **Task**                         | **Paper** |
+|---------------------------|----------------------------------|-----------|
+| Melodia                   | Predominant pitch extraction     | [1]       |
+| FTANet-Carnatic           | Vocal pitch extraction           | -         |
+| TonicIndianArtMusic       | Tonic idendification             | [2]       |
+
+
+
+
+[1] J. Salamon and E. Gómez, "Melody extraction from polyphonic music signals using pitch contour characteristics," IEEE Transactions on Audio, Speech, and Language Processing, vol. 20, no. 6, pp. 1759–1770, 2012.
+
+[2] J. Salamon, S. Gulati, and X. Serra, "A Multipitch Approach to Tonic Identification in Indian Classical Music," in International Society for Music Information Retrieval Conference (ISMIR’12), 2012. 
