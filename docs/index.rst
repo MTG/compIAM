@@ -30,6 +30,12 @@ loaders, tools, and models for the computational analysis of two main Indian Art
 
    source/datasets
 
+.. toctree::
+   :caption: Contributing
+   :maxdepth: 1
+
+   source/contributing
+
 
 Citation
 ========

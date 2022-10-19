@@ -1,10 +1,17 @@
 # compIAM
 compIAM (**comp**utational analysis of **I**ndian **A**rt **M**usic) is a collaborative initiative involving many researchers that aims at putting together a common repository of datasets, tools, and models for the computational analysis of Carnatic and Hindustani music. 
 
+You can get started on the Computational Analysis of Indian Art Music through our ISMIR 2022 Tutorial: [Computational Methods For Supporting Corpus-Based Research On Indian Art Music](https://github.com/MTG/IAM-tutorial-ismir22).
+
 ## Installing compIAM
 TODO :)
 
 ## Basic usage
+compIAM does not have terminal functionalities but it is to be used within Python based-projects. Import compIAM to your project:
+
+``import compiam``
+
+
 compIAM includes wrappers to easily initialize the tools and datasets. 
 
 | **Wrapper**                 | **Description**                    | **Option list**                       |
@@ -30,6 +37,13 @@ compIAM is very much open for contributions. You can contribute by:
 * Adding new datasets
 * Adding tools or models
 * Improving the library features
+* Writing walkthroughs of the included tools
 * Identifying and fixing bugs
 
-Please check the [contribution guidelines](TODO) and get in touch in case you have questions or suggestions. 
+Please check the [contribution guidelines](TODO) and get in touch in case you have questions or suggestions.
+
+## License
+TODO :)
+
+## Citing
+TODO :)
