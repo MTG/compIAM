@@ -41,7 +41,7 @@ models_dict = {
     },
     "structure:dhrupad-bandish-segmentation": {
         "module_name": "compiam.structure.dhrupad_bandish_segmentation",
-        "class_name": "MridangamStrokeClassification",
+        "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
             "filepath": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/pretrained_models/"),
             "splits_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"),
@@ -52,7 +52,7 @@ models_dict = {
     },
     "timbre:mridangam-stroke": {
         "module_name": "compiam.timbre.mridangam_stroke_classification",
-        "class_name": "DhrupadBandishSegmentation",
+        "class_name": "MridangamStrokeClassification",
         "kwargs": {}
     },
 }

@@ -103,7 +103,8 @@ def build_model(input_height, input_len, n_classes):
 
 #data-loader(https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel)
 class Dataset(data.Dataset):
-    "Characterizes a dataset for PyTorch"
+    """Characterizes a dataset for PyTorch
+    """
     def __init__(self, datadir, list_IDs, labels):
         "Initialization"
         self.datadir  =  datadir
@@ -111,11 +112,13 @@ class Dataset(data.Dataset):
         self.list_IDs  =  list_IDs
 
     def __len__(self):
-        "Denotes the total number of samples"
+        """Denotes the total number of samples
+        """
         return len(self.list_IDs)
 
     def __getitem__(self, index):
-        "Generates one sample of data"
+        """Generates one sample of data
+        """
         # Select sample
         ID  =  self.list_IDs[index] #os.path.join(self.datadir, self.list_IDs[index])
 
@@ -138,16 +141,6 @@ def categorical_to_class(class_ids,classes):
     for i in range(len(class_ids)):
         class_ids[i] = map[class_ids[i].item()]
     return class_ids
-    
-#function to create N-frame overlapping chunks of the full audio spectrogram  
-def makechunks(x,duration,hop):
-    n_chunks = int(np.floor((x.shape[1]-duration)/hop) + 1)
-    y = np.zeros([n_chunks, x.shape[0], duration])
-    for i in range(n_chunks):
-            y[i] = x[:, i*hop:(i*hop)+duration]
-            #normalise
-            y[i] = (y[i]-np.min(y[i]))/(np.max(y[i])-np.min(y[i]))
-    return y
 
 #function to smooth predicted s.t.m. estimates by constraining minimum section duration
 def smooth_boundaries(stmvstime_track,min_dur):

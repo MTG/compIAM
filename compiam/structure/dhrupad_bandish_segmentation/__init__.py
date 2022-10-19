@@ -200,9 +200,9 @@ class DhrupadBandishSegmentation:
     def predict(self, path_to_file, mode="net", output_dir=None):
         """Dhrupad Bandish Segmentation init method.
 
-        :param path_to_file: TODO
-        :param mode: TODO
-        :param output_dir: TODO
+        :param path_to_file: path of the input file
+        :param mode: model mode: "voc", "pakh" or "net"
+        :param output_dir: directory to store printed outputs
         """
         if not os.path.exists(path_to_file):
             raise ValueError("Input file not found") 

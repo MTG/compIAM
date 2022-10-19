@@ -13,13 +13,13 @@ except:
 
 from params import *
 
-#function to create N-frame overlapping chunks of the full audio spectrogram  
 def makechunks(x, duration, hop):
-    """TODO
+    """Function to create N-frame overlapping chunks of the full 
+    audio spectrogram  
 
-    :param x: TODO
-    :param duration: TODO
-    :param hop: TODO
+    :param x: input data
+    :param duration: duration of chunks
+    :param hop: hop size between windows
     """
     n_chunks = int(np.floor((x.shape[1]-duration)/hop) + 1)
     y = np.zeros([n_chunks, x.shape[0], duration])
@@ -31,11 +31,12 @@ def makechunks(x, duration, hop):
     return y
 
 def extract_features(audio_dir, annotations_dir, save_dir, mode):
-    """TODO
+    """Main feature extraction function. It computes the features from
+    split audios and annotations and store these into a .npy file.
 
-    :param audio_dir: TODO
-    :param annotations_dir: TODO
-    :param save_dir: TODO
+    :param audio_dir: directory where splitted audios live (see ``data.py``)
+    :param annotations_dir: directory where annotations live (see ``data.py``)
+    :param save_dir: directory to store the extracted features (see ``data.py``)
     :param mode: model mode: "voc", "pakh" or "net"
     """
     if mode == "voc":
