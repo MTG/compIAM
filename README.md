@@ -7,11 +7,11 @@ TODO :)
 ## Basic usage
 compIAM includes wrappers to easily initialize the tools and datasets. 
 
-| **Wrapper**               | **Description**                                    | **Option list**              |
-|---------------------------|----------------------------------------------------|------------------------------|
-| compiam.load_dataset()    | Initializing dataset loaders through mirdata       | See ``data.datasets_list``   |
-| compiam.load_corpora()    | Accessing the Dunya corpora                        | See ``data.corpora_list``    |
-| compiam.load_model()      | Initializing tools and models included in compIAM  | See ``data.model_dict``      |
+| **Wrapper**                 | **Description**                                    | **Option list**                       |
+|-----------------------------|----------------------------------------------------|---------------------------------------|
+| ``compiam.load_dataset()``  | Initializing dataset loaders through mirdata       | See ``compiam.data.datasets_list``    |
+| ``compiam.load_corpora()``  | Accessing the Dunya corpora                        | See ``compiam.data.corpora_list``     |
+| ``compiam.load_model()``    | Initializing tools and models included in compIAM  | See ``compiam.data.models_dict``      |
 
 ## Available tools
 compIAM is structured by the fundamental aspects of music in which we classify the several relevant tasks for the Indian Art Music tradition. Check here the available tools for:
