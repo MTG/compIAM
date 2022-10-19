@@ -7,9 +7,7 @@ You can get started on the Computational Analysis of Indian Art Music through ou
 TODO :)
 
 ## Basic usage
-compIAM does not have terminal functionalities but it is to be used within Python based-projects. Import compIAM to your project:
-
-``import compiam``
+compIAM does not have terminal functionalities but it is to be used within Python based-projects. First, import the library to your Python project with: ``import compiam``.
 
 
 compIAM includes wrappers to easily initialize the tools and datasets. 
