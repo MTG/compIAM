@@ -3,6 +3,8 @@ import librosa
 
 import numpy as np
 
+from compiam.structure.dhrupad_bandish_segmentation.params import *
+
 try:
     import torch
 except:
@@ -10,8 +12,6 @@ except:
         "In order to use this tool you need to have torch installed. "
         "Please reinstall compiam using `pip install compiam[torch]`"
     )
-
-from params import *
 
 def makechunks(x, duration, hop):
     """Function to create N-frame overlapping chunks of the full 
