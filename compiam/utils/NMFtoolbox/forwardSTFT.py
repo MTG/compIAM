@@ -64,23 +64,25 @@ def forwardSTFT(x, parameter=None):
         The phase spectrogram (wrapped in -pi ... +pi)
     """
     parameter = init_parameters(parameter)
-    blockSize = parameter['blockSize']
+    blockSize = parameter["blockSize"]
     halfBlockSize = round(blockSize / 2)
-    hopSize = parameter['hopSize']
-    winFunc = parameter['winFunc']
-    reconstMirror = parameter['reconstMirror']
-    appendFrame = parameter['appendFrame']
+    hopSize = parameter["hopSize"]
+    winFunc = parameter["winFunc"]
+    reconstMirror = parameter["reconstMirror"]
+    appendFrame = parameter["appendFrame"]
 
     # the number of bins needs to be corrected
     # if we want to discard the mirror spectrum
-    if parameter['reconstMirror']:
-        numBins = round(parameter['blockSize'] / 2) + 1
+    if parameter["reconstMirror"]:
+        numBins = round(parameter["blockSize"] / 2) + 1
     else:
-        numBins = parameter['blockSize']
+        numBins = parameter["blockSize"]
 
     # append safety space in the beginning and end
     if appendFrame:
-        x = np.concatenate((np.zeros(halfBlockSize), x, np.zeros(halfBlockSize)), axis=0)
+        x = np.concatenate(
+            (np.zeros(halfBlockSize), x, np.zeros(halfBlockSize)), axis=0
+        )
 
     numSamples = len(x)
 
@@ -92,9 +94,9 @@ def forwardSTFT(x, parameter=None):
 
     counter = 0
 
-    for k in range(0, len(x)-blockSize, hopSize):
+    for k in range(0, len(x) - blockSize, hopSize):
         # where to pick
-        ind = range(k, k+blockSize)
+        ind = range(k, k + blockSize)
 
         # pick signal frame
         snip = x[ind]
@@ -140,10 +142,20 @@ def init_parameters(parameter):
     parameter: dict
     """
     parameter = dict() if not parameter else parameter
-    parameter['blockSize'] = 2048 if 'blockSize' not in parameter else parameter['blockSize']
-    parameter['hopSize'] = 512 if 'hopSize' not in parameter else parameter['hopSize']
-    parameter['winFunc'] = np.hanning(parameter['blockSize']) if 'winFunc' not in parameter else parameter['winFunc']
-    parameter['reconstMirror'] = True if 'reconstMirror' not in parameter else parameter['reconstMirror']
-    parameter['appendFrame'] = True if 'appendFrame' not in parameter else parameter['appendFrame']
+    parameter["blockSize"] = (
+        2048 if "blockSize" not in parameter else parameter["blockSize"]
+    )
+    parameter["hopSize"] = 512 if "hopSize" not in parameter else parameter["hopSize"]
+    parameter["winFunc"] = (
+        np.hanning(parameter["blockSize"])
+        if "winFunc" not in parameter
+        else parameter["winFunc"]
+    )
+    parameter["reconstMirror"] = (
+        True if "reconstMirror" not in parameter else parameter["reconstMirror"]
+    )
+    parameter["appendFrame"] = (
+        True if "appendFrame" not in parameter else parameter["appendFrame"]
+    )
 
     return parameter
