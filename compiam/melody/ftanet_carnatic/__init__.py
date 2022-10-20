@@ -36,12 +36,12 @@ except:
 class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music"""
 
-    def __init__(self, filepath):
+    def __init__(self, model_path):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
         """
-        if not os.path.exists(filepath + ".data-00000-of-00001"):
+        if not os.path.exists(model_path + ".data-00000-of-00001"):
             raise ValueError(
                 """
                 Given path to model weights not found. Make sure you enter the path correctly.
@@ -51,9 +51,9 @@ class FTANetCarnatic(object):
                 available before loading the Carnatic FTA-Net.
             """
             )
-        self.filepath = filepath
+        self.model_path = model_path
         self.model = self.load_model()
-        self.model.load_weights(filepath).expect_partial()
+        self.model.load_weights(model_path).expect_partial()
 
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
