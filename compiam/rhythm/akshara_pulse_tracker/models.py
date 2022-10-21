@@ -574,7 +574,7 @@ def get_akshara_onsets(
     BPM=np.arange(40, 600.4, 0.5), minBPM=120, octTol=20, theta=0.005, 
     delta=pow(10, 6), maxLen=0.6, binWidth=10e-3, 
     thres=0.05, ignoreTooClose=0.6, 
-    decayCoeff=15, backSearch=[5.0, 0.5], alphaDP=3, smoothTime=2560):
+    decayCoeff=15, backSearch=[5.0, 0.5], alphaDP=3, smoothTime=2560, pwtol=0.2):
     
     # Deduce other parameters
     fTicks = np.arange(Nfft / 2 + 1) * Fs / Nfft
@@ -583,7 +583,7 @@ def get_akshara_onsets(
     pdSmooth = round(frmHop * smoothTime)
     featureRate = 1 / frmHop
     stepSize = round(stepSizeTempogram / frmHop)
-    NBins = maxLen / binWidth + 1
+    Nbins = maxLen / binWidth + 1
     wtolHistAv = round(20e-3 / binWidth)
 
     # Get onset functions
@@ -624,7 +624,8 @@ def get_akshara_onsets(
 
     # Candidate estimation
     akCandLocs, akCandTs, akCandWts, akCandTransMat = estimateAksharaCandidates(onsTs, onsFn.copy(), TCper, TCts,
-                                                                                mmpFromTC, thres, ignoreTooClose, decayCoeff)
+                                                                                mmpFromTC, pwtol, thres, ignoreTooClose, decayCoeff)
+
     Locs = akCandLocs
     ts = akCandTs
     Wts = akCandWts
