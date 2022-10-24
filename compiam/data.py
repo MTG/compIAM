@@ -24,6 +24,15 @@ models_dict = {
         "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
+    "melody:deepsrgm": {
+        "module_name": "compiam.melody.deepsrgm",
+        "class_name": "DEEPSRGM",
+        "kwargs": {
+            "filepath": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
+            "mapping_path": os.path.join(WORKDIR, "conf/raga/DEEPSRGM_mapping.json")
+        }
+    },
+    
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
