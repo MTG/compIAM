@@ -22,10 +22,10 @@ jobs:
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
-    - name: Check black formatting
-      uses: rickstaa/action-black@v1
-      with:
-        black_args: ". --check"
+    #- name: Check black formatting
+    #  uses: rickstaa/action-black@v1
+    #  with:
+    #    black_args: ". --check"
     # - name: Test docs
     # - uses: ammaraskar/sphinx-action@master
     #  with:
