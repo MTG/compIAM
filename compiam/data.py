@@ -18,12 +18,16 @@ models_dict = {
     "rhythm:1way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")},
+        "kwargs": {
+            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")
+        },
     },
     "rhythm:4way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")},
+        "kwargs": {
+            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")
+        },
     },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
