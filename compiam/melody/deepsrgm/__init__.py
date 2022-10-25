@@ -1,7 +1,6 @@
 import os
-import mirdata
 import json
-from importlib_metadata import Mapping
+import mirdata
 
 import numpy as np
 
@@ -19,7 +18,8 @@ except:
 
 
 class DEEPSRGM(object):
-    """DEEPSRGM model for raga classification
+    """DEEPSRGM model for raga classification. This DEEPSGRM implementation has been
+    kindly provided by Shubham Lohiya and Swarada Bharadwaj.
     """
     def __init__(self, filepath, mapping_path, dataset_home=None, device=None):
         """DEEPSRGM init method.
@@ -37,15 +37,14 @@ class DEEPSRGM(object):
         self.mapping = None
         self.selected_ragas = [5, 8, 10, 13, 17, 20, 22, 23, 24, 28]  # pre-defined for release 0.1
         self.model = deepsrgmModel(rnn="lstm").to(self.device)
-        self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
-
+        #self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
+        self.dataset = None  # To update when CompmMusic Raga dataset is on mirdata
 
     def load_mapping(self, selection=None):
         """ TODO
         """
         selected_ragas = self.selected_ragas if selection is None else selection
-        legend = json.load(open(self.mapping_path, "r"))
-        self.mapping = create_mapping(legend, selected_ragas)
+        self.mapping = create_mapping(self.mapping_path, selected_ragas)
 
 
     def load_model(self, rnn="lstm"):
@@ -64,8 +63,17 @@ class DEEPSRGM(object):
                 version (https://github.com/MTG/compIAM) so make sure you have these available before 
                 loading the DEEPSRGM.
             """)
-        self.model.load_state_dict(torch.load(weights_path))
-
+        
+        else:
+            weights = torch.load(weights_path, map_location=self.device)
+            new_weights = weights.copy()
+            keys_to_fix =  [".weight_ih_l0", ".weight_hh_l0", ".bias_ih_l0", ".bias_hh_l0"]
+            keys_to_fix = [rnn + x for x in keys_to_fix]
+            for i in keys_to_fix:
+                new_weights[i.replace(rnn, "rnn")] = weights[i]
+                del new_weights[i]
+            self.model.load_state_dict(new_weights)
+    
 
     def get_features(self, audio_file=None, pitch_file=None, tonic_file=None, \
         from_mirdata=False, track_id=None, k=5):
@@ -88,7 +96,7 @@ class DEEPSRGM(object):
         else:
             try:
                 melodia = compiam.load_model("melody:melodia")
-                tonic_extraction = compiam.load_model("melody:tonic_multipitch")
+                tonic_extraction = compiam.load_model("melody:tonic-multipitch")
             except:
                 raise ImportError(
                     "In order to use this tool in this context you need to have essentia "
@@ -97,7 +105,7 @@ class DEEPSRGM(object):
                 )
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.") 
-            _, freqs = melodia.extract(audio_file)
+            freqs = melodia.extract(audio_file)[:, 1]
 
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.") 
@@ -134,7 +142,7 @@ class DEEPSRGM(object):
 
         # Predict
         with torch.no_grad():
-            out = self.model.forward(features.to(self.device))
+            out = self.model.forward(torch.from_numpy(features).to(self.device).long())
         preds = torch.argmax(out, axis=-1)
         majority, _ = torch.mode(preds)
         majority = int(majority)

@@ -1,5 +1,5 @@
 import torch.nn as nn
-from attention_layer import Attention
+from compiam.melody.deepsrgm.attention_layer import Attention
 
 class deepsrgmModel(nn.Module):
     def __init__(self, rnn="lstm", input_length=5000, embedding_size=128, hidden_size=768,
