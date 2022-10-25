@@ -116,9 +116,9 @@ def NMF(V, parameter):
 
         elif parameter["costFunc"] == "ISDiv":  # Itakura Saito divergence update rules
             if not parameter["fixW"]:
-                W *= ((Lambda ** -2 * V) @ H.T) / ((Lambda ** -1) @ H.T + EPS)
+                W *= ((Lambda**-2 * V) @ H.T) / ((Lambda**-1) @ H.T + EPS)
 
-            H *= (W.T @ (Lambda ** -2 * V)) / (W.T @ (Lambda ** -1) + EPS)
+            H *= (W.T @ (Lambda**-2 * V)) / (W.T @ (Lambda**-1) + EPS)
 
         else:
             raise ValueError("Unknown cost function")

@@ -34,8 +34,8 @@ from scipy.ndimage.filters import convolve
 import scipy.io
 import os
 
-EPS = 2.0 ** -52
-MAX_WAV_VALUE = 2.0 ** 15
+EPS = 2.0**-52
+MAX_WAV_VALUE = 2.0**15
 PATH_TO_MATRICES = "matrices/"
 
 
