@@ -1,5 +1,4 @@
 import os
-import json
 import mirdata
 
 import numpy as np
@@ -38,7 +37,7 @@ class DEEPSRGM(object):
         self.selected_ragas = [5, 8, 10, 13, 17, 20, 22, 23, 24, 28]  # pre-defined for release 0.1
         self.model = deepsrgmModel(rnn="lstm").to(self.device)
         #self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
-        self.dataset = None  # To update when CompmMusic Raga dataset is on mirdata
+        self.dataset = None  # To update when CompMusic Raga dataset is integrated mirdata
 
     def load_mapping(self, selection=None):
         """ TODO
