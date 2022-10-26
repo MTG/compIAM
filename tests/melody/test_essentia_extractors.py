@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from compiam
+import compiam
 from compiam.data import WORKDIR
 
 def _predict_normalized_pitch():
