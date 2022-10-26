@@ -29,10 +29,9 @@ models_dict = {
         "class_name": "DEEPSRGM",
         "kwargs": {
             "filepath": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
-            "mapping_path": os.path.join(WORKDIR, "conf/raga/DEEPSRGM_mapping.json")
+            "mapping_path": os.path.join(WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json")
         }
     },
-    
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
