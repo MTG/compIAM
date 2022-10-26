@@ -1,8 +1,9 @@
-from compiam.utils import get_installed_dependencies
-deps = get_installed_dependencies()
+# Pitch extraction
+from compiam.melody.melodia import Melodia
+from compiam.melody.ftanet_carnatic import FTANetCarnatic
 
-if "essentia" in deps:
-    from compiam.melody.melodia import Melodia
-    from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
-if "tensorflow" in deps:
-    from compiam.melody.ftanet_carnatic import FTANetCarnatic
+# Tonic extraction
+from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
+
+# Raga recognition
+from compiam.melody.deepsrgm import DEEPSRGM

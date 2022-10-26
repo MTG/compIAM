@@ -47,5 +47,5 @@ def load_yaml(path):
 
 def get_installed_dependencies():
     deps = pipdeptree.get_installed_distributions(local_only=True)
-    return [x.split(" ")[0] for x in deps]
+    return [str(x).split(" ")[0] for x in deps]
 

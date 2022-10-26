@@ -5,28 +5,17 @@ import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 
-try:
-    import torch
-    from compiam.structure.dhrupad_bandish_segmentation.audio_processing import split_audios
-    from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import extract_features, makechunks
-    from compiam.structure.dhrupad_bandish_segmentation.model_utils import *
-    from compiam.structure.dhrupad_bandish_segmentation.params import *
-except:
-    raise ImportError(
-        "In order to use this tool you need to have torch installed. "
-        "Please reinstall compiam using `pip install compiam[torch]`"
-    )
-
 from compiam.utils import get_logger
 
 logger = get_logger(__name__)
+
 
 class DhrupadBandishSegmentation:
     """Dhrupad Bandish Segmentation
     """
     def __init__(
         self,
-        filepath=None,
+        model_path=None,
         splits_path=None,
         annotations_path=None,
         features_path = None,
@@ -35,10 +24,37 @@ class DhrupadBandishSegmentation:
         device=None):
         """Dhrupad Bandish Segmentation init method.
 
-        :param filepath: path to file to the model weights.
+        :param model_path: path to file to the model weights.
         :param device: indicate whether the model will run on the GPU.
         """
-        self.filepath = filepath
+        ###
+        try:
+            global torch
+            import torch
+
+            global split_audios
+            from compiam.structure.dhrupad_bandish_segmentation.audio_processing import split_audios
+
+            global extract_features, makechunks
+            from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import (
+                extract_features, makechunks
+            )
+
+            global class_to_categorical, categorical_to_class, build_model, smooth_boundaries
+            from compiam.structure.dhrupad_bandish_segmentation.model_utils import (
+                class_to_categorical, categorical_to_class, build_model, smooth_boundaries
+            )
+
+            global pars
+            import compiam.structure.dhrupad_bandish_segmentation.params as pars
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have torch installed. "
+                "Please reinstall compiam using `pip install compiam[torch]`"
+            )
+        ###
+
+        self.model_path = model_path
         self.splits_path = splits_path
         self.annotations_path = annotations_path
         self.features_path = features_path
@@ -96,16 +112,16 @@ class DhrupadBandishSegmentation:
                 partition["train"].extend(ids)
 
         #generators
-        training_set = Dataset(self.features_path, partition["train"], labels_stm)
-        training_generator = data.DataLoader(training_set, **params)
+        training_set = torch.utils.data.Dataset(self.features_path, partition["train"], labels_stm)
+        training_generator = torch.utils.data.data.DataLoader(training_set, **pars)
 
-        validation_set = Dataset(self.features_path, partition["validation"], labels_stm)
-        validation_generator = data.DataLoader(validation_set, **params)
+        validation_set = torch.utils.data.Dataset(self.features_path, partition["validation"], labels_stm)
+        validation_generator = torch.utils.data.DataLoader(validation_set, **pars)
 
         #model definition and training
-        classes=  classes_dict[mode]
+        classes=  pars.classes_dict[mode]
         n_classes = len(classes)
-        model = build_model(input_height, input_len, n_classes).float().to(self.device)
+        model = build_model(pars.input_height, pars.input_len, n_classes).float().to(self.device)
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
@@ -121,10 +137,10 @@ class DhrupadBandishSegmentation:
         val_loss_epoch = []; val_acc_epoch = []
         n_idle = 0
 
-        if not os.path.exists(os.path.join(self.filepath, mode)):
-            os.makedir(os.path.join(self.filepath, mode))
+        if not os.path.exists(os.path.join(self.model_path, mode)):
+            os.makedir(os.path.join(self.model_path, mode))
 
-        for epoch in range(max_epochs):
+        for epoch in range(pars.max_epochs):
             if n_idle == 50:
                 break
             train_loss_epoch += [0]; train_acc_epoch += [0]
@@ -153,7 +169,7 @@ class DhrupadBandishSegmentation:
                 
                 #append loss and acc to arrays
                 train_loss_epoch[-1] += loss.item()
-                acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / batch_size
+                acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / pars.batch_size
                 train_acc_epoch[-1] += acc
                 n_iter += 1
 
@@ -166,7 +182,7 @@ class DhrupadBandishSegmentation:
             with torch.set_grad_enabled(False):
                 for local_batch, local_labels, _ in validation_generator:
                     #map labels to class ids
-                    local_labels = class_to_categorical(local_labels,classes)
+                    local_labels = pars.class_to_categorical(local_labels,classes)
 
                     #add channel dimension
                     if len(local_batch.shape) == 3:
@@ -181,7 +197,7 @@ class DhrupadBandishSegmentation:
 
                     #append loss and acc to arrays
                     val_loss_epoch[-1] += loss.item()
-                    acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / batch_size
+                    acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / pars.batch_size
                     val_acc_epoch[-1] += acc
 
                     n_iter += 1
@@ -190,12 +206,12 @@ class DhrupadBandishSegmentation:
 
             #save if val_loss reduced
             if val_loss_epoch[-1] == min(val_loss_epoch): 
-                torch.save(model.state_dict(), os.path.join(self.filepath, mode, "saved_model_fold_%d.pt"%fold))
+                torch.save(model.state_dict(), os.path.join(self.model_path, mode, "saved_model_fold_%d.pt"%fold))
                 n_idle = 0
             else: n_idle += 1
             
             #print loss in current epoch
-            print("Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"%(epoch, max_epochs, train_loss_epoch[-1], train_acc_epoch[-1],val_loss_epoch[-1],val_acc_epoch[-1]))
+            print("Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"%(epoch, pars.max_epochs, train_loss_epoch[-1], train_acc_epoch[-1],val_loss_epoch[-1],val_acc_epoch[-1]))
         
     def predict_stm(self, path_to_file, mode="net", output_dir=None):
         """Dhrupad Bandish Segmentation init method.
@@ -216,15 +232,15 @@ class DhrupadBandishSegmentation:
 
         #convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
-            audio, sr=fs, n_fft=nfft, hop_length=hopsize, win_length=winsize, n_mels=input_height, fmin=20, fmax=8000)
+            audio, sr=fs, n_fft=pars.nfft, hop_length=pars.hopsize, win_length=pars.winsize, n_mels=pars.input_height, fmin=20, fmax=8000)
         melgram = 10*np.log10(1e-10+melgram)
-        melgram_chunks = makechunks(melgram, input_len, input_hop)
+        melgram_chunks = makechunks(melgram, pars.input_len, pars.input_hop)
 
         #load model
-        classes = classes_dict[mode]
+        classes = pars.classes_dict[mode]
         n_classes = len(classes)
-        model_path = os.path.join(self.filepath, mode, "saved_model_fold_0.pt")
-        model = build_model(input_height, input_len, n_classes).float().to(self.device)
+        model_path = os.path.join(self.model_path, mode, "saved_model_fold_0.pt")
+        model = build_model(pars.input_height, pars.input_len, n_classes).float().to(self.device)
         model.load_state_dict(torch.load(os.path.join(model_path), map_location=self.device))
         model.eval()
 
@@ -233,11 +249,11 @@ class DhrupadBandishSegmentation:
         for chunk in melgram_chunks:
             model_in = (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
             model_out = model.forward(model_in)
-            model_out = nn.Softmax(1)(model_out).detach().numpy()
+            model_out = torch.nn.Softmax(1)(model_out).detach().numpy()
             stm_vs_time.append(np.argmax(model_out))
 
         #smooth predictions with a minimum section duration of 5s
-        stm_vs_time = smooth_boundaries(stm_vs_time, min_sec_dur)
+        stm_vs_time = smooth_boundaries(stm_vs_time, pars.min_sec_dur)
 
         #plot
         plt.plot(np.arange(len(stm_vs_time))*0.5, stm_vs_time)

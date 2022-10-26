@@ -2,30 +2,36 @@ import os
 
 import numpy as np
 
-try:
-    import torch
-    from torch.utils import data as th_data
-except:
-    raise ImportError(
-        "In order to use this tool you need to have torch installed. "
-        "Please reinstall compiam using `pip install compiam[torch]`"
-    )
-
 from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger
 from compiam.visualisation.training import plot_losses
 
 logger = get_logger(__name__)
 
-from compiam.rhythm.tabla_transcription.model import onsetCNN_D, onsetCNN_RT, onsetCNN
-from compiam.rhythm.tabla_transcription.utils import TablaDataset, gen_melgrams, peakPicker, make_train_val_split
+from compiam.rhythm.tabla_transcription.utils import TablaDataset, gen_melgrams, peakPicker, make_train_val_split, load_mel_data
+
 
 class FourWayTabla:
     """TODO
     """
-    def __init__(self, filepath=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):
+    def __init__(self, model_path=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None):
         """TODO
         """
+        ###
+        try:
+            global torch
+            import torch
+
+            global onsetCNN_D, onsetCNN_RT, onsetCNN
+            from compiam.rhythm.tabla_transcription.model import onsetCNN_D, onsetCNN_RT, onsetCNN
+
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have torch installed. "
+                "Please reinstall compiam using `pip install compiam[torch]`"
+            )
+        ### 
+
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -38,26 +44,29 @@ class FourWayTabla:
         self.hop_dur = hop_dur
         
         # Load model if passed
-        self.filepath = filepath
-        if self.filepath:
-            self.load_models(filepath)
+        self.model_path = model_path
+        if self.model_path:
+            self.load_models(model_path)
 
-    def load_models(self, filepath):
+    def load_models(self, model_path):
         """TODO
         """
-        stats_path = os.path.join(filepath, 'means_stds.npy')
+        stats_path = os.path.join(model_path, 'means_stds.npy')
         self.stats = np.load(stats_path)
         for cat in self.categories:
             self.models[cat] = {}
             for fold in range(self.n_folds):
-                saved_model_path = os.path.join(filepath, cat, 'saved_model_%d.pt'%fold)
+                saved_model_path = os.path.join(model_path, cat, 'saved_model_%d.pt'%fold)
                 model = self.model_names[cat]().double().to(self.device)
                 model.load_state_dict(torch.load(saved_model_path, map_location=self.device))
                 model.eval()
 
                 self.models[cat][fold] = model
 
-    def train_epoch(self, model, training_generator, criterion=torch.nn.BCELoss(reduction='none')):
+    def train_epoch(self, model, training_generator, optimizer, criterion=None):
+        # Torch is imported inside __init__ 
+        if criterion == None:
+            criterion = torch.nn.BCELoss(reduction='none')
         model.train()
         n_batch=0
         loss_epoch=0
@@ -65,7 +74,7 @@ class FourWayTabla:
             n_batch+=1
 
             #transfer to GPU
-            local_batch, local_labels, local_weights = local_batch.double().to(device), local_labels.double().to(device), local_weights.double().to(device)
+            local_batch, local_labels, local_weights = local_batch.double().to(self.device), local_labels.double().to(self.device), local_weights.double().to(self.device)
 
             #model forward pass
             optimizer.zero_grad()
@@ -97,7 +106,7 @@ class FourWayTabla:
                 n_batch+=1
 
                 #transfer to GPU
-                local_batch, local_labels = local_batch.double().to(device), local_labels.double().to(device)
+                local_batch, local_labels = local_batch.double().to(self.device), local_labels.double().to(self.device)
 
                 #model forward pass
                 outs = model(local_batch).squeeze()
@@ -110,17 +119,17 @@ class FourWayTabla:
         return model, loss_epoch/n_batch
 
     def train(
-        self, filepath, 
+        self, model_path, 
         categories=['D', 'RT', 'RB', 'B'], 
         model_kwargs={}, 
-        criterion=torch.nn.BCELoss(reduction='none'), 
+        criterion=None, 
         max_epochs=50, 
         early_stop_patience=10, 
         lr=1e-4,
         val_fold=0,
         batch_size=256,
         num_workers=4,
-        seg_length=15,
+        seq_length=15,
         n_channels=3,
         gpu_id=0,
         aug_method=None,
@@ -140,6 +149,10 @@ class FourWayTabla:
             model_kwargs = model_kwargs*len(categories)
         elif len(model_kwargs) != len(categories):
             raise Exception('<model_kwargs> should be either a single dict or a list of dicts equal in length to <categories>')
+
+        # Torch is imported in __init__
+        if criterion == None:
+            criterion = torch.nn.BCELoss(reduction='none')
         
         use_cuda = torch.cuda.is_available()
         device = torch.device(f"cuda:{gpu_id}" if use_cuda else "cpu")
@@ -157,14 +170,14 @@ class FourWayTabla:
 
             logger.info("Getting train and val generators")
             training_generator, validation_generator = self.get_generators(
-                filepath, aug_method, fold, c, seq_length, n_channels, batch_size, num_workers)
+                model_path, aug_method, val_fold, c, seq_length, n_channels, batch_size, num_workers)
 
             #train-val loop
             train_loss_epoch=[]
             val_loss_epoch=[]
             for epoch in range(max_epochs):
                 ##training
-                model, loss_epoch = self.train_epoch(model, training_generator, criterion)
+                model, loss_epoch = self.train_epoch(model, training_generator, optimizer, criterion)
                 train_loss_epoch.append(loss_epoch)
 
                 ##validation
@@ -177,7 +190,7 @@ class FourWayTabla:
                 #save model if val loss is minimum so far
                 if(val_loss_epoch[-1] == min(val_loss_epoch)):
                     if model_save_dir:
-                        torch.save(model.state_dict(), os.path.join(model_save_dir, f'saved_model_{args.fold}.pt'))
+                        torch.save(model.state_dict(), os.path.join(model_save_dir, f'saved_model_{val_fold}.pt'))
                     #reset early stop count to 0 since new minimum loss reached
                     early_stop_count = 0
                 else:
@@ -189,7 +202,7 @@ class FourWayTabla:
 
             if plot_save_dir:
                 #plot losses vs epoch
-                plot_save_filepath = os.path.join(plot_save_dir, f'loss_curves_{args.fold}.png')
+                plot_save_filepath = os.path.join(plot_save_dir, f'loss_curves_{val_fold}.png')
                 plot_losses(train_loss_epoch, val_loss_epoch, plot_save_filepath)
 
     def predict(self, path_to_audio, predict_thresh=0.3):
@@ -231,38 +244,38 @@ class FourWayTabla:
 
         return onsets, labels
 
-    def get_generators(self, filepath, aug_method, fold, category, seq_length, n_channels, batch_size, num_workers):
+    def get_generators(self, model_path, aug_method, fold, category, seq_length, n_channels, batch_size, num_workers):
         #make train-val splits
         logger.info('Making train-val splits')
         # these are temp files that will be created and overwritten during every
         # training run; they contain the frame-wise onset labels for a given category
         # and weights to be applied during loss computation 
         train_val_data_filepaths = {
-            'train':os.path.join(filepath, f'labels_weights_train_{aug_method}.hdf5'), 
-            'validation':os.path.join(filepath, f'labels_weights_val_{aug_method}.hdf5')}    
+            'train':os.path.join(model_path, f'labels_weights_train_{aug_method}.hdf5'), 
+            'validation':os.path.join(model_path, f'labels_weights_val_{aug_method}.hdf5')}    
 
         #get list of audios in each CV fold
-        split_dir = os.path.join(filepath, 'cv_folds', '')
+        split_dir = os.path.join(model_path, 'cv_folds', '')
         folds = {'val': fold, 'train': np.delete([0,1,2], fold)}
         splits = dict(zip([0, 1, 2], [np.loadtxt(os.path.join(split_dir, f'3fold_cv_{fold}.fold'), dtype=str) for fold in range(3)]))
 
         #create training and validation splits of data and save them to disk as temporary files
-        labels_weights_orig_filepath = os.path.join(filepath, f'labels_weights_orig_{category}.hdf5')
-        labels_weights_aug_filepath = os.path.join(filepath, f'labels_weights_{aug_method}_{category}.hdf5')
+        labels_weights_orig_filepath = os.path.join(model_path, f'labels_weights_orig_{category}.hdf5')
+        labels_weights_aug_filepath = os.path.join(model_path, f'labels_weights_{aug_method}_{category}.hdf5')
         make_train_val_split(folds, labels_weights_orig_filepath, labels_weights_aug_filepath, train_val_data_filepaths)
 
         #load all melgram-label pairs as a dict to memory for faster training (ensure sufficient RAM size apriori)
-        songlist_orig = np.loadtxt(os.path.join(filepath, 'songlists/songlist_orig.txt'), dtype=str)
-        songlist_aug = np.loadtxt(os.path.join(filepath, f'/songlists/songlist_{aug_method}.txt'), dtype=str)
-        mel_data = load_mel_data(filepath, folds, splits, songlist_orig, songlist_aug)
+        songlist_orig = np.loadtxt(os.path.join(model_path, 'songlists/songlist_orig.txt'), dtype=str)
+        songlist_aug = np.loadtxt(os.path.join(model_path, f'/songlists/songlist_{aug_method}.txt'), dtype=str)
+        mel_data = load_mel_data(model_path, folds, splits, songlist_orig, songlist_aug)
 
         #data loaders
         params = {'batch_size': batch_size, 'shuffle': True, 'num_workers': num_workers}
-        training_set = TablaDataset(train_val_data_filepaths['train'], seq_length=seg_length, n_channels=n_channels, mel_data=mel_data)
-        training_generator = th_data.DataLoader(training_set, **params)
+        training_set = TablaDataset(train_val_data_filepaths['train'], seq_length=seq_length, n_channels=n_channels, mel_data=mel_data)
+        training_generator = torch.utils.data.th_data.DataLoader(training_set, **params)
 
-        validation_set = TablaDataset(train_val_data_filepaths['validation'], seq_length=seg_length, n_channels=n_channels, mel_data=mel_data)
-        validation_generator = th_data.DataLoader(validation_set, **params)
+        validation_set = TablaDataset(train_val_data_filepaths['validation'], seq_length=seq_length, n_channels=n_channels, mel_data=mel_data)
+        validation_generator = torch.utils.data.th_data.DataLoader(validation_set, **params)
 
         return training_generator, validation_generator
   

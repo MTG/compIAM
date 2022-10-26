@@ -2,14 +2,6 @@ import os
 
 import numpy as np
 
-try:
-    import essentia.standard as estd
-except:
-    raise ImportError(
-        "In order to use this tool you need to have essentia installed. "
-        "Please reinstall compiam using `pip install compiam[essentia]`"
-    )
-
 from compiam.utils.pitch import pitch_normalisation
 
 class Melodia:
@@ -25,6 +17,17 @@ class Melodia:
             For a complete and detailed list of the parameters see the documentation on the 
             following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
         """
+        ###
+        try:
+            global estd
+            import essentia.standard as estd
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have essentia installed. "
+                "Please reinstall compiam using `pip install compiam[essentia]`"
+            )
+        ###
+
         self.binResolution = binResolution
         self.filterIterations = filterIterations
         self.frameSize = frameSize
