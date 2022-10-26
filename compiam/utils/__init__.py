@@ -1,6 +1,7 @@
 import logging
 import os
 import yaml
+import pipdeptree
 
 def get_logger(name):
     logging.basicConfig(format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",)
@@ -42,3 +43,9 @@ def load_yaml(path):
     with open(path) as f:
         d = yaml.load(f, Loader=yaml.FullLoader)   
     return d
+
+
+def get_installed_dependencies():
+    deps = pipdeptree.get_installed_distributions(local_only=True)
+    return [x.split(" ")[0] for x in deps]
+
