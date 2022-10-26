@@ -6,6 +6,7 @@ from compiam.dunya import Corpora
 from compiam.data import models_dict, datasets_list, corpora_list
 from compiam.exceptions import ModelNotDefinedError
 
+
 def load_model(model_name, models_dict=models_dict):
     """Wrapper for loading models, extractors, and algorithms.
 
@@ -15,31 +16,34 @@ def load_model(model_name, models_dict=models_dict):
     """
     if not model_name in models_dict:
         raise ModelNotDefinedError(
-            (f"Model, {model_name} does not exist in compiam.data.models_dict, please follow " 
-                "instructions for adding new model to in ``data.py`` documentation"))
+            (
+                f"Model, {model_name} does not exist in compiam.data.models_dict, please follow "
+                "instructions for adding new model to in ``data.py`` documentation"
+            )
+        )
 
     m_dict = models_dict[model_name]
-    module = getattr(
-        import_module(
-            m_dict["module_name"]),
-            m_dict["class_name"]
-        )
+    module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
     return module(**m_dict["kwargs"])
+
 
 def load_dataset(dataset_name, data_home=None, version="default"):
     """Wrapper/alias function to load a mirdata Dataset class.
 
-    :param dataset_name: the dataset's name, see mirdata.DATASETS for a 
+    :param dataset_name: the dataset's name, see mirdata.DATASETS for a
         complete list of possibilities.
-    :param data_home: path where the data lives. If None uses the default 
+    :param data_home: path where the data lives. If None uses the default
         home location.
-    :param version: which version of the dataset to load. If None, the 
+    :param version: which version of the dataset to load. If None, the
         default version is loaded.
     :returns: a mirdata.core.Dataset object.
     """
     if dataset_name not in datasets_list:
-        raise ValueError("Invalid dataset {}".format(dataset_name)) 
-    return mirdata.initialize(dataset_name=dataset_name, data_home=data_home, version=version)
+        raise ValueError("Invalid dataset {}".format(dataset_name))
+    return mirdata.initialize(
+        dataset_name=dataset_name, data_home=data_home, version=version
+    )
+
 
 def load_corpora(tradition, cc=True, token=None):
     """Wrapper function to load access to the Dunya corpora.
@@ -50,18 +54,25 @@ def load_corpora(tradition, cc=True, token=None):
     :returns: a compiam.Corpora object.
     """
     if tradition not in list(corpora_list.keys()):
-        raise ValueError("Please enter a valid tradition in {}".format(list(corpora_list.keys())))
+        raise ValueError(
+            "Please enter a valid tradition in {}".format(list(corpora_list.keys()))
+        )
     if not isinstance(cc, bool):
-        raise ValueError("""Parameter cc must be a boolean to indicate whether to load the open or 
+        raise ValueError(
+            """Parameter cc must be a boolean to indicate whether to load the open or 
             the restricted portion of the corpora.
-        """)
+        """
+        )
     if token is None:
-        raise ImportError("""Please initialize the Corpora introducing your Dunya API token as parameter. 
+        raise ImportError(
+            """Please initialize the Corpora introducing your Dunya API token as parameter. 
             To get your token, first register to https://dunya.compmusic.upf.edu/ and then go to your user 
             page by clicking at your username at te right top of the webpage. You will find the API token 
             in the "API Access" section. Request restricted access if needed. Thanks.
-        """)
+        """
+        )
     return Corpora(tradition=tradition, cc=cc, token=token)
+
 
 def list_models():
     """Just listing the available models.
@@ -70,6 +81,7 @@ def list_models():
     """
     return list(models_dict.keys())
 
+
 def list_datasets():
     """Just listing the available datasets.
 
@@ -77,10 +89,11 @@ def list_datasets():
     """
     return datasets_list
 
+
 def list_corpora():
     """Just listing the available corpora. For each corpora we do have
-            a restricted and a CC version. To indicate which of the two 
-            is loaded with ``load_corpora`` function, use the input 
+            a restricted and a CC version. To indicate which of the two
+            is loaded with ``load_corpora`` function, use the input
             parameter cc as True or False.
 
     :returns: a list of available corpora.

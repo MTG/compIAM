@@ -28,7 +28,7 @@ class Intervals:
 
     def next_interval(self, interval):
         """
-        Given a value of an interval, this function returns the 
+        Given a value of an interval, this function returns the
         next interval value
         """
         index = np.where(self.intervals == interval)
@@ -42,10 +42,15 @@ class Intervals:
         This function returns the nearest interval to any given interval.
         """
         thresh_range = 25  # in cents
-        if interval < self.intervals[0] - thresh_range or interval > self.intervals[-1] + thresh_range:
-            raise IndexError("The interval given is beyond " + str(thresh_range)
-                             + " cents over the range of intervals defined.")
+        if (
+            interval < self.intervals[0] - thresh_range
+            or interval > self.intervals[-1] + thresh_range
+        ):
+            raise IndexError(
+                "The interval given is beyond "
+                + str(thresh_range)
+                + " cents over the range of intervals defined."
+            )
 
         index = find_nearest_index(self.intervals, interval)
         return self.intervals[index]
-

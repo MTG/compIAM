@@ -78,74 +78,74 @@ def initActivations(parameter, strategy):
 
     parameter = init_parameters(parameter)
 
-    if strategy == 'random':
+    if strategy == "random":
         np.random.seed(0)
-        initH = np.random.rand(parameter['numComp'], parameter['numFrames'])
+        initH = np.random.rand(parameter["numComp"], parameter["numFrames"])
 
-    elif strategy == 'uniform':
-        initH = np.ones((parameter['numComp'], parameter['numFrames']))
+    elif strategy == "uniform":
+        initH = np.ones((parameter["numComp"], parameter["numFrames"]))
 
-    elif strategy == 'pitched':
-        uniquePitches = np.unique(parameter['pitches'])
+    elif strategy == "pitched":
+        uniquePitches = np.unique(parameter["pitches"])
 
         # overwrite
-        parameter['numComp'] = uniquePitches.size
+        parameter["numComp"] = uniquePitches.size
 
         # initialize activations with very small values
-        initH = EPS + np.zeros((parameter['numComp'], parameter['numFrames']))
+        initH = EPS + np.zeros((parameter["numComp"], parameter["numFrames"]))
 
         for k in range(uniquePitches.size):
 
             # find corresponding note onsets and durations
-            ind = np.nonzero(parameter['pitches'] == uniquePitches[k])[0]
+            ind = np.nonzero(parameter["pitches"] == uniquePitches[k])[0]
 
             # insert activations
             for g in range(len(ind)):
                 currInd = ind[g]
 
-                noteStartInSeconds = parameter['onsets'][currInd]
-                noteEndeInSeconds = noteStartInSeconds + parameter['durations'][currInd]
+                noteStartInSeconds = parameter["onsets"][currInd]
+                noteEndeInSeconds = noteStartInSeconds + parameter["durations"][currInd]
 
-                noteStartInSeconds -= parameter['onsetOffsetTol']
-                noteEndeInSeconds += parameter['onsetOffsetTol']
+                noteStartInSeconds -= parameter["onsetOffsetTol"]
+                noteEndeInSeconds += parameter["onsetOffsetTol"]
 
-                noteStartInFrames = int(round(noteStartInSeconds / parameter['deltaT']))
-                noteEndeInFrames = int(round(noteEndeInSeconds / parameter['deltaT']))
+                noteStartInFrames = int(round(noteStartInSeconds / parameter["deltaT"]))
+                noteEndeInFrames = int(round(noteEndeInSeconds / parameter["deltaT"]))
 
                 frameRange = np.arange(noteStartInFrames, noteEndeInFrames + 1)
                 frameRange = frameRange[frameRange >= 0]
-                frameRange = frameRange[frameRange <= parameter['numFrames']]
+                frameRange = frameRange[frameRange <= parameter["numFrames"]]
 
                 # insert gate-like activation
-                initH[k, frameRange-1] = 1
+                initH[k, frameRange - 1] = 1
 
-    elif strategy == 'drums':
-        uniqueDrums = np.unique(parameter['drums'])
+    elif strategy == "drums":
+        uniqueDrums = np.unique(parameter["drums"])
 
         # overwrite
-        parameter['numComp'] = uniqueDrums.size
+        parameter["numComp"] = uniqueDrums.size
 
         # initialize activations with very small values
-        initH = EPS + np.zeros((parameter['numComp'], parameter['numFrames']))
+        initH = EPS + np.zeros((parameter["numComp"], parameter["numFrames"]))
 
         # sanity check
-        if uniqueDrums.size == parameter['numComp']:
+        if uniqueDrums.size == parameter["numComp"]:
 
             # insert impulses at onset positions
             for k in range(len(uniqueDrums)):
-                currOns = np.nonzero(parameter['drums'] == uniqueDrums[k])[0]
-                currOns = parameter['onsets'][currOns]
-                currOns = np.round(currOns/parameter['deltaT']).astype(np.int)
+                currOns = np.nonzero(parameter["drums"] == uniqueDrums[k])[0]
+                currOns = parameter["onsets"][currOns]
+                currOns = np.round(currOns / parameter["deltaT"]).astype(np.int)
                 currOns = currOns[currOns >= 0]
-                currOns = currOns[currOns <= parameter['numFrames']]
+                currOns = currOns[currOns <= parameter["numFrames"]]
 
-                initH[uniqueDrums[k].astype(int)-1, currOns-1] = 1
+                initH[uniqueDrums[k].astype(int) - 1, currOns - 1] = 1
 
             # add exponential decay
-            initH = NEMA(initH, parameter['decay'])
+            initH = NEMA(initH, parameter["decay"])
 
     else:
-        raise ValueError('Invalid strategy.')
+        raise ValueError("Invalid strategy.")
 
     return initH
 
@@ -162,7 +162,9 @@ def init_parameters(parameter):
     -------
     parameter: dict
     """
-    parameter['decay'] = 0.75 if 'decay' not in parameter else parameter['decay']
-    parameter['onsetOffsetTol'] = 0.025 if 'onsetOffsetTol' not in parameter else parameter['onsetOffsetTol']
+    parameter["decay"] = 0.75 if "decay" not in parameter else parameter["decay"]
+    parameter["onsetOffsetTol"] = (
+        0.025 if "onsetOffsetTol" not in parameter else parameter["onsetOffsetTol"]
+    )
 
     return parameter
