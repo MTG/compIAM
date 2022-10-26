@@ -7,26 +7,28 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 
-from .feature_extraction import normalise_features
+from compiam.timbre.mridangam_stroke_classification import normalise_features
 
 
 class StrokeClassification:
-    """ Mridangam stroke classification
+    """Mridangam stroke classification.
     """
     def __init__(self):
-        """ Mridangam stroke classification init method
-        :param data_home: folder where the dataset is stored
-        :param version:  version of the dataset to use
+        """Mridangam stroke classification init method.
+
+        :param data_home: folder where the dataset is stored.
+        :param version:  version of the dataset to use.
         """
 
     def train(self, trainig_data, feature_list, model_type="svm", balance=False, balance_ref='random'):
-        """ Train a support vector machine for stroke classification
-        :param trainig_data: DataFrame including features to train
-        :param feature_list: list of features considered for training
-        :param model_type: type of model to train
-        :param balance: balance the number of instances per class to prevent biases
-        :param balance_ref: reference class for data balancement
-        :returns: a trained scikit learn classificator object
+        """Train a support vector machine for stroke classification.
+
+        :param trainig_data: DataFrame including features to train.
+        :param feature_list: list of features considered for training.
+        :param model_type: type of model to train.
+        :param balance: balance the number of instances per class to prevent biases.
+        :param balance_ref: reference class for data balancement.
+        :returns: a trained scikit learn classificator object.
         """
 
         if trainig_data is None:

@@ -1,36 +1,46 @@
 import os
-from pathlib import Path
-WORKDIR = Path().absolute()
+import pathlib
+WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 
 #############
 # Models Dict
 #############
 # Each model should be stored in models_dict using 
 #   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
-#	    {"class_name": "<name of the model class>", "filepath": "<path_to_model if any>"}
+#	    {
+#           "module_name": "<compiam.melody/rhythm/timbre/structure.file/folder name of model>",
+#           "class_name": "<name of the model class>",
+#           "filepath": "<path_to_model if any>"
+#       }
 
 models_dict = {
     "rhythm:1way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
+        "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "melody:ftanet-carnatic": {
+        "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
         "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "melody:melodia": {
+        "module_name": "compiam.melody.melodia",
         "class_name": "Melodia",
         "kwargs": {}
     },
     "melody:tonic-multipitch": {
+        "module_name": "compiam.melody.tonic_multipitch",
         "class_name": "TonicIndianMultiPitch",
         "kwargs": {}
     },
     "timbre:mridangam-stroke": {
+        "module_name": "compiam.timbre.mridangam_stroke_classification",
         "class_name": "MridangamStrokeClassification",
         "kwargs": {}
     },
