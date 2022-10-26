@@ -96,7 +96,7 @@ def normalizeFeature(featMat, normP):
 
 
 ###########################################################################################
-def compute_fourierCoefficients(s, win, noverlap, f, fs):
+def compute_fourierCoefficients(s, win, noverlap, f, fs, verbose=True):
     winLen = win.size
     hopSize = winLen - noverlap
     T = np.arange(0, winLen, 1) / fs
@@ -119,7 +119,8 @@ def compute_fourierCoefficients(s, win, noverlap, f, fs):
             si = (sig * sine_fn).sum()
             x[w, f0] = co + 1j * si
         if not np.mod(f0, 100):
-            logger.info(str(f0) + '/' + str(f.size) + '...')
+            if verbose:
+                logger.info(str(f0) + '/' + str(f.size) + '...')
     x = x.transpose()
     return x, f, t
 
@@ -134,7 +135,7 @@ def tempogram_viaDFT(fn, tempoWindow, featureRate, stepsize, BPM, verbose=True):
     ggk = np.zeros(int(np.round(winLen / 2)))
     novelty = np.append(ggk, fn.copy())
     novelty = np.append(novelty, ggk)
-    TG, BPM, T = compute_fourierCoefficients(novelty, window, winLen - stepsize, BPM / 60.0, featureRate)
+    TG, BPM, T = compute_fourierCoefficients(novelty, window, winLen - stepsize, BPM / 60.0, featureRate, verbose)
     BPM = BPM * 60.0
     T = T - T[0]
     tempogram = TG / math.sqrt(winLen) / sum(window) * winLen;
