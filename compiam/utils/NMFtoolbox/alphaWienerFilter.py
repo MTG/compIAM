@@ -92,7 +92,7 @@ def alphaWienerFilter(mixtureX, sourceA, alpha=1.2, binarize=False):
         #  If desired, make this a binary mask
         if binarize:
             tmp = softMasks[k]
-            softMasks[k] = tmp[tmp > (1.0 / numComp)] * 1
+            softMasks[k] = tmp[tmp > (1.0/numComp)] * 1
 
         #  And apply it to the mixture
         sourceX.append(mixtureX * currSoftMask)

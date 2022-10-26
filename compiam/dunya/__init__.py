@@ -1,6 +1,6 @@
 # Copyright 2013, 2014 Music Technology Group - Universitat Pompeu Fabra
 #
-# Several functions in this file are part of Dunya and have been ported
+# Several functions in this file are part of Dunya and have been ported 
 # from pycompmusic (https://github.com/MTG/pycompmusic), the official API
 #
 # Dunya is free software: you can redistribute it and/or modify it under the
@@ -18,20 +18,12 @@
 import os
 import errno
 
-from .conn import (
-    _get_paged_json,
-    _dunya_query_json,
-    _get_paged_json,
-    get_mp3,
-    _file_for_document,
-    set_token,
-)
+from .conn import _get_paged_json, _dunya_query_json, _get_paged_json, get_mp3, _file_for_document, set_token
 from compiam.io import write_1d_csv, write_2d_csv, write_json, write_scalar_txt
 
-
 class Corpora:
-    """Dunya corpora class with access functions"""
-
+    """Dunya corpora class with access functions
+    """
     def __init__(self, tradition, cc, token):
         """Dunya corpora class init method.
 
@@ -44,16 +36,14 @@ class Corpora:
         set_token(self.token)
 
         self.tradition = tradition
-        self.collection = (
-            "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
-        )
+        self.collection = 'dunya-' + self.tradition + '-cc' if cc else 'dunya-' + self.tradition
 
     def get_collection(self):
         """Get the documents (recordings) in a collection.
 
         :param slug: the name of the collection.
         """
-        return _dunya_query_json("document/" + self.collection)["documents"]
+        return _dunya_query_json("document/" + self.collection)['documents']
 
     def list_recordings(self, recording_detail=False):
         """List the recordings in the database. This function will automatically page through API results.
@@ -65,7 +55,7 @@ class Corpora:
         """
         args = {}
         if recording_detail:
-            args["detail"] = "1"
+            args['detail'] = '1'
         return _get_paged_json("api/" + self.tradition + "/recording", **args)
 
     def get_recording(self, rmbid):
@@ -86,7 +76,7 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/artist")
 
-    def get_artist(self, ambid):
+    def get_artist(self,  ambid):
         """Get specific information about an artist.
 
         :param ambid: An artist MBID.
@@ -106,7 +96,7 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/concert")
 
-    def get_concert(self, cmbid):
+    def get_concert(self,  cmbid):
         """Get specific information about a concert.
 
         :param cmbid: A concert mbid.
@@ -125,7 +115,7 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/work")
 
-    def get_work(self, wmbid):
+    def get_work(self,  wmbid):
         """Get specific information about a work.
 
         :param wmbid: A work mbid.
@@ -142,7 +132,7 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/raaga")
 
-    def get_raaga(self, rid):
+    def get_raaga(self,  rid):
         """Get specific information about a raaga.
 
         :param rid: A raaga id or uuid.
@@ -161,7 +151,7 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/taala")
 
-    def get_taala(self, tid):
+    def get_taala(self,  tid):
         """Get specific information about a taala.
 
         :param tid: A taala id or uuid.
@@ -174,13 +164,13 @@ class Corpora:
     def list_instruments(self):
         """List the instruments in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing instrument information:
+        :returns: A list of dictionaries containing instrument information: 
             ``{"id": instrument id, "name": Name of the instrument}``
             For additional information about each instrument use :func:`get_instrument`.
         """
         return _get_paged_json("api/" + self.tradition + "/instrument")
 
-    def get_instrument(self, iid):
+    def get_instrument(self,  iid):
         """Get specific information about an instrument.
 
         :param iid: An instrument id
@@ -198,10 +188,7 @@ class Corpora:
         :returns: a list of filetypes in the database for this recording.
         """
         document = _dunya_query_json("document/by-id/%s" % recordingid)
-        return {
-            x: list(document["derivedfiles"][x].keys())
-            for x in list(document["derivedfiles"].keys())
-        }
+        return {x:list(document['derivedfiles'][x].keys()) for x in list(document['derivedfiles'].keys())}
 
     @staticmethod
     def get_annotation(recordingid, thetype, subtype=None, part=None, version=None):
@@ -214,14 +201,10 @@ class Corpora:
         :param version: a specific version, otherwise the most recent one will be used.
         :returns: The contents of the most recent version of the derived file.
         """
-        return _file_for_document(
-            recordingid, thetype, subtype=subtype, part=part, version=version
-        )
+        return _file_for_document(recordingid, thetype, subtype=subtype, part=part, version=version)
 
     @staticmethod
-    def save_annotation(
-        recordingid, thetype, location, subtype=None, part=None, version=None
-    ):
+    def save_annotation(recordingid, thetype, location, subtype=None, part=None, version=None):
         """A version of get_annotation that writes the parsed data into a file.
 
         :param recordingid: Musicbrainz recording ID.
@@ -231,21 +214,17 @@ class Corpora:
         :param version: a specific version, otherwise the most recent one will be used.
         :returns: None (a file containing the parsed data is written).
         """
-        data = _file_for_document(
-            recordingid, thetype, subtype=subtype, part=part, version=version
-        )
-        if ("tonic" in subtype) or ("aksharaPeriod" in subtype):
+        data = _file_for_document(recordingid, thetype, subtype=subtype, part=part, version=version)
+        if ('tonic' in subtype) or ('aksharaPeriod' in subtype):
             write_scalar_txt(data, location)
-        elif "section" in subtype:
+        elif 'section' in subtype:
             write_json(data, location)
-        elif "APcurve" in subtype:
+        elif 'APcurve' in subtype:
             write_2d_csv(data, location)
-        elif ("pitch" in subtype) or ("aksharaTicks" in subtype):
+        elif ('pitch' in subtype) or ('aksharaTicks' in subtype):
             write_1d_csv(data, location)
         else:
-            raise ValueError(
-                "No writing method available for data type: {} and {}", thetype, subtype
-            )
+            raise ValueError("No writing method available for data type: {} and {}", thetype, subtype)
 
     def download_mp3(self, recordingid, location):
         """Download the mp3 of a document and save it to the specificed directory.

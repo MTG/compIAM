@@ -7,8 +7,8 @@ setup(
     author_email=["thomas.nuttall@upf.edu", "genis.plaja@upf.edu"],
     zip_safe=False,
     include_package_data=True,
-    long_description=open("README.md").read(),
-    install_requires=[
+    long_description=open('README.md').read(),
+    install_requires = [
         "matplotlib>=3.0.0",
         "numpy==1.19.5",
         "librosa==0.8.0",
