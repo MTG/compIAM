@@ -20,7 +20,6 @@ setup(
         "scikit-learn~=0.24.2",
         "tqdm==4.64.1",
         "mirdata==0.3.6",
-        "pipdeptree==2.3.1",
         "zope",
     ],
     extras_require={
