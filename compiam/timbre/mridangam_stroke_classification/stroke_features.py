@@ -3,8 +3,16 @@ import tqdm
 
 import pandas as pd
 import numpy as np
-import essentia.standard as estd
-from pathlib import Path
+
+try:
+    import essentia.standard as estd
+except:
+    raise ImportError(
+        "In order to use this tool you need to have essentia installed. "
+        "Please reinstall compiam using `pip install compiam[essentia]`"
+    )
+
+from compiam.data import WORKDIR
 
 SPLIT_PARAMS = {
     "fs": 44100,
@@ -19,10 +27,11 @@ MIX_MAX_SCALER = preprocessing.MinMaxScaler()
 
 
 def split_file(filename):
-    """ Define split boundaries based on a fixed energy threshold
-    :param filename: path to file to process
+    """ Define split boundaries based on a fixed energy threshold.
+
+    :param filename: path to file to process.
     :returns: a tuple with input file, energy threshold, split function, and 
-        start and end indexes of the detected splits
+        start and end indexes of the detected splits.
     """
     x = estd.MonoLoader(filename = filename, sampleRate = SPLIT_PARAMS.get("fs"))()
     NRG = []
@@ -50,10 +59,11 @@ def split_file(filename):
     return (x, NRG, split_decision_func, start_indexes, stop_indexes)
 
 def process_strokes(file_dict, load_computed=False):
-    """ Process and extract features from stroke files
-    :param stroke_dict: dict of files per stroke class (preferably generated through a mirdata loader)
-    :param load_computed: if True the pre-computed file is loaded
-    :returns: DataFrame with features per split, and list of computed features
+    """ Process and extract features from stroke files.
+
+    :param stroke_dict: dict of files per stroke class (preferably generated through a mirdata loader).
+    :param load_computed: if True the pre-computed file is loaded.
+    :returns: DataFrame with features per split, and list of computed features.
     """
     if not isinstance(load_computed, bool):
         raise ValueError("load_computed must be whether True or False") 
@@ -104,21 +114,22 @@ def process_strokes(file_dict, load_computed=False):
         # Convert list of features to dict and write to file
         df_features = pd.DataFrame(list_of_feat, columns=columns)
         df_features.to_csv(
-            os.path.join(Path().absolute(), 'models', 'timbre', \
+            os.path.join(WORKDIR, 'models', 'timbre', \
                 'mridangam_stroke_classification', 'pre-computed_features.csv'), index=False)
     else: 
         # Load the pre-computed dict
         df_features = pd.read_csv(
-            os.path.join(Path().absolute(), 'models', 'timbre', \
+            os.path.join(WORKDIR, 'models', 'timbre', \
                 'mridangam_stroke_classification', 'pre-computed_features.csv'))
         feature_list = list(df_features.columns)
     return df_features, feature_list
 
 def normalise_features(trainig_data, feature_list=None):
-    """ Normalise feature DataFrames
-    :param trainig_data: DataFrame with no-normalised features
-    :param feature_list: list of features to prevent including the stroke label if included in the list
-    :returns: DataFrame with normalised features per split
+    """ Normalise feature DataFrames.
+
+    :param trainig_data: DataFrame with no-normalised features.
+    :param feature_list: list of features to prevent including the stroke label if included in the list.
+    :returns: DataFrame with normalised features per split.
     """
     data_modif = trainig_data.copy()
     if feature_list is None:
@@ -128,9 +139,10 @@ def normalise_features(trainig_data, feature_list=None):
     return data_modif
 
 def features_for_pred(filename):
-    """ Compute and format features for prediction
-    :param filename: path to file to extract the features from
-    :returns: DataFrame with normalised features per split
+    """ Compute and format features for prediction.
+
+    :param filename: path to file to extract the features from.
+    :returns: DataFrame with normalised features per split.
     """
     (audio, _, _, start_indexes, stop_indexes) = split_file(filename)
     if len(start_indexes) > 1:
