@@ -27,7 +27,7 @@ class FTANetCarnatic(object):
     def __init__(self, filepath):
         """FTA-Net melody extraction init method.
 
-        :param model_path: path to file to the model weights.
+        :param filepath: path to file to the model weights.
         """
         if not os.path.exists(filepath + '.data-00000-of-00001'):
             raise ValueError("""
@@ -40,6 +40,7 @@ class FTANetCarnatic(object):
         self.filepath = filepath
         self.model = self.load_model()
         self.model.load_weights(filepath).expect_partial()
+
 
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
@@ -83,6 +84,7 @@ class FTANetCarnatic(object):
                 selected = Add()([selected, x_s])
         return selected
 
+
     @staticmethod
     def FTA_Module(x, shape, kt, kf):
         """Selection and fusion module.
@@ -124,6 +126,7 @@ class FTANetCarnatic(object):
         x_f = Multiply()([x_f, a_f])
 
         return x_r, x_t, x_f
+
 
     def load_model(self, input_shape=(320, 128, 3)):
         """Building the entire FTA-Net.
@@ -224,6 +227,7 @@ class FTANetCarnatic(object):
 
         ### TODO: Write code to re-sample in case sampling frequency is initialized different than 8k
         return np.array([TStamps, freqs]).transpose().toList()
+
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalise pitch given a tonic.

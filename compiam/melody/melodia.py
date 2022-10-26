@@ -77,8 +77,8 @@ class Melodia:
             voiceVibrato=self.voiceVibrato,
             voicingTolerance=self.voicingTolerance)
         pitch, _ = extractor(audio)
-        TStamps = np.array(range(0, len(pitch))) * np.float(self.parameters['hopSize']) / self.parameters['sampleRate']
-        return np.array([TStamps, pitch]).transpose().toList()
+        TStamps = np.array(range(0, len(pitch))) * np.float(self.hopSize) / self.sampleRate
+        return np.array([TStamps, pitch]).transpose()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalize pitch given a tonic.
