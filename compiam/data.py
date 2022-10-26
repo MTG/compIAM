@@ -14,6 +14,14 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 #       }
 
 models_dict = {
+    "melody:deepsrgm": {
+        "module_name": "compiam.melody.deepsrgm",
+        "class_name": "DEEPSRGM",
+        "kwargs": {
+            "filepath": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
+            "mapping_path": os.path.join(WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json")
+        }
+    },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
