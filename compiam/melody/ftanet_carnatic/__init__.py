@@ -27,7 +27,7 @@ class FTANetCarnatic(object):
     def __init__(self, filepath):
         """FTA-Net melody extraction init method.
 
-        :param model_path: path to file to the model weights.
+        :param filepath: path to file to the model weights.
         """
         if not os.path.exists(filepath + '.data-00000-of-00001'):
             raise ValueError("""
