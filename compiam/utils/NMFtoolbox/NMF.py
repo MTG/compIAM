@@ -76,55 +76,53 @@ def NMF(V, parameter):
 
     # get important params
     K, M = V.shape
-    R = parameter["numComp"]
-    L = parameter["numIter"]
+    R = parameter['numComp']
+    L = parameter['numIter']
 
     # initialization of W and H
-    if isinstance(parameter["initW"], list):
-        W = np.array(parameter["initW"])
+    if isinstance(parameter['initW'], list):
+        W = np.array(parameter['initW'])
     else:
-        W = deepcopy(parameter["initW"])
+        W = deepcopy(parameter['initW'])
 
-    H = deepcopy(parameter["initH"])
+    H = deepcopy(parameter['initH'])
 
     # create helper matrix of all ones
     onesMatrix = np.ones((K, M))
 
     # normalize to unit sum
-    V /= EPS + V.sum()
+    V /= (EPS + V.sum())
 
     # main iterations
-    for iter in tnrange(L, desc="Processing"):
+    for iter in tnrange(L, desc='Processing'):
 
         # compute approximation
         Lambda = EPS + W @ H
 
         # switch between pre-defined update rules
-        if parameter["costFunc"] == "EucDist":  # euclidean update rules
-            if not parameter["fixW"]:
-                W *= V @ H.T / (Lambda @ H.T + EPS)
+        if parameter['costFunc'] == 'EucDist':  # euclidean update rules
+            if not parameter['fixW']:
+                W *= (V @ H.T / (Lambda @ H.T + EPS))
 
-            H *= W.T @ V / (W.T @ Lambda + EPS)
+            H *= (W.T @ V / (W.T @ Lambda + EPS))
 
-        elif (
-            parameter["costFunc"] == "KLDiv"
-        ):  # Kullback Leibler divergence update rules
-            if not parameter["fixW"]:
+        elif parameter['costFunc'] == 'KLDiv':  # Kullback Leibler divergence update rules
+            if not parameter['fixW']:
                 W *= ((V / Lambda) @ H.T) / (onesMatrix @ H.T + EPS)
 
             H *= (W.T @ (V / Lambda)) / (W.T @ onesMatrix + EPS)
 
-        elif parameter["costFunc"] == "ISDiv":  # Itakura Saito divergence update rules
-            if not parameter["fixW"]:
-                W *= ((Lambda**-2 * V) @ H.T) / ((Lambda**-1) @ H.T + EPS)
+        elif parameter['costFunc'] == 'ISDiv':  # Itakura Saito divergence update rules
+            if not parameter['fixW']:
+                W *= ((Lambda ** -2 * V) @ H.T) / ((Lambda ** -1) @ H.T + EPS)
 
-            H *= (W.T @ (Lambda**-2 * V)) / (W.T @ (Lambda**-1) + EPS)
+            H *= (W.T @(Lambda ** -2 * V)) / (W.T @ (Lambda ** -1) + EPS)
 
         else:
-            raise ValueError("Unknown cost function")
+            raise ValueError('Unknown cost function')
 
         # normalize templates to unit sum
-        if not parameter["fixW"]:
+        if not parameter['fixW']:
             normVec = W.sum(axis=0)
             W *= 1.0 / (EPS + normVec)
 
@@ -149,10 +147,8 @@ def init_parameters(parameter):
     -------
     parameter: dict
     """
-    parameter["costFunc"] = (
-        "KLDiv" if "costFunc" not in parameter else parameter["costFunc"]
-    )
-    parameter["numIter"] = 30 if "numIter" not in parameter else parameter["numIter"]
-    parameter["fixW"] = False if "fixW" not in parameter else parameter["fixW"]
+    parameter['costFunc'] = 'KLDiv' if 'costFunc' not in parameter else parameter['costFunc']
+    parameter['numIter'] = 30 if 'numIter' not in parameter else parameter['numIter']
+    parameter['fixW'] = False if 'fixW' not in parameter else parameter['fixW']
 
     return parameter
