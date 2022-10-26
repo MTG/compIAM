@@ -73,11 +73,6 @@ def test_load_tf_models_full():
 def test_load_tf_models_all():
     _load_tf_models()
 
-@pytest.mark.torch
-def test_no_tf():
-    with pytest.raises(ImportError):
-        from compiam.melody.ftanet_carnatic import FTANetCarnatic
-
 
 ###############
 # Torch testing
@@ -98,12 +93,6 @@ def test_load_torch_models_full():
 @pytest.mark.all
 def test_load_torch_models_all():
     _load_torch_models()
-
-@pytest.mark.tensorflow
-def test_no_torch():
-    with pytest.raises(ImportError):
-        from compiam.rhythm.tabla_transcription import FourWayTabla
-        from compiam.structure.dhrupad_bandish_segmentation import DhrupadBandishSegmentation
 
 
 
