@@ -1,8 +1,9 @@
 import os
 import pytest
 
-from compiam.data import WORKDIR
 from compiam import load_model
+from compiam.melody import TonicIndianMultiPitch
+from compiam.data import WORKDIR
 
 def _predict_pitch():
     ftanet = load_model("melody:ftanet-carnatic")
@@ -24,7 +25,7 @@ def _predict_normalized_pitch():
 
     # assert pitch
 
-    tonic_multipitch = compiam.melody.TonicIndianMultiPitch
+    tonic_multipitch = TonicIndianMultiPitch()
     with pytest.raises(ValueError):
         tonic_multipitch.extract(os.path.join(WORKDIR, "tests", "resources", \
             "melody", "hola.wav"))
