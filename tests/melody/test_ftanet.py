@@ -24,7 +24,7 @@ def _predict_normalized_pitch():
 
     # assert pitch
 
-    tonic_multipitch = load_model("melody:tonic-multipitch")
+    tonic_multipitch = compiam.melody.TonicIndianMultiPitch
     with pytest.raises(ValueError):
         tonic_multipitch.extract(os.path.join(WORKDIR, "tests", "resources", \
             "melody", "hola.wav"))
