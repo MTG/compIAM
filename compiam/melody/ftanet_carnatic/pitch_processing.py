@@ -1,13 +1,12 @@
-# The functions in this file were directly ported from the original repoository of
+# The functions in this file were directly ported from the original repoository of 
 # the FTA-Net (https://github.com/yushuai/FTANet-melodic). We documented these for
-# a more clear usage of the code by the CompIAM users. For direct use of the FTA-Net
+# a more clear usage of the code by the CompIAM users. For direct use of the FTA-Net 
 # as designed and published by the authors, please refer to the original cited
 # GitHub repository.
 
 import numpy as np
 
 from .cfp import get_CenFreq
-
 
 def batchize_test(data, size=430):
     """Re-arrange CFP features to fit the FTA-Net model.
@@ -24,17 +23,16 @@ def batchize_test(data, size=430):
         if (i + 1) * size > data.shape[-1]:
             batch_x = np.zeros((data.shape[0], data.shape[1], size))
 
-            tmp_x = data[:, :, i * size :]
+            tmp_x = data[:, :, i * size:]
 
-            batch_x[:, :, : tmp_x.shape[-1]] += tmp_x
+            batch_x[:, :, :tmp_x.shape[-1]] += tmp_x
             xlist.append(batch_x.transpose(1, 2, 0))
             break
         else:
-            batch_x = data[:, :, i * size : (i + 1) * size]
+            batch_x = data[:, :, i * size:(i + 1) * size]
             xlist.append(batch_x.transpose(1, 2, 0))
 
     return np.array(xlist)
-
 
 def est(output, CenFreq, time_arr):
     """Re-arrange FTA-Net output to a versatile pitch time-series.
@@ -59,7 +57,6 @@ def est(output, CenFreq, time_arr):
 
     return est_arr
 
-
 def iseg(data):
     """Re-shape data.
 
@@ -73,7 +70,6 @@ def iseg(data):
         new_data[:, i * data.shape[-1] : (i + 1) * data.shape[-1]] = data[i]
     return new_data
 
-
 def get_est_arr(model, x_list, y_list, batch_size):
     """Run the FTA-Net model in batches and construct the final pitch time-series.
 
@@ -86,7 +82,7 @@ def get_est_arr(model, x_list, y_list, batch_size):
     for i in range(len(x_list)):
         x = x_list[i]
         y = y_list[i]
-
+        
         # predict and concat
         num = x.shape[0] // batch_size
         if x.shape[0] % batch_size != 0:
@@ -95,20 +91,20 @@ def get_est_arr(model, x_list, y_list, batch_size):
         for j in range(num):
             # x: (batch_size, freq_bins, seg_len)
             if j == num - 1:
-                X = x[j * batch_size :]
+                X = x[j * batch_size:]
                 length = x.shape[0] - j * batch_size
             else:
-                X = x[j * batch_size : (j + 1) * batch_size]
+                X = x[j * batch_size: (j + 1) * batch_size]
                 length = batch_size
-
+            
             prediction = model.predict(X, length)
             preds.append(prediction)
-
+        
         # (num*bs, freq_bins, seg_len) to (freq_bins, T)
         preds = np.concatenate(preds, axis=0)
         preds = iseg(preds)
         # transform to f0ref
         CenFreq = get_CenFreq(StartFreq=31, StopFreq=1250, NumPerOct=60)
         est_arr = est(preds, CenFreq, y)
-
+        
     return est_arr

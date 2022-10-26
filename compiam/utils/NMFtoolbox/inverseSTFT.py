@@ -80,17 +80,17 @@ def inverseSTFT(X, parameter):
     # initialize parameters
     parameter = init_parameters(parameter, numBins)
 
-    reconstMirror = parameter["reconstMirror"]
-    appendFrame = parameter["appendFrame"]
-    analyticSig = parameter["analyticSig"]
-    blockSize = parameter["blockSize"]
-    hopSize = parameter["hopSize"]
+    reconstMirror = parameter['reconstMirror']
+    appendFrame = parameter['appendFrame']
+    analyticSig = parameter['analyticSig']
+    blockSize = parameter['blockSize']
+    hopSize = parameter['hopSize']
     numPadBins = blockSize - numBins
     numSamples = numFrames * hopSize + blockSize
 
     # for simplicity, we assume the analysis and synthesis windows to be equal
-    analysisWinFunc = deepcopy(parameter["winFunc"])
-    synthesisWinFunc = deepcopy(parameter["winFunc"])
+    analysisWinFunc = deepcopy(parameter['winFunc'])
+    synthesisWinFunc = deepcopy(parameter['winFunc'])
 
     # prepare helper variables
     halfBlockSize = round(blockSize / 2)
@@ -106,11 +106,7 @@ def inverseSTFT(X, parameter):
     scale = 2.0 if analyticSig else 1.0
 
     # decide between analytic and real output
-    y = (
-        np.zeros(numSamples, dtype=np.complex64)
-        if analyticSig
-        else np.zeros(numSamples, dtype=np.float32)
-    )
+    y = np.zeros(numSamples, dtype=np.complex64) if analyticSig else np.zeros(numSamples, dtype=np.float32)
 
     # construct normalization function for the synthesis window
     # that equals the denominator in eq. (6) in [1]
@@ -176,11 +172,11 @@ def inverseSTFT(X, parameter):
 
     # check if borders need to be removed
     if appendFrame:
-        y = y[halfBlockSize : len(y) - halfBlockSize]
+        y = y[halfBlockSize:len(y) - halfBlockSize]
 
     # check if number of samples was defined from outside
-    if parameter["numSamples"]:
-        y = y[0 : parameter["numSamples"]]
+    if parameter['numSamples']:
+        y = y[0:parameter['numSamples']]
 
     return y.reshape(-1, 1), synthesisWinFunc
 
@@ -198,28 +194,18 @@ def init_parameters(parameter, numBins):
     parameter: dict
     """
     parameter = dict() if not parameter else parameter
-    parameter["blockSize"] = (
-        2048 if "blockSize" not in parameter else parameter["blockSize"]
-    )
-    parameter["hopSize"] = 512 if "hopSize" not in parameter else parameter["hopSize"]
-    parameter["winFunc"] = (
-        np.hanning(parameter["blockSize"])
-        if "winFunc" not in parameter
-        else parameter["winFunc"]
-    )
-    parameter["appendFrame"] = (
-        True if "appendFrame" not in parameter else parameter["appendFrame"]
-    )
-    parameter["analyticSig"] = (
-        False if "analyticSig" not in parameter else parameter["analyticSig"]
-    )
+    parameter['blockSize'] = 2048 if 'blockSize' not in parameter else parameter['blockSize']
+    parameter['hopSize'] = 512 if 'hopSize' not in parameter else parameter['hopSize']
+    parameter['winFunc'] = np.hanning(parameter['blockSize']) if 'winFunc' not in parameter else parameter['winFunc']
+    parameter['appendFrame'] = True if 'appendFrame' not in parameter else parameter['appendFrame']
+    parameter['analyticSig'] = False if 'analyticSig' not in parameter else parameter['analyticSig']
 
     # this controls if the upper part of the spectrum is given or should be
     # reconctructed by 'mirroring' (flip and conjugate) of the lower spectrum
-    if "reconstMirror" not in parameter:
-        if numBins == parameter["blockSize"]:
-            parameter["reconstMirror"] = False
-        elif numBins < parameter["blockSize"]:
-            parameter["reconstMirror"] = True
+    if 'reconstMirror' not in parameter:
+        if numBins == parameter['blockSize']:
+            parameter['reconstMirror'] = False
+        elif numBins < parameter['blockSize']:
+            parameter['reconstMirror'] = True
 
     return parameter
