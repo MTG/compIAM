@@ -11,8 +11,8 @@ from compiam.timbre.mridangam_stroke_classification import normalise_features
 
 
 class StrokeClassification:
-    """Mridangam stroke classification."""
-
+    """Mridangam stroke classification.
+    """
     def __init__(self):
         """Mridangam stroke classification init method.
 
@@ -20,14 +20,7 @@ class StrokeClassification:
         :param version:  version of the dataset to use.
         """
 
-    def train(
-        self,
-        trainig_data,
-        feature_list,
-        model_type="svm",
-        balance=False,
-        balance_ref="random",
-    ):
+    def train(self, trainig_data, feature_list, model_type="svm", balance=False, balance_ref='random'):
         """Train a support vector machine for stroke classification.
 
         :param trainig_data: DataFrame including features to train.
@@ -39,63 +32,46 @@ class StrokeClassification:
         """
 
         if trainig_data is None:
-            raise ValueError(
-                "Prior to train the model please load the dataset using .process_strokes()"
-            )
+            raise ValueError("Prior to train the model please load the dataset using .process_strokes()") 
 
-        # Let's use sklearn's preprocessing tools for applying normalisation to features
+        #Let's use sklearn's preprocessing tools for applying normalisation to features
         data_modif = normalise_features(trainig_data, feature_list)
-
+        
         if balance == True:
             strokes = trainig_data.stroke.unique()
-            count_dict = trainig_data["stroke"].value_counts().to_dict()
+            count_dict = trainig_data['stroke'].value_counts().to_dict()
             min_stroke = min(count_dict, key=count_dict.get)
-            min_number = (
-                data_modif.stroke.value_counts()[min_stroke]
-                if balance_ref == "lower"
+            min_number = data_modif.stroke.value_counts()[min_stroke] if balance_ref == 'lower' \
                 else data_modif.stroke.value_counts()[random.choice(strokes)]
-            )
             reshaped_stroke_list = []
             for strk in strokes:
                 if count_dict[strk] > min_number:
-                    reshaped_stroke_list.append(
-                        data_modif[data_modif.stroke == strk].sample(n=min_number)
-                    )
+                    reshaped_stroke_list.append(data_modif[data_modif.stroke == strk].sample(n = min_number))
                 else:
                     reshaped_stroke_list.append(data_modif[data_modif.stroke == strk])
-            # Merging after downsampling
+            #Merging after downsampling
             data_modif = pd.concat(reshaped_stroke_list)
 
-        X = data_modif.iloc[:, : len(feature_list) - 1].values
+        X = data_modif.iloc[:,:len(feature_list)-1].values 
         # Creating output values
-        data_modif.stroke = pd.Categorical(
-            data_modif.stroke
-        )  # convert to categorical data
+        data_modif.stroke = pd.Categorical(data_modif.stroke)  # convert to categorical data
         y = np.array(data_modif.stroke.cat.codes)  # create label encoded outputs
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.33, random_state=42
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 42)
 
         if model_type == "svm":
-            clf = svm.SVC(gamma=1 / (X_train.shape[-1] * X_train.var()))
+            clf = svm.SVC(gamma = 1 / (X_train.shape[-1] * X_train.var()))
         elif model_type == "mlp":
             clf = MLPClassifier(alpha=1, max_iter=1000)
         else:
-            raise ValueError(
-                "Model not available. Please check the available options in the documentation."
-            )
+            raise ValueError("Model not available. Please check the available options in the documentation.") 
 
         # Fit model with training data
         clf.fit(X_train, y_train)
 
         # Evaluate
         y_pred = clf.predict(X_test)
-        print(
-            "{} model successfully trained with accuracy {}% in the testing set".format(
-                model_type.upper(),
-                round(np.sum(y_test == y_pred) / len(y_pred) * 100),
-                2,
-            )
-        )
+        print("{} model successfully trained with accuracy {}% in the testing set".format(
+            model_type.upper(),
+            round(np.sum(y_test == y_pred) / len(y_pred)*100), 2))
         return clf

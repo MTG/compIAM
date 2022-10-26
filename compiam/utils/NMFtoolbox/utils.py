@@ -34,9 +34,9 @@ from scipy.ndimage.filters import convolve
 import scipy.io
 import os
 
-EPS = 2.0**-52
-MAX_WAV_VALUE = 2.0**15
-PATH_TO_MATRICES = "matrices/"
+EPS = 2.0 ** -52
+MAX_WAV_VALUE = 2.0 ** 15
+PATH_TO_MATRICES = 'matrices/'
 
 
 def make_monaural(audio):
@@ -99,7 +99,7 @@ def pcmInt16ToFloat32Numpy(audio):
     return res
 
 
-def conv2(x, y, mode="same"):
+def conv2(x, y, mode='same'):
     """Emulate the function conv2 from Mathworks.
 
     Usage:
@@ -111,7 +111,7 @@ def conv2(x, y, mode="same"):
     # A simple implementation supporting the 'same' option, only, could be made like below
     # source: https://stackoverflow.com/questions/3731093/is-there-a-python-equivalent-of-matlabs-conv2-function
 
-    if not mode == "same":
+    if not mode == 'same':
         raise NotImplementedError("Mode not supported")
 
     # Add singleton dimensions
@@ -132,12 +132,14 @@ def conv2(x, y, mode="same"):
     # Apparently, the origin must be set in a special way to reproduce
     # the results of scipy.signal.convolve and Matlab
     for i in range(len(x.shape)):
-        if (x.shape[i] - y.shape[i]) % 2 == 0 and x.shape[i] > 1 and y.shape[i] > 1:
+        if ((x.shape[i] - y.shape[i]) % 2 == 0 and
+                x.shape[i] > 1 and
+                y.shape[i] > 1):
             origin = origin + (-1,)
         else:
             origin = origin + (0,)
 
-    z = convolve(x, y, mode="constant", origin=origin)
+    z = convolve(x, y, mode='constant', origin=origin)
 
     return z
 
@@ -162,15 +164,9 @@ def run_unit_test(res_python, mat_matlab, decimal_precision=5):
     else:
         arr_python = res_python
 
-    np.testing.assert_almost_equal(
-        arr_python, mat_matlab, decimal=decimal_precision, err_msg="", verbose=True
-    )
+    np.testing.assert_almost_equal(arr_python, mat_matlab, decimal=decimal_precision, err_msg='', verbose=True)
 
-    print(
-        "Test successfully passed. Precision: {} significant digits".format(
-            decimal_precision
-        )
-    )
+    print('Test successfully passed. Precision: {} significant digits'.format(decimal_precision))
 
 
 def get_matlab_matrices(function_name):
@@ -193,7 +189,7 @@ def get_matlab_matrices(function_name):
 
     for filename in filename_list:
         filepath = os.path.join(base_dir, filename)
-        matrix_id = filename.split(".")[0]
+        matrix_id = filename.split('.')[0]
         matlab_matrix = load_matlab_dict(filepath, matrix_id)
         matrix_dict[matrix_id] = matlab_matrix
 
@@ -211,8 +207,4 @@ def run_matlab_script(function_name, path_to_matlab_bin):
     path_to_matlab_bin: str
         Path to the binary file of MATLAB
     """
-    os.system(
-        "cat test_{}.m | {} - nodesktop - nosplash".format(
-            function_name, path_to_matlab_bin
-        )
-    )
+    os.system('cat test_{}.m | {} - nodesktop - nosplash'.format(function_name, path_to_matlab_bin))

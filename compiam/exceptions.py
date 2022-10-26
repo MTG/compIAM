@@ -1,18 +1,14 @@
 class ModelNotFoundError(Exception):
-    pass
-
+	pass
 
 class ModelNotDefinedError(Exception):
-    pass
-
+	pass
 
 class ModelNotTrainedError(Exception):
-    pass
-
+	pass
 
 class HTTPError(Exception):
     pass
-
 
 class ConnectionError(Exception):
     pass
