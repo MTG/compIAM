@@ -10,7 +10,7 @@ def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     :param tonic: recording tonic to normalize the pitch to.
     :param bins_per_octave: number of frequency bins per octave.
     :param max_value: maximum value to clip the normalized pitch to.
-    :returns: a 2-D list with time-stamps and normalized to a given tonic 
+    :returns: a 2-D list with time-stamps and normalized to a given tonic
         pitch values per timestamp.
     """
     pitch_values = pitch[:, 1]

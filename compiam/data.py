@@ -1,13 +1,14 @@
 import os
 import pathlib
+
 WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 
 #############
 # Models Dict
 #############
-# Each model should be stored in models_dict using 
+# Each model should be stored in models_dict using
 #   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
-#	    {
+# 	    {
 #           "module_name": "<compiam.melody/rhythm/timbre/structure.file/folder name of model>",
 #           "class_name": "<name of the model class>",
 #           "model_path": "<path_to_model if any>"
@@ -19,34 +20,53 @@ models_dict = {
         "class_name": "DEEPSRGM",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
-            "mapping_path": os.path.join(WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json")
-        }
+            "mapping_path": os.path.join(
+                WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json"
+            ),
+        },
     },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
-        "kwargs": {"model_path": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
+        "kwargs": {
+            "model_path": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")
+        },
     },
     "rhythm:1way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
+        "kwargs": {
+            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")
+        },
     },
     "rhythm:4way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
+        "kwargs": {
+            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")
+        },
     },
     "structure:dhrupad-bandish-segmentation": {
         "module_name": "compiam.structure.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/pretrained_models/"),
-            "splits_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"),
-            "annotations_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/annotations/"),
-            "original_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_original/"),
-            "processed_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_sections/"),
-        }
+            "model_path": os.path.join(
+                WORKDIR,
+                "models/structure/dhrupad_bandish_segmentation/pretrained_models/",
+            ),
+            "splits_path": os.path.join(
+                WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"
+            ),
+            "annotations_path": os.path.join(
+                WORKDIR, "models/structure/dhrupad_bandish_segmentation/annotations/"
+            ),
+            "original_audios_path": os.path.join(
+                WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_original/"
+            ),
+            "processed_audios_path": os.path.join(
+                WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_sections/"
+            ),
+        },
     },
 }
 
@@ -55,7 +75,7 @@ models_dict = {
 # Datasets List
 ###############
 # Make sure you:
-#   1. create a dataset loader in mirdata (https://github.com/mir-dataset-loaders/mirdata) 
+#   1. create a dataset loader in mirdata (https://github.com/mir-dataset-loaders/mirdata)
 #   2. add the dataset identifier in this list
 
 datasets_list = ["saraga_carnatic", "saraga_hindustani", "mridangam_stroke"]
@@ -100,4 +120,3 @@ corpora_list = {
         },
     },
 }
-

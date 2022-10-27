@@ -8,6 +8,7 @@ from compiam.structure.dhrupad_bandish_segmentation.params import fs
 
 import warnings
 
+
 def split_audios(save_dir=None, annotations_path=None, audios_path=None):
     """Dhrupad Bandish Segmentation init method.
 
@@ -16,35 +17,48 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
     :param audios_path: path where to find the original audios
     """
     if not os.path.exists(save_dir):
-        warnings.warn("""Save directory not found. Creating it...
-        """)
+        warnings.warn(
+            """Save directory not found. Creating it...
+        """
+        )
         os.mkdir(save_dir)
 
     if not os.path.exists(annotations_path):
-        raise ValueError("""
-            Path to annotations not found.""")
+        raise ValueError(
+            """
+            Path to annotations not found."""
+        )
 
     if not os.path.exists(audios_path):
-        raise ValueError("""
-            Path to original audios not found.""")
+        raise ValueError(
+            """
+            Path to original audios not found."""
+        )
 
-    annotations = np.loadtxt(os.path.join(annotations_path, "section_boundaries_labels.csv", delimiter=",", dtype=str))
+    annotations = np.loadtxt(
+        os.path.join(
+            annotations_path, "section_boundaries_labels.csv", delimiter=",", dtype=str
+        )
+    )
 
-    song= "" #please leave this line as it is
+    song = ""  # please leave this line as it is
     for item in annotations:
         if "_".join(item[0].split("_")[:-1]) != song:
             song = "_".join(item[0].split("_")[:-1])
             try:
-                x, _ = librosa.load(os.path.join(audios_path, song+".wav"), sr=fs)
+                x, _ = librosa.load(os.path.join(audios_path, song + ".wav"), sr=fs)
             except FileNotFoundError:
-                print("""
+                print(
+                    """
                     Audio for %s not found. Please make sure you check:
                     models/structure/dhrupad_bandish_segmentation/original_audio/README.md
-                """%song)
+                """
+                    % song
+                )
                 song = ""
                 continue
 
-        start = int(float(item[1])*fs)
-        end = int(float(item[2])*fs)
+        start = int(float(item[1]) * fs)
+        end = int(float(item[2]) * fs)
         y = x[start:end]
-        sf.write(os.path.join(save_dir,item[0] + ".wav"), y, fs)
+        sf.write(os.path.join(save_dir, item[0] + ".wav"), y, fs)
