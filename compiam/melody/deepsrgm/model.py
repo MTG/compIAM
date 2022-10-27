@@ -1,9 +1,19 @@
 import torch.nn as nn
 from compiam.melody.deepsrgm.attention_layer import Attention
 
+
 class deepsrgmModel(nn.Module):
-    def __init__(self, rnn="lstm", input_length=5000, embedding_size=128, hidden_size=768,
-                 num_layers=1, num_classes=10, vocab_size=209, drop_prob=0.3):
+    def __init__(
+        self,
+        rnn="lstm",
+        input_length=5000,
+        embedding_size=128,
+        hidden_size=768,
+        num_layers=1,
+        num_classes=10,
+        vocab_size=209,
+        drop_prob=0.3,
+    ):
         """DEEPSRGM model init class
 
         :param rnn: indicates whether to use an LSTM or a GRU
@@ -18,21 +28,31 @@ class deepsrgmModel(nn.Module):
 
         super(deepsrgmModel, self).__init__()
         self.num_layers = num_layers
-        self.hidden_size = hidden_size        
+        self.hidden_size = hidden_size
 
-        if rnn=="lstm":
-            self.rnn = nn.LSTM(embedding_size, hidden_size, num_layers,
-                            dropout=drop_prob, batch_first=True)
-        elif rnn=="gru":
-            self.rnn = nn.GRU(embedding_size, hidden_size, num_layers,
-                          dropout=drop_prob, batch_first=True)
+        if rnn == "lstm":
+            self.rnn = nn.LSTM(
+                embedding_size,
+                hidden_size,
+                num_layers,
+                dropout=drop_prob,
+                batch_first=True,
+            )
+        elif rnn == "gru":
+            self.rnn = nn.GRU(
+                embedding_size,
+                hidden_size,
+                num_layers,
+                dropout=drop_prob,
+                batch_first=True,
+            )
 
         self.embeddings = nn.Embedding(vocab_size, embedding_size)
         self.attention_layer = Attention(hidden_size, input_length)
 
         self.fc1 = nn.Linear(hidden_size, 384)
         self.fc2 = nn.Linear(384, num_classes)
-        
+
         # self.batchNorm1d = nn.BatchNorm1d(input_length)
         self.dropout = nn.Dropout(drop_prob)
         self.relu = nn.ReLU()

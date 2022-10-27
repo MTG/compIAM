@@ -30,8 +30,9 @@ class Attention(nn.Module):
         feature_dim = self.feature_dim
         step_dim = self.step_dim
 
-        eij = torch.mm(x.contiguous().view(-1, feature_dim),
-                       self.weight).view(-1, step_dim)
+        eij = torch.mm(x.contiguous().view(-1, feature_dim), self.weight).view(
+            -1, step_dim
+        )
 
         if self.bias:
             eij = eij + self.b

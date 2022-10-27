@@ -72,7 +72,7 @@ def NEMA(A, lamb=0.9):
 
     for k in range(1, numCols):
         storeRow = deepcopy(filtered[:, k])
-        filtered[:, k] = lamb * filtered[:, k-1] + filtered[:, k] * (1 - lamb)
+        filtered[:, k] = lamb * filtered[:, k - 1] + filtered[:, k] * (1 - lamb)
         filtered[:, k] = np.maximum(filtered[:, k], storeRow)
 
     return filtered
