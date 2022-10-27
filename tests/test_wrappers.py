@@ -28,7 +28,7 @@ def test_lists():
     assert type(list_models()) is list
     assert type(list_datasets()) is list
     assert type(list_corpora()) is list
-    assert "melody:melodia" in list_models()
+    assert "melody:ftanet-carnatic" in list_models()
     assert "saraga_carnatic" in list_datasets()
     assert "hindustani" in list_corpora()
 
@@ -52,15 +52,6 @@ def _load_torch_models():
     assert type(tabla_class) == FourWayTabla
     assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 
-def _load_ess_models():
-    from compiam import load_model
-    from compiam.melody.melodia import Melodia
-    from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
-    melodia = load_model("melody:melodia")
-    tonic_multipitch = load_model("melody:tonic-multipitch")
-    assert type(melodia) == Melodia
-    assert type(tonic_multipitch) == TonicIndianMultiPitch
-
 
 ####################
 # Tensorflow testing
@@ -82,11 +73,6 @@ def test_load_tf_models_full():
 def test_load_tf_models_all():
     _load_tf_models()
 
-@pytest.mark.torch
-def test_no_tf():
-    with pytest.raises(ImportError):
-        from compiam.melody.ftanet_carnatic import FTANetCarnatic
-
 
 ###############
 # Torch testing
@@ -107,38 +93,6 @@ def test_load_torch_models_full():
 @pytest.mark.all
 def test_load_torch_models_all():
     _load_torch_models()
-
-@pytest.mark.tensorflow
-def test_no_torch():
-    with pytest.raises(ImportError):
-        from compiam.rhythm.tabla_transcription import FourWayTabla
-        from compiam.structure.dhrupad_bandish_segmentation import DhrupadBandishSegmentation
-
-
-##################
-# Essentia testing
-##################
-
-@pytest.mark.essentia
-def test_load_ess_models_ess():
-    _load_ess_models()
-
-@pytest.mark.essentia_tensorflow
-def test_load_ess_models_ess_tf():
-    _load_ess_models()
-
-@pytest.mark.essentia_torch
-def test_load_torch_models_ess_torch():
-    _load_ess_models()
-
-@pytest.mark.all
-def test_load_torch_models_all():
-    _load_ess_models()
-
-@pytest.mark.full_ml
-def test_no_ess():
-    with pytest.raises(ImportError):
-        from compiam.melody.melodia import Melodia
 
 
 

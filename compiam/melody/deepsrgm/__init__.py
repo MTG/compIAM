@@ -6,21 +6,12 @@ import numpy as np
 import compiam
 from compiam.melody.deepsrgm.raga_mapping import create_mapping
 
-try:
-    import torch
-    from compiam.melody.deepsrgm.model import deepsrgmModel
-except:
-    raise ImportError(
-        "In order to use this tool you need to have torch installed. "
-        "Please reinstall compiam using `pip install 'compiam[torch]'"
-    )
-
 
 class DEEPSRGM(object):
     """DEEPSRGM model for raga classification. This DEEPSGRM implementation has been
     kindly provided by Shubham Lohiya and Swarada Bharadwaj.
     """
-    def __init__(self, filepath, mapping_path, dataset_home=None, device=None):
+    def __init__(self, model_path, mapping_path, dataset_home=None, device=None):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
@@ -28,10 +19,24 @@ class DEEPSRGM(object):
         :param dataset_home: path to find the mirdata dataset
         :param device: torch CUDA config to route model to GPU
         """
+        ###
+        try:
+            global torch
+            import torch
+
+            global deepsrgmModel
+            from compiam.melody.deepsrgm.model import deepsrgmModel
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have torch installed. "
+                "Please reinstall compiam using `pip install 'compiam[torch]'"
+            )
+        ###
+
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.model_path = filepath
+        self.model_path = model_path
         self.mapping_path = mapping_path
         self.mapping = None
         self.selected_ragas = [5, 8, 10, 13, 17, 20, 22, 23, 24, 28]  # pre-defined for release 0.1

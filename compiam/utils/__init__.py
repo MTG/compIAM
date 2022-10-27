@@ -1,6 +1,6 @@
-import logging
 import os
 import yaml
+import logging
 
 def get_logger(name):
     logging.basicConfig(format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",)
