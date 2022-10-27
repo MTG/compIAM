@@ -36,7 +36,7 @@ from compiam.utils.NMFtoolbox.midi2freq import midi2freq
 from compiam.utils.NMFtoolbox.utils import load_matlab_dict, EPS
 
 
-def initTemplates(parameter, strategy='random'):
+def initTemplates(parameter, strategy="random"):
     """Implements different initialization strategies for NMF templates. The
     strategies 'random' and 'uniform' are self-explaining. The strategy
     'pitched' uses comb-filter templates as described in [2]. The strategy
@@ -75,58 +75,76 @@ def initTemplates(parameter, strategy='random'):
     parameter = init_parameters(parameter)
     initW = list()
 
-    if strategy == 'random':
+    if strategy == "random":
         # fix random seed
         np.random.seed(0)
 
-        for k in range(parameter['numComp']):
-            initW.append(np.random.rand(parameter['numBins'], parameter['numTemplateFrames']))
+        for k in range(parameter["numComp"]):
+            initW.append(
+                np.random.rand(parameter["numBins"], parameter["numTemplateFrames"])
+            )
 
-    elif strategy == 'uniform':
-        for k in range(parameter['numComp']):
-            initW.append(np.ones((parameter['numBins'], parameter['numTemplateFrames'])))
+    elif strategy == "uniform":
+        for k in range(parameter["numComp"]):
+            initW.append(
+                np.ones((parameter["numBins"], parameter["numTemplateFrames"]))
+            )
 
-    elif strategy == 'pitched':
-        uniquePitches = np.unique(parameter['pitches'])
+    elif strategy == "pitched":
+        uniquePitches = np.unique(parameter["pitches"])
 
         # needs to be overwritten
-        parameter['numComp'] = uniquePitches.size
+        parameter["numComp"] = uniquePitches.size
 
         for k in range(uniquePitches.size):
             # initialize as zeros
-            initW.append(EPS + np.zeros((parameter['numBins'], parameter['numTemplateFrames'])))
+            initW.append(
+                EPS + np.zeros((parameter["numBins"], parameter["numTemplateFrames"]))
+            )
 
             # then insert non-zero entries in bands around hypothetic harmonics
-            curPitchFreqLower_Hz = midi2freq(uniquePitches[k] - parameter['pitchTolDown'])
-            curPitchFreqUpper_Hz = midi2freq(uniquePitches[k] + parameter['pitchTolUp'])
+            curPitchFreqLower_Hz = midi2freq(
+                uniquePitches[k] - parameter["pitchTolDown"]
+            )
+            curPitchFreqUpper_Hz = midi2freq(uniquePitches[k] + parameter["pitchTolUp"])
 
-            for g in range(parameter['numHarmonics']):
-                currPitchFreqLower_Bins = (g + 1) * curPitchFreqLower_Hz / parameter['deltaF']
-                currPitchFreqUpper_Bins = (g + 1) * curPitchFreqUpper_Hz / parameter['deltaF']
+            for g in range(parameter["numHarmonics"]):
+                currPitchFreqLower_Bins = (
+                    (g + 1) * curPitchFreqLower_Hz / parameter["deltaF"]
+                )
+                currPitchFreqUpper_Bins = (
+                    (g + 1) * curPitchFreqUpper_Hz / parameter["deltaF"]
+                )
 
-                binRange = np.arange(int(round(currPitchFreqLower_Bins)) - 1, int(round(currPitchFreqUpper_Bins)))
-                binRange = binRange[0:parameter['numBins']]
+                binRange = np.arange(
+                    int(round(currPitchFreqLower_Bins)) - 1,
+                    int(round(currPitchFreqUpper_Bins)),
+                )
+                binRange = binRange[0 : parameter["numBins"]]
 
                 # insert 1/f intensity
-                initW[k][binRange, :] = 1/(g+1)
+                initW[k][binRange, :] = 1 / (g + 1)
 
-    elif strategy == 'drums':
+    elif strategy == "drums":
 
-        dictW = load_matlab_dict('../data/dictW.mat', 'dictW')
+        dictW = load_matlab_dict("../data/dictW.mat", "dictW")
 
-        if parameter['numBins'] == dictW.shape[0]:
+        if parameter["numBins"] == dictW.shape[0]:
             for k in range(dictW.shape[1]):
-                initW.append(dictW[:, k].reshape(-1, 1) * np.linspace(1, 0.1, parameter['numTemplateFrames']))
+                initW.append(
+                    dictW[:, k].reshape(-1, 1)
+                    * np.linspace(1, 0.1, parameter["numTemplateFrames"])
+                )
 
         # needs to be overwritten
-        parameter['numComp'] = len(initW)
+        parameter["numComp"] = len(initW)
 
     else:
-        raise ValueError('Invalid strategy.')
+        raise ValueError("Invalid strategy.")
 
     # do final normalization
-    for k in range(parameter['numComp']):
-        initW[k] /= (EPS + initW[k].sum())
+    for k in range(parameter["numComp"]):
+        initW[k] /= EPS + initW[k].sum()
 
     return initW
 
@@ -143,9 +161,17 @@ def init_parameters(parameter):
     -------
     parameter: dict
     """
-    parameter['pitchTolUp'] = 0.75 if 'pitchTolUp' not in parameter else parameter['pitchTolUp']
-    parameter['pitchTolDown'] = 0.75 if 'pitchTolDown' not in parameter else parameter['pitchTolDown']
-    parameter['numHarmonics'] = 25 if 'numHarmonics' not in parameter else parameter['numHarmonics']
-    parameter['numTemplateFrames'] = 1 if 'numTemplateFrames' not in parameter else parameter['numTemplateFrames']
+    parameter["pitchTolUp"] = (
+        0.75 if "pitchTolUp" not in parameter else parameter["pitchTolUp"]
+    )
+    parameter["pitchTolDown"] = (
+        0.75 if "pitchTolDown" not in parameter else parameter["pitchTolDown"]
+    )
+    parameter["numHarmonics"] = (
+        25 if "numHarmonics" not in parameter else parameter["numHarmonics"]
+    )
+    parameter["numTemplateFrames"] = (
+        1 if "numTemplateFrames" not in parameter else parameter["numTemplateFrames"]
+    )
 
     return parameter

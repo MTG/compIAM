@@ -11,17 +11,18 @@ logger = get_logger(__name__)
 
 
 class DhrupadBandishSegmentation:
-    """Dhrupad Bandish Segmentation
-    """
+    """Dhrupad Bandish Segmentation"""
+
     def __init__(
         self,
         model_path=None,
         splits_path=None,
         annotations_path=None,
-        features_path = None,
+        features_path=None,
         original_audios_path=None,
         processed_audios_path=None,
-        device=None):
+        device=None,
+    ):
         """Dhrupad Bandish Segmentation init method.
 
         :param model_path: path to file to the model weights.
@@ -33,16 +34,22 @@ class DhrupadBandishSegmentation:
             import torch
 
             global split_audios
-            from compiam.structure.dhrupad_bandish_segmentation.audio_processing import split_audios
+            from compiam.structure.dhrupad_bandish_segmentation.audio_processing import (
+                split_audios,
+            )
 
             global extract_features, makechunks
             from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import (
-                extract_features, makechunks
+                extract_features,
+                makechunks,
             )
 
             global class_to_categorical, categorical_to_class, build_model, smooth_boundaries
             from compiam.structure.dhrupad_bandish_segmentation.model_utils import (
-                class_to_categorical, categorical_to_class, build_model, smooth_boundaries
+                class_to_categorical,
+                categorical_to_class,
+                build_model,
+                smooth_boundaries,
             )
 
             global pars
@@ -73,13 +80,19 @@ class DhrupadBandishSegmentation:
         :param verbose: showing details of the model
         """
         print("Splitting audios...")
-        split_audios(self.processed_audios_path, self.annotations_path, self.original_audios_path)
+        split_audios(
+            self.processed_audios_path, self.annotations_path, self.original_audios_path
+        )
         print("Extracting features...")
-        extract_features(self.processed_audios_path, self.annotations_path, self.features_path, mode)
+        extract_features(
+            self.processed_audios_path, self.annotations_path, self.features_path, mode
+        )
 
-        #generate cross-validation folds for training
+        # generate cross-validation folds for training
         songlist = os.listdir(self.features_path)
-        labels_stm = np.load(os.path.join(self.features_path, "labels_stm.npy"), allow_pickle=True).item()
+        labels_stm = np.load(
+            os.path.join(self.features_path, "labels_stm.npy"), allow_pickle=True
+        ).item()
 
         partition = {"train": [], "validation": []}
         n_folds = 3
@@ -87,13 +100,19 @@ class DhrupadBandishSegmentation:
         for i_fold in range(n_folds):
             all_folds.append(
                 np.loadtxt(
-                    os.path.join(self.splits_path, mode, "fold_" + i_fold + ".csv",
-                    delimiter=",",
-                    dtype="str")))
+                    os.path.join(
+                        self.splits_path,
+                        mode,
+                        "fold_" + i_fold + ".csv",
+                        delimiter=",",
+                        dtype="str",
+                    )
+                )
+            )
 
         val_fold = all_folds[fold]
         train_fold = np.array([])
-        for i_fold in np.delete(np.arange(0,n_folds), fold):
+        for i_fold in np.delete(np.arange(0, n_folds), fold):
             if len(train_fold) == 0:
                 train_fold = all_folds[i_fold]
             else:
@@ -111,17 +130,25 @@ class DhrupadBandishSegmentation:
             elif section_name in train_fold:
                 partition["train"].extend(ids)
 
-        #generators
-        training_set = torch.utils.data.Dataset(self.features_path, partition["train"], labels_stm)
+        # generators
+        training_set = torch.utils.data.Dataset(
+            self.features_path, partition["train"], labels_stm
+        )
         training_generator = torch.utils.data.data.DataLoader(training_set, **pars)
 
-        validation_set = torch.utils.data.Dataset(self.features_path, partition["validation"], labels_stm)
+        validation_set = torch.utils.data.Dataset(
+            self.features_path, partition["validation"], labels_stm
+        )
         validation_generator = torch.utils.data.DataLoader(validation_set, **pars)
 
-        #model definition and training
-        classes=  pars.classes_dict[mode]
+        # model definition and training
+        classes = pars.classes_dict[mode]
         n_classes = len(classes)
-        model = build_model(pars.input_height, pars.input_len, n_classes).float().to(self.device)
+        model = (
+            build_model(pars.input_height, pars.input_len, n_classes)
+            .float()
+            .to(self.device)
+        )
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
@@ -129,12 +156,14 @@ class DhrupadBandishSegmentation:
             print(model)
             n_params = 0
             for param in model.parameters():
-                    n_params+=torch.prod(torch.tensor(param.shape))
-            print("Num of trainable params: %d\n"%n_params)
+                n_params += torch.prod(torch.tensor(param.shape))
+            print("Num of trainable params: %d\n" % n_params)
 
         ##training epochs loop
-        train_loss_epoch = []; train_acc_epoch = []
-        val_loss_epoch = []; val_acc_epoch = []
+        train_loss_epoch = []
+        train_acc_epoch = []
+        val_loss_epoch = []
+        val_acc_epoch = []
         n_idle = 0
 
         if not os.path.exists(os.path.join(self.model_path, mode)):
@@ -143,33 +172,45 @@ class DhrupadBandishSegmentation:
         for epoch in range(pars.max_epochs):
             if n_idle == 50:
                 break
-            train_loss_epoch += [0]; train_acc_epoch += [0]
-            val_loss_epoch += [0]; val_acc_epoch += [0]
+            train_loss_epoch += [0]
+            train_acc_epoch += [0]
+            val_loss_epoch += [0]
+            val_acc_epoch += [0]
 
-            n_iter = 0 
+            n_iter = 0
             ##training
             model.train()
             for local_batch, local_labels, _ in training_generator:
-                #map labels to class ids
-                local_labels=class_to_categorical(local_labels,classes)
+                # map labels to class ids
+                local_labels = class_to_categorical(local_labels, classes)
 
-                #add channel dimension
+                # add channel dimension
                 if len(local_batch.shape) == 3:
                     local_batch = local_batch.unsqueeze(1)
-                
-                #transfer to GPU
-                local_batch, local_labels = local_batch.float().to(self.device), local_labels.to(self.device)
 
-                #update weights
+                # transfer to GPU
+                local_batch, local_labels = local_batch.float().to(
+                    self.device
+                ), local_labels.to(self.device)
+
+                # update weights
                 optimizer.zero_grad()
                 outs = model(local_batch).squeeze()
                 loss = criterion(outs, local_labels.long())
                 loss.backward()
                 optimizer.step()
-                
-                #append loss and acc to arrays
+
+                # append loss and acc to arrays
                 train_loss_epoch[-1] += loss.item()
-                acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / pars.batch_size
+                acc = (
+                    np.sum(
+                        (
+                            np.argmax(outs.detach().cpu().numpy(), 1)
+                            == local_labels.detach().cpu().numpy()
+                        )
+                    )
+                    / pars.batch_size
+                )
                 train_acc_epoch[-1] += acc
                 n_iter += 1
 
@@ -181,38 +222,64 @@ class DhrupadBandishSegmentation:
             model.eval()
             with torch.set_grad_enabled(False):
                 for local_batch, local_labels, _ in validation_generator:
-                    #map labels to class ids
-                    local_labels = pars.class_to_categorical(local_labels,classes)
+                    # map labels to class ids
+                    local_labels = pars.class_to_categorical(local_labels, classes)
 
-                    #add channel dimension
+                    # add channel dimension
                     if len(local_batch.shape) == 3:
                         local_batch = local_batch.unsqueeze(1)
 
-                    #transfer to GPU
-                    local_batch, local_labels = local_batch.float().to(self.device), local_labels.to(self.device)
-                    
-                    #evaluate model
+                    # transfer to GPU
+                    local_batch, local_labels = local_batch.float().to(
+                        self.device
+                    ), local_labels.to(self.device)
+
+                    # evaluate model
                     outs = model(local_batch).squeeze()
                     loss = criterion(outs, local_labels.long())
 
-                    #append loss and acc to arrays
+                    # append loss and acc to arrays
                     val_loss_epoch[-1] += loss.item()
-                    acc = np.sum((np.argmax(outs.detach().cpu().numpy(),1) == local_labels.detach().cpu().numpy())) / pars.batch_size
+                    acc = (
+                        np.sum(
+                            (
+                                np.argmax(outs.detach().cpu().numpy(), 1)
+                                == local_labels.detach().cpu().numpy()
+                            )
+                        )
+                        / pars.batch_size
+                    )
                     val_acc_epoch[-1] += acc
 
                     n_iter += 1
                 val_loss_epoch[-1] /= n_iter
                 val_acc_epoch[-1] /= n_iter
 
-            #save if val_loss reduced
-            if val_loss_epoch[-1] == min(val_loss_epoch): 
-                torch.save(model.state_dict(), os.path.join(self.model_path, mode, "saved_model_fold_%d.pt"%fold))
+            # save if val_loss reduced
+            if val_loss_epoch[-1] == min(val_loss_epoch):
+                torch.save(
+                    model.state_dict(),
+                    os.path.join(
+                        self.model_path, mode, "saved_model_fold_%d.pt" % fold
+                    ),
+                )
                 n_idle = 0
-            else: n_idle += 1
-            
-            #print loss in current epoch
-            print("Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"%(epoch, pars.max_epochs, train_loss_epoch[-1], train_acc_epoch[-1],val_loss_epoch[-1],val_acc_epoch[-1]))
-        
+            else:
+                n_idle += 1
+
+            # print loss in current epoch
+            print(
+                "Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"
+                % (
+                    epoch,
+                    pars.max_epochs,
+                    train_loss_epoch[-1],
+                    train_acc_epoch[-1],
+                    val_loss_epoch[-1],
+                    val_acc_epoch[-1],
+                )
+            )
+
     def predict_stm(self, path_to_file, mode="net", output_dir=None):
         """Dhrupad Bandish Segmentation init method.
 
@@ -221,46 +288,65 @@ class DhrupadBandishSegmentation:
         :param output_dir: directory to store printed outputs
         """
         if not os.path.exists(path_to_file):
-            raise ValueError("Input file not found") 
+            raise ValueError("Input file not found")
         if not os.path.exists(output_dir):
-            raise FileNotFoundError("""
+            raise FileNotFoundError(
+                """
                 Folder to store output does not exists or it is not specified. Please enter a valid folder
-                to store the outputs.""") 
+                to store the outputs."""
+            )
 
-        #load input audio
+        # load input audio
         audio, fs = librosa.load(path_to_file, sr=fs)
 
-        #convert to mel-spectrogram
+        # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
-            audio, sr=fs, n_fft=pars.nfft, hop_length=pars.hopsize, win_length=pars.winsize, n_mels=pars.input_height, fmin=20, fmax=8000)
-        melgram = 10*np.log10(1e-10+melgram)
+            audio,
+            sr=fs,
+            n_fft=pars.nfft,
+            hop_length=pars.hopsize,
+            win_length=pars.winsize,
+            n_mels=pars.input_height,
+            fmin=20,
+            fmax=8000,
+        )
+        melgram = 10 * np.log10(1e-10 + melgram)
         melgram_chunks = makechunks(melgram, pars.input_len, pars.input_hop)
 
-        #load model
+        # load model
         classes = pars.classes_dict[mode]
         n_classes = len(classes)
         model_path = os.path.join(self.model_path, mode, "saved_model_fold_0.pt")
-        model = build_model(pars.input_height, pars.input_len, n_classes).float().to(self.device)
-        model.load_state_dict(torch.load(os.path.join(model_path), map_location=self.device))
+        model = (
+            build_model(pars.input_height, pars.input_len, n_classes)
+            .float()
+            .to(self.device)
+        )
+        model.load_state_dict(
+            torch.load(os.path.join(model_path), map_location=self.device)
+        )
         model.eval()
 
-        #predict s.t.m. versus time
+        # predict s.t.m. versus time
         stm_vs_time = []
         for chunk in melgram_chunks:
-            model_in = (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
+            model_in = (
+                (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
+            )
             model_out = model.forward(model_in)
             model_out = torch.nn.Softmax(1)(model_out).detach().numpy()
             stm_vs_time.append(np.argmax(model_out))
 
-        #smooth predictions with a minimum section duration of 5s
+        # smooth predictions with a minimum section duration of 5s
         stm_vs_time = smooth_boundaries(stm_vs_time, pars.min_sec_dur)
 
-        #plot
-        plt.plot(np.arange(len(stm_vs_time))*0.5, stm_vs_time)
-        plt.yticks(np.arange(-1, 6), [""]+["1","2","4","8","16"]+[""])
+        # plot
+        plt.plot(np.arange(len(stm_vs_time)) * 0.5, stm_vs_time)
+        plt.yticks(np.arange(-1, 6), [""] + ["1", "2", "4", "8", "16"] + [""])
         plt.grid("on", linestyle="--", axis="y")
         plt.xlabel("Time (s)", fontsize=12)
         plt.ylabel("Surface tempo multiple", fontsize=12)
-        plt.savefig(os.path.join(output_dir, path_to_file.split("/")[-1].split(".wav")[0]) + ".png")
-
-
+        plt.savefig(
+            os.path.join(output_dir, path_to_file.split("/")[-1].split(".wav")[0])
+            + ".png"
+        )

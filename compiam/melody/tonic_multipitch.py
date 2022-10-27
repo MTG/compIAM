@@ -1,14 +1,26 @@
 import os
 
+
 class TonicIndianMultiPitch:
-    """MultiPitch approach to extract the tonic from IAM music signals.
-    """
-    def __init__(self, binResolution=10, frameSize=2048, harmonicWeight=0.8, hopSize=128,
-                 magnitudeCompression=1, magnitudeThreshold=40, maxTonicFrequency=375,
-                 minTonicFrequency=100, numberHarmonics=20, referenceFrequency=55, sampleRate=44100):
+    """MultiPitch approach to extract the tonic from IAM music signals."""
+
+    def __init__(
+        self,
+        binResolution=10,
+        frameSize=2048,
+        harmonicWeight=0.8,
+        hopSize=128,
+        magnitudeCompression=1,
+        magnitudeThreshold=40,
+        maxTonicFrequency=375,
+        minTonicFrequency=100,
+        numberHarmonics=20,
+        referenceFrequency=55,
+        sampleRate=44100,
+    ):
         """Tonic extraction init method.
-            For a complete and detailed list of the parameters see the documentation on the 
-            following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html.
+        For a complete and detailed list of the parameters see the documentation on the
+        following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html.
         """
         ###
         try:
@@ -47,11 +59,12 @@ class TonicIndianMultiPitch:
             frameSize=self.frameSize,
             harmonicWeight=self.harmonicWeight,
             hopSize=self.hopSize,
-            magnitudeCompression=self.magnitudeCompression, 
+            magnitudeCompression=self.magnitudeCompression,
             magnitudeThreshold=self.magnitudeThreshold,
             maxTonicFrequency=self.maxTonicFrequency,
             minTonicFrequency=self.minTonicFrequency,
             numberHarmonics=self.numberHarmonics,
             referenceFrequency=self.referenceFrequency,
-            sampleRate=self.sampleRate)
+            sampleRate=self.sampleRate,
+        )
         return extractor(audio)
