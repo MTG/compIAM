@@ -1,11 +1,11 @@
 import os
 import pytest
 
+from compiam.melody import Melodia, TonicIndianMultiPitch
 from compiam.data import WORKDIR
-from compiam import load_model
 
 def _predict_normalized_pitch():
-    melodia = load_model("melody:melodia")
+    melodia = Melodia()
     with pytest.raises(ValueError):
         melodia.extract(os.path.join(WORKDIR, "tests", "resources", \
             "melody", "hola.wav"))
@@ -14,7 +14,7 @@ def _predict_normalized_pitch():
         
     # assert pitch here
 
-    tonic_multipitch = load_model("melody:tonic-multipitch")
+    tonic_multipitch = TonicIndianMultiPitch()
     with pytest.raises(ValueError):
         tonic_multipitch.extract(os.path.join(WORKDIR, "tests", "resources", \
             "melody", "hola.wav"))

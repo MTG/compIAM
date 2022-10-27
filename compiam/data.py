@@ -10,7 +10,7 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 #	    {
 #           "module_name": "<compiam.melody/rhythm/timbre/structure.file/folder name of model>",
 #           "class_name": "<name of the model class>",
-#           "filepath": "<path_to_model if any>"
+#           "model_path": "<path_to_model if any>"
 #       }
 
 models_dict = {
@@ -18,50 +18,35 @@ models_dict = {
         "module_name": "compiam.melody.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
-            "filepath": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
+            "model_path": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
             "mapping_path": os.path.join(WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json")
         }
     },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
-        "kwargs": {"filepath": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
-    },
-    "melody:melodia": {
-        "module_name": "compiam.melody.melodia",
-        "class_name": "Melodia",
-        "kwargs": {}
-    },
-    "melody:tonic-multipitch": {
-        "module_name": "compiam.melody.tonic_multipitch",
-        "class_name": "TonicIndianMultiPitch",
-        "kwargs": {}
+        "kwargs": {"model_path": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")}
     },
     "rhythm:1way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
+        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")}
     },
     "rhythm:4way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
-        "kwargs": {"filepath": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
+        "kwargs": {"model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")}
     },
     "structure:dhrupad-bandish-segmentation": {
         "module_name": "compiam.structure.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
-            "filepath": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/pretrained_models/"),
+            "model_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/pretrained_models/"),
             "splits_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"),
             "annotations_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/annotations/"),
             "original_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_original/"),
             "processed_audios_path": os.path.join(WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_sections/"),
         }
-    },
-    "timbre:mridangam-stroke": {
-        "module_name": "compiam.timbre.mridangam_stroke_classification",
-        "class_name": "MridangamStrokeClassification",
-        "kwargs": {}
     },
 }
 

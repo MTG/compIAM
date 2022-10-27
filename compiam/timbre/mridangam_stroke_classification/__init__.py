@@ -8,10 +8,9 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 
-from compiam.timbre.mridangam_stroke_classification.stroke_features import \
-    features_for_pred, process_strokes, features_for_pred, normalise_features
 from compiam.exceptions import ModelNotTrainedError
 from compiam.data import WORKDIR
+
 
 class MridangamStrokeClassification:
     """Mridangam stroke classification.
@@ -19,6 +18,18 @@ class MridangamStrokeClassification:
     def __init__(self):
         """Mridangam stroke classification init method.
         """
+        ###
+        try:
+            global features_for_pred, process_strokes, features_for_pred, normalise_features
+            from compiam.timbre.mridangam_stroke_classification.stroke_features import \
+                features_for_pred, process_strokes, features_for_pred, normalise_features
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have essentia installed. "
+                "Please reinstall compiam using `pip install 'compiam[essentia]'"
+            )
+        ###
+
         self.dataset = None
         self.model = None
         self.feature_list = None
