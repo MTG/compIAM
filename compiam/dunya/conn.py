@@ -1,6 +1,6 @@
 # Copyright 2013, 2014 Music Technology Group - Universitat Pompeu Fabra
 #
-# This file is part of Dunya and has been ported from pycompmusic 
+# This file is part of Dunya and has been ported from pycompmusic
 # (https://github.com/MTG/pycompmusic), the official Python API
 #
 # Dunya is free software: you can redistribute it and/or modify it under the
@@ -28,8 +28,8 @@ from compiam.exceptions import HTTPError, ConnectionError
 HOSTNAME = "https://dunya.compmusic.upf.edu"
 TOKEN = None
 session = requests.Session()
-session.mount('http://', requests.adapters.HTTPAdapter(max_retries=5))
-session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+session.mount("http://", requests.adapters.HTTPAdapter(max_retries=5))
+session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
 
 
 def set_hostname(hostname):
@@ -52,11 +52,12 @@ def set_token(token):
     global TOKEN
     TOKEN = token
 
+
 def _get_paged_json(path, **kwargs):
     extra_headers = None
-    if 'extra_headers' in kwargs:
-        extra_headers = kwargs.get('extra_headers')
-        del kwargs['extra_headers']
+    if "extra_headers" in kwargs:
+        extra_headers = kwargs.get("extra_headers")
+        del kwargs["extra_headers"]
     nxt = _make_url(path, **kwargs)
     logger.debug("initial paged to %s", nxt)
     ret = []
@@ -111,37 +112,33 @@ def _make_url(path, **kwargs):
         kwargs = {}
     for key, value in kwargs.items():
         if isinstance(value, str):
-            kwargs[key] = value.encode('utf8')
-    url = urllibparse.urlunparse((
-        protocol,
-        hostname,
-        '%s' % path,
-        '',
-        urllibparse.urlencode(kwargs),
-        ''
-    ))
+            kwargs[key] = value.encode("utf8")
+    url = urllibparse.urlunparse(
+        (protocol, hostname, "%s" % path, "", urllibparse.urlencode(kwargs), "")
+    )
     return url
 
 
 def _dunya_query_json(path, **kwargs):
-    """Make a query to dunya and expect the results to be JSON.
-    """
+    """Make a query to dunya and expect the results to be JSON."""
     g = _dunya_url_query(_make_url(path, **kwargs))
     return g.json() if g else None
 
 
 def _dunya_query_file(path, **kwargs):
-    """Make a query to dunya and return the raw result.
-    """
+    """Make a query to dunya and return the raw result."""
     g = _dunya_url_query(_make_url(path, **kwargs))
     if g:
-        cl = g.headers.get('content-length')
+        cl = g.headers.get("content-length")
         content = g.content
         if cl and int(cl) != len(content):
-            logger.warning("Indicated content length is not the same as returned content. Some data may be missing")
+            logger.warning(
+                "Indicated content length is not the same as returned content. Some data may be missing"
+            )
         return content
     else:
         return
+
 
 def _file_for_document(recordingid, thetype, subtype=None, part=None, version=None):
     """Get the most recent derived file given a filetype.
