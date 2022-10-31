@@ -7,3 +7,12 @@ from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
 
 # Raga recognition
 from compiam.melody.deepsrgm import DEEPSRGM
+
+# Show user the available tools
+def list_tools():
+    return [
+        "Melodia",
+        "FTANetCarnatic", 
+        "TonicIndianMultiPitch",
+        "DEEPSRGM"
+    ]
