@@ -8,7 +8,7 @@ from compiam.exceptions import ModelNotDefinedError
 
 
 def load_model(model_name, models_dict=models_dict):
-    """Wrapper for loading models, extractors, and algorithms.
+    """Wrapper for loading pre-trained models.
 
     :param model_name: name of the model, extractors, or algorithm to load.
     :param models_dict: dict object including the available models.
@@ -28,7 +28,7 @@ def load_model(model_name, models_dict=models_dict):
 
 
 def load_dataset(dataset_name, data_home=None, version="default"):
-    """Wrapper/alias function to load a mirdata Dataset class.
+    """Alias function to load a mirdata Dataset class.
 
     :param dataset_name: the dataset's name, see mirdata.DATASETS for a
         complete list of possibilities.
@@ -46,7 +46,7 @@ def load_dataset(dataset_name, data_home=None, version="default"):
 
 
 def load_corpora(tradition, cc=True, token=None):
-    """Wrapper function to load access to the Dunya corpora.
+    """Wrapper to load access to the Dunya corpora.
 
     :param tradition: carnatic or hindustani.
     :param cc: boolean indicating if the CC version of the corpora is loaded.
