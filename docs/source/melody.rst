@@ -1,13 +1,41 @@
 .. _melody:
 
-Melodic models
+Melodic analysis
+================
+
+Melodia
++++++++
+
+.. automodule:: compiam.melody.melodia
+   :members:
+
+FTANet-Carnatic
++++++++++++++++
+
+.. automodule:: compiam.melody.ftanet_carnatic
+   :members:
+
+FTANet-Carnatic utils
+---------------------
+
+.. automodule:: compiam.melody.ftanet_carnatic.pitch_processing
+   :members:
+
+Tonic Indian Art Music (Multipitch approach)
+++++++++++++++++++++++++++++++++++++++++++++
+
+.. automodule:: compiam.melody.tonic_multipitch
+   :members:
+
+DEEPSRGM
+++++++++
+
+.. automodule:: compiam.melody.deepsrgm
+   :members:
+
+DEEPSRGM utils
 --------------
 
-Please remember these models are loaded using ``compiam.load_models``, and the list of
-availabel models can be seen running ``compiam.list_models``.
-
-
-.. automodule:: compiam.melody
+.. automodule:: compiam.melody.deepsrgm.model
    :members:
-   :inherited-members:
 

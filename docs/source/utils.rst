@@ -1,21 +1,14 @@
-compiam.utils package
-=====================
+Util functions
+==============
 
-Submodules
-----------
-
-compiam.utils.augment module
-----------------------------
+Data augmentation utils
++++++++++++++++++++++++
 
 .. automodule:: compiam.utils.augment
    :members:
-   :undoc-members:
-   :show-inheritance:
 
-Module contents
----------------
+Pitch-related utils
++++++++++++++++++++
 
-.. automodule:: compiam.utils
+.. automodule:: compiam.utils.pitch
    :members:
-   :undoc-members:
-   :show-inheritance:
