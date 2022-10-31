@@ -1,13 +1,11 @@
 .. _structure:
 
-Structure models
-----------------
+Structure analysis
+==================
 
-Please remember these models are loaded using ``compiam.load_models``, and the list of
-availabel models can be seen running ``compiam.list_models``.
+Dhrupad Bandish Segmentation
+++++++++++++++++++++++++++++
 
-
-.. automodule:: compiam.structure
+.. automodule:: compiam.structure.dhrupad_bandish_segmentation
    :members:
    :inherited-members:
-

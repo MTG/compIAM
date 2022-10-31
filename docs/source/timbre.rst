@@ -1,12 +1,11 @@
 .. _timbre:
 
-Timbre models
--------------
+Timbre analysis
+===============
 
-Please remember these models are loaded using ``compiam.load_models``, and the list of
-availabel models can be seen running ``compiam.list_models``.
+Mridangam Stroke Classification
++++++++++++++++++++++++++++++++
 
-
-.. automodule:: compiam.timbre
+.. automodule:: compiam.timbre.mridangam_stroke_classification
    :members:
    :inherited-members:
