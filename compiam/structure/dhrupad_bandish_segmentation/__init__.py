@@ -4,6 +4,7 @@ import librosa
 
 import numpy as np
 import matplotlib.pyplot as plt
+from compiam.exceptions import ModelNotFoundError
 
 from compiam.utils import get_logger
 
@@ -15,6 +16,7 @@ class DhrupadBandishSegmentation:
 
     def __init__(
         self,
+        mode="net",
         model_path=None,
         splits_path=None,
         annotations_path=None,
@@ -61,7 +63,27 @@ class DhrupadBandishSegmentation:
             )
         ###
 
+        # Load mode by default: update with self.update mode()
+        self.mode = mode
+        self.classes = pars.classes_dict[self.mode]
+
+        self.model = None
         self.model_path = model_path
+
+        if self.model_path is not None:
+            if not os.path.exists(
+                os.path.join(self.model_path, self.mode, "saved_model_fold_0.pt")
+            ):
+                raise ModelNotFoundError("""
+                    Given path to model weights not found. Make sure you enter the path correctly.
+                    A training process for the FTA-Net tuned to Carnatic is under development right
+                    now and will be added to the library soon. Meanwhile, we provide the weights in the
+                    latest repository version (https://github.com/MTG/compIAM) so make sure you have these
+                    available before loading the Carnatic FTA-Net.
+                """)
+            self.load_model()  # Loading pre-trained model for given mode
+
+
         self.splits_path = splits_path
         self.annotations_path = annotations_path
         self.features_path = features_path
@@ -71,7 +93,30 @@ class DhrupadBandishSegmentation:
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    def train(self, mode, fold, verbose=0):
+
+    def load_model(self):
+        """TODO
+        """
+        self.model = (
+            build_model(pars.input_height, pars.input_len, len(self.classes))
+            .float()
+            .to(self.device)
+        )
+        self.model.load_state_dict(
+            torch.load(os.path.join(self.model_path), map_location=self.device)
+        )
+        self.model.eval()
+
+
+    def update_mode(self, mode):
+        """TODO
+        """
+        self.mode = mode
+        self.classes = pars.classes_dict[mode]
+        self.load_model()
+
+
+    def train(self, fold=0, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
 
         :param data_dir: path to extracted features and labels.
@@ -85,7 +130,7 @@ class DhrupadBandishSegmentation:
         )
         print("Extracting features...")
         extract_features(
-            self.processed_audios_path, self.annotations_path, self.features_path, mode
+            self.processed_audios_path, self.annotations_path, self.features_path, self.mode
         )
 
         # generate cross-validation folds for training
@@ -102,7 +147,7 @@ class DhrupadBandishSegmentation:
                 np.loadtxt(
                     os.path.join(
                         self.splits_path,
-                        mode,
+                        self.mode,
                         "fold_" + i_fold + ".csv",
                         delimiter=",",
                         dtype="str",
@@ -142,20 +187,18 @@ class DhrupadBandishSegmentation:
         validation_generator = torch.utils.data.DataLoader(validation_set, **pars)
 
         # model definition and training
-        classes = pars.classes_dict[mode]
-        n_classes = len(classes)
-        model = (
-            build_model(pars.input_height, pars.input_len, n_classes)
+        self.model = (
+            build_model(pars.input_height, pars.input_len, len(self.classes))
             .float()
             .to(self.device)
         )
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+        optimizer = torch.optim.Adam(self.parameters(), lr=0.0001)
 
         if verbose == 1:
-            print(model)
+            print(self.model)
             n_params = 0
-            for param in model.parameters():
+            for param in self.model.parameters():
                 n_params += torch.prod(torch.tensor(param.shape))
             print("Num of trainable params: %d\n" % n_params)
 
@@ -166,8 +209,8 @@ class DhrupadBandishSegmentation:
         val_acc_epoch = []
         n_idle = 0
 
-        if not os.path.exists(os.path.join(self.model_path, mode)):
-            os.makedir(os.path.join(self.model_path, mode))
+        if not os.path.exists(os.path.join(self.model_path, self.mode)):
+            os.makedir(os.path.join(self.model_path, self.mode))
 
         for epoch in range(pars.max_epochs):
             if n_idle == 50:
@@ -179,10 +222,10 @@ class DhrupadBandishSegmentation:
 
             n_iter = 0
             ##training
-            model.train()
+            self.model.train()
             for local_batch, local_labels, _ in training_generator:
                 # map labels to class ids
-                local_labels = class_to_categorical(local_labels, classes)
+                local_labels = class_to_categorical(local_labels, self.classes)
 
                 # add channel dimension
                 if len(local_batch.shape) == 3:
@@ -195,7 +238,7 @@ class DhrupadBandishSegmentation:
 
                 # update weights
                 optimizer.zero_grad()
-                outs = model(local_batch).squeeze()
+                outs = self.model(local_batch).squeeze()
                 loss = criterion(outs, local_labels.long())
                 loss.backward()
                 optimizer.step()
@@ -219,11 +262,11 @@ class DhrupadBandishSegmentation:
 
             n_iter = 0
             ##validation
-            model.eval()
+            self.model.eval()
             with torch.set_grad_enabled(False):
                 for local_batch, local_labels, _ in validation_generator:
                     # map labels to class ids
-                    local_labels = pars.class_to_categorical(local_labels, classes)
+                    local_labels = pars.class_to_categorical(local_labels, self.classes)
 
                     # add channel dimension
                     if len(local_batch.shape) == 3:
@@ -235,7 +278,7 @@ class DhrupadBandishSegmentation:
                     ), local_labels.to(self.device)
 
                     # evaluate model
-                    outs = model(local_batch).squeeze()
+                    outs = self.model(local_batch).squeeze()
                     loss = criterion(outs, local_labels.long())
 
                     # append loss and acc to arrays
@@ -258,9 +301,9 @@ class DhrupadBandishSegmentation:
             # save if val_loss reduced
             if val_loss_epoch[-1] == min(val_loss_epoch):
                 torch.save(
-                    model.state_dict(),
+                    self.model.state_dict(),
                     os.path.join(
-                        self.model_path, mode, "saved_model_fold_%d.pt" % fold
+                        self.model_path, self.mode, "saved_model_fold_%d.pt" % fold
                     ),
                 )
                 n_idle = 0
@@ -280,7 +323,7 @@ class DhrupadBandishSegmentation:
                 )
             )
 
-    def predict_stm(self, path_to_file, mode="net", output_dir=None):
+    def predict_stm(self, path_to_file, output_dir=None):
         """Dhrupad Bandish Segmentation init method.
 
         :param path_to_file: path of the input file
@@ -313,27 +356,13 @@ class DhrupadBandishSegmentation:
         melgram = 10 * np.log10(1e-10 + melgram)
         melgram_chunks = makechunks(melgram, pars.input_len, pars.input_hop)
 
-        # load model
-        classes = pars.classes_dict[mode]
-        n_classes = len(classes)
-        model_path = os.path.join(self.model_path, mode, "saved_model_fold_0.pt")
-        model = (
-            build_model(pars.input_height, pars.input_len, n_classes)
-            .float()
-            .to(self.device)
-        )
-        model.load_state_dict(
-            torch.load(os.path.join(model_path), map_location=self.device)
-        )
-        model.eval()
-
         # predict s.t.m. versus time
         stm_vs_time = []
         for chunk in melgram_chunks:
             model_in = (
                 (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
             )
-            model_out = model.forward(model_in)
+            model_out = self.model.forward(model_in)
             model_out = torch.nn.Softmax(1)(model_out).detach().numpy()
             stm_vs_time.append(np.argmax(model_out))
 

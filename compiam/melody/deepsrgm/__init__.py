@@ -38,6 +38,12 @@ class DEEPSRGM(object):
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.model_path = model_path
+
+        ## Loading LSTM model by default
+        if self.model_path is not None:
+            self.model = deepsrgmModel(rnn="lstm").to(self.device)
+            self.load_model(rnn="lstm")
+
         self.mapping_path = mapping_path
         self.mapping = None
         self.selected_ragas = [
@@ -52,11 +58,10 @@ class DEEPSRGM(object):
             24,
             28,
         ]  # pre-defined for release 0.1
-        self.model = deepsrgmModel(rnn="lstm").to(self.device)
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
-            None  # To update when CompMusic Raga dataset is integrated mirdata
-        )
+            None  
+        ) # To update when CompMusic Raga dataset is integrated mirdata
 
     def load_mapping(self, selection=None):
         """TODO"""
