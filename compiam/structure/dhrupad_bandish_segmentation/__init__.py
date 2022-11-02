@@ -63,6 +63,9 @@ class DhrupadBandishSegmentation:
             )
         ###
 
+        if not device:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+
         # Load mode by default: update with self.update mode()
         self.mode = mode
         self.classes = pars.classes_dict[self.mode]
@@ -89,9 +92,6 @@ class DhrupadBandishSegmentation:
         self.features_path = features_path
         self.original_audios_path = original_audios_path
         self.processed_audios_path = processed_audios_path
-
-        if not device:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
     def load_model(self):
