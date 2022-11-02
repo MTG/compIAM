@@ -2,6 +2,7 @@ import mirdata
 
 from importlib import import_module
 
+from compiam import melody, rhythm, structure, timbre
 from compiam.dunya import Corpora
 from compiam.data import models_dict, datasets_list, corpora_list
 from compiam.exceptions import ModelNotDefinedError
