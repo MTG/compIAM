@@ -10,9 +10,4 @@ from compiam.melody.deepsrgm import DEEPSRGM
 
 # Show user the available tools
 def list_tools():
-    return [
-        "Melodia",
-        "FTANetCarnatic", 
-        "TonicIndianMultiPitch",
-        "DEEPSRGM"
-    ]
+    return ["Melodia", "FTANetCarnatic", "TonicIndianMultiPitch", "DEEPSRGM"]

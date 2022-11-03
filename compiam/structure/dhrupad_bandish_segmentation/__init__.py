@@ -81,18 +81,19 @@ class DhrupadBandishSegmentation:
                 os.path.join(
                     self.model_path,
                     self.mode,
-                    "saved_model_fold_" + str(self.fold) + ".pt"
+                    "saved_model_fold_" + str(self.fold) + ".pt",
                 )
             ):
-                raise ModelNotFoundError("""
+                raise ModelNotFoundError(
+                    """
                     Given path to model weights not found. Make sure you enter the path correctly.
                     A training process for the FTA-Net tuned to Carnatic is under development right
                     now and will be added to the library soon. Meanwhile, we provide the weights in the
                     latest repository version (https://github.com/MTG/compIAM) so make sure you have these
                     available before loading the Carnatic FTA-Net.
-                """)
+                """
+                )
             self.load_model()  # Loading pre-trained model for given mode
-
 
         self.splits_path = splits_path
         self.annotations_path = annotations_path
@@ -100,30 +101,23 @@ class DhrupadBandishSegmentation:
         self.original_audios_path = original_audios_path
         self.processed_audios_path = processed_audios_path
 
-
     def load_model(self):
-        """Loading weights for model, given self.mode and self.fold
-        """
+        """Loading weights for model, given self.mode and self.fold"""
         path_to_model = os.path.join(
-            self.model_path,
-            self.mode, 
-            "saved_model_fold_" + str(self.fold) + ".pt"
+            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
         )
         self.model = (
             build_model(pars.input_height, pars.input_len, len(self.classes))
             .float()
             .to(self.device)
         )
-        self.model.load_state_dict(
-            torch.load(path_to_model, map_location=self.device)
-        )
+        self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
 
-
     def update_mode(self, mode):
-        """Update mode for the training and sampling. Mode is one of net, voc, 
-        pakh, indicating the source for s.t.m. estimation. Use the net mode if 
-        audio is a mixture signal, else use voc or pakh for clean/source-separated 
+        """Update mode for the training and sampling. Mode is one of net, voc,
+        pakh, indicating the source for s.t.m. estimation. Use the net mode if
+        audio is a mixture signal, else use voc or pakh for clean/source-separated
         vocals or pakhawaj tracks.
 
         :param mode: new mode to use
@@ -140,7 +134,6 @@ class DhrupadBandishSegmentation:
         self.fold = fold
         self.load_model()
 
-
     def train(self, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
 
@@ -153,7 +146,10 @@ class DhrupadBandishSegmentation:
         )
         print("Extracting features...")
         extract_features(
-            self.processed_audios_path, self.annotations_path, self.features_path, self.mode
+            self.processed_audios_path,
+            self.annotations_path,
+            self.features_path,
+            self.mode,
         )
 
         # generate cross-validation folds for training
