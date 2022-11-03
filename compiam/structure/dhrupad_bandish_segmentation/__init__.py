@@ -17,6 +17,7 @@ class DhrupadBandishSegmentation:
     def __init__(
         self,
         mode="net",
+        fold=0,
         model_path=None,
         splits_path=None,
         annotations_path=None,
@@ -66,8 +67,10 @@ class DhrupadBandishSegmentation:
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        # Load mode by default: update with self.update mode()
+        # Load mode by default: update with self.update_mode()
         self.mode = mode
+        # Load fold by default: update with self.update_fold()
+        self.fold = fold
         self.classes = pars.classes_dict[self.mode]
 
         self.model = None
@@ -75,7 +78,11 @@ class DhrupadBandishSegmentation:
 
         if self.model_path is not None:
             if not os.path.exists(
-                os.path.join(self.model_path, self.mode, "saved_model_fold_0.pt")
+                os.path.join(
+                    self.model_path,
+                    self.mode,
+                    "saved_model_fold_" + str(self.fold) + ".pt"
+                )
             ):
                 raise ModelNotFoundError("""
                     Given path to model weights not found. Make sure you enter the path correctly.
@@ -95,33 +102,49 @@ class DhrupadBandishSegmentation:
 
 
     def load_model(self):
-        """TODO
+        """Loading weights for model, given self.mode and self.fold
         """
+        path_to_model = os.path.join(
+            self.model_path,
+            self.mode, 
+            "saved_model_fold_" + str(self.fold) + ".pt"
+        )
         self.model = (
             build_model(pars.input_height, pars.input_len, len(self.classes))
             .float()
             .to(self.device)
         )
         self.model.load_state_dict(
-            torch.load(os.path.join(self.model_path), map_location=self.device)
+            torch.load(path_to_model, map_location=self.device)
         )
         self.model.eval()
 
 
     def update_mode(self, mode):
-        """TODO
+        """Update mode for the training and sampling. Mode is one of net, voc, 
+        pakh, indicating the source for s.t.m. estimation. Use the net mode if 
+        audio is a mixture signal, else use voc or pakh for clean/source-separated 
+        vocals or pakhawaj tracks.
+
+        :param mode: new mode to use
         """
         self.mode = mode
         self.classes = pars.classes_dict[mode]
         self.load_model()
 
+    def update_fold(self, fold):
+        """Update data fold for the training and sampling
 
-    def train(self, fold=0, verbose=0):
+        :param fold: new fold to use
+        """
+        self.fold = fold
+        self.load_model()
+
+
+    def train(self, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
 
         :param data_dir: path to extracted features and labels.
-        :param mode: model mode: "voc", "pakh" or "net"
-        :param fold: fold id 0, 1 or 2
         :param verbose: showing details of the model
         """
         print("Splitting audios...")
@@ -155,9 +178,9 @@ class DhrupadBandishSegmentation:
                 )
             )
 
-        val_fold = all_folds[fold]
+        val_fold = all_folds[self.fold]
         train_fold = np.array([])
-        for i_fold in np.delete(np.arange(0, n_folds), fold):
+        for i_fold in np.delete(np.arange(0, n_folds), self.fold):
             if len(train_fold) == 0:
                 train_fold = all_folds[i_fold]
             else:
@@ -324,10 +347,9 @@ class DhrupadBandishSegmentation:
             )
 
     def predict_stm(self, path_to_file, output_dir=None):
-        """Dhrupad Bandish Segmentation init method.
+        """Predict Dhrupad Bandish Segmentation
 
         :param path_to_file: path of the input file
-        :param mode: model mode: "voc", "pakh" or "net"
         :param output_dir: directory to store printed outputs
         """
         if not os.path.exists(path_to_file):
