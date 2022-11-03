@@ -2,6 +2,4 @@ from compiam.timbre.mridangam_stroke_classification import MridangamStrokeClassi
 
 # Show user the available tools
 def list_tools():
-    return [
-        "MridangamStrokeClassification"
-    ]
+    return ["MridangamStrokeClassification"]

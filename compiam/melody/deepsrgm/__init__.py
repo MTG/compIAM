@@ -60,8 +60,8 @@ class DEEPSRGM(object):
         ]  # pre-defined for release 0.1
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
-            None  
-        ) # To update when CompMusic Raga dataset is integrated mirdata
+            None  # To update when CompMusic Raga dataset is integrated mirdata
+        )
 
     def load_mapping(self, selection=None):
         """TODO"""

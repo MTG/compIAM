@@ -12,8 +12,8 @@ except:
 
 # model definition for resonant bass and resonant both categories
 class onsetCNN(nn.Module):
-    """TODO
-    """
+    """TODO"""
+
     def __init__(self):
         super(onsetCNN, self).__init__()
         self.conv1 = nn.Conv2d(3, 16, (3, 7))
@@ -41,8 +41,8 @@ class onsetCNN(nn.Module):
 
 # model definition for damped category
 class onsetCNN_D(nn.Module):
-    """TODO
-    """
+    """TODO"""
+
     def __init__(self):
         super(onsetCNN_D, self).__init__()
         self.conv1 = nn.Conv2d(3, 16, (3, 7))
@@ -70,8 +70,8 @@ class onsetCNN_D(nn.Module):
 
 # model definition for resonant treble category
 class onsetCNN_RT(nn.Module):
-    """TODO
-    """
+    """TODO"""
+
     def __init__(self):
         super(onsetCNN_RT, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, (3, 7))
