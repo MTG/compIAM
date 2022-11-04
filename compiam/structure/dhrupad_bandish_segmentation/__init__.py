@@ -28,7 +28,17 @@ class DhrupadBandishSegmentation:
     ):
         """Dhrupad Bandish Segmentation init method.
 
+        :param mode: net, voc, or pakh. That indicates the source for s.t.m. estimation. Use the net
+            mode if audio is a mixture signal, else use voc or pakh for clean/source-separated vocals or 
+            pakhawaj tracks.
+        :param fold: 0, 1 or 2, it is the validation fold to use during training
         :param model_path: path to file to the model weights.
+        :param splits_path: path to file to audio splits.
+        :param annotations_path: path to file to the annotations.
+        :param features_path: path to file to the computed features.
+        :param original_audios_path: path to file to the original audios from the dataset (see README.md in
+            compIAM/models/structure/dhrupad_bandish_segmentation/audio_original)
+        :param processed_audios_path: path to file to the processed audio files
         :param device: indicate whether the model will run on the GPU.
         """
         ###
@@ -73,17 +83,14 @@ class DhrupadBandishSegmentation:
         self.fold = fold
         self.classes = pars.classes_dict[self.mode]
 
-        self.model = None
+        self.model = self._build_model()
         self.model_path = model_path
 
         if self.model_path is not None:
-            if not os.path.exists(
-                os.path.join(
-                    self.model_path,
-                    self.mode,
-                    "saved_model_fold_" + str(self.fold) + ".pt",
-                )
-            ):
+            path_to_model = os.path.join(
+                self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+            )
+            if not os.path.exists(path_to_model):
                 raise ModelNotFoundError(
                     """
                     Given path to model weights not found. Make sure you enter the path correctly.
@@ -93,7 +100,7 @@ class DhrupadBandishSegmentation:
                     available before loading the Carnatic FTA-Net.
                 """
                 )
-            self.load_model()  # Loading pre-trained model for given mode
+            self.load_model(path_to_model)  # Loading pre-trained model for given mode
 
         self.splits_path = splits_path
         self.annotations_path = annotations_path
@@ -101,16 +108,17 @@ class DhrupadBandishSegmentation:
         self.original_audios_path = original_audios_path
         self.processed_audios_path = processed_audios_path
 
-    def load_model(self):
-        """Loading weights for model, given self.mode and self.fold"""
-        path_to_model = os.path.join(
-            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
-        )
-        self.model = (
+    def _build_model(self):
+        """Building non-trained model
+        """
+        return (
             build_model(pars.input_height, pars.input_len, len(self.classes))
             .float()
             .to(self.device)
         )
+
+    def load_model(self, path_to_model):
+        """Loading weights for model, given self.mode and self.fold"""
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
 
@@ -124,7 +132,10 @@ class DhrupadBandishSegmentation:
         """
         self.mode = mode
         self.classes = pars.classes_dict[mode]
-        self.load_model()
+        path_to_model = os.path.join(
+            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+        )
+        self.load_model(path_to_model)
 
     def update_fold(self, fold):
         """Update data fold for the training and sampling
@@ -132,7 +143,10 @@ class DhrupadBandishSegmentation:
         :param fold: new fold to use
         """
         self.fold = fold
-        self.load_model()
+        path_to_model = os.path.join(
+            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+        )
+        self.load_model(path_to_model)
 
     def train(self, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
@@ -206,11 +220,6 @@ class DhrupadBandishSegmentation:
         validation_generator = torch.utils.data.DataLoader(validation_set, **pars)
 
         # model definition and training
-        self.model = (
-            build_model(pars.input_height, pars.input_len, len(self.classes))
-            .float()
-            .to(self.device)
-        )
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         optimizer = torch.optim.Adam(self.parameters(), lr=0.0001)
 
