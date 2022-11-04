@@ -30,7 +30,8 @@ class DEEPSRGM(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please reinstall compiam using `pip install 'compiam[torch]'"
+                "Please reinstall compiam using pip install compiam[torch] or "
+                "install torch with pip install torch."
             )
         ###
 
@@ -167,7 +168,8 @@ class DEEPSRGM(object):
                 raise ImportError(
                     "In order to use this tool in this context you need to have essentia "
                     " and torch installed. "
-                    "Please reinstall compiam using `pip install 'compiam[essentia-torch]'`"
+                    "Please reinstall compiam using pip install compiam[essentia-torch], "
+                    "or install both dependencies using pip install <dep-name>"
                 )
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.")

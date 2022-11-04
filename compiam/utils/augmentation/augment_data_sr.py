@@ -150,7 +150,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output",
         type=str,
-        default="../outputs/",
+        default=os.path.join("..", "outputs"),
         help="folder to save modified audios",
     )
     parser.add_argument("--fs", type=int, default=16000, help="sampling rate")
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--templates",
         type=str,
-        default="./nmf_templates.npy",
+        default=os.path.join(".", "nmf_templates.npy"),
         help="path to saved nmf templates",
     )
     parser.add_argument(

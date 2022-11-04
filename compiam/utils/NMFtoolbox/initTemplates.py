@@ -29,6 +29,7 @@
     with 'NMF toolbox'. If not, see http://www.gnu.org/licenses/.
 """
 
+import os
 
 import numpy as np
 
@@ -127,7 +128,7 @@ def initTemplates(parameter, strategy="random"):
 
     elif strategy == "drums":
 
-        dictW = load_matlab_dict("../data/dictW.mat", "dictW")
+        dictW = load_matlab_dict(os.path.join("..", "data", "dictW.mat"), "dictW")
 
         if parameter["numBins"] == dictW.shape[0]:
             for k in range(dictW.shape[1]):
