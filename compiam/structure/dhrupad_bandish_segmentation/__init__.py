@@ -70,7 +70,8 @@ class DhrupadBandishSegmentation:
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please reinstall compiam using `pip install compiam[torch]`"
+                "Please reinstall compiam using pip install compiam[torch] or "
+                "install torch with pip install torch."
             )
         ###
 
@@ -117,7 +118,10 @@ class DhrupadBandishSegmentation:
         )
 
     def load_model(self, path_to_model):
-        """Loading weights for model, given self.mode and self.fold"""
+        """Loading weights for model, given self.mode and self.fold
+
+        :param path_to_model: path to model weights
+        """
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
 
@@ -197,7 +201,7 @@ class DhrupadBandishSegmentation:
 
         for song in songlist:
             try:
-                ids = glob.glob(self.features_path + song + "/*.pt")
+                ids = glob.glob(os.path.join(self.features_path + song, "*.pt"))
             except:
                 continue
             section_name = "_".join(song.split("_")[0:4])
@@ -330,7 +334,7 @@ class DhrupadBandishSegmentation:
                 torch.save(
                     self.model.state_dict(),
                     os.path.join(
-                        self.model_path, self.mode, "saved_model_fold_%d.pt" % fold
+                        self.model_path, self.mode, "saved_model_fold_%d.pt" % self.fold
                     ),
                 )
                 n_idle = 0
@@ -402,6 +406,7 @@ class DhrupadBandishSegmentation:
         plt.xlabel("Time (s)", fontsize=12)
         plt.ylabel("Surface tempo multiple", fontsize=12)
         plt.savefig(
-            os.path.join(output_dir, path_to_file.split("/")[-1].split(".wav")[0])
-            + ".png"
+            os.path.join(
+                output_dir, os.path.basename(path_to_file).replace(".wav", ".png")
+            )
         )

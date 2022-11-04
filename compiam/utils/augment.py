@@ -79,7 +79,7 @@ def stroke_remix(
     in_path,
     out_dir,
     gain_factors=(0.6, 2, 0.2),
-    templates=f"{file_dir}/augmentation/templates.npy",
+    templates=os.path.join(file_dir, "augmentation", "templates.npy"),
     winDur=46.4,
     hopDur=5e-3,
     sr=16000,
