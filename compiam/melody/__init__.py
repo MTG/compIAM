@@ -10,6 +10,8 @@ from compiam.melody.deepsrgm import DEEPSRGM
 
 # Show user the available tools
 import sys, inspect
+
+
 def list_tools():
     list_of_tools = []
     for _, obj in inspect.getmembers(sys.modules[__name__]):
