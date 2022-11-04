@@ -1,12 +1,25 @@
 .. _rhythm:
 
-Rhythm models
--------------
+Rhythm analysis
+===============
 
-Please remember these models are loaded using ``compiam.load_models``, and the list of
-availabel models can be seen running ``compiam.list_models``.
+Four-Way Tabla Classification
++++++++++++++++++++++++++++++
 
-
-.. automodule:: compiam.rhythm
+.. automodule:: compiam.rhythm.tabla_transcription
    :members:
-   :inherited-members:
+
+Four-Way Tabla Classification utils
+-----------------------------------
+
+.. automodule:: compiam.rhythm.tabla_transcription.model
+   :members:
+
+.. automodule:: compiam.rhythm.tabla_transcription.utils
+   :members:
+
+Akshara Pulse Tracker
++++++++++++++++++++++
+
+.. automodule:: compiam.rhythm.akshara_pulse_tracker
+   :members:

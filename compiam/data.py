@@ -7,9 +7,9 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 # Models Dict
 #############
 # Each model should be stored in models_dict using
-#   "<melody/rhythm/timbre/structure>:model_id":<d> where <d> is:
+#   "<melody|rhythm|timbrestructure>:model_id":<d> where <d> is:
 # 	    {
-#           "module_name": "<compiam.melody/rhythm/timbre/structure.file/folder name of model>",
+#           "module_name": "<compiam.melody|rhythm|timbre|structure.file|folder name of model>",
 #           "class_name": "<name of the model class>",
 #           "model_path": "<path_to_model if any>"
 #       }
@@ -19,9 +19,14 @@ models_dict = {
         "module_name": "compiam.melody.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models/melody/deepsrgm/"),
+            "model_path": os.path.join(WORKDIR, "models", "melody", "deepsrgm"),
             "mapping_path": os.path.join(
-                WORKDIR, "compiam/melody/deepsrgm/conf/DEEPSRGM_mapping.json"
+                WORKDIR,
+                "compiam",
+                "melody",
+                "deepsrgm",
+                "conf",
+                "DEEPSRGM_mapping.json",
             ),
         },
     },
@@ -29,21 +34,23 @@ models_dict = {
         "module_name": "compiam.melody.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models/melody/ftanet/carnatic/OA")
+            "model_path": os.path.join(
+                WORKDIR, "models", "melody", "ftanet", "carnatic", "OA"
+            )
         },
     },
     "rhythm:1way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/1way/")
+            "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "1way")
         },
     },
     "rhythm:4way-tabla": {
         "module_name": "compiam.rhythm.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models/rhythm/4wayTabla/4way/")
+            "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "4way")
         },
     },
     "structure:dhrupad-bandish-segmentation": {
@@ -52,19 +59,34 @@ models_dict = {
         "kwargs": {
             "model_path": os.path.join(
                 WORKDIR,
-                "models/structure/dhrupad_bandish_segmentation/pretrained_models/",
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "pretrained_models",
             ),
             "splits_path": os.path.join(
-                WORKDIR, "models/structure/dhrupad_bandish_segmentation/splits/"
+                WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "splits"
             ),
             "annotations_path": os.path.join(
-                WORKDIR, "models/structure/dhrupad_bandish_segmentation/annotations/"
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "annotations",
             ),
             "original_audios_path": os.path.join(
-                WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_original/"
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_original",
             ),
             "processed_audios_path": os.path.join(
-                WORKDIR, "models/structure/dhrupad_bandish_segmentation/audio_sections/"
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_sections",
             ),
         },
     },

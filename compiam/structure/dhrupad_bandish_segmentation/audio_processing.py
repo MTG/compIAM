@@ -10,7 +10,7 @@ import warnings
 
 
 def split_audios(save_dir=None, annotations_path=None, audios_path=None):
-    """Dhrupad Bandish Segmentation init method.
+    """Split audio of Dhrupad dataset
 
     :param save_dir: path where to save the splits
     :param annotations_path: path where to find the annotations

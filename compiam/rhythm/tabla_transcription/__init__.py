@@ -40,7 +40,8 @@ class FourWayTabla:
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please reinstall compiam using `pip install compiam[torch]`"
+                "Please reinstall compiam using pip install compiam[torch] or "
+                "install torch with pip install torch."
             )
         ###
 
@@ -351,10 +352,12 @@ class FourWayTabla:
 
         # load all melgram-label pairs as a dict to memory for faster training (ensure sufficient RAM size apriori)
         songlist_orig = np.loadtxt(
-            os.path.join(model_path, "songlists/songlist_orig.txt"), dtype=str
+            os.path.join(model_path, "songlists", "songlist_orig.txt"), dtype=str
         )
         songlist_aug = np.loadtxt(
-            os.path.join(model_path, f"/songlists/songlist_{aug_method}.txt"), dtype=str
+            os.path.join(
+                model_path, "songlists", "songlist_" + str(aug_method) + ".txt"
+            ),
         )
         mel_data = load_mel_data(model_path, folds, splits, songlist_orig, songlist_aug)
 

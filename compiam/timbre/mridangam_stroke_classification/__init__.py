@@ -29,7 +29,8 @@ class MridangamStrokeClassification:
         except:
             raise ImportError(
                 "In order to use this tool you need to have essentia installed. "
-                "Please reinstall compiam using `pip install 'compiam[essentia]'"
+                "Please reinstall compiam using pip install compiam[essentia] or "
+                "install essentia with pip install essentia."
             )
         ###
 
@@ -96,6 +97,7 @@ class MridangamStrokeClassification:
         self, model_type="svm", load_computed=True, balance=False, balance_ref="random"
     ):
         """Train a support vector machine for stroke classification.
+
         :param model_type: type of model to train.
         :param model_type: bool to indicate if the features are computed or loaded from file.
         :param balance: balance the number of instances per class to prevent biases.

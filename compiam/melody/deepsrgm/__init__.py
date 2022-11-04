@@ -1,5 +1,5 @@
 import os
-import mirdata
+import mirdata  # TODO
 
 import numpy as np
 
@@ -30,14 +30,21 @@ class DEEPSRGM(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please reinstall compiam using `pip install 'compiam[torch]'"
+                "Please reinstall compiam using pip install compiam[torch] or "
+                "install torch with pip install torch."
             )
         ###
 
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
+        self.model = self._build_model(rnn="lstm")
         self.model_path = model_path
+
+        ## Loading LSTM model by default
+        if self.model_path is not None:
+            self.load_model(self.model_path, rnn="lstm")
+
         self.mapping_path = mapping_path
         self.mapping = None
         self.selected_ragas = [
@@ -52,24 +59,45 @@ class DEEPSRGM(object):
             24,
             28,
         ]  # pre-defined for release 0.1
-        self.model = deepsrgmModel(rnn="lstm").to(self.device)
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
             None  # To update when CompMusic Raga dataset is integrated mirdata
         )
 
+    def _build_model(self, rnn="lstm"):
+        """Bulding DEEPSRM
+
+        :param rnn: lstm (default) or gru.
+        """
+        return deepsrgmModel(rnn=rnn).to(self.device)
+
     def load_mapping(self, selection=None):
-        """TODO"""
+        """Loading raga mapping for DEEPSRGM
+
+        :param selection: Selection of ragas for the DEEPSRGM model. A default selection
+            is initialized by default in compiam v1.0. Flexible selection and training of this
+            model is under development at this moment and will be available in the next release.
+        """
         selected_ragas = self.selected_ragas if selection is None else selection
         self.mapping = create_mapping(self.mapping_path, selected_ragas)
 
-    def load_model(self, rnn="lstm"):
-        """TODO"""
+    def load_model(self, model_path, rnn="lstm"):
+        """Loading weights for DEEPSRGM
+
+        :param model_path: path to model. If ".pth" not in entered path, it assumes that the
+            default weights provided in the library are used. Otherwise, make sure to enter the
+            full path to your own .pth file.
+        :param rnn: lstm (default) or gru.
+        """
         if rnn == "gru":
-            self.model = deepsrgmModel(rnn="gru").to(self.device)
-            weights_path = os.path.join(self.model_path, "gru_30_checkpoint.pth")
+            self.model = deepsrgmModel(rnn=rnn).to(self.device)
+            # This is the case for automatic loading of provided weights
+            if ".pth" not in model_path:
+                weights_path = os.path.join(model_path, "gru_30_checkpoint.pth")
         else:
-            weights_path = os.path.join(self.model_path, "lstm_25_checkpoint.pth")
+            # This is the case for automatic loading of provided weights
+            if ".pth" not in model_path:
+                weights_path = os.path.join(model_path, "lstm_25_checkpoint.pth")
         if not os.path.exists(weights_path):
             raise ValueError(
                 """
@@ -77,7 +105,7 @@ class DEEPSRGM(object):
                 A training process for DEEPSRGM is under development right now and will be added 
                 to the library soon. Meanwhile, we provide the weights in the latest repository 
                 version (https://github.com/MTG/compIAM) so make sure you have these available before 
-                loading the DEEPSRGM.
+                loading the DEEPSRGM. The weights are stored in .pth file format.
             """
             )
 
@@ -105,7 +133,17 @@ class DEEPSRGM(object):
         track_id=None,
         k=5,
     ):
-        """TODO"""
+        """Computing features for prediction of DEEPSRM
+
+        :param audio_file: path to file from which to extract the features
+        :param pitch_file: path to pre-computed pitch file (if available)
+        :param tonic_file: path to pre-computed tonic file (if available)
+        :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
+            Indian Art Music Raga Recognition Dataset (must be specifically this one)
+        :param track_id: track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is
+            set to True
+        :param k: k indicating the precision of the pitch feature.
+        """
         if (pitch_file is not None) and (tonic_file is not None):
             freqs = open(pitch_file).read().strip().split("\n")
             tonic = eval(open(tonic_file).read().strip())
@@ -130,7 +168,8 @@ class DEEPSRGM(object):
                 raise ImportError(
                     "In order to use this tool in this context you need to have essentia "
                     " and torch installed. "
-                    "Please reinstall compiam using `pip install 'compiam[essentia-torch]'`"
+                    "Please reinstall compiam using pip install compiam[essentia-torch], "
+                    "or install both dependencies using pip install <dep-name>"
                 )
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.")
