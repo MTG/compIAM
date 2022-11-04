@@ -1,3 +1,7 @@
+import sys
+
+from compiam.utils import get_tool_list
+
 # Pitch extraction
 from compiam.melody.melodia import Melodia
 from compiam.melody.ftanet_carnatic import FTANetCarnatic
@@ -7,3 +11,7 @@ from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
 
 # Raga recognition
 from compiam.melody.deepsrgm import DEEPSRGM
+
+# Show user the available tools
+def list_tools():
+    return get_tool_list(modules=sys.modules[__name__])

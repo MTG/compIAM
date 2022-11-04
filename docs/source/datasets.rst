@@ -3,10 +3,11 @@
 Load IAM datasets using mirdata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To add a dataset in compIAM, please first open an issue in compIAM, then write
-a mirdata loader for the dataset and create a PR. Once merged, please include 
-then the dataset in `datasets_list` in `data.py`.
+compIAM includes an alias function for ``mirdata.initialize()`` to directly
+initialize the mirdata loaders of Indian Art Music datasets.
 
+.. note::
+    Print out the available datasets to load: ``compiam.list_datasets()``.
 
 .. autofunction:: compiam.load_dataset
     

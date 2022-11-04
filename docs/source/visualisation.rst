@@ -1,29 +1,20 @@
-compiam.visualisation package
-=============================
+Visualisation tools
+===================
 
-Subpackages
------------
+PyPeaks for Indian Art Music
+++++++++++++++++++++++++++++
 
-.. toctree::
-   :maxdepth: 4
+.. automodule:: compiam.visualisation.peaks.data
+   :members:
 
-   compiam.visualisation.peaks
-
-Submodules
-----------
-
-compiam.visualisation.audio module
-----------------------------------
+Audio visualisation utils
+++++++++++++++++++++++++++
 
 .. automodule:: compiam.visualisation.audio
    :members:
-   :undoc-members:
-   :show-inheritance:
 
-Module contents
----------------
+Training visualisation utils
+++++++++++++++++++++++++++++
 
-.. automodule:: compiam.visualisation
+.. automodule:: compiam.visualisation.training
    :members:
-   :undoc-members:
-   :show-inheritance:

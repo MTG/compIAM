@@ -15,7 +15,7 @@ except:
 
 # Dataloader class
 class TablaDataset(data.Dataset):
-    "Characterizes a dataset for PyTorch"
+    """Characterizes a dataset for PyTorch"""
 
     def __init__(self, filepath, seq_length=15, n_channels=3, mel_data=None):
         "Initialization"
