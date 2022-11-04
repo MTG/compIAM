@@ -29,7 +29,7 @@ class DhrupadBandishSegmentation:
         """Dhrupad Bandish Segmentation init method.
 
         :param mode: net, voc, or pakh. That indicates the source for s.t.m. estimation. Use the net
-            mode if audio is a mixture signal, else use voc or pakh for clean/source-separated vocals or 
+            mode if audio is a mixture signal, else use voc or pakh for clean/source-separated vocals or
             pakhawaj tracks.
         :param fold: 0, 1 or 2, it is the validation fold to use during training
         :param model_path: path to file to the model weights.
@@ -109,8 +109,7 @@ class DhrupadBandishSegmentation:
         self.processed_audios_path = processed_audios_path
 
     def _build_model(self):
-        """Building non-trained model
-        """
+        """Building non-trained model"""
         return (
             build_model(pars.input_height, pars.input_len, len(self.classes))
             .float()
