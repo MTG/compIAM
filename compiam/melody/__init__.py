@@ -1,3 +1,7 @@
+import sys
+
+from compiam.utils import get_tool_list
+
 # Pitch extraction
 from compiam.melody.melodia import Melodia
 from compiam.melody.ftanet_carnatic import FTANetCarnatic
@@ -9,12 +13,5 @@ from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
 from compiam.melody.deepsrgm import DEEPSRGM
 
 # Show user the available tools
-import sys, inspect
-
-
 def list_tools():
-    list_of_tools = []
-    for _, obj in inspect.getmembers(sys.modules[__name__]):
-        if inspect.isclass(obj):
-            list_of_tools.append(obj.__name__)
-    return list_of_tools
+    return get_tool_list(modules=sys.modules[__name__])

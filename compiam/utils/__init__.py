@@ -1,5 +1,7 @@
 import os
+import sys
 import yaml
+import inspect
 import logging
 
 
@@ -47,3 +49,11 @@ def load_yaml(path):
     with open(path) as f:
         d = yaml.load(f, Loader=yaml.FullLoader)
     return d
+
+
+def get_tool_list(modules):
+    list_of_tools = []
+    for _, obj in inspect.getmembers(modules):
+        if inspect.isclass(obj):
+            list_of_tools.append(obj.__name__)
+    return list_of_tools
