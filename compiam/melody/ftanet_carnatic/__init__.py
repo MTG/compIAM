@@ -32,7 +32,7 @@ class FTANetCarnatic(object):
             )
         ###
 
-        self.model = self.load_model()
+        self.model = self._build_model()
 
         self.model_path = model_path
         if self.model_path is not None:
@@ -47,7 +47,7 @@ class FTANetCarnatic(object):
                 """
                 )
 
-            self.load_weights(self.model_path)
+            self.load_model(self.model_path)
 
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
@@ -135,7 +135,7 @@ class FTANetCarnatic(object):
 
         return x_r, x_t, x_f
 
-    def load_model(self, input_shape=(320, 128, 3)):
+    def _build_model(self, input_shape=(320, 128, 3)):
         """Building the entire FTA-Net.
 
         :param input_shape: input shape.
@@ -200,7 +200,7 @@ class FTANetCarnatic(object):
         x = layers.Softmax(axis=-2)(x)
         return Model(inputs=visible, outputs=x)
 
-    def load_weights(self, model_path):
+    def load_model(self, model_path):
         try:
             self.model.load_weights(model_path).expect_partial()
             self.model_path = model_path
