@@ -1,8 +1,28 @@
 [build-system]
-requires = ["setuptools>=42.0", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
 ]
+
+[project]
+name = "compIAM"
+version = "0.0.3"
+authors = [
+ "Thomas Nuttall, thomas.nuttall@upf.edu",
+ "Genís Plaja-Roglans, genis.plaja@upf.edu"
+]
+description = "Computational tools for the analysis of Indian Art Music"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    License :: OSI Approved :: GNU Affero General Public License v3,
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/MTG/compIAM/tree/master/compiam"
+"Bug Tracker" = "https://github.com/MTG/compIAM/issues"
