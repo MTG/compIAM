@@ -1,6 +1,10 @@
+import os
+import pathlib
 from setuptools import find_packages, setup
 
-with open("requirements.txt") as f:
+WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
+
+with open(os.path.join(WORKDIR, "requirements.txt")) as f:
     REQUIREMENTS = f.readlines()
 
 setup(
@@ -10,7 +14,7 @@ setup(
     author_email=["thomas.nuttall@upf.edu", "genis.plaja@upf.edu"],
     zip_safe=False,
     include_package_data=True,
-    long_description=open("README.md").read(),
+    long_description=open(os.path.join(WORKDIR, "README.md")).read(),
     install_requires=REQUIREMENTS,
     extras_require={
         "tests": [
