@@ -31,9 +31,6 @@ extensions = [
     "sphinx.ext.githubpages",
 ]
 
-# The suffix of source filenames.
-source_suffix = ".rst"
-
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
