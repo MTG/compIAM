@@ -8,7 +8,6 @@ from compiam.visualisation.training import plot_losses
 
 logger = get_logger(__name__)
 
-
 class FourWayTabla:
     """TODO"""
 
@@ -22,14 +21,14 @@ class FourWayTabla:
             import torch
 
             global onsetCNN_D, onsetCNN_RT, onsetCNN
-            from compiam.rhythm.tabla_transcription.model import (
+            from compiam.rhythm.transcription.model import (
                 onsetCNN_D,
                 onsetCNN_RT,
                 onsetCNN,
             )
 
             global TablaDataset, gen_melgrams, peakPicker, make_train_val_split, load_mel_data
-            from compiam.rhythm.tabla_transcription.utils import (
+            from compiam.rhythm.transcription.utils import (
                 TablaDataset,
                 gen_melgrams,
                 peakPicker,

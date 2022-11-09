@@ -40,14 +40,14 @@ models_dict = {
         },
     },
     "rhythm:1way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
+        "module_name": "compiam.rhythm.transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "1way")
         },
     },
     "rhythm:4way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
+        "module_name": "compiam.rhythm.transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "4way")

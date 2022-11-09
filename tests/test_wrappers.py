@@ -50,7 +50,7 @@ def _load_tf_models():
 
 def _load_torch_models():
     from compiam import load_model
-    from compiam.rhythm.tabla_transcription import FourWayTabla
+    from compiam.rhythm.transcription import FourWayTabla
     from compiam.structure.dhrupad_bandish_segmentation import (
         DhrupadBandishSegmentation,
     )

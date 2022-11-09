@@ -6,16 +6,16 @@ Rhythm analysis
 Four-Way Tabla Classification
 +++++++++++++++++++++++++++++
 
-.. automodule:: compiam.rhythm.tabla_transcription
+.. automodule:: compiam.rhythm.transcription
    :members:
 
 Four-Way Tabla Classification utils
 -----------------------------------
 
-.. automodule:: compiam.rhythm.tabla_transcription.model
+.. automodule:: compiam.rhythm.transcription.model
    :members:
 
-.. automodule:: compiam.rhythm.tabla_transcription.utils
+.. automodule:: compiam.rhythm.transcription.utils
    :members:
 
 Akshara Pulse Tracker
