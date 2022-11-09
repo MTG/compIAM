@@ -8,4 +8,4 @@
 
 [1] M. A. Rohit, A. Bhattacharjee, and P. Rao, “Four-way Classification of Tabla Strokes with Models Adapted from Automatic Drum Transcription”, in Proc. of the 22nd Int. Society for Music Information Retrieval Conf. (ISMIR 20), Online, 2020
 
-[1] Originally implemented by Ajay Srinivasamurthy as part of PyCompMusic - https://github.com/MTG/pycompmusic
+[2] Originally implemented by Ajay Srinivasamurthy as part of PyCompMusic - https://github.com/MTG/pycompmusic
