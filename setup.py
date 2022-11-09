@@ -21,6 +21,7 @@ setup(
         "tqdm==4.64.1",
         "mirdata==0.3.6",
         "zope",
+        "hmmlearn"
     ],
     extras_require={
         "tests": [

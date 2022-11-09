@@ -1,8 +1,14 @@
+import csv
 import os
+import pickle
 
+import hmmlearn.hmm as hmm
+import librosa
 import numpy as np
+import tqdm 
 
 from compiam.exceptions import ModelNotTrainedError
+from compiam.rhythm.akshara_pulse_tracker import AksharaPulseTracker
 from compiam.utils import get_logger
 from compiam.visualisation.training import plot_losses
 
@@ -381,3 +387,141 @@ class FourWayTabla:
         )
 
         return training_generator, validation_generator
+
+
+class MnemonicTranscription:
+    """
+    Transcribe from audio to bol or konnakol
+    """
+    def __init__(self, syllables=None, feature_kwargs={'n_mfcc':13, 'win_length':1024, 'hop_length':256}, model_kwargs={'n_components':7, 'n_mix': 3, 'n_iter':100, 'algorithm': 'viterbi', 'init_params':''}, sr=44100):
+        
+        self.sr = sr
+
+        if isinstance(syllables, dict):
+            self.syllables = set(syllables.values())
+            self.mapping = syllables
+        else:
+            self.syllables = set(syllables)
+            self.mapping = {x:x for x in syllables}
+
+        self.models = {}
+        for s in self.syllables:
+            self.models[s] = hmm.GMMHMM(**model_kwargs)
+
+        self.feature_kwargs = feature_kwargs
+
+    def train(self, filepaths_audio, filepaths_annotation, sr=None):
+        if not len(filepaths_audio) == len(filepaths_annotation):
+            raise Exception("filepaths_audio and filepaths_annotation must be the same length")
+
+        sr = self.sr if not sr else sr
+
+        samples = {s:[] for s in self.syllables}
+        # load and extract features
+        for fau, fan in zip(filepaths_audio, filepaths_annotation):
+            audio, _ = librosa.load(fau, sr=sr)
+            annotations = self.load_annotations(fan)
+            
+            annotations = [(round(t*sr), self.map(a)) for t,a in annotations]
+            ann_syls = set([x[1] for x in annotations])
+            
+            # Extract melodic features
+            features = self.extract_features(audio, sr=sr)
+
+            for syl in ann_syls:
+                if not syl in self.syllables:
+                    continue
+                
+                # get params
+                hop_length = self.feature_kwargs['hop_length']
+                
+                # get training samples relevant to syl
+                samples_ix = self.get_sample_ix(annotations, audio, syl)
+                samples_ix = [(int(i/hop_length),int(j/hop_length)) for i,j in samples_ix]
+
+                samples[syl] = samples[syl] + [features[:,i:j] for i,j in samples_ix]
+
+        # Train models
+        for syl, samps in tqdm.tqdm(samples.items()):
+            if samps:
+                samps_concat = np.concatenate(samps, axis=1)
+                lengths = np.array([s.shape[1] for s in samps])
+                self.models[syl].fit(samps_concat.T, lengths)
+
+    def predict(self, filepaths, sr=None):
+        sr = self.sr if not sr else sr
+        if not isinstance(filepaths, list):
+            filepaths = list(filepaths)
+        results = []
+        for fau in filepaths:
+            audio, _ = librosa.load(fau, sr=sr)
+            results.append(self.predict_audio(audio, sr=sr))
+        return results[0] if len(results) == 1 else results
+
+    def predict_audio(self, audio, onsets=None, sr=None):
+        sr = self.sr if not sr else sr
+        hop_length = self.features_kwargs['hop_length']
+        features = self.extract_features(audio, sr=sr)
+
+        if not onsets:
+            # if not onsets are passed, extract using 
+            pulse = AksharaPulseTracker()
+            onsets = pulse.extract(fau)
+            onsets = np.append(onsets, len(audio)/sr)
+
+        n_ons = len(onsets)
+        samples_ix = [(int(onsets[i]*sr)/hop_length, (int(onsets[i+1]*sr)/hop_length)-1) for i in range(n_ons-1)]
+        samples_ix.append((samples_ix[-1][1],features.shape[1]-1))
+
+        labels = []
+        for i,j in samples_ix:
+            samp = features[:,i:j]
+            t = round(i*self.feature_kwargs['hop_length']/sr,2)
+            label = self.predict_sample(self.models, samp)
+            labels.append((t, label))
+
+        return labels
+
+    def predict_sample(self, sample):
+        # predict list of test
+        names = []
+
+        scores = []
+        for syl in self.models.keys():
+            scores.append(self.models[syl].score(sample.T))
+            names.append(syl)
+        label = scores.index(max(scores))
+        return names[label]
+
+    def map(self, a):
+        if a in self.mapping:
+            return self.mapping[a]
+        else:
+            logger.warning(f'Skipping unknown syllable, {a} for training instance. Model syllables: {self.mapping.keys()}')
+            return '!UKNOWN'
+
+    def get_sample_ix(self, annotations, audio, syl):
+        annotations_two = annotations + [(len(audio),'!END')]
+        zipped = zip(annotations, annotations_two[1:])
+        samples = [(t1, t2-1) for ((t1,a1),(t2,a2)) in zipped if a1==syl]
+        return samples
+
+    def extract_features(self, audio, sr=None):
+        sr = self.sr if not sr else sr
+        MFCC = librosa.feature.mfcc(y=audio, sr=sr, **self.feature_kwargs)
+        MFCC_delta = librosa.feature.delta(MFCC)
+        features = np.concatenate((MFCC, MFCC_delta))
+        return features
+
+    def load_annotations(self, path):
+        annotations = []
+        with open(path, 'r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                annotations.append((float(row[0]), str(row[1]).strip()))
+
+        return annotations
+
+    def save(self, path):
+        with open(path, "wb") as d:
+            pickle.dump(self, d)
