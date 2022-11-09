@@ -10,6 +10,7 @@ jobs:
           python-version: '3.9' 
       - name: Install dependencies
         run: |
+          sudo apt-get install libsndfile1
           pip install sphinx
           pip install mirdata
       - name: Sphinx build
@@ -22,4 +23,5 @@ jobs:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
+          enable_jekyll: false
           force_orphan: true
