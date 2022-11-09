@@ -1,53 +1,26 @@
 from setuptools import find_packages, setup
 
+with open("requirements.txt") as f:
+    REQUIREMENTS = f.readlines()
+
 setup(
     name="compiam",
-    version="1.0",
+    version="0.1.0",
     packages=find_packages(),
     author_email=["thomas.nuttall@upf.edu", "genis.plaja@upf.edu"],
     zip_safe=False,
     include_package_data=True,
     long_description=open("README.md").read(),
-    install_requires=[
-        "matplotlib>=3.0.0",
-        "numpy==1.19.5",
-        "librosa==0.8.0",
-        "SoundFile==0.10.3.post1",
-        "joblib==0.17.0",
-        "pathlib==1.0.1",
-        "pytsmod==0.3.3",
-        "scipy~=1.4.1",
-        "scikit-learn~=0.24.2",
-        "tqdm==4.64.1",
-        "mirdata==0.3.6",
-        "zope",
-    ],
+    install_requires=REQUIREMENTS,
     extras_require={
         "tests": [
             "pytest>=4.4.0",
             "pytest-cov>=2.6.1",
-            "pytest-pep8>=1.0.0",
-            "pytest-mock>=1.10.1",
-            "pytest-localserver>=0.5.0",
-            "testcontainers>=2.3",
-            "future==0.17.1",
-            "coveralls>=1.7.0",
-            "types-PyYAML",
-            "types-chardet",
-            "smart_open[all] >= 5.0.0",
         ],
         "docs": [
-            "numpydoc",
-            "recommonmark",
             "sphinx>=3.4.0",
             "sphinxcontrib-napoleon",
             "sphinx_rtd_theme",
         ],
-        "tensorflow": ["tensorflow==2.5.0"],
-        "torch": ["torch==1.8.0"],
-        "essentia": ["essentia"],
-        "essentia-tensorflow": ["tensorflow==2.5.0", "essentia"],
-        "essentia-torch": ["essentia", "torch==1.8.0"],
-        "full-ML": ["tensorflow==2.5.0", "torch==1.8.0"],
     },
 )

@@ -28,7 +28,7 @@ class FTANetCarnatic(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
-                "Please reinstall compiam using `pip install 'compiam[tensorflow]'"
+                "Please install tensorflow using: pip install tensorflow==2.5.0"
             )
         ###
 
