@@ -391,7 +391,7 @@ class FourWayTabla:
 
 class MnemonicTranscription:
     """
-    Bol or konnakol transcription from audio. Based on model presented in [1]
+    bōl or solkattu transcription from audio. Based on model presented in [1]
     
     [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X. 
     (2015, October). Discovery of Syllabic Percussion Patterns in Tabla 
@@ -415,9 +415,9 @@ class MnemonicTranscription:
             'init_params':''}, 
         sr=44100):
         """
-        :param syllables: List of strings representing expected bol/konnakol syllables OR dict of string:string mappings.
+        :param syllables: List of strings representing expected bōl/solkattu syllables OR dict of string:string mappings.
             If a dict is passed, any subsequent syllable labels passed at training time will be converted as per this mapping. The values of
-            this dict will act as the bol/konnakol "vocabulary" for this model.
+            this dict will act as the bōl/solkattu "vocabulary" for this model.
         :type syllables: list or dict
         :param feature_kwargs: Dict of parameters to pass to librosa.feature.mfcc or librosa.feature.delta. Defaults are selected as per [1]
         :type feature_kwargs: dict
@@ -506,20 +506,20 @@ class MnemonicTranscription:
 
     def predict(self, filepaths, onsets=None, sr=None):
         """
-        Predict bol/konnakol transcription for list of input audios at <filepaths>.
+        Predict bōl/solkattu transcription for list of input audios at <filepaths>.
 
         :param filepaths: Either one filepath or list of filepaths to audios to predict on
         :type filepaths: list or string
         :param onsets: list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used
-            to automatically identify bol/konnakol onsets. If passed should be a list of onset annotations, each being 
-            a list of bol/konnakol onsets in seconds. <onsets> should contain one set of onset annotations for each filepath
+            to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being 
+            a list of bōl/solkattu onsets in seconds. <onsets> should contain one set of onset annotations for each filepath
             in <filepaths>
         :type onsets: list or None
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
 
         :returns: if <filepaths> is a list, then return a list of transcriptions, each 
-            transcription of the form [(timestamp in seconds, bol/konnakol),...]. Or if <filepaths>
+            transcription of the form [(timestamp in seconds, bōl/solkattu),...]. Or if <filepaths>
             is a single fiel path string, return a single transcription.
         :rtype: list
         """ 
@@ -541,19 +541,19 @@ class MnemonicTranscription:
 
     def predict_audio(self, audio, onsets=None, sr=None):
         """
-        Predict bol/konnakol transcription directly from audio time series 
+        Predict bōl/solkattu transcription directly from audio time series 
         (such as for example that loaded by librosa.load)
 
         :param audio: Numpy array of representing audio time series
         :type filepaths: list or string
         :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically 
-            identify bol/konnakol onsets. If passed <onsets> should be a list of bol/konnakol
+            identify bōl/solkattu onsets. If passed <onsets> should be a list of bōl/solkattu
             onsets in seconds
         :type onsets: list or None
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
 
-        :returns: bol/konnakol transcription of form [(time in seconds, syllable),... ]
+        :returns: bōl/solkattu transcription of form [(time in seconds, syllable),... ]
         :rtype: list
         """ 
         sr = self.sr if not sr else sr
@@ -582,12 +582,12 @@ class MnemonicTranscription:
     def predict_sample(self, sample):
         """
         Predict one sample using internal models. One sample should correspond to one
-        bol/konnakol
+        bōl/solkattu
 
         :param sample: Numpy array features corresponding to <sample> (extracted using self.extract_features)
         :type sample: np.array
 
-        :returns: bol/konnakol label
+        :returns: bōl/solkattu label
         :rtype: str
         """
         names = []
@@ -601,12 +601,12 @@ class MnemonicTranscription:
 
     def map(self, a):
         """
-        Map input bol/konnakol, <a> to reduced bol/konnakol vocabulary
+        Map input bōl/solkattu, <a> to reduced bōl/solkattu vocabulary
 
-        :param a: bol/konnakol string (that must exist in self.mapping)
+        :param a: bōl/solkattu string (that must exist in self.mapping)
         :type a: np.array
 
-        :returns: mapped bol/konnakol label
+        :returns: mapped bōl/solkattu label
         :rtype: str
         """
         if a in self.mapping:
@@ -618,17 +618,17 @@ class MnemonicTranscription:
     def get_sample_ix(self, annotations, audio, syl):
         """
         Convert input onset annotations to list of in/out points for a 
-        specific bol/konnakol syllable, <syl>
+        specific bōl/solkattu syllable, <syl>
 
-        :param annotations: onset annotations of the form [(timestamp in seconds, bol/konnakol),... ]
+        :param annotations: onset annotations of the form [(timestamp in seconds, bōl/solkattu),... ]
         :type annotations: list/iterable
         :param audio: time series representation of audio
         :type audio: np.array
-        :param syl: bol/konnakol syllable to extract
+        :param syl: bōl/solkattu syllable to extract
         :type syl: str
 
         :returns: list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single 
-            bols/konnakols
+            bōls/solkattus
         :rtype: str
         """
         annotations_two = annotations + [(len(audio),'!END')]
@@ -659,10 +659,10 @@ class MnemonicTranscription:
         Load onset annotations from <path>
 
         :param path: path to onset annotaitons for one recording
-            of the form (timestamp in seconds, bol/konnakol syllable)
+            of the form (timestamp in seconds, bōl/solkattu syllable)
         :type path: str
 
-        :returns: list of onset annotations (timestamp seconds, bol/konnakol syllable)
+        :returns: list of onset annotations (timestamp seconds, bōl/solkattu syllable)
         :rtype: list
         """
         annotations = []
