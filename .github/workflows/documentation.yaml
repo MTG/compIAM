@@ -11,7 +11,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install libsndfile1
-          pip install sphinx sphinx_rtd_theme mirdata
+          pip install sphinx sphinx_rtd_theme mirdata matplotlib scipy essentia tensorflow torch
       - name: Sphinx build
         run: |
           sphinx-build docs _build
