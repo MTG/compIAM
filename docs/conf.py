@@ -6,7 +6,7 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information -----------------------------------------------------
@@ -30,6 +30,12 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.githubpages",
 ]
+
+# The suffix of source filenames.
+source_suffix = ".rst"
+
+# The master toctree document.
+master_doc = "index"
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
