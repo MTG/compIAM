@@ -1,0 +1,3 @@
+include ACKNOWLEDGEMENTS
+include AUTHORS
+include requirements.txt
