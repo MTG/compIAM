@@ -391,10 +391,47 @@ class FourWayTabla:
 
 class MnemonicTranscription:
     """
-    Transcribe from audio to bol or konnakol
+    Bol or konnakol transcription from audio. Based on model presented in [1]
+    
+    [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X. 
+    (2015, October). Discovery of Syllabic Percussion Patterns in Tabla 
+    Solo Recordings. In Proceedings of the 16th International Society 
+    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391). 
+    Malaga, Spain.
     """
-    def __init__(self, syllables=None, feature_kwargs={'n_mfcc':13, 'win_length':1024, 'hop_length':256}, model_kwargs={'n_components':7, 'n_mix': 3, 'n_iter':100, 'algorithm': 'viterbi', 'init_params':''}, sr=44100):
+    def __init__(
+        self, 
+        syllables, 
+        feature_kwargs={
+            'n_mfcc':13, 
+            'win_length':1024, 
+            'hop_length':256
+        }, 
+        model_kwargs={
+            'n_components':7, 
+            'n_mix': 3, 
+            'n_iter':100, 
+            'algorithm': 'viterbi', 
+            'init_params':''}, 
+        sr=44100):
+        """
+        :param syllables: List of strings representing expected bol/konnakol syllables OR dict of string:string mappings.
+            If a dict is passed, any subsequent syllable labels passed at training time will be converted as per this mapping. The values of
+            this dict will act as the bol/konnakol "vocabulary" for this model.
+        :type syllables: list or dict
+        :param feature_kwargs: Dict of parameters to pass to librosa.feature.mfcc or librosa.feature.delta. Defaults are selected as per [1]
+        :type feature_kwargs: dict
+        :param model_kwargs: Dict of parameters to pass to hmmlearn.hmm.GMMHMM. Defaults are selected as per [1]
+        :type model_kwargs: dict
+        :param sr: sampling rate of audio to train on (default 44.1Hz)
+        :type sr: int
         
+        [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X. 
+        (2015, October). Discovery of Syllabic Percussion Patterns in Tabla 
+        Solo Recordings. In Proceedings of the 16th International Society 
+        for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391). 
+        Malaga, Spain.
+        """ 
         self.sr = sr
 
         if isinstance(syllables, dict):
@@ -409,8 +446,25 @@ class MnemonicTranscription:
             self.models[s] = hmm.GMMHMM(**model_kwargs)
 
         self.feature_kwargs = feature_kwargs
+        self.trained = False
 
     def train(self, filepaths_audio, filepaths_annotation, sr=None):
+        """
+        Train one gaussian mixture model hidden markov model for each syllables passed at initialisation 
+        on input audios and annotations passed via <filepaths_audio> and <filepaths_annotation>.
+        Training hyperparameters are configured upon intialisation and can be accessed/changed
+        via self.model_kwargs.
+
+        :param filepaths_audio: List of filepaths to audios to train on
+        :type filepaths_audio: list
+        :param filepaths_annotation: List of filepaths to annotations to train on.
+            annotations should be in csv format, with no header of (timestamp in seconds, <syllable>). 
+            Annotated syllables that do not correspond to syllables passed at initialisation will be ignored
+            One annotations path should be passed for each audio path
+        :type filepaths_annotaton: list
+        :param sr: sampling rate of audio to train on (default <self.sr>)
+        :param sr: int
+        """ 
         if not len(filepaths_audio) == len(filepaths_annotation):
             raise Exception("filepaths_audio and filepaths_annotation must be the same length")
 
@@ -448,17 +502,60 @@ class MnemonicTranscription:
                 lengths = np.array([s.shape[1] for s in samps])
                 self.models[syl].fit(samps_concat.T, lengths)
 
-    def predict(self, filepaths, sr=None):
+        self.trained = True
+
+    def predict(self, filepaths, onsets=None, sr=None):
+        """
+        Predict bol/konnakol transcription for list of input audios at <filepaths>.
+
+        :param filepaths: Either one filepath or list of filepaths to audios to predict on
+        :type filepaths: list or string
+        :param onsets: list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used
+            to automatically identify bol/konnakol onsets. If passed should be a list of onset annotations, each being 
+            a list of bol/konnakol onsets in seconds. <onsets> should contain one set of onset annotations for each filepath
+            in <filepaths>
+        :type onsets: list or None
+        :param sr: sampling rate of audio to train on (default <self.sr>)
+        :param sr: int
+
+        :returns: if <filepaths> is a list, then return a list of transcriptions, each 
+            transcription of the form [(timestamp in seconds, bol/konnakol),...]. Or if <filepaths>
+            is a single fiel path string, return a single transcription.
+        :rtype: list
+        """ 
+        if not self.trained:
+            raise ModelNotTrainedError('Please train model before predicting using .train() method')
+        if onsets:
+            if not len(onsets) == len(filepaths):
+                raise Exception("One onset annotation required for each filepath")
+
         sr = self.sr if not sr else sr
         if not isinstance(filepaths, list):
             filepaths = list(filepaths)
         results = []
-        for fau in filepaths:
+        for i,fau in enumerate(filepaths):
             audio, _ = librosa.load(fau, sr=sr)
-            results.append(self.predict_audio(audio, sr=sr))
+            ot = onsets[i] if onsets else None
+            results.append(self.predict_audio(audio, onsets=ot, sr=sr))
         return results[0] if len(results) == 1 else results
 
     def predict_audio(self, audio, onsets=None, sr=None):
+        """
+        Predict bol/konnakol transcription directly from audio time series 
+        (such as for example that loaded by librosa.load)
+
+        :param audio: Numpy array of representing audio time series
+        :type filepaths: list or string
+        :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically 
+            identify bol/konnakol onsets. If passed <onsets> should be a list of bol/konnakol
+            onsets in seconds
+        :type onsets: list or None
+        :param sr: sampling rate of audio to train on (default <self.sr>)
+        :param sr: int
+
+        :returns: bol/konnakol transcription of form [(time in seconds, syllable),... ]
+        :rtype: list
+        """ 
         sr = self.sr if not sr else sr
         hop_length = self.features_kwargs['hop_length']
         features = self.extract_features(audio, sr=sr)
@@ -483,7 +580,16 @@ class MnemonicTranscription:
         return labels
 
     def predict_sample(self, sample):
-        # predict list of test
+        """
+        Predict one sample using internal models. One sample should correspond to one
+        bol/konnakol
+
+        :param sample: Numpy array features corresponding to <sample> (extracted using self.extract_features)
+        :type sample: np.array
+
+        :returns: bol/konnakol label
+        :rtype: str
+        """
         names = []
 
         scores = []
@@ -494,6 +600,15 @@ class MnemonicTranscription:
         return names[label]
 
     def map(self, a):
+        """
+        Map input bol/konnakol, <a> to reduced bol/konnakol vocabulary
+
+        :param a: bol/konnakol string (that must exist in self.mapping)
+        :type a: np.array
+
+        :returns: mapped bol/konnakol label
+        :rtype: str
+        """
         if a in self.mapping:
             return self.mapping[a]
         else:
@@ -501,12 +616,38 @@ class MnemonicTranscription:
             return '!UKNOWN'
 
     def get_sample_ix(self, annotations, audio, syl):
+        """
+        Convert input onset annotations to list of in/out points for a 
+        specific bol/konnakol syllable, <syl>
+
+        :param annotations: onset annotations of the form [(timestamp in seconds, bol/konnakol),... ]
+        :type annotations: list/iterable
+        :param audio: time series representation of audio
+        :type audio: np.array
+        :param syl: bol/konnakol syllable to extract
+        :type syl: str
+
+        :returns: list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single 
+            bols/konnakols
+        :rtype: str
+        """
         annotations_two = annotations + [(len(audio),'!END')]
         zipped = zip(annotations, annotations_two[1:])
         samples = [(t1, t2-1) for ((t1,a1),(t2,a2)) in zipped if a1==syl]
         return samples
 
     def extract_features(self, audio, sr=None):
+        """
+        Convert input audio to features MFCC features
+
+        :param audio: time series representation of audio
+        :type audio: np.array
+        :param sr: sampling rate of audio to train on (default <self.sr>)
+        :param sr: int
+
+        :returns: array of features
+        :rtype: np.array
+        """
         sr = self.sr if not sr else sr
         MFCC = librosa.feature.mfcc(y=audio, sr=sr, **self.feature_kwargs)
         MFCC_delta = librosa.feature.delta(MFCC)
@@ -514,6 +655,16 @@ class MnemonicTranscription:
         return features
 
     def load_annotations(self, path):
+        """
+        Load onset annotations from <path>
+
+        :param path: path to onset annotaitons for one recording
+            of the form (timestamp in seconds, bol/konnakol syllable)
+        :type path: str
+
+        :returns: list of onset annotations (timestamp seconds, bol/konnakol syllable)
+        :rtype: list
+        """
         annotations = []
         with open(path, 'r') as f:
             reader = csv.reader(f)
@@ -523,5 +674,11 @@ class MnemonicTranscription:
         return annotations
 
     def save(self, path):
+        """
+        Save model at path as .pkl
+
+        :param path: Path to save model to
+        :type path: strs
+        """
         with open(path, "wb") as d:
             pickle.dump(self, d)
