@@ -1,26 +1,34 @@
-name: Docs
-on: [push, pull_request, workflow_dispatch]
+# Created by MichaelCurrin
+# https://gist.github.com/MichaelCurrin/a698731096f78240f653faf9a9127cba
+
+name: Build and deploy 
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
-  docs:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout 🛎️
+        uses: actions/checkout@master
         with:
-          python-version: '3.8' 
-      - name: Install dependencies
+          persist-credentials: false
+          submodules: true  # TODO remove this if not using submodules in Hexo
+
+      - name: Install 🔧
+        run: yarn install
+
+      - name: Build 🏗️
         run: |
-          pip install sphinx sphinx_rtd_theme
-          pip install numba==0.45.1
-          pip install mirdata
-      - name: Sphinx build
-        run: |
-          sphinx-build docs _build
-      - name: Deploy
+          yarn clean
+          yarn build
+
+      - name: Deploy to GH Pages 🚀
         uses: peaceiris/actions-gh-pages@v3
-        #if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
-          publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
-          force_orphan: true
+          publish_dir: public
