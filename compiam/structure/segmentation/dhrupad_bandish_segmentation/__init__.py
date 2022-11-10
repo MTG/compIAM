@@ -47,7 +47,7 @@ class DhrupadBandishSegmentation:
             import torch
 
             global split_audios
-            from compiam.structure.dhrupad_bandish_segmentation.audio_processing import (
+            from compiam.structure.segmentation.dhrupad_bandish_segmentation.audio_processing import (
                 split_audios,
             )
 
