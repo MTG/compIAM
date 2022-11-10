@@ -42,8 +42,7 @@ class Melodia:
         except:
             raise ImportError(
                 "In order to use this tool you need to have essentia installed. "
-                "Please reinstall compiam using pip install compiam[essentia] or "
-                "install essentia with pip install essentia."
+                "Please install essentia using: pip install essentia"
             )
         ###
 

@@ -30,8 +30,7 @@ class DEEPSRGM(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please reinstall compiam using pip install compiam[torch] or "
-                "install torch with pip install torch."
+                "Please install torch using: pip install torch==1.8.0"
             )
         ###
 
@@ -166,10 +165,8 @@ class DEEPSRGM(object):
                 tonic_extraction = compiam.load_model("melody:tonic-multipitch")
             except:
                 raise ImportError(
-                    "In order to use this tool in this context you need to have essentia "
-                    " and torch installed. "
-                    "Please reinstall compiam using pip install compiam[essentia-torch], "
-                    "or install both dependencies using pip install <dep-name>"
+                    "In order to use these tools to extract the features you need to have essentia installed. "
+                    "Please install essentia using: pip install essentia"
                 )
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.")

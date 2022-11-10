@@ -4,7 +4,7 @@ try:
 except:
     raise ImportError(
         "In order to use this tool you need to have torch installed. "
-        "Please reinstall compiam using `pip install compiam[torch]`"
+        "Please install torch using: pip install torch"
     )
 
 # from compiam.utils.core import get_logger
