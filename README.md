@@ -25,13 +25,17 @@ pip install -r requirements.txt
 ### Importing the integrated tools
 compIAM does not have terminal functionalities but it is to be used within Python based-projects. First, import the library to your Python project with: ``import compiam``.
 
-The integrated tools and models are organized by the following fundamental musical aspects: melody, rhythm, structure and timbre. You can access the several included tools by importing them from their corresponding modules:
+The integrated tools and models are organized by:
+1) The following fundamental musical aspects: melody, rhythm, structure and timbre. 
+2) The task these tools tackle.
+
+You can access the several included tools by importing them from their corresponding modules:
 ```
-from compiam.melody import FTANetCarnatic
-from compiam.rhythm import FourWayTabla
+from compiam.melody.pitch_extraction import FTANetCarnatic
+from compiam.rhythm.transcription import FourWayTabla
 ```
 
-**TIP:** Print out the available tool for each category: ``compiam.melody.list_tools()``.
+**TIP:** Print out the available tool for each category: ``compiam.melody.list_tools()``. Print out the available tasks for each category: ``compiam.melody.list_tasks()``, and print out the available tools for each module using: ``compiam.melody.list_tools()``. You may also list only the tools for a particular task: ``compiam.melody.pitch_extraction.list_tools()``
 
 ### Wrappers
 compIAM also includes wrappers to easily initialize relevant datasets, corpora, and also pre-trained models for particular problems.

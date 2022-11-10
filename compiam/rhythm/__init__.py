@@ -4,7 +4,7 @@ to_avoid = [x[0]for x in inspect.getmembers(implib.import_module("compiam.rhythm
 
 
 ### IMPORT HERE THE CONSIDERED TASKS
-from compiam.rhythm import meter
+from compiam.rhythm import meter_tracking
 from compiam.rhythm import transcription
 
 
