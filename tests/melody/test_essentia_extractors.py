@@ -1,7 +1,8 @@
 import os
 import pytest
 
-from compiam.melody import Melodia, TonicIndianMultiPitch
+from compiam.melody.pitch_extraction import Melodia
+from compiam.melody.tonic_identification import TonicIndianMultiPitch
 from compiam.data import WORKDIR
 
 
