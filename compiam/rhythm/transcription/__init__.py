@@ -5,6 +5,7 @@ import pickle
 import hmmlearn.hmm as hmm
 import librosa
 import numpy as np
+from sklearn.exceptions import NotFittedError
 import tqdm 
 
 from compiam.exceptions import ModelNotTrainedError
@@ -411,8 +412,9 @@ class MnemonicTranscription:
             'n_components':7, 
             'n_mix': 3, 
             'n_iter':100, 
-            'algorithm': 'viterbi', 
-            'init_params':''}, 
+            'algorithm': 'viterbi',
+            'params':'mcw'
+        }, 
         sr=44100):
         """
         :param syllables: List of strings representing expected bōl/solkattu syllables OR dict of string:string mappings.
@@ -534,18 +536,17 @@ class MnemonicTranscription:
             filepaths = list(filepaths)
         results = []
         for i,fau in enumerate(filepaths):
-            audio, _ = librosa.load(fau, sr=sr)
             ot = onsets[i] if onsets else None
-            results.append(self.predict_audio(audio, onsets=ot, sr=sr))
+            results.append(self.predict_single(fau, onsets=ot, sr=sr))
         return results[0] if len(results) == 1 else results
 
-    def predict_audio(self, audio, onsets=None, sr=None):
+    def predict_single(self, filepath, onsets=None, sr=None):
         """
         Predict bōl/solkattu transcription directly from audio time series 
         (such as for example that loaded by librosa.load)
 
-        :param audio: Numpy array of representing audio time series
-        :type filepaths: list or string
+        :param filepath: Filepath to audio to analyze
+        :type filepath: str
         :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically 
             identify bōl/solkattu onsets. If passed <onsets> should be a list of bōl/solkattu
             onsets in seconds
@@ -555,26 +556,28 @@ class MnemonicTranscription:
 
         :returns: bōl/solkattu transcription of form [(time in seconds, syllable),... ]
         :rtype: list
-        """ 
+        """
         sr = self.sr if not sr else sr
-        hop_length = self.features_kwargs['hop_length']
+        hop_length = self.feature_kwargs['hop_length']
+
+        audio, _ = librosa.load(filepath, sr=sr)
         features = self.extract_features(audio, sr=sr)
 
         if not onsets:
             # if not onsets are passed, extract using 
             pulse = AksharaPulseTracker()
-            onsets = pulse.extract(fau)
+            onsets = pulse.extract(filepath)
             onsets = np.append(onsets, len(audio)/sr)
 
         n_ons = len(onsets)
-        samples_ix = [(int(onsets[i]*sr)/hop_length, (int(onsets[i+1]*sr)/hop_length)-1) for i in range(n_ons-1)]
+        samples_ix = [(int(onsets[i]*sr/hop_length), (int(onsets[i+1]*sr/hop_length))-1) for i in range(n_ons-1)]
         samples_ix.append((samples_ix[-1][1],features.shape[1]-1))
-
+        
         labels = []
         for i,j in samples_ix:
             samp = features[:,i:j]
             t = round(i*self.feature_kwargs['hop_length']/sr,2)
-            label = self.predict_sample(self.models, samp)
+            label = self.predict_sample(samp)
             labels.append((t, label))
 
         return labels
@@ -594,8 +597,11 @@ class MnemonicTranscription:
 
         scores = []
         for syl in self.models.keys():
-            scores.append(self.models[syl].score(sample.T))
-            names.append(syl)
+            try:
+                scores.append(self.models[syl].score(sample.T))
+                names.append(syl)
+            except NotFittedError:
+                logger.warning(f'{syl} not fitted (no instance of {syl} in training) data. Will not be used for prediction.')
         label = scores.index(max(scores))
         return names[label]
 

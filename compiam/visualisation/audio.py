@@ -6,10 +6,15 @@ import numpy as np
 def plot_waveform(path_to_audio, t1, t2, labels=None, sr=44100, filepath=None):
     """TODO"""
     # get data
+    if not (isinstance(labels, (dict)) or (labels is None)):
+        raise Exception('<labels> must either be None or dict')
+    if not (isinstance(filepath, (str)) or (filepath is None)):
+        raise Exception('<filepath> must either be None or str')
+
     y, _ = librosa.load(path_to_audio, sr=sr)
     y1 = t1 * sr
     y2 = t2 * sr
-    y = y[y1:y2]
+    y = y[int(y1):int(y2)]
     max_y = max(y)
     min_y = min(y)
     t = np.linspace(t1, t2, len(y))
@@ -27,7 +32,6 @@ def plot_waveform(path_to_audio, t1, t2, labels=None, sr=44100, filepath=None):
     if labels is not None:
         for o, l in labels.items():
             if t1 <= o <= t2:
-                print(f"{o}:{l}")
                 plt.axvline(o, color="firebrick", linestyle="--")
                 plt.text(o, max_y + max_y * 0.11, l, color="firebrick")
 
