@@ -3,23 +3,30 @@
 Rhythm analysis
 ===============
 
-Four-Way Tabla Classification
-+++++++++++++++++++++++++++++
+Percussion Transcription
+++++++++++++++++++++++++
 
-.. automodule:: compiam.rhythm.tabla_transcription
+Four-Way Tabla Classification
+-----------------------------
+
+.. automodule:: compiam.rhythm.transcription.tabla_transcription
    :members:
 
 Four-Way Tabla Classification utils
 -----------------------------------
 
-.. automodule:: compiam.rhythm.tabla_transcription.model
+.. automodule:: compiam.rhythm.transcription.tabla_transcription.model
    :members:
 
-.. automodule:: compiam.rhythm.tabla_transcription.utils
+.. automodule:: compiam.rhythm.transcription.tabla_transcription.utils
    :members:
+
+
+Meter tracking
+++++++++++++++
 
 Akshara Pulse Tracker
-+++++++++++++++++++++
+---------------------
 
-.. automodule:: compiam.rhythm.akshara_pulse_tracker
+.. automodule:: compiam.rhythm.meter_tracking.akshara_pulse_tracker
    :members:
