@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 
-from compiam.timbre.mridangam_stroke_classification import normalise_features
+from compiam.timbre.stroke_classification.mridangam_stroke_classification import normalise_features
 
 
 class StrokeClassification:

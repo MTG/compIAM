@@ -52,13 +52,13 @@ class DhrupadBandishSegmentation:
             )
 
             global extract_features, makechunks
-            from compiam.structure.dhrupad_bandish_segmentation.feature_extraction import (
+            from compiam.structure.segmentation.dhrupad_bandish_segmentation.feature_extraction import (
                 extract_features,
                 makechunks,
             )
 
             global class_to_categorical, categorical_to_class, build_model, smooth_boundaries
-            from compiam.structure.dhrupad_bandish_segmentation.model_utils import (
+            from compiam.structure.segmentation.dhrupad_bandish_segmentation.model_utils import (
                 class_to_categorical,
                 categorical_to_class,
                 build_model,
@@ -66,7 +66,7 @@ class DhrupadBandishSegmentation:
             )
 
             global pars
-            import compiam.structure.dhrupad_bandish_segmentation.params as pars
+            import compiam.structure.segmentation.dhrupad_bandish_segmentation.params as pars
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "

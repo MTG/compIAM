@@ -1,17 +1,23 @@
-import sys
+### IMPORT HERE FUNCTIONALITIES
+import inspect, importlib as implib
+to_avoid = [x[0]for x in inspect.getmembers(implib.import_module("compiam.melody"), inspect.ismodule)]
 
-from compiam.utils import get_tool_list
 
-# Pitch extraction
-from compiam.melody.melodia import Melodia
-from compiam.melody.ftanet_carnatic import FTANetCarnatic
+### IMPORT HERE THE CONSIDERED TASKS
+from compiam.melody import tonic_identification
+from compiam.melody import pitch_extraction
+from compiam.melody import raga_recognition
 
-# Tonic extraction
-from compiam.melody.tonic_multipitch import TonicIndianMultiPitch
 
-# Raga recognition
-from compiam.melody.deepsrgm import DEEPSRGM
+
+# Show user the available tasks
+def list_tasks():
+    return [x[0]for x in inspect.getmembers(implib.import_module("compiam.melody"), inspect.ismodule) \
+        if x[0] not in to_avoid]
 
 # Show user the available tools
 def list_tools():
-    return get_tool_list(modules=sys.modules[__name__])
+    tasks = [x[0]for x in inspect.getmembers(implib.import_module("compiam.melody"), inspect.ismodule) \
+        if x[0] not in to_avoid]
+    tools_for_tasks = [inspect.getmembers(implib.import_module("compiam.melody."+task), inspect.isclass) for task in tasks]
+    return [task[0] for tasklist in tools_for_tasks for task in tasklist]

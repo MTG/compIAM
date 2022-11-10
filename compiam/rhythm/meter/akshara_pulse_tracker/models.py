@@ -16,7 +16,7 @@ import numpy as np
 import scipy.stats as scistats
 import scipy.signal as scisig
 
-from compiam.rhythm.akshara_pulse_tracker import parameters as params
+from compiam.rhythm.meter.akshara_pulse_tracker import parameters as params
 from compiam.utils import get_logger
 
 logger = get_logger(__name__)
