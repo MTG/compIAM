@@ -2,7 +2,7 @@ import os
 import pytest
 
 from compiam import load_model
-from compiam.melody import TonicIndianMultiPitch
+from compiam.melody.tonic_identification import TonicIndianMultiPitch
 from compiam.data import WORKDIR
 
 
