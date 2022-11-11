@@ -68,8 +68,13 @@ compIAM is very much open for contributions. You can contribute by:
 
 Please check the [contribution guidelines](https://mtg.github.io/compIAM/source/contributing.html) and get in touch in case you have questions or suggestions.
 
-## License
-TODO :)
-
 ## Citing
-TODO :)
+```bibtex
+@software{compiam_mtg_2022,
+  author = {{Genís Plaja-Roglans and Thomas Nuttall and Xavier Serra}},
+  title = {compIAM},
+  url = {https://mtg.github.io/compIAM/},
+  version = {0.1.0},
+  year = {2022}
+}
+```
