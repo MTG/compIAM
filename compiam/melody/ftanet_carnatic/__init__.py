@@ -20,11 +20,9 @@ class FTANetCarnatic(object):
         """
         ###
         try:
-            global K
-            from tensorflow.keras import backend as K
+            global tf
+            import tensorflow as tf
 
-            global Input, Model, layers
-            from tensorflow.keras import Input, Model, layers
         except:
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
@@ -65,32 +63,32 @@ class FTANetCarnatic(object):
             if fused == None:
                 fused = x_s
             else:
-                fused = layers.Add()([fused, x_s])
+                fused = tf.keras.layers.Add()([fused, x_s])
 
         ## Fuse
-        fused = layers.GlobalAveragePooling2D()(fused)
-        fused = layers.BatchNormalization()(fused)
-        fused = layers.Dense(
+        fused = tf.keras.layers.GlobalAveragePooling2D()(fused)
+        fused = tf.keras.layers.BatchNormalization()(fused)
+        fused = tf.keras.layers.Dense(
             max(n_channel // reduction, limitation), activation="selu"
         )(fused)
 
         ## Select
         masks = []
         for i in range(len(x_list)):
-            masks.append(layers.Dense(n_channel)(fused))
-        mask_stack = layers.Lambda(K.stack, arguments={"axis": -1})(masks)
+            masks.append(tf.keras.layers.Dense(n_channel)(fused))
+        mask_stack = tf.keras.layers.Lambda(tf.keras.backend.stack, arguments={"axis": -1})(masks)
         # (n_channel, n_kernel)
-        mask_stack = layers.Softmax(axis=-2)(mask_stack)
+        mask_stack = tf.keras.layers.Softmax(axis=-2)(mask_stack)
 
         selected = None
         for i, x_s in enumerate(x_list):
-            mask = layers.Lambda(lambda z: z[:, :, i])(mask_stack)
-            mask = layers.Reshape((1, 1, n_channel))(mask)
-            x_s = layers.Multiply()([x_s, mask])
+            mask = tf.keras.layers.Lambda(lambda z: z[:, :, i])(mask_stack)
+            mask = tf.keras.layers.Reshape((1, 1, n_channel))(mask)
+            x_s = tf.keras.layers.Multiply()([x_s, mask])
             if selected == None:
                 selected = x_s
             else:
-                selected = layers.Add()([selected, x_s])
+                selected = tf.keras.layers.Add()([selected, x_s])
         return selected
 
     @staticmethod
@@ -104,34 +102,34 @@ class FTANetCarnatic(object):
         :returns: the resized input, the time-attention map,
             and the frequency-attention map.
         """
-        x = layers.BatchNormalization()(x)
+        x = tf.keras.layers.BatchNormalization()(x)
 
         ## Residual
-        x_r = layers.Conv2D(shape[2], (1, 1), padding="same", activation="relu")(x)
+        x_r = tf.keras.layers.Conv2D(shape[2], (1, 1), padding="same", activation="relu")(x)
 
         ## Time Attention
         # Attn Map (1, T, C), FC
-        a_t = layers.Lambda(K.mean, arguments={"axis": -3})(x)
-        a_t = layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)
-        a_t = layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)  # 2
-        a_t = layers.Softmax(axis=-2)(a_t)
-        a_t = layers.Reshape((1, shape[1], shape[2]))(a_t)
+        a_t = tf.keras.layers.Lambda(tf.keras.backend.mean, arguments={"axis": -3})(x)
+        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)
+        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)  # 2
+        a_t = tf.keras.layers.Softmax(axis=-2)(a_t)
+        a_t = tf.keras.layers.Reshape((1, shape[1], shape[2]))(a_t)
         # Reweight
-        x_t = layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
-        x_t = layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_t)
-        x_t = layers.Multiply()([x_t, a_t])
+        x_t = tf.keras.layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
+        x_t = tf.keras.layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_t)
+        x_t = tf.keras.layers.Multiply()([x_t, a_t])
 
         # Frequency Attention
         # Attn Map (F, 1, C), Conv1D
-        a_f = layers.Lambda(K.mean, arguments={"axis": -2})(x)
-        a_f = layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
-        a_f = layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
-        a_f = layers.Softmax(axis=-2)(a_f)
-        a_f = layers.Reshape((shape[0], 1, shape[2]))(a_f)
+        a_f = tf.keras.layers.Lambda(tf.keras.backend.mean, arguments={"axis": -2})(x)
+        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
+        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
+        a_f = tf.keras.layers.Softmax(axis=-2)(a_f)
+        a_f = tf.keras.layers.Reshape((shape[0], 1, shape[2]))(a_f)
         # Reweight
-        x_f = layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
-        x_f = layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_f)
-        x_f = layers.Multiply()([x_f, a_f])
+        x_f = tf.keras.layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
+        x_f = tf.keras.layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_f)
+        x_f = tf.keras.layers.Multiply()([x_f, a_f])
 
         return x_r, x_t, x_f
 
@@ -141,28 +139,28 @@ class FTANetCarnatic(object):
         :param input_shape: input shape.
         :returns: a tensorflow Model instance of the FTA-Net.
         """
-        visible = Input(shape=input_shape)
-        x = layers.BatchNormalization()(visible)
+        visible = tf.keras.layers.Input(shape=input_shape)
+        x = tf.keras.layers.BatchNormalization()(visible)
 
         ## Bottom
         # bm = BatchNormalization()(x)
         bm = x
-        bm = layers.Conv2D(
+        bm = tf.keras.layers.Conv2D(
             16, (4, 1), padding="valid", strides=(4, 1), activation="selu"
         )(
             bm
         )  # 80
-        bm = layers.Conv2D(
+        bm = tf.keras.layers.Conv2D(
             16, (4, 1), padding="valid", strides=(4, 1), activation="selu"
         )(
             bm
         )  # 20
-        bm = layers.Conv2D(
+        bm = tf.keras.layers.Conv2D(
             16, (4, 1), padding="valid", strides=(4, 1), activation="selu"
         )(
             bm
         )  # 5
-        bm = layers.Conv2D(
+        bm = tf.keras.layers.Conv2D(
             1, (5, 1), padding="valid", strides=(5, 1), activation="selu"
         )(
             bm
@@ -171,11 +169,11 @@ class FTANetCarnatic(object):
         shape = input_shape
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0], shape[1], 32), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 32, 4, 4)
-        x = layers.MaxPooling2D((2, 2))(x)
+        x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0] // 2, shape[1] // 2, 64), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 64, 4, 4)
-        x = layers.MaxPooling2D((2, 2))(x)
+        x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0] // 4, shape[1] // 4, 128), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 128, 4, 4)
@@ -183,22 +181,22 @@ class FTANetCarnatic(object):
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0] // 4, shape[1] // 4, 128), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 128, 4, 4)
 
-        x = layers.UpSampling2D((2, 2))(x)
+        x = tf.keras.layers.UpSampling2D((2, 2))(x)
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0] // 2, shape[1] // 2, 64), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 64, 4, 4)
 
-        x = layers.UpSampling2D((2, 2))(x)
+        x = tf.keras.layers.UpSampling2D((2, 2))(x)
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0], shape[1], 32), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 32, 4, 4)
 
         x_r, x_t, x_f = self.FTA_Module(x, (shape[0], shape[1], 1), 3, 3)
         x = self.SF_Module([x_r, x_t, x_f], 1, 4, 4)
-        x = layers.Concatenate(axis=1)([bm, x])
+        x = tf.keras.layers.Concatenate(axis=1)([bm, x])
 
         # Softmax
-        x = layers.Lambda(K.squeeze, arguments={"axis": -1})(x)
-        x = layers.Softmax(axis=-2)(x)
-        return Model(inputs=visible, outputs=x)
+        x = tf.keras.layers.Lambda(tf.keras.backend.squeeze, arguments={"axis": -1})(x)
+        x = tf.keras.layers.Softmax(axis=-2)(x)
+        return tf.keras.models.Model(inputs=visible, outputs=x)
 
     def load_model(self, model_path):
         try:
