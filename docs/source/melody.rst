@@ -23,7 +23,7 @@ Melodia
    :members:
 
 FTANet-Carnatic
-+++++++++++++++
+---------------
 
 .. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic
    :members:
