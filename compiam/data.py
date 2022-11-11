@@ -9,14 +9,14 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 # Each model should be stored in models_dict using
 #   "<melody|rhythm|timbrestructure>:model_id":<d> where <d> is:
 # 	    {
-#           "module_name": "<compiam.melody|rhythm|timbre|structure.file|folder name of model>",
+#           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
 #           "model_path": "<path_to_model if any>"
 #       }
 
 models_dict = {
     "melody:deepsrgm": {
-        "module_name": "compiam.melody.deepsrgm",
+        "module_name": "compiam.melody.raga_recognition.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "melody", "deepsrgm"),
@@ -31,7 +31,7 @@ models_dict = {
         },
     },
     "melody:ftanet-carnatic": {
-        "module_name": "compiam.melody.ftanet_carnatic",
+        "module_name": "compiam.melody.pitch_extraction.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
         "kwargs": {
             "model_path": os.path.join(
@@ -40,21 +40,21 @@ models_dict = {
         },
     },
     "rhythm:1way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
+        "module_name": "compiam.rhythm.transcription.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "1way")
         },
     },
     "rhythm:4way-tabla": {
-        "module_name": "compiam.rhythm.tabla_transcription",
+        "module_name": "compiam.rhythm.transcription.tabla_transcription",
         "class_name": "FourWayTabla",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "4way")
         },
     },
     "structure:dhrupad-bandish-segmentation": {
-        "module_name": "compiam.structure.dhrupad_bandish_segmentation",
+        "module_name": "compiam.structure.segmentation.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
             "model_path": os.path.join(

@@ -20,7 +20,7 @@ class MridangamStrokeClassification:
         ###
         try:
             global features_for_pred, process_strokes, features_for_pred, normalise_features
-            from compiam.timbre.mridangam_stroke_classification.stroke_features import (
+            from compiam.timbre.stroke_classification.mridangam_stroke_classification.stroke_features import (
                 features_for_pred,
                 process_strokes,
                 features_for_pred,
