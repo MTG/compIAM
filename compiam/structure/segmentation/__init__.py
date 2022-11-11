@@ -2,7 +2,9 @@ import sys
 
 from compiam.utils import get_tool_list
 
-from compiam.structure.segmentation.dhrupad_bandish_segmentation import DhrupadBandishSegmentation
+from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
+    DhrupadBandishSegmentation,
+)
 
 # Show user the available tools
 def list_tools():

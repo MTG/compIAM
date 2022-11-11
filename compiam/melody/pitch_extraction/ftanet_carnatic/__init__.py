@@ -6,7 +6,10 @@ import numpy as np
 from compiam.exceptions import ModelNotFoundError
 
 from compiam.utils.pitch import pitch_normalisation
-from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import batchize_test, get_est_arr
+from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
+    batchize_test,
+    get_est_arr,
+)
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 
 
