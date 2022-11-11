@@ -1,13 +1,13 @@
 matplotlib>=3.0.0
-numpy==1.19.5
+numpy>=1.19.5
 librosa==0.8.0
 SoundFile==0.10.3.post1
 joblib>=1.2.0
-pathlib==1.0.1
+pathlib~=1.0.1
 pytsmod==0.3.3
 scipy~=1.4.1
 scikit-learn~=0.24.2
-tqdm==4.64.1
+tqdm~=4.64.1
 mirdata==0.3.6
 tensorflow==2.8.0
 torch==1.8.0
