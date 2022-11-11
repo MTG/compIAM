@@ -1,5 +1,5 @@
 import torch.nn as nn
-from compiam.melody.deepsrgm.attention_layer import Attention
+from compiam.melody.raga_recognition.deepsrgm.attention_layer import Attention
 
 
 class deepsrgmModel(nn.Module):
