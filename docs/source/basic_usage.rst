@@ -8,8 +8,9 @@ compIAM does not have terminal functionalities but it is to be used within Pytho
 your Python project with: ``import compiam``.
 
 The integrated tools and models are organized by:
-1) The following fundamental musical aspects: melody, rhythm, structure and timbre. 
-2) The task these tools tackle.
+
+#. First, the following fundamental musical aspects: melody, rhythm, structure and timbre. 
+#. Then, the tools are grouped by the task these tools tackle.
 
 You can access the several included tools by importing them from their corresponding modules:
 
