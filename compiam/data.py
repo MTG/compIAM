@@ -9,14 +9,14 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 # Each model should be stored in models_dict using
 #   "<melody|rhythm|timbrestructure>:model_id":<d> where <d> is:
 # 	    {
-#           "module_name": "<compiam.melody|rhythm|timbre|structure.file|folder name of model>",
+#           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
 #           "model_path": "<path_to_model if any>"
 #       }
 
 models_dict = {
     "melody:deepsrgm": {
-        "module_name": "compiam.melody.raga_recognition_deepsrgm",
+        "module_name": "compiam.melody.raga_recognition.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
             "model_path": os.path.join(WORKDIR, "models", "melody", "deepsrgm"),
