@@ -1,9 +1,41 @@
-import sys
+### IMPORT HERE FUNCTIONALITIES
+import inspect, importlib as implib
 
-from compiam.utils import get_tool_list
+to_avoid = [
+    x[0]
+    for x in inspect.getmembers(
+        implib.import_module("compiam.timbre"), inspect.ismodule
+    )
+]
 
-from compiam.timbre.mridangam_stroke_classification import MridangamStrokeClassification
+
+### IMPORT HERE THE CONSIDERED TASKS
+from compiam.timbre import stroke_classification
+
+
+# Show user the available tasks
+def list_tasks():
+    return [
+        x[0]
+        for x in inspect.getmembers(
+            implib.import_module("compiam.timbre"), inspect.ismodule
+        )
+        if x[0] not in to_avoid
+    ]
+
 
 # Show user the available tools
 def list_tools():
-    return get_tool_list(modules=sys.modules[__name__])
+    tasks = [
+        x[0]
+        for x in inspect.getmembers(
+            implib.import_module("compiam.timbre"), inspect.ismodule
+        )
+        if x[0] not in to_avoid
+    ]
+    return [
+        inspect.getmembers(
+            implib.import_module("compiam.timbre." + task), inspect.isclass
+        )[0][0]
+        for task in tasks
+    ]

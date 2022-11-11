@@ -3,7 +3,7 @@ import librosa
 
 import numpy as np
 
-from compiam.structure.dhrupad_bandish_segmentation.params import *
+from compiam.structure.segmentation.dhrupad_bandish_segmentation.params import *
 
 try:
     import torch

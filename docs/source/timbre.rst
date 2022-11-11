@@ -3,9 +3,12 @@
 Timbre analysis
 ===============
 
-Mridangam Stroke Classification
-+++++++++++++++++++++++++++++++
+Stroke Classification
++++++++++++++++++++++
 
-.. automodule:: compiam.timbre.mridangam_stroke_classification
+Mridangam Stroke Classification
+-------------------------------
+
+.. automodule:: compiam.timbre.stroke_classification.mridangam_stroke_classification
    :members:
    :inherited-members:

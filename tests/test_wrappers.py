@@ -42,7 +42,7 @@ def test_lists():
 
 def _load_tf_models():
     from compiam import load_model
-    from compiam.melody.ftanet_carnatic import FTANetCarnatic
+    from compiam.melody.pitch_extraction.ftanet_carnatic import FTANetCarnatic
 
     ftanet = load_model("melody:ftanet-carnatic")
     assert type(ftanet) == FTANetCarnatic
@@ -50,8 +50,8 @@ def _load_tf_models():
 
 def _load_torch_models():
     from compiam import load_model
-    from compiam.rhythm.tabla_transcription import FourWayTabla
-    from compiam.structure.dhrupad_bandish_segmentation import (
+    from compiam.rhythm.transcription.tabla_transcription import FourWayTabla
+    from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
         DhrupadBandishSegmentation,
     )
 

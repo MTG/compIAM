@@ -4,7 +4,7 @@ import librosa
 import numpy as np
 import soundfile as sf
 
-from compiam.structure.dhrupad_bandish_segmentation.params import fs
+from compiam.structure.segmentation.dhrupad_bandish_segmentation.params import fs
 
 import warnings
 
