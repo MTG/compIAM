@@ -22,14 +22,14 @@ class FourWayTabla:
             import torch
 
             global onsetCNN_D, onsetCNN_RT, onsetCNN
-            from compiam.rhythm.tabla_transcription.model import (
+            from compiam.rhythm.transcription.tabla_transcription.model import (
                 onsetCNN_D,
                 onsetCNN_RT,
                 onsetCNN,
             )
 
             global TablaDataset, gen_melgrams, peakPicker, make_train_val_split, load_mel_data
-            from compiam.rhythm.tabla_transcription.utils import (
+            from compiam.rhythm.transcription.tabla_transcription.utils import (
                 TablaDataset,
                 gen_melgrams,
                 peakPicker,

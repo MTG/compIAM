@@ -4,7 +4,7 @@ import mirdata  # TODO
 import numpy as np
 
 import compiam
-from compiam.melody.deepsrgm.raga_mapping import create_mapping
+from compiam.melody.raga_recognition.deepsrgm.raga_mapping import create_mapping
 
 
 class DEEPSRGM(object):
@@ -26,7 +26,7 @@ class DEEPSRGM(object):
             import torch
 
             global deepsrgmModel
-            from compiam.melody.deepsrgm.model import deepsrgmModel
+            from compiam.melody.raga_recognition.deepsrgm.model import deepsrgmModel
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "

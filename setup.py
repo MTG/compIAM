@@ -7,7 +7,7 @@ setup(
     name="compiam",
     version="0.1.0",
     packages=find_packages(),
-    author_email=["thomas.nuttall@upf.edu", "genis.plaja@upf.edu"],
+    author_email=["genis.plaja@upf.edu", "thomas.nuttall@upf.edu"],
     zip_safe=False,
     include_package_data=True,
     long_description=open("./README.md").read(),

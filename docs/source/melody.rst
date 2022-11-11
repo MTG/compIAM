@@ -3,39 +3,50 @@
 Melodic analysis
 ================
 
-Melodia
-+++++++
+Tonic Identification
+++++++++++++++++++++
 
-.. automodule:: compiam.melody.melodia
+Tonic Indian Art Music (Multipitch approach)
+--------------------------------------------
+
+.. automodule:: compiam.melody.tonic_identification.tonic_multipitch
+   :members:
+
+
+Pitch Extraction
+++++++++++++++++
+
+Melodia
+-------
+
+.. automodule:: compiam.melody.pitch_extraction.melodia
    :members:
 
 FTANet-Carnatic
 +++++++++++++++
 
-.. automodule:: compiam.melody.ftanet_carnatic
+.. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic
    :members:
 
 FTANet-Carnatic utils
 ---------------------
 
-.. automodule:: compiam.melody.ftanet_carnatic.pitch_processing
+.. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing
    :members:
 
-Tonic Indian Art Music (Multipitch approach)
-++++++++++++++++++++++++++++++++++++++++++++
 
-.. automodule:: compiam.melody.tonic_multipitch
-   :members:
+Raga Recognition
+++++++++++++++++
 
 DEEPSRGM
-++++++++
+--------
 
-.. automodule:: compiam.melody.deepsrgm
+.. automodule:: compiam.melody.raga_recognition.deepsrgm
    :members:
 
 DEEPSRGM utils
 --------------
 
-.. automodule:: compiam.melody.deepsrgm.model
+.. automodule:: compiam.melody.raga_recognition.deepsrgm.model
    :members:
 
