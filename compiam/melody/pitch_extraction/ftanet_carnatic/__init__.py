@@ -79,7 +79,9 @@ class FTANetCarnatic(object):
         masks = []
         for i in range(len(x_list)):
             masks.append(tf.keras.layers.Dense(n_channel)(fused))
-        mask_stack = tf.keras.layers.Lambda(tf.keras.backend.stack, arguments={"axis": -1})(masks)
+        mask_stack = tf.keras.layers.Lambda(
+            tf.keras.backend.stack, arguments={"axis": -1}
+        )(masks)
         # (n_channel, n_kernel)
         mask_stack = tf.keras.layers.Softmax(axis=-2)(mask_stack)
 
@@ -108,30 +110,48 @@ class FTANetCarnatic(object):
         x = tf.keras.layers.BatchNormalization()(x)
 
         ## Residual
-        x_r = tf.keras.layers.Conv2D(shape[2], (1, 1), padding="same", activation="relu")(x)
+        x_r = tf.keras.layers.Conv2D(
+            shape[2], (1, 1), padding="same", activation="relu"
+        )(x)
 
         ## Time Attention
         # Attn Map (1, T, C), FC
         a_t = tf.keras.layers.Lambda(tf.keras.backend.mean, arguments={"axis": -3})(x)
-        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)
-        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(a_t)  # 2
+        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(
+            a_t
+        )
+        a_t = tf.keras.layers.Conv1D(shape[2], kt, padding="same", activation="selu")(
+            a_t
+        )  # 2
         a_t = tf.keras.layers.Softmax(axis=-2)(a_t)
         a_t = tf.keras.layers.Reshape((1, shape[1], shape[2]))(a_t)
         # Reweight
-        x_t = tf.keras.layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
-        x_t = tf.keras.layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_t)
+        x_t = tf.keras.layers.Conv2D(
+            shape[2], (3, 3), padding="same", activation="selu"
+        )(x)
+        x_t = tf.keras.layers.Conv2D(
+            shape[2], (5, 5), padding="same", activation="selu"
+        )(x_t)
         x_t = tf.keras.layers.Multiply()([x_t, a_t])
 
         # Frequency Attention
         # Attn Map (F, 1, C), Conv1D
         a_f = tf.keras.layers.Lambda(tf.keras.backend.mean, arguments={"axis": -2})(x)
-        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
-        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(a_f)
+        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(
+            a_f
+        )
+        a_f = tf.keras.layers.Conv1D(shape[2], kf, padding="same", activation="selu")(
+            a_f
+        )
         a_f = tf.keras.layers.Softmax(axis=-2)(a_f)
         a_f = tf.keras.layers.Reshape((shape[0], 1, shape[2]))(a_f)
         # Reweight
-        x_f = tf.keras.layers.Conv2D(shape[2], (3, 3), padding="same", activation="selu")(x)
-        x_f = tf.keras.layers.Conv2D(shape[2], (5, 5), padding="same", activation="selu")(x_f)
+        x_f = tf.keras.layers.Conv2D(
+            shape[2], (3, 3), padding="same", activation="selu"
+        )(x)
+        x_f = tf.keras.layers.Conv2D(
+            shape[2], (5, 5), padding="same", activation="selu"
+        )(x_f)
         x_f = tf.keras.layers.Multiply()([x_f, a_f])
 
         return x_r, x_t, x_f
