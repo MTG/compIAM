@@ -28,5 +28,5 @@ Meter tracking
 Akshara Pulse Tracker
 ---------------------
 
-.. automodule:: compiam.rhythm.meter_tracking.akshara_pulse_tracker
+.. automodule:: compiam.rhythm.meter.akshara_pulse_tracker
    :members:
