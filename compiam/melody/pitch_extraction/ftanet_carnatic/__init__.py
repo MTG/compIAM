@@ -16,7 +16,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music"""
 
-    def __init__(self, model_path=None):
+    def __init__(self, model_path=None, sample_rate=8000):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
@@ -34,6 +34,7 @@ class FTANetCarnatic(object):
         ###
 
         self.model = self._build_model()
+        self.sample_rate = sample_rate
 
         self.model_path = model_path
         if self.model_path is not None:
@@ -228,7 +229,7 @@ class FTANetCarnatic(object):
         except:
             raise FileNotFoundError("Model path does not exist")
 
-    def predict(self, path_to_audio, sample_rate=8000, hop_size=80, batch_size=5):
+    def predict(self, path_to_audio, hop_size=80, batch_size=5):
         """Extract melody from filename.
 
         :param filename: path to file to extract.
@@ -244,9 +245,9 @@ class FTANetCarnatic(object):
         if not os.path.exists(path_to_audio):
             raise ValueError("Target audio not found.")
         print("CFP process in {}".format(path_to_audio))
-        y, _ = librosa.load(path_to_audio, sr=sample_rate)
+        y, _ = librosa.load(path_to_audio, sr=self.sample_rate)
         audio_len = len(y)
-        batch_min = 8000 * 60 * batch_size
+        batch_min = self.sample_rate * 60 * batch_size
         freqs = []
         if len(y) > batch_min:
             iters = math.ceil(len(y) / batch_min)
@@ -256,28 +257,28 @@ class FTANetCarnatic(object):
                 if i == iters - 1:
                     audio_in = y[batch_min * i :]
                 feature, _, time_arr = cfp_process(
-                    audio_in, sr=sample_rate, hop=hop_size
+                    audio_in, sr=self.sample_rate, hop=hop_size
                 )
                 data = batchize_test(feature, size=128)
                 xlist.append(data)
                 timestamps.append(time_arr)
 
-                estimation = get_est_arr(self.ftanet, xlist, timestamps, batch_size=16)
+                estimation = get_est_arr(self.model, xlist, timestamps, batch_size=16)
                 if i == 0:
                     freqs = estimation[:, 1]
                 else:
                     freqs = np.concatenate((freqs, estimation[:, 1]))
         else:
-            feature, _, time_arr = cfp_process(y, sr=sample_rate, hop=hop_size)
+            feature, _, time_arr = cfp_process(y, sr=self.sample_rate, hop=hop_size)
             data = batchize_test(feature, size=128)
             xlist.append(data)
             timestamps.append(time_arr)
             # Getting estimatted pitch
-            estimation = get_est_arr(self.ftanet, xlist, timestamps, batch_size=16)
+            estimation = get_est_arr(self.model, xlist, timestamps, batch_size=16)
             freqs = estimation[:, 1]
-        TStamps = np.linspace(0, audio_len / sample_rate, len(freqs))
+        TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
 
-        ### TODO: Write code to re-sample in case sampling frequency is initialized different than 8k
+        ### TODO: Write code to re-sample pitch if needed
         return np.array([TStamps, freqs]).transpose().toList()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
