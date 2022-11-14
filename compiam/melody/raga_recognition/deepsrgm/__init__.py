@@ -59,7 +59,7 @@ class DEEPSRGM(object):
         ]  # pre-defined for release 0.1
 
         if (mapping_path is not None) and (self.selected_ragas is not None):
-            self.mapping = self.load_mapping()
+            self.load_mapping()
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
             None  # To update when CompMusic Raga dataset is integrated mirdata
@@ -172,10 +172,12 @@ class DEEPSRGM(object):
                 )
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.")
+            print("Extracting pitch track using melodia...")
             freqs = melodia.extract(audio_file)[:, 1]
 
             if not os.path.exists(audio_file):
                 raise FileNotFoundError("Input audio not found.")
+            print("Extracting tonic using multi-pitch approach...")
             tonic = tonic_extraction.extract(audio_file)
 
         # Normalise pitch
