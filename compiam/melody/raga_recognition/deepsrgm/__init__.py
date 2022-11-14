@@ -45,7 +45,6 @@ class DEEPSRGM(object):
             self.load_model(self.model_path, rnn="lstm")
 
         self.mapping_path = mapping_path
-        self.mapping = None
         self.selected_ragas = [
             5,
             8,
@@ -58,6 +57,9 @@ class DEEPSRGM(object):
             24,
             28,
         ]  # pre-defined for release 0.1
+
+        if (mapping_path is None) and (self.selected_ragas is None):
+            self.mapping = self.load_mapping()
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
             None  # To update when CompMusic Raga dataset is integrated mirdata
