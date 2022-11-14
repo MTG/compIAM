@@ -83,6 +83,19 @@ def list_models():
     return list(models_dict.keys())
 
 
+def get_model_info(model_key):
+    """Get complete info in data/models_dict for a particular pre-trained model
+
+    :param model_key: model key from models_dict
+    :returns: infomation about a particular model.
+    """
+    if model_key not in list(models_dict.keys()):
+        raise ValueError(
+            "Please enter a valid model key from {}".format(list(models_dict.keys()))
+        )
+    return models_dict[model_key]
+
+
 def list_datasets():
     """Just listing the available datasets.
 

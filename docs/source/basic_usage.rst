@@ -10,7 +10,7 @@ your Python project with: ``import compiam``.
 The integrated tools and models are organized by:
 
 #. First, the following fundamental musical aspects: melody, rhythm, structure and timbre. 
-#. Then, the tools are grouped by the task these tools tackle.
+#. Then, the tools are grouped by tasks.
 
 You can access the several included tools by importing them from their corresponding modules:
 
@@ -25,6 +25,7 @@ You can access the several included tools by importing them from their correspon
     and print out the available tools for each module using: ``compiam.melody.list_tools()``.
     You may also list only the tools for a particular task: ``compiam.melody.pitch_extraction.list_tools()``
 
+
 Make sure to check out the documentation to identify how the package is organized and where does each tool lives.
 
 
@@ -38,3 +39,8 @@ compIAM also includes wrappers to easily initialize relevant datasets, corpora, 
    compiam.load_dataset
    compiam.load_corpora
    compiam.load_model
+
+
+.. tip::
+    When listing available tools using the ``list_tools()`` functions, some will appear with a "*" at the end. That is meant to 
+    indicate that such tools have pre-trained models available, which may be loaded using the wrapper ``compiam.load_model()``.
