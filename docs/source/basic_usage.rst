@@ -20,13 +20,18 @@ You can access the several included tools by importing them from their correspon
     from compiam.rhythm.transcription import FourWayTabla
 
 
-.. note::
-    Print out the available tasks for each category: ``compiam.melody.list_tasks()``, 
-    and print out the available tools for each module using: ``compiam.melody.list_tools()``.
-    You may also list only the tools for a particular task: ``compiam.melody.pitch_extraction.list_tools()``
+We provide nice functionalities to explore where do the tools live: 
 
+#. Print out the available tasks for each category: ``compiam.melody.list_tasks()``
+#. Print out the available tools for each module using: ``compiam.melody.list_tools()``
+#. Print out only the tools for a particular task: ``compiam.melody.pitch_extraction.list_tools()``
 
-Make sure to check out the documentation to identify how the package is organized and where does each tool lives.
+.. important::
+    Some tools (especially the ML/DL models) require specific dependencies that are not installed by default, 
+    because of their size or compatibility issues. If a tool is loaded and a particular dependency is missing, 
+    an alert will be displayed, to inform the user which dependency is missing and how to proceed to install
+    it in the right version. See ``optional_requirements.txt`` where the optional dependencies and
+    the specific versions we use in ``compiam`` are listed.
 
 
 Wrappers
