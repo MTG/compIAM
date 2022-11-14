@@ -58,7 +58,7 @@ class DEEPSRGM(object):
             28,
         ]  # pre-defined for release 0.1
 
-        if (mapping_path is None) and (self.selected_ragas is None):
+        if (mapping_path is not None) and (self.selected_ragas is not None):
             self.mapping = self.load_mapping()
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
