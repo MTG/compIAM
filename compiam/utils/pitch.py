@@ -20,4 +20,4 @@ def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     normalised_pitch[indexes] = 0
     indexes = np.where(normalised_pitch > max_value)
     normalised_pitch[indexes] = max_value
-    return np.array([pitch[:, 0], normalised_pitch]).transpose().toList()
+    return np.array([pitch[:, 0], normalised_pitch]).transpose()

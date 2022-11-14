@@ -36,7 +36,8 @@ models_dict = {
         "kwargs": {
             "model_path": os.path.join(
                 WORKDIR, "models", "melody", "ftanet", "carnatic", "OA"
-            )
+            ),
+            "sample_rate": 8000,
         },
     },
     "rhythm:1way-tabla": {
