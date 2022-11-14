@@ -264,8 +264,6 @@ def norm(x):
 def cfp_process(y, ypath=None, csv=False, sr=None, hop=256):
     if type(y) is str:
         y, _ = load_audio(y, sr=sr)
-    else:
-        y = librosa.resample(y, orig_sr=44100, target_sr=sr)
     Z, time, CenFreq, tfrL0, tfrLF, tfrLQ = feature_extraction(
         y, sr, Hop=hop, StartFreq=31.0, StopFreq=1250.0, NumPerOct=60
     )
