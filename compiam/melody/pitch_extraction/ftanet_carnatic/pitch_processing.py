@@ -6,7 +6,7 @@
 
 import numpy as np
 
-from .cfp import get_CenFreq
+from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import get_CenFreq
 
 
 def batchize_test(data, size=430):

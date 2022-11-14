@@ -24,6 +24,7 @@ models_dict = {
                 WORKDIR,
                 "compiam",
                 "melody",
+                "raga_recognition",
                 "deepsrgm",
                 "conf",
                 "DEEPSRGM_mapping.json",
