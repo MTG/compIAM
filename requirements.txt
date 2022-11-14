@@ -9,8 +9,5 @@ scipy~=1.4.1
 scikit-learn~=0.24.2
 tqdm~=4.64.1
 mirdata==0.3.6
-tensorflow==2.7.2
 hmmlearn
-torch~=1.8.0
-essentia
 zope

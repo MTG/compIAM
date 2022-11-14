@@ -13,8 +13,9 @@ sys.path.insert(0, os.path.abspath("../"))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "compiam"
-copyright = "2022, MTG, UPF (Thomas Nuttal, Genís Plaja-Roglans, and more)"
-author = "Thomas Nuttal, Genís Plaja-Roglans, and more"
+copyright = "2022, Music Technology Group, Universitat Pompeu Fabra \
+    (Genís Plaja-Roglans, Thomas Nuttal, Xavier Serra)"
+author = "Genís Plaja-Roglans, Thomas Nuttal, Xavier Serra"
 release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
