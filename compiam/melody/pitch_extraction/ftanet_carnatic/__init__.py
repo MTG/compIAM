@@ -279,7 +279,7 @@ class FTANetCarnatic(object):
         TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
 
         ### TODO: Write code to re-sample pitch if needed
-        return np.array([TStamps, freqs]).transpose().toList()
+        return np.array([TStamps, freqs]).transpose()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalise pitch given a tonic.
