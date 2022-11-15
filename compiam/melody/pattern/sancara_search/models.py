@@ -14,14 +14,14 @@ class CAEWrapper:
 
     Example:
     ```
-    model_path = "<modeL_output_folder>/model_complex_auto_cqt.save"
+    model_path = "<model_output_folder>/model_complex_auto_cqt.save"
     conf_path  = "cae-invar/config_cqt_old.ini"
     spec_path  = "cae-invar/config_spec.cfg"
-    audio_path = "<path_to_audio.mp3"
+    audio_path = "<path_to_audio>"
 
     model = CAEWrapper(model_path, conf_path, spec_path)
-    amps, phase = model.extract_features(audio_path)
-    amps
+    ampls, phase = model.extract_features(audio_path)
+    ampls
     >> tensor([[1.2935, 4.0693, 1.0390,  ..., 0.4740, 1.3497, 0.5319],
         [1.5923, 2.4673, 3.4847,  ..., 0.4998, 1.3553, 1.4519],
         [1.2482, 1.0292, 2.1280,  ..., 0.7126, 1.4086, 1.9351],
