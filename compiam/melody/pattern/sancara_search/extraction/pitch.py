@@ -90,44 +90,6 @@ def interpolate_below_length(arr, val, gap):
     return interp
 
 
-def extract_pitch_track(audio_path, frameSize, hopSize, gap_interp, smooth, sr):
-
-    audio_loaded, _ = librosa.load(audio_path, sr=sr)
-
-    # Run spleeter on track to remove the background
-    separator = Separator('spleeter:2stems')
-    audio_loader = AudioAdapter.default()
-    waveform, _ = audio_loader.load(audio_path, sample_rate=sr)
-    prediction = separator.separate(waveform=waveform)
-    clean_vocal = prediction['vocals']
-
-    # Prepare audio for pitch extraction
-    audio_mono = clean_vocal.sum(axis=1) / 2
-    audio_mono_eqloud = estd.EqualLoudness(sampleRate=sr)(audio_mono)
-
-    # Extract pitch using Melodia algorithm from Essentia
-    pitch_extractor = estd.PredominantPitchMelodia(frameSize=frameSize, hopSize=hopSize)
-    raw_pitch, _ = pitch_extractor(audio_mono_eqloud)
-    raw_pitch_ = np.append(raw_pitch, 0.0)
-    time = np.linspace(0.0, len(audio_mono_eqloud) / sr, len(raw_pitch))
-
-    timestep = time[4]-time[3] # resolution of time track
-
-    # Gap interpolation
-    if gap_interp:
-        print(f'Interpolating gaps of {gap_interp} or less')
-        raw_pitch = interpolate_below_length(raw_pitch_, 0, int(gap_interp/timestep))
-        
-    # Gaussian smoothing
-    if smooth:
-        print(f'Gaussian smoothing with sigma={smooth}')
-        pitch = gaussian_filter1d(raw_pitch, smooth)
-    else:
-        pitch = raw_pitch[:]
-
-    return pitch, raw_pitch, timestep, time
-
-
 def silence_stability_from_file(inpath, outpath, tonic=None, min_stability_length_secs=1, stab_hop_secs=0.2, freq_var_thresh_stab=8, gap_interp=0.250):
 
     pitch, time, timestep = get_timeseries(inpath)

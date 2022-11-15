@@ -8,103 +8,222 @@ from compiam.melody.pattern.sancara_search.extraction.sequence import (
     convert_seqs_to_timestep, remove_below_length)
 from compiam.melody.pattern.sancara_search.extraction.evaluation import get_coverage
 
-def run_pipeline(X, 
-    conv_filter, bin_thresh, gauss_sigma, cont_thresh, etc_kernel_size, binop_dim, perc_tail, bin_thresh_segment,
-    min_diff_trav_seq, silence_mask, cqt_window, sr, timestep, min_length_cqt, match_tol, extend_tol, dupl_perc_overlap, 
-    n_dtw, thresh_dtw, thresh_cos, min_pattern_length_seconds, min_in_group):
+from compiam.melody.pattern.sancara_search.complex_auto.util import to_numpy
+from scipy.spatial.distance import pdist, squareform
 
-    print('Convolving similarity matrix')
-    X_conv = convolve_array_tile(X, cfilter=conv_filter)
+def self_similarity(features, exclusion_mask=None, timestep=None, hop_length=None, sr=44100):
+    """
+    Compute self similarity matrix between features in <features>. If an <exclusion_mask>
+    is passed. Regions corresponding to that mask will be excluded from the computation and
+    the returned matrix will correspond only to those regions marked as 0 in the mask.
 
-    print('Binarizing convolved array')
-    X_bin = binarize(X_conv, bin_thresh)
+    :param features: array of features extracted from audio 
+    :type features: np.ndarray
+    :param exclusion_mask: array of 0 and 1, should be masked or not? [Optional]
+    :type exclusion_mask: np.ndarray or None
+    :param timestep: time in seconds between elements of <exclusion_mask>
+        Only required if <exclusion_mask> is passed
+    :type timestep: float or None
+    :param hop_length: number of audio frames corresponding to one element in <features>
+        Only required if <exclusion_mask> is passed
+    :type hop_length: int or None
+    :param sr: sampling rate of audio corresponding to <features>
+        Only required if <exclusion_mask> is passed
+    :type sr: int or None
 
-    print('Removing diagonal')
-    X_diag = remove_diagonal(X_bin)
+    :returns: 
+        if exclusion mask is passed return...
+            matrix - self similarity matrix
+            orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}
+            sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}
+            boundaries_orig - list of boundaries between wanted and unwanted regions in orig array
+            boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array
+        else return
+            matrix - self similarity matrix
+    :rtype: (np.ndarray, dict, dict, list, list) or np.ndarray
+    """
+    if exclusion_mask is not None:
+        assert(all([timestep is not None, hop_length is not None, sr is not None])), \
+            "To use exclusion mask, <timestep>, <hop_length> and <sr> must also be passed"
 
-    if gauss_sigma:
-        print('Applying diagonal gaussian filter')
-        diagonal_gaussian(X_bin, gauss_sigma)
-
-        print('Binarize gaussian blurred similarity matrix')
-        binarize(X_gauss, cont_thresh)
+    # Deal with masking if any
+    if exclusion_mask:
+        features_mask = convert_mask(features, exclusion_mask, timestep, hop_length, sr)
+        orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse = get_conversion_mappings(features_mask)
     else:
-        X_gauss = X_diag
-        X_cont = X_gauss
+        orig_sparse_lookup = None
+        sparse_orig_lookup = None
+        boundaries_orig = None
+        boundaries_sparse = None
+        
+    # Indices we want to keep
+    good_ix = np.where(mask==0)[0]
 
-    print('Ensuring symmetry between upper and lower triangle in array')
-    X_sym = make_symmetric(X_cont)
+    # Compute self similarity
+    sparse_features = features[good_ix]
+    matrix_orig = create_ss_matrix(sparse_features)
 
-    print('Identifying and isolating regions between edges')
-    X_fill = edges_to_contours(X_sym, etc_kernel_size)
+    # Normalise self similarity matrix
+    matrix_norm = normalise_self_sim(matrix)
 
-    print('Cleaning isolated non-directional regions using morphological opening')
-    X_binop = apply_bin_op(X_fill, binop_dim)
+    if exclusion_mask:
+        return matrix_norm, orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse
+    else:
+        return matrix_norm
 
-    print('Ensuring symmetry between upper and lower triangle in array')
-    X_binop = make_symmetric(X_binop)
 
-    ## Join segments that are sufficiently close
-    print('Extracting segments using flood fill and centroid')
-    all_segments = extract_segments_new(X_binop)
+def convert_mask(arr, exclusion_mask, timestep, hop_length, sr):
+    """
+    Get mask of excluded regions in the same dimension as array, <arr>
 
-    print('Extending Segments')
-    all_segments_extended = extend_segments(all_segments, X_sym, X_conv, perc_tail, bin_thresh_segment)
-    print(f'    {len(all_segments_extended)} extended segments...')
+    :param arr: array corresponding to features extracted from audio
+    :type arr: np.ndarray
+    :param exclusion_mask: Mask indicating whether element should be excluded (different dimensions to <arr>)
+    :type exclusion_mask: np.ndarray
+    :param timestep: time in seconds between each element in <exclusion_mask>
+    :type timestep: float
+    :param hop_length: how many frames of audio correspond to each element in <arr>
+    :type hop_length: int
+    :param sr: sampling rate of audio from which <arr> was computed
+    :type sr: int
 
-    print('Joining segments that are sufficiently close')
-    all_segments_joined = join_all_segments(all_segments_extended, min_diff_trav_seq)
-    print(f'    {len(all_segments_joined)} joined segments...')
+    :returns: array of mask values equal in length to one dimension of <arr> - 0/1 is masked?
+    :rtype: np.ndarray
+    """
+    # get mask of silent and stable regions
+    mask = []
+    for i in range(arr.shape[0]):
+        # what is the time at this element of arr?
+        t = (i+1)*hop_length/sr
+        # find index in mask
+        ix = round(t/timestep)
+        # append mask value for this point
+        mask.append(mask[ix])
+    mask = np.array(mask)
+    return mask
 
-    print('Breaking segments with silent/stable regions')
-    # Format - [[(x,y), (x1,y1)],...]
-    all_broken_segments = break_all_segments(all_segments_joined, silence_mask, cqt_window, sr, timestep)
-    all_broken_segments = break_all_segments(all_broken_segments, stable_mask, cqt_window, sr, timestep)
-    print(f'    {len(all_broken_segments)} broken segments...')
 
-    print('Reducing Segments')
-    all_segments_reduced = remove_short(all_broken_segments, min_length_cqt)
-    print(f'    {len(all_segments_reduced)} segments above minimum length of {min_pattern_length_seconds}s...')
+def get_conversion_mappings(mask):
+    """
+    Before reducing an array to only include elements that do not correspond
+    to <mask>. We want to record the relationship between the new (sparse) array
+    index and the old (orig) array.
 
-    print('Identifying Segment Groups')
-    all_groups = group_segments(all_segments_reduced, min_length_cqt, match_tol, silence_and_stable_mask, cqt_window, timestep, sr)
-    print(f'    {len(all_groups)} segment groups found...')
+    :param mask: mask of 0/1 - is element to be excluded
+    :param type: np.ndarray
 
-    print('Extending segments to silence')
-    silence_and_stable_mask_2 = np.array([1 if any([i==2,j==2]) else 0 for i,j in zip(silence_mask, stable_mask)])
-    all_groups_ext = extend_groups_to_mask(all_groups, silence_and_stable_mask_2, toler=extend_tol)
+    :returns: 
+        orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}
+        sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}
+        boundaries_orig - list of boundaries between wanted and unwanted regions in orig array
+        boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array
+    :rtype: (dict, dict, list, list)
+    """
+    # Indices we want to keep
+    good_ix = np.where(mask==0)[0]
 
-    print('Joining Groups of overlapping Sequences')
-    all_groups_over = group_overlapping(all_groups_ext, dupl_perc_overlap)
-    print(f'    {len(all_groups_over)} groups after join...')
+    # Mapping between old and new indices
+    orig_sparse_lookup = {g:s for s,g in enumerate(good_ix)}
+    sparse_orig_lookup = {s:g for g,s in orig_sparse_lookup.items()}
 
-    print('Grouping further using distance measures')
-    all_groups_dtw = group_by_distance(all_groups_over, pitch, n_dtw, thresh_dtw, thresh_cos, cqt_window, sr, timestep)
-    print(f'    {len(all_groups_dtw)} groups after join...')
+    # Indices corresponding to boundaries 
+    # between wanted and unwanted regions
+    # in original array
+    boundaries_orig = []
+    for i in range(1, len(mask)):
+        curr = mask[i]
+        prev = mask[i-1]
+        if curr==0 and prev==1:
+            boundaries_orig.append(i)
+        elif curr==1 and prev==0:
+            boundaries_orig.append(i-1)
 
-    print('Convert sequences to pitch track timesteps')
-    starts_seq, lengths_seq = convert_seqs_to_timestep(all_groups_dtw, cqt_window, sr, timestep)
+    # Boundaries corresponding to newly joined
+    # regions in sparse array
+    boundaries_sparse = np.array([orig_sparse_lookup[i] for i in boundaries_orig])
 
-    print('Applying exclusion functions')
-    starts_seq_exc,  lengths_seq_exc = remove_below_length(starts_seq, lengths_seq, timestep, min_pattern_length_seconds)
+    # Boundaries contain two consecutive boundaries for each gap
+    # but not if the excluded region leads to the end of the track
+    red_boundaries_sparse = []
+    boundaries_mask = [0]*len(boundaries_sparse)
+    for i in range(len(boundaries_sparse)):
+        if i==0:
+            red_boundaries_sparse.append(boundaries_sparse[i])
+            boundaries_mask[i]=1
+        if boundaries_mask[i]==1:
+            continue
+        curr = boundaries_sparse[i]
+        prev = boundaries_sparse[i-1]
+        if curr-prev == 1:
+            red_boundaries_sparse.append(prev)
+            boundaries_mask[i]=1
+            boundaries_mask[i-1]=1
+        else:
+            red_boundaries_sparse.append(curr)
+            boundaries_mask[i]=1
+    boundaries_sparse = np.array(sorted(list(set(red_boundaries_sparse))))
 
-    starts_seq_exc = [p for p in starts_seq_exc if len(p)>min_in_group]
-    lengths_seq_exc = [p for p in lengths_seq_exc if len(p)>min_in_group]
+    return orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse
 
-    print('Extend all segments to stable or silence')
-    starts_seq_ext, lengths_seq_ext = starts_seq_exc, lengths_seq_exc
 
-    starts_sec_ext = [[x*timestep for x in p] for p in starts_seq_ext]
-    lengths_sec_ext = [[x*timestep for x in l] for l in lengths_seq_ext]
+def create_ss_matrix(feats, mode='cosine'):
+    """
+    Compute self similarity matrix between features in <feats>
+    using distance measure, <mode>
 
-    starts_seq_ext = [[int(x/timestep) for x in p] for p in starts_sec_ext]
-    lengths_seq_ext = [[int(x/timestep) for x in l] for l in lengths_sec_ext]
+    :param feats: array of features
+    :type feats: np.ndarray
+    :param mode: name of distance measure (recognised by scipy.spatial.distance)
+    :type mode: str
 
-    print('')
-    n_patterns = sum([len(x) for x in starts_seq_ext])
-    coverage = get_coverage(pitch, starts_seq_ext, lengths_seq_ext)
-    print(f'Number of Patterns: {n_patterns}')
-    print(f'Number of Groups: {len(starts_sec_ext)}')
-    print(f'Coverage: {round(coverage,2)}')
+    :returns: self similarity matrix
+    :rtype: np.ndarray
+    """
+    matrix = squareform(pdist(np.vstack(to_numpy(feats)),
+                              metric=mode))
+    return matrix   
 
-    return starts_seq_ext, lengths_seq_ext
+
+def normalise_self_sim(matrix):
+    """
+    Normalise self similarity matrix:
+        invert and convolve
+
+    :param matrix: self similarity matrix
+    :type matrix: np.ndarray
+
+    :returns: matrix normalized, same dimensions
+    :rtype: np.ndarray
+    """
+    matrix = 1 / (matrix + 1e-6)
+
+    for k in range(-8, 9):
+        eye = 1 - np.eye(*matrix.shape, k=k)
+        matrix = matrix * eye
+
+    flength = 10
+    ey = np.eye(flength) + np.eye(flength, k=1) + np.eye(flength, k=-1)
+    matrix = convolve2d(matrix, ey, mode="same")
+
+    diag_mask = np.ones(matrix.shape)
+    diag_mask = (diag_mask - np.diag(np.ones(matrix.shape[0]))).astype(np.bool)
+
+    mat_min = np.min(matrix[diag_mask])
+    mat_max = np.max(matrix[diag_mask])
+
+    # not sure if needed for now. TODO: revisit
+    #matrix -= matrix.min()
+    #matrix /= (matrix.max() + 1e-8)
+
+    #for b in boundaries_sparse:
+    #    matrix[:,b] = 1
+    #    matrix[b,:] = 1
+
+    matrix[~diag_mask] = 0
+
+    return matrix
+
+
+
+
+
