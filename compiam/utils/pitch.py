@@ -1,3 +1,5 @@
+import mir_eval
+
 import numpy as np
 
 ###############
@@ -21,3 +23,28 @@ def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     indexes = np.where(normalised_pitch > max_value)
     normalised_pitch[indexes] = max_value
     return np.array([pitch[:, 0], normalised_pitch]).transpose()
+
+def pitch_resampling(pitch, new_len):
+    """Resample pitch to a given new length in samples
+
+    :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
+    :param new_len: new length of the output pitch
+    """
+    times = pitch[:, 0]
+    frequencies = pitch[:, 1]
+    
+    voicing = []
+    for freq in frequencies:
+        voicing.append(1) if freq > 0 else voicing.append(0)
+    
+    times_new = np.linspace(times[0], times[-1], num=new_len)
+    
+    frequencies_resampled, _ = mir_eval.melody.resample_melody_series(
+        times=times,
+        frequencies=frequencies,
+        voicing=np.array(voicing),
+        times_new=times_new,
+        kind='linear'
+    )
+    
+    return np.array([times_new, frequencies_resampled]).transpose()

@@ -5,7 +5,7 @@ import librosa
 import numpy as np
 from compiam.exceptions import ModelNotFoundError
 
-from compiam.utils.pitch import pitch_normalisation
+from compiam.utils.pitch import pitch_normalisation, pitch_resampling
 from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
     batchize_test,
     get_est_arr,
@@ -278,8 +278,14 @@ class FTANetCarnatic(object):
             estimation = get_est_arr(self.model, xlist, timestamps, batch_size=16)
             freqs = estimation[:, 1]
         TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
+        output = np.array([TStamps, freqs]).transpose()
 
-        return np.array([TStamps, freqs]).transpose()
+        if out_step is not None:
+            current_step = (audio_len / self.sample_rate) / len(freqs)
+            new_len = (out_step * len(freqs)) // current_step
+            output = pitch_resampling(output, new_len)
+
+        return output
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalise pitch given a tonic.
