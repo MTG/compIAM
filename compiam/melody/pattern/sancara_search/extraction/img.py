@@ -1,15 +1,15 @@
 import numpy as np
 
-import cv2
+#import cv2
 
 from scipy import signal
 from scipy import misc
 from scipy.ndimage import binary_opening
-import skimage
-from skimage.transform import hough_line, hough_line_peaks
-from skimage.feature import canny
-from skimage.draw import line
-from skimage import data
+#import skimage
+#from skimage.transform import hough_line, hough_line_peaks
+#from skimage.feature import canny
+#from skimage.draw import line
+#from skimage import data
 
 from scipy.ndimage import gaussian_filter
 

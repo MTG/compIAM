@@ -1,15 +1,8 @@
-from compiam.melody.pattern.sancara_search.extraction.img import (
-    remove_diagonal, convolve_array_tile, binarize, diagonal_gaussian, 
-    apply_bin_op, make_symmetric, edges_to_contours)
-from compiam.melody.pattern.sancara_search.extraction.segments import (
-    extract_segments_new, break_all_segments, remove_short, extend_segments, join_all_segments, 
-    extend_groups_to_mask, group_segments, group_overlapping, group_by_distance)
-from compiam.melody.pattern.sancara_search.extraction.sequence import (
-    convert_seqs_to_timestep, remove_below_length)
-from compiam.melody.pattern.sancara_search.extraction.evaluation import get_coverage
+import numpy as np
 
 from compiam.melody.pattern.sancara_search.complex_auto.util import to_numpy
 from scipy.spatial.distance import pdist, squareform
+from scipy.signal import convolve2d
 
 def self_similarity(features, exclusion_mask=None, timestep=None, hop_length=None, sr=44100):
     """
@@ -42,12 +35,13 @@ def self_similarity(features, exclusion_mask=None, timestep=None, hop_length=Non
             matrix - self similarity matrix
     :rtype: (np.ndarray, dict, dict, list, list) or np.ndarray
     """
-    if exclusion_mask is not None:
-        assert(all([timestep is not None, hop_length is not None, sr is not None])), \
+    em = not (exclusion_mask is None)
+    if em:
+        assert(all([not timestep is None, not hop_length is None, not sr is None])), \
             "To use exclusion mask, <timestep>, <hop_length> and <sr> must also be passed"
 
     # Deal with masking if any
-    if exclusion_mask:
+    if em:
         features_mask = convert_mask(features, exclusion_mask, timestep, hop_length, sr)
         orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse = get_conversion_mappings(features_mask)
     else:
@@ -57,30 +51,30 @@ def self_similarity(features, exclusion_mask=None, timestep=None, hop_length=Non
         boundaries_sparse = None
         
     # Indices we want to keep
-    good_ix = np.where(mask==0)[0]
+    good_ix = np.where(features_mask==0)[0]
 
     # Compute self similarity
     sparse_features = features[good_ix]
-    matrix_orig = create_ss_matrix(sparse_features)
+    matrix = create_ss_matrix(sparse_features)
 
     # Normalise self similarity matrix
     matrix_norm = normalise_self_sim(matrix)
 
-    if exclusion_mask:
+    if em:
         return matrix_norm, orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse
     else:
         return matrix_norm
 
 
-def convert_mask(arr, exclusion_mask, timestep, hop_length, sr):
+def convert_mask(arr, mask, timestep, hop_length, sr):
     """
     Get mask of excluded regions in the same dimension as array, <arr>
 
     :param arr: array corresponding to features extracted from audio
     :type arr: np.ndarray
-    :param exclusion_mask: Mask indicating whether element should be excluded (different dimensions to <arr>)
-    :type exclusion_mask: np.ndarray
-    :param timestep: time in seconds between each element in <exclusion_mask>
+    :param mask: Mask indicating whether element should be excluded (different dimensions to <arr>)
+    :type mask: np.ndarray
+    :param timestep: time in seconds between each element in <mask>
     :type timestep: float
     :param hop_length: how many frames of audio correspond to each element in <arr>
     :type hop_length: int
@@ -91,16 +85,18 @@ def convert_mask(arr, exclusion_mask, timestep, hop_length, sr):
     :rtype: np.ndarray
     """
     # get mask of silent and stable regions
-    mask = []
+    new_mask = []
     for i in range(arr.shape[0]):
         # what is the time at this element of arr?
         t = (i+1)*hop_length/sr
         # find index in mask
         ix = round(t/timestep)
         # append mask value for this point
-        mask.append(mask[ix])
-    mask = np.array(mask)
-    return mask
+        try:
+            new_mask.append(mask[ix])
+        except:
+            import ipdb; ipdb.set_trace()
+    return np.array(new_mask)
 
 
 def get_conversion_mappings(mask):
@@ -211,13 +207,8 @@ def normalise_self_sim(matrix):
     mat_min = np.min(matrix[diag_mask])
     mat_max = np.max(matrix[diag_mask])
 
-    # not sure if needed for now. TODO: revisit
-    #matrix -= matrix.min()
-    #matrix /= (matrix.max() + 1e-8)
-
-    #for b in boundaries_sparse:
-    #    matrix[:,b] = 1
-    #    matrix[b,:] = 1
+    matrix -= matrix.min()
+    matrix /= (matrix.max() + 1e-8)
 
     matrix[~diag_mask] = 0
 

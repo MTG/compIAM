@@ -85,7 +85,7 @@ def extract_stability_mask(pitch, min_stab_sec, hop_sec, var, timestep):
     :rtype: np.ndarray
     """
     stab_hop = int(hop_sec/timestep)
-    reverse_raw_pitch = np.flip(pitch)
+    reverse_pitch = np.flip(pitch)
 
     # apply in both directions to array to account for hop_size errors
     stable_mask_1 = [is_stable(pitch[s:s+stab_hop], var) for s in range(len(pitch))]
