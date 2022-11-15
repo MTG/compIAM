@@ -48,8 +48,7 @@ def _predict_normalized_pitch():
     normalised_pitch = ftanet.normalise_pitch(pitch, tonic)
     assert isinstance(normalised_pitch, np.ndarray)
     assert np.shape(normalised_pitch) == np.shape(pitch)
-    assert np.all(np.isclose(normalised_pitch[:10, 0], pitch[:10, 0]))
-    assert np.all(np.isclose(pitch[140:150, 1], np.array([4., 4., 4., 4., 4., 4., 4., 4., 4., 4.])))
+    assert np.all(np.isclose(normalised_pitch[140:150, 1], np.array([4., 4., 4., 4., 4., 4., 4., 4., 4., 4.])))
 
 
 @pytest.mark.tensorflow
@@ -59,6 +58,7 @@ def test_predict_tf():
 
 @pytest.mark.essentia_tensorflow
 def test_predict_ess_tf():
+    _predict_pitch()
     _predict_normalized_pitch()
 
 
@@ -68,5 +68,6 @@ def test_predict_full():
 
 
 @pytest.mark.all
-def test_predict_full():
+def test_predict_all():
     _predict_pitch()
+    _predict_normalized_pitch()

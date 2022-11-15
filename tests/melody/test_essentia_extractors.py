@@ -36,7 +36,7 @@ def _predict_normalized_pitch():
     normalised_pitch = melodia.normalise_pitch(pitch, tonic)
     assert isinstance(normalised_pitch, np.ndarray)
     assert np.shape(normalised_pitch) == np.shape(pitch)
-    assert np.all(np.isclose(pitch[140:150, 1], np.array([4., 4., 4., 4., 4., 4., 4., 4., 4., 4.])))
+    assert np.all(np.isclose(normalised_pitch[140:150, 1], np.array([4., 4., 4., 4., 4., 4., 4., 4., 4., 4.])))
 
 
 @pytest.mark.essentia
@@ -44,16 +44,16 @@ def test_ess_extractors_ess():
     _predict_normalized_pitch()
 
 
-@pytest.mark.essentia
+@pytest.mark.essentia_tensorflow
 def test_ess_extractors_ess_tf():
     _predict_normalized_pitch()
 
 
-@pytest.mark.essentia
+@pytest.mark.essentia_torch
 def test_ess_extractors_ess_torch():
     _predict_normalized_pitch()
 
 
 @pytest.mark.all
-def test_ess_extractors_ess_torch():
+def test_ess_extractors_ess_all():
     _predict_normalized_pitch()
