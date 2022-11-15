@@ -1,7 +1,7 @@
 ### IMPORT HERE FUNCTIONALITIES
 import inspect, importlib as implib
 from compiam.data import models_dict
-
+from compiam.melody.pattern.sancara_search.models import CAEWrapper
 
 to_avoid = [
     x[0]
