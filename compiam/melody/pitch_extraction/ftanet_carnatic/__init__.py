@@ -281,9 +281,8 @@ class FTANetCarnatic(object):
         output = np.array([TStamps, freqs]).transpose()
 
         if out_step is not None:
-            current_step = (audio_len / self.sample_rate) / len(freqs)
-            new_len = int((audio_len / self.sample_rate) // current_step)
-            output = pitch_resampling(output, new_len)
+            new_len = int((audio_len / self.sample_rate) // out_step)
+            return pitch_resampling(output, new_len)
 
         return output
 
