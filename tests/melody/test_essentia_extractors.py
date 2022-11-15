@@ -34,7 +34,7 @@ def _predict_normalized_pitch():
     assert tonic == 157.64892578125
 
     normalised_pitch = melodia.normalise_pitch(pitch, tonic)
-    assert isinstance(normalised_pitch, np.array)
+    assert isinstance(normalised_pitch, np.ndarray)
     assert np.shape(normalised_pitch) == np.shape(pitch)
     assert np.all(np.isclose(pitch[140:150, 1], np.array([4., 4., 4., 4., 4., 4., 4., 4., 4., 4.])))
 
