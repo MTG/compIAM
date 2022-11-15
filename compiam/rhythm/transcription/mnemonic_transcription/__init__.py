@@ -6,7 +6,7 @@ import hmmlearn.hmm as hmm
 import librosa
 import numpy as np
 from sklearn.exceptions import NotFittedError
-import tqdm 
+import tqdm
 
 from compiam.exceptions import ModelNotTrainedError
 from compiam.rhythm.meter.akshara_pulse_tracker import AksharaPulseTracker
@@ -14,32 +14,31 @@ from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
+
 class MnemonicTranscription:
     """
     bōl or solkattu transcription from audio. Based on model presented in [1]
-    
-    [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X. 
-    (2015, October). Discovery of Syllabic Percussion Patterns in Tabla 
-    Solo Recordings. In Proceedings of the 16th International Society 
-    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391). 
+
+    [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X.
+    (2015, October). Discovery of Syllabic Percussion Patterns in Tabla
+    Solo Recordings. In Proceedings of the 16th International Society
+    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391).
     Malaga, Spain.
     """
+
     def __init__(
-        self, 
-        syllables, 
-        feature_kwargs={
-            'n_mfcc':13, 
-            'win_length':1024, 
-            'hop_length':256
-        }, 
+        self,
+        syllables,
+        feature_kwargs={"n_mfcc": 13, "win_length": 1024, "hop_length": 256},
         model_kwargs={
-            'n_components':7, 
-            'n_mix': 3, 
-            'n_iter':100, 
-            'algorithm': 'viterbi',
-            'params':'mcw'
-        }, 
-        sr=44100):
+            "n_components": 7,
+            "n_mix": 3,
+            "n_iter": 100,
+            "algorithm": "viterbi",
+            "params": "mcw",
+        },
+        sr=44100,
+    ):
         """
         :param syllables: List of strings representing expected bōl/solkattu syllables OR dict of string:string mappings.
             If a dict is passed, any subsequent syllable labels passed at training time will be converted as per this mapping. The values of
@@ -51,13 +50,13 @@ class MnemonicTranscription:
         :type model_kwargs: dict
         :param sr: sampling rate of audio to train on (default 44.1Hz)
         :type sr: int
-        
-        [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X. 
-        (2015, October). Discovery of Syllabic Percussion Patterns in Tabla 
-        Solo Recordings. In Proceedings of the 16th International Society 
-        for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391). 
+
+        [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X.
+        (2015, October). Discovery of Syllabic Percussion Patterns in Tabla
+        Solo Recordings. In Proceedings of the 16th International Society
+        for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391).
         Malaga, Spain.
-        """ 
+        """
         self.sr = sr
 
         if isinstance(syllables, dict):
@@ -65,7 +64,7 @@ class MnemonicTranscription:
             self.mapping = syllables
         else:
             self.syllables = set(syllables)
-            self.mapping = {x:x for x in syllables}
+            self.mapping = {x: x for x in syllables}
 
         self.models = {}
         for s in self.syllables:
@@ -76,7 +75,7 @@ class MnemonicTranscription:
 
     def train(self, filepaths_audio, filepaths_annotation, sr=None):
         """
-        Train one gaussian mixture model hidden markov model for each syllables passed at initialisation 
+        Train one gaussian mixture model hidden markov model for each syllables passed at initialisation
         on input audios and annotations passed via <filepaths_audio> and <filepaths_annotation>.
         Training hyperparameters are configured upon intialisation and can be accessed/changed
         via self.model_kwargs.
@@ -84,42 +83,46 @@ class MnemonicTranscription:
         :param filepaths_audio: List of filepaths to audios to train on
         :type filepaths_audio: list
         :param filepaths_annotation: List of filepaths to annotations to train on.
-            annotations should be in csv format, with no header of (timestamp in seconds, <syllable>). 
+            annotations should be in csv format, with no header of (timestamp in seconds, <syllable>).
             Annotated syllables that do not correspond to syllables passed at initialisation will be ignored
             One annotations path should be passed for each audio path
         :type filepaths_annotaton: list
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
-        """ 
+        """
         if not len(filepaths_audio) == len(filepaths_annotation):
-            raise Exception("filepaths_audio and filepaths_annotation must be the same length")
+            raise Exception(
+                "filepaths_audio and filepaths_annotation must be the same length"
+            )
 
         sr = self.sr if not sr else sr
 
-        samples = {s:[] for s in self.syllables}
+        samples = {s: [] for s in self.syllables}
         # load and extract features
         for fau, fan in zip(filepaths_audio, filepaths_annotation):
             audio, _ = librosa.load(fau, sr=sr)
             annotations = self.load_annotations(fan)
-            
-            annotations = [(round(t*sr), self.map(a)) for t,a in annotations]
+
+            annotations = [(round(t * sr), self.map(a)) for t, a in annotations]
             ann_syls = set([x[1] for x in annotations])
-            
+
             # Extract melodic features
             features = self.extract_features(audio, sr=sr)
 
             for syl in ann_syls:
                 if not syl in self.syllables:
                     continue
-                
+
                 # get params
-                hop_length = self.feature_kwargs['hop_length']
-                
+                hop_length = self.feature_kwargs["hop_length"]
+
                 # get training samples relevant to syl
                 samples_ix = self.get_sample_ix(annotations, audio, syl)
-                samples_ix = [(int(i/hop_length),int(j/hop_length)) for i,j in samples_ix]
+                samples_ix = [
+                    (int(i / hop_length), int(j / hop_length)) for i, j in samples_ix
+                ]
 
-                samples[syl] = samples[syl] + [features[:,i:j] for i,j in samples_ix]
+                samples[syl] = samples[syl] + [features[:, i:j] for i, j in samples_ix]
 
         # Train models
         for syl, samps in tqdm.tqdm(samples.items()):
@@ -137,20 +140,22 @@ class MnemonicTranscription:
         :param filepaths: Either one filepath or list of filepaths to audios to predict on
         :type filepaths: list or string
         :param onsets: list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used
-            to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being 
+            to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being
             a list of bōl/solkattu onsets in seconds. <onsets> should contain one set of onset annotations for each filepath
             in <filepaths>
         :type onsets: list or None
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
 
-        :returns: if <filepaths> is a list, then return a list of transcriptions, each 
+        :returns: if <filepaths> is a list, then return a list of transcriptions, each
             transcription of the form [(timestamp in seconds, bōl/solkattu),...]. Or if <filepaths>
             is a single fiel path string, return a single transcription.
         :rtype: list
-        """ 
+        """
         if not self.trained:
-            raise ModelNotTrainedError('Please train model before predicting using .train() method')
+            raise ModelNotTrainedError(
+                "Please train model before predicting using .train() method"
+            )
         if onsets:
             if not len(onsets) == len(filepaths):
                 raise Exception("One onset annotation required for each filepath")
@@ -159,19 +164,19 @@ class MnemonicTranscription:
         if not isinstance(filepaths, list):
             filepaths = list(filepaths)
         results = []
-        for i,fau in enumerate(filepaths):
+        for i, fau in enumerate(filepaths):
             ot = onsets[i] if onsets else None
             results.append(self.predict_single(fau, onsets=ot, sr=sr))
         return results[0] if len(results) == 1 else results
 
     def predict_single(self, filepath, onsets=None, sr=None):
         """
-        Predict bōl/solkattu transcription directly from audio time series 
+        Predict bōl/solkattu transcription directly from audio time series
         (such as for example that loaded by librosa.load)
 
         :param filepath: Filepath to audio to analyze
         :type filepath: str
-        :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically 
+        :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically
             identify bōl/solkattu onsets. If passed <onsets> should be a list of bōl/solkattu
             onsets in seconds
         :type onsets: list or None
@@ -182,25 +187,31 @@ class MnemonicTranscription:
         :rtype: list
         """
         sr = self.sr if not sr else sr
-        hop_length = self.feature_kwargs['hop_length']
+        hop_length = self.feature_kwargs["hop_length"]
 
         audio, _ = librosa.load(filepath, sr=sr)
         features = self.extract_features(audio, sr=sr)
 
         if not onsets:
-            # if not onsets are passed, extract using 
+            # if not onsets are passed, extract using
             pulse = AksharaPulseTracker()
             onsets = pulse.extract(filepath)
-            onsets = np.append(onsets, len(audio)/sr)
+            onsets = np.append(onsets, len(audio) / sr)
 
         n_ons = len(onsets)
-        samples_ix = [(int(onsets[i]*sr/hop_length), (int(onsets[i+1]*sr/hop_length))-1) for i in range(n_ons-1)]
-        samples_ix.append((samples_ix[-1][1],features.shape[1]-1))
-        
+        samples_ix = [
+            (
+                int(onsets[i] * sr / hop_length),
+                (int(onsets[i + 1] * sr / hop_length)) - 1,
+            )
+            for i in range(n_ons - 1)
+        ]
+        samples_ix.append((samples_ix[-1][1], features.shape[1] - 1))
+
         labels = []
-        for i,j in samples_ix:
-            samp = features[:,i:j]
-            t = round(i*self.feature_kwargs['hop_length']/sr,2)
+        for i, j in samples_ix:
+            samp = features[:, i:j]
+            t = round(i * self.feature_kwargs["hop_length"] / sr, 2)
             label = self.predict_sample(samp)
             labels.append((t, label))
 
@@ -225,7 +236,9 @@ class MnemonicTranscription:
                 scores.append(self.models[syl].score(sample.T))
                 names.append(syl)
             except NotFittedError:
-                logger.warning(f'{syl} not fitted (no instance of {syl} in training) data. Will not be used for prediction.')
+                logger.warning(
+                    f"{syl} not fitted (no instance of {syl} in training) data. Will not be used for prediction."
+                )
         label = scores.index(max(scores))
         return names[label]
 
@@ -242,12 +255,14 @@ class MnemonicTranscription:
         if a in self.mapping:
             return self.mapping[a]
         else:
-            logger.warning(f'Skipping unknown syllable, {a} for training instance. Model syllables: {self.mapping.keys()}')
-            return '!UKNOWN'
+            logger.warning(
+                f"Skipping unknown syllable, {a} for training instance. Model syllables: {self.mapping.keys()}"
+            )
+            return "!UKNOWN"
 
     def get_sample_ix(self, annotations, audio, syl):
         """
-        Convert input onset annotations to list of in/out points for a 
+        Convert input onset annotations to list of in/out points for a
         specific bōl/solkattu syllable, <syl>
 
         :param annotations: onset annotations of the form [(timestamp in seconds, bōl/solkattu),... ]
@@ -257,13 +272,13 @@ class MnemonicTranscription:
         :param syl: bōl/solkattu syllable to extract
         :type syl: str
 
-        :returns: list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single 
+        :returns: list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single
             bōls/solkattus
         :rtype: str
         """
-        annotations_two = annotations + [(len(audio),'!END')]
+        annotations_two = annotations + [(len(audio), "!END")]
         zipped = zip(annotations, annotations_two[1:])
-        samples = [(t1, t2-1) for ((t1,a1),(t2,a2)) in zipped if a1==syl]
+        samples = [(t1, t2 - 1) for ((t1, a1), (t2, a2)) in zipped if a1 == syl]
         return samples
 
     def extract_features(self, audio, sr=None):
@@ -296,7 +311,7 @@ class MnemonicTranscription:
         :rtype: list
         """
         annotations = []
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             reader = csv.reader(f)
             for row in reader:
                 annotations.append((float(row[0]), str(row[1]).strip()))

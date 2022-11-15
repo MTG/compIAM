@@ -21,11 +21,9 @@ register and get a personal access token. Said token will be required
 to use the functions to access the database. 
 
 
-.. autoclass:: compiam.dunya.Corpora
+.. automodule:: compiam.dunya
    :members:
-   :inherited-members:
 
 
 .. automodule:: compiam.dunya.conn
    :members:
-   :inherited-members:
