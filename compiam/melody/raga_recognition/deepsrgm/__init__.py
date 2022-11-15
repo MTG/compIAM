@@ -12,7 +12,9 @@ class DEEPSRGM(object):
     kindly provided by Shubham Lohiya and Swarada Bharadwaj.
     """
 
-    def __init__(self, model_path, mapping_path, dataset_home=None, device=None):
+    def __init__(
+        self, model_path=None, mapping_path=None, dataset_home=None, device=None
+    ):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
@@ -82,7 +84,7 @@ class DEEPSRGM(object):
         selected_ragas = self.selected_ragas if selection is None else selection
         self.mapping = create_mapping(self.mapping_path, selected_ragas)
 
-    def load_model(self, model_path, rnn="lstm"):
+    def load_model(self, model_path=None, rnn="lstm"):
         """Loading weights for DEEPSRGM
 
         :param model_path: path to model. If ".pth" not in entered path, it assumes that the
@@ -93,12 +95,13 @@ class DEEPSRGM(object):
         if rnn == "gru":
             self.model = deepsrgmModel(rnn=rnn).to(self.device)
             # This is the case for automatic loading of provided weights
-            if ".pth" not in model_path:
+            if model_path is None:
                 weights_path = os.path.join(model_path, "gru_30_checkpoint.pth")
         else:
             # This is the case for automatic loading of provided weights
-            if ".pth" not in model_path:
+            if model_path is None:
                 weights_path = os.path.join(model_path, "lstm_25_checkpoint.pth")
+
         if not os.path.exists(weights_path):
             raise ValueError(
                 """
@@ -110,20 +113,19 @@ class DEEPSRGM(object):
             """
             )
 
-        else:
-            weights = torch.load(weights_path, map_location=self.device)
-            new_weights = weights.copy()
-            keys_to_fix = [
-                ".weight_ih_l0",
-                ".weight_hh_l0",
-                ".bias_ih_l0",
-                ".bias_hh_l0",
-            ]
-            keys_to_fix = [rnn + x for x in keys_to_fix]
-            for i in keys_to_fix:
-                new_weights[i.replace(rnn, "rnn")] = weights[i]
-                del new_weights[i]
-            self.model.load_state_dict(new_weights)
+        weights = torch.load(weights_path, map_location=self.device)
+        new_weights = weights.copy()
+        keys_to_fix = [
+            ".weight_ih_l0",
+            ".weight_hh_l0",
+            ".bias_ih_l0",
+            ".bias_hh_l0",
+        ]
+        keys_to_fix = [rnn + x for x in keys_to_fix]
+        for i in keys_to_fix:
+            new_weights[i.replace(rnn, "rnn")] = weights[i]
+            del new_weights[i]
+        self.model.load_state_dict(new_weights)
 
     def get_features(
         self,

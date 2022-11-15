@@ -1,2 +1,2 @@
-model_checkpoint_path: "OA"
-all_model_checkpoint_paths: "OA"
+model_checkpoint_path: "carnatic"
+all_model_checkpoint_paths: "carnatic"

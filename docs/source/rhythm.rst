@@ -9,6 +9,9 @@ Percussion Transcription
 Four-Way Tabla Classification
 -----------------------------
 
+.. note::
+    REQUIRES: torch
+
 .. automodule:: compiam.rhythm.transcription.tabla_transcription
    :members:
 
