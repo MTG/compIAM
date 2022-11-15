@@ -1,3 +1,4 @@
+configobj
 matplotlib>=3.0.0
 numpy>=1.20.3
 librosa==0.8.0
@@ -10,4 +11,5 @@ tqdm~=4.64.1
 mirdata==0.3.6
 mir_eval
 hmmlearn
+validate
 zope
