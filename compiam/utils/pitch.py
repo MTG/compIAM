@@ -5,7 +5,7 @@ import numpy as np
 ###############
 # Melody utils
 ###############
-def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
+def normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     """Normalize pitch given a tonic.
 
     :param pitch: a 2-D list with time-stamps and pitch values per timestamp.
@@ -25,7 +25,7 @@ def pitch_normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     return np.array([pitch[:, 0], normalised_pitch]).transpose()
 
 
-def pitch_resampling(pitch, new_len):
+def resampling(pitch, new_len):
     """Resample pitch to a given new length in samples
 
     :param pitch: a 2-D list with time-stamps and pitch values per timestamp.

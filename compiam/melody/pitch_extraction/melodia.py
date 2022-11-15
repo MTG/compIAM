@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from compiam.utils.pitch import pitch_normalisation
+from compiam.utils.pitch import normalisation
 
 
 class Melodia:
@@ -115,6 +115,6 @@ class Melodia:
         :returns: a 2-D list with time-stamps and normalized to a given tonic
             pitch values per timestamp.
         """
-        return pitch_normalisation(
+        return normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value
         )
