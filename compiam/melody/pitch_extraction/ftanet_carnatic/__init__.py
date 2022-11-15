@@ -282,7 +282,7 @@ class FTANetCarnatic(object):
 
         if out_step is not None:
             current_step = (audio_len / self.sample_rate) / len(freqs)
-            new_len = (out_step * len(freqs)) // current_step
+            new_len = int((audio_len / self.sample_rate) // current_step)
             output = pitch_resampling(output, new_len)
 
         return output
