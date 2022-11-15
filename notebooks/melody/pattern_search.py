@@ -1,4 +1,4 @@
-audio_path = "/Volumes/Shruti/asplab2/cae-invar/audio/lara_wim/original/2018_11_13_am_Sec_1_P2_Varaali_V.2.wav"
+audio_path = "/Volumes/Shruti/asplab2/cae-invar/audio/lara_wim/spleeter/2018_11_13_am_Sec_4_P1_Atana_V.2.mp3"
 
 # TODO, for each stage include a visualisation
 
@@ -13,19 +13,20 @@ ampl, phase = cae.extract_features(audio_path)
 
 # Pitch Track 
 ftanet = load_model('melody:ftanet-carnatic')
-pitch_track = ftanet.extract(audio_path)
-pitch = pitch_track[:,0]
-time  = pitch_track[:,1]
+pitch_track = ftanet.predict(audio_path)
+pitch = pitch_track[:,1]
+time  = pitch_track[:,0]
 timestep  = time[2]-time[1]
 
 # Stability Track
 from compiam.utils.pitch import extract_stability_mask
+import numpy as np
 
 stability_mask = extract_stability_mask(
 	pitch=pitch, 
 	min_stab_sec=1.0, 
 	hop_sec=0.2, 
-	var_thresh=60,
+	var=60,
 	timestep=timestep)
 
 # Silence Mask
@@ -36,7 +37,7 @@ exclusion_mask = np.logical_or(silence_mask==1, stability_mask==1)
 # Self Similarity
 from compiam.melody.pattern import self_similarity
 
-ss = self_similarity(features, exclusion_mask=exclusion_mask, timestep=timestep, hop_length=cae.hop_length, sr=cae.sr)
+ss = self_similarity(ampl, exclusion_mask=exclusion_mask, timestep=timestep, hop_length=cae.hop_length, sr=cae.sr)
 X, orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse = ss
 
 
