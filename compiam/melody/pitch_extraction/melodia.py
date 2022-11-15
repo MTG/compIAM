@@ -100,7 +100,7 @@ class Melodia:
         )
         pitch, _ = extractor(audio)
         TStamps = (
-            np.array(range(0, len(pitch))) * np.float(self.hopSize) / self.sampleRate
+            np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
         )
         return np.array([TStamps, pitch]).transpose()
 

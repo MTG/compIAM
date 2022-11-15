@@ -4,7 +4,6 @@ import pytest
 import numpy as np
 
 from compiam import load_model
-from compiam.melody.tonic_identification import TonicIndianMultiPitch
 from compiam.data import WORKDIR
 
 
@@ -92,6 +91,7 @@ def _predict_normalized_pitch():
         os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
     )
 
+    from compiam.melody.tonic_identification import TonicIndianMultiPitch
     tonic_multipitch = TonicIndianMultiPitch()
     tonic = tonic_multipitch.extract(
         os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")

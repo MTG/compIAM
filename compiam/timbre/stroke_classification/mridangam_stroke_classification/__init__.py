@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 
-from compiam.exceptions import ModelNotTrainedError
+from compiam.exceptions import ModelNotTrainedError, DatasetNotLoadedError
 from compiam.data import WORKDIR
 
 
@@ -36,6 +36,7 @@ class MridangamStrokeClassification:
         self.dataset = None
         self.model = None
         self.feature_list = None
+        self.computed_features_path = os.path.join(WORKDIR, "models", "timbre", "mridangam_stroke_classification", "pre-computed_features.csv") 
 
     def load_mridangam_dataset(self, data_home=None, version="default", download=True):
         """Load mirdata dataloader for mirdangam stroke.
@@ -76,6 +77,12 @@ class MridangamStrokeClassification:
 
         :returns: list of strokes in the datasets.
         """
+        if self.dataset is None:
+            raise DatasetNotLoadedError("""
+                Please load the dataset using the .load_mridangam_dataset() method or the strokes 
+                cannot be listed.
+            """)
+
         stroke_names = []
         for i in self.mridangam_ids:
             stroke_names.append(self.mridangam_data[i].stroke_name)
@@ -86,6 +93,12 @@ class MridangamStrokeClassification:
 
         :returns: dict with strokes as values and unique integer as keys.
         """
+        if self.dataset is None:
+            raise DatasetNotLoadedError("""
+                Please load the dataset using the .load_mridangam_dataset() method or the strokes 
+                cannot be listed.
+            """)
+
         stroke_names = []
         for i in self.mridangam_ids:
             stroke_names.append(self.mridangam_data[i].stroke_name)
@@ -103,20 +116,12 @@ class MridangamStrokeClassification:
         :param balance_ref: reference class for data balancement.
         :returns: a trained scikit learn classificator object.
         """
-        if self.dataset is None:
+        if (self.dataset is None) and (load_computed is False):
             raise ValueError("Dataset not found, please run load_mridangam_dataset")
-        if not os.path.exists(
-            os.path.join(
-                WORKDIR,
-                "models",
-                "timbre",
-                "mridangam_stroke_classification",
-                "pre-computed_features.csv",
-            )
-        ):
+        if (load_computed is True) and not os.path.exists(self.computed_features_path):
             raise ValueError(
                 """
-                Training data not found. Please check you downloaded it correctly or run .train_model()
+                Training data not found. Please check you set the path correctly otherwise run .train_model()
                 function with load_computed=False"""
             )
         training_data, self.feature_list = process_strokes(

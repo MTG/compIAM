@@ -61,7 +61,7 @@ def split_file(filename):
     return (x, NRG, split_decision_func, start_indexes, stop_indexes)
 
 
-def process_strokes(file_dict, load_computed=False):
+def process_strokes(file_dict, load_computed=False, computed_path=None):
     """Process and extract features from stroke files.
 
     :param stroke_dict: dict of files per stroke class (preferably generated through a mirdata loader).
@@ -120,27 +120,12 @@ def process_strokes(file_dict, load_computed=False):
                             first_one = False
         # Convert list of features to dict and write to file
         df_features = pd.DataFrame(list_of_feat, columns=columns)
-        df_features.to_csv(
-            os.path.join(
-                WORKDIR,
-                "models",
-                "timbre",
-                "mridangam_stroke_classification",
-                "pre-computed_features.csv",
-            ),
-            index=False,
-        )
+        df_features.to_csv(computed_path, index=False)
     else:
+        if not os.path.exists(computed_path):
+            raise ValueError("Please enter a valid path for the computed features .csv path")
         # Load the pre-computed dict
-        df_features = pd.read_csv(
-            os.path.join(
-                WORKDIR,
-                "models",
-                "timbre",
-                "mridangam_stroke_classification",
-                "pre-computed_features.csv",
-            )
-        )
+        df_features = pd.read_csv(computed_path)
         feature_list = list(df_features.columns)
     return df_features, feature_list
 
