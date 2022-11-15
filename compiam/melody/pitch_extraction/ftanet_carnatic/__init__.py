@@ -29,7 +29,7 @@ class FTANetCarnatic(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
-                "Please install tensorflow using: pip install tensorflow==2.5.0"
+                "Please install tensorflow using: pip install tensorflow==2.7.2"
             )
         ###
 
@@ -229,7 +229,7 @@ class FTANetCarnatic(object):
         except:
             raise FileNotFoundError("Model path does not exist")
 
-    def predict(self, path_to_audio, hop_size=80, batch_size=5):
+    def predict(self, path_to_audio, hop_size=80, batch_size=5, out_step=None):
         """Extract melody from filename.
 
         :param filename: path to file to extract.
@@ -238,6 +238,7 @@ class FTANetCarnatic(object):
         :param batch_size: batches of seconds that are passed through the model
             (defaulted to 5, increase if enough computational power, reduce if
             needed).
+        :param out_step: particular time-step duration if needed at output
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         xlist = []
@@ -278,7 +279,6 @@ class FTANetCarnatic(object):
             freqs = estimation[:, 1]
         TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
 
-        ### TODO: Write code to re-sample pitch if needed
         return np.array([TStamps, freqs]).transpose()
 
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):

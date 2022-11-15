@@ -104,6 +104,7 @@ class Melodia:
         )
         return np.array([TStamps, pitch]).transpose()
 
+    @staticmethod
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalize pitch given a tonic.
 
