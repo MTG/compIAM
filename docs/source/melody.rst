@@ -9,6 +9,9 @@ Tonic Identification
 Tonic Indian Art Music (Multipitch approach)
 --------------------------------------------
 
+.. note::
+    REQUIRES: essentia
+
 .. automodule:: compiam.melody.tonic_identification.tonic_multipitch
    :members:
 
@@ -19,11 +22,17 @@ Pitch Extraction
 Melodia
 -------
 
+.. note::
+    REQUIRES: essentia
+
 .. automodule:: compiam.melody.pitch_extraction.melodia
    :members:
 
 FTANet-Carnatic
 ---------------
+
+.. note::
+    REQUIRES: tensorflow
 
 .. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic
    :members:
@@ -40,6 +49,9 @@ Raga Recognition
 
 DEEPSRGM
 --------
+
+.. note::
+    REQUIRES: torch
 
 .. automodule:: compiam.melody.raga_recognition.deepsrgm
    :members:
