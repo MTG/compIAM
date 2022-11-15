@@ -286,6 +286,7 @@ class FTANetCarnatic(object):
 
         return output
 
+    @staticmethod
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):
         """Normalise pitch given a tonic.
 

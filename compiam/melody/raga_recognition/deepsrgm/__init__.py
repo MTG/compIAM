@@ -12,7 +12,9 @@ class DEEPSRGM(object):
     kindly provided by Shubham Lohiya and Swarada Bharadwaj.
     """
 
-    def __init__(self, model_path=None, mapping_path=None, dataset_home=None, device=None):
+    def __init__(
+        self, model_path=None, mapping_path=None, dataset_home=None, device=None
+    ):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
