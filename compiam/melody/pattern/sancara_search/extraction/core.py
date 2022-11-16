@@ -1,6 +1,5 @@
 import numpy as np
 
-from compiam.melody.pattern.sancara_search.complex_auto.util import to_numpy
 from scipy.spatial.distance import pdist, squareform
 from scipy.signal import convolve2d
 
@@ -175,7 +174,7 @@ def create_ss_matrix(feats, mode='cosine'):
     :returns: self similarity matrix
     :rtype: np.ndarray
     """
-    matrix = squareform(pdist(np.vstack(to_numpy(feats)),
+    matrix = squareform(pdist(np.vstack(feats.detach().numpy()),
                               metric=mode))
     return matrix   
 

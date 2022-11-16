@@ -138,8 +138,8 @@ class CAEWrapper:
         if not isinstance(conf['bins_per_oct'], int):
             raise ValueError("bins_per_oct in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['fmin'], float):
-            raise ValueError("fmin in conf at <conf_path> should be an float")
+        if not isinstance(conf['fmin'], (float,int)):
+            raise ValueError("fmin in conf at <conf_path> should be an float/integer")
 
         if not isinstance(conf['hop_length'], int):
             raise ValueError("hop_length in conf at <conf_path> should be an integer")
