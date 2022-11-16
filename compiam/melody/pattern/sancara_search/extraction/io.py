@@ -4,8 +4,6 @@ import os
 import pickle
 import yaml
 
-#import essentia
-#import essentia.standard
 import numpy as np
 import librosa
 import soundfile as sf
