@@ -1,9 +1,6 @@
 import numpy as np
 from configobj import ConfigObj
 
-from compiam.melody.pattern.sancara_search.complex_auto.cqt import to_cqt_repr, standardize
-from compiam.melody.pattern.sancara_search.complex_auto.complex import Complex
-from compiam.melody.pattern.sancara_search.complex_auto.util import cuda_variable
 
 class CAEWrapper:
     """
@@ -56,6 +53,16 @@ class CAEWrapper:
         try:
             global torch
             import torch
+
+            global to_cqt_repr, standardize
+            from compiam.melody.pattern.sancara_search.complex_auto.cqt import to_cqt_repr, standardize
+
+            global Complex
+            from compiam.melody.pattern.sancara_search.complex_auto.complex import Complex
+
+            global cuda_variable
+            from compiam.melody.pattern.sancara_search.complex_auto.util import cuda_variable
+
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
