@@ -149,13 +149,13 @@ def normalise_features(trainig_data, feature_list=None):
     return data_modif
 
 
-def features_for_pred(filename):
+def features_for_pred(input_file):
     """Compute and format features for prediction.
 
     :param filename: path to file to extract the features from.
     :returns: DataFrame with normalised features per split.
     """
-    (audio, _, _, start_indexes, stop_indexes) = split_file(filename)
+    (audio, _, _, start_indexes, stop_indexes) = split_file(input_file)
     if len(start_indexes) > 1:
         max_len = np.argmax(
             [np.abs(y - x) for x, y in zip(start_indexes, stop_indexes)]

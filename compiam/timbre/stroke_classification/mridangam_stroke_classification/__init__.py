@@ -86,7 +86,7 @@ class MridangamStrokeClassification:
         stroke_names = []
         for i in self.mridangam_ids:
             stroke_names.append(self.mridangam_data[i].stroke_name)
-        return np.unique(stroke_names)
+        return list(np.unique(stroke_names))
 
     def dict_strokes(self):
         """List and convert to indexed dict the available mridangam strokes in the dataset.
@@ -106,7 +106,7 @@ class MridangamStrokeClassification:
         return {idx: x for idx, x in enumerate(stroke_names)}
 
     def train_model(
-        self, model_type="svm", load_computed=True, balance=False, balance_ref="random"
+        self, model_type="svm", load_computed=False, balance=False, balance_ref="random"
     ):
         """Train a support vector machine for stroke classification.
 
@@ -114,18 +114,21 @@ class MridangamStrokeClassification:
         :param model_type: bool to indicate if the features are computed or loaded from file.
         :param balance: balance the number of instances per class to prevent biases.
         :param balance_ref: reference class for data balancement.
-        :returns: a trained scikit learn classificator object.
+        :returns: accuracy in percentage and rounded to two decimals
         """
         if (self.dataset is None) and (load_computed is False):
-            raise ValueError("Dataset not found, please run load_mridangam_dataset")
+            raise DatasetNotLoadedError("Dataset not found, please run load_mridangam_dataset")
         if (load_computed is True) and not os.path.exists(self.computed_features_path):
             raise ValueError(
                 """
                 Training data not found. Please check you set the path correctly otherwise run .train_model()
                 function with load_computed=False"""
             )
+        file_dict = {item: [] for item in self.list_strokes()}
+        for i in self.mridangam_ids:
+            file_dict[self.mridangam_data[i].stroke_name].append(self.mridangam_data[i].audio_path)
         training_data, self.feature_list = process_strokes(
-            self.dict_strokes(), load_computed=load_computed
+            file_dict, load_computed=load_computed
         )
 
         # Let"s use sklearn"s preprocessing tools for applying normalisation to features
@@ -182,6 +185,7 @@ class MridangamStrokeClassification:
                 2,
             )
         )
+        return round((np.sum(y_test == y_pred) / len(y_pred) * 100), 2)
 
     def predict(self, file_list):
         """Predict stroke type from list of files.
@@ -194,7 +198,7 @@ class MridangamStrokeClassification:
                 "The model is not trained. Please run train_model()."
             )
 
-        if not isinstance(file_list, list):
+        if not isinstance(file_list, list) and (isinstance(file_list, str)):
             file_list = [file_list]
 
         list_of_feats = []
