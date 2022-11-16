@@ -15,7 +15,9 @@ test_files = [
 
 def _predict_strokes():
     if not os.path.exists(os.path.join(WORKDIR, "tests", "resources", "mir_datasets")):
-        subprocess.run(["mkdir", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")])
+        subprocess.run(
+            ["mkdir", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")]
+        )
     from compiam.timbre.stroke_classification import MridangamStrokeClassification
 
     mridangam_stroke_class = MridangamStrokeClassification()
@@ -58,7 +60,9 @@ def _predict_strokes():
     preds = mridangam_stroke_class.predict(test_files)
     assert isinstance(preds, dict)
     assert len(list(preds.keys())) == 2
-    subprocess.run(["rm", "-r", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")])
+    subprocess.run(
+        ["rm", "-r", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")]
+    )
 
 
 @pytest.mark.essentia

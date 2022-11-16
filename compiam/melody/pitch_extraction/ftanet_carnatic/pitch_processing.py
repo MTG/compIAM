@@ -1,7 +1,7 @@
-# The functions in this file were directly ported (and in some cases adapted) 
-# from the original repoository ofthe FTA-Net (https://github.com/yushuai/FTANet-melodic). 
-# We documented these for a more clear usage of the code by the CompIAM users. For direct 
-# use of the FTA-Net as designed and published by the authors, please refer to the original 
+# The functions in this file were directly ported (and in some cases adapted)
+# from the original repoository ofthe FTA-Net (https://github.com/yushuai/FTANet-melodic).
+# We documented these for a more clear usage of the code by the CompIAM users. For direct
+# use of the FTA-Net as designed and published by the authors, please refer to the original
 # mentioned GitHub repository.
 
 import numpy as np
