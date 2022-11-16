@@ -1,7 +1,6 @@
 ### IMPORT HERE FUNCTIONALITIES
 import inspect, importlib as implib
 from compiam.data import models_dict
-from compiam.melody.pattern.sancara_search.models import CAEWrapper
 
 to_avoid = [
     x[0]
@@ -15,6 +14,7 @@ to_avoid = [
 from compiam.melody import tonic_identification
 from compiam.melody import pitch_extraction
 from compiam.melody import raga_recognition
+from compiam.melody import pattern
 
 
 # Show user the available tasks
