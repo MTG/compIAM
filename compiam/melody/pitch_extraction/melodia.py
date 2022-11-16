@@ -99,9 +99,7 @@ class Melodia:
             voicingTolerance=self.voicingTolerance,
         )
         pitch, _ = extractor(audio)
-        TStamps = (
-            np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
-        )
+        TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
         return np.array([TStamps, pitch]).transpose()
 
     @staticmethod

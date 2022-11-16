@@ -171,7 +171,9 @@ class DEEPSRGM(object):
             try:
                 melodia = compiam.melody.pitch_extraction.Melodia
                 melodia = melodia()
-                tonic_extraction = compiam.melody.tonic_identification.TonicIndianMultiPitch
+                tonic_extraction = (
+                    compiam.melody.tonic_identification.TonicIndianMultiPitch
+                )
                 tonic_extraction = tonic_extraction()
             except:
                 raise ImportError(

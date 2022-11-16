@@ -8,6 +8,7 @@ from compiam.data import WORKDIR
 
 def _predict_normalized_pitch():
     from compiam.melody.pitch_extraction import Melodia
+
     melodia = Melodia()
     with pytest.raises(ValueError):
         melodia.extract(
@@ -57,8 +58,9 @@ def _predict_normalized_pitch():
             ),
         )
     )
-    
+
     from compiam.melody.tonic_identification import TonicIndianMultiPitch
+
     tonic_multipitch = TonicIndianMultiPitch()
     with pytest.raises(ValueError):
         tonic_multipitch.extract(

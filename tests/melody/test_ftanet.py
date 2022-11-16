@@ -92,6 +92,7 @@ def _predict_normalized_pitch():
     )
 
     from compiam.melody.tonic_identification import TonicIndianMultiPitch
+
     tonic_multipitch = TonicIndianMultiPitch()
     tonic = tonic_multipitch.extract(
         os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
