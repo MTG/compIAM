@@ -10,6 +10,10 @@ class ModelNotTrainedError(Exception):
     pass
 
 
+class DatasetNotLoadedError(Exception):
+    pass
+
+
 class HTTPError(Exception):
     pass
 

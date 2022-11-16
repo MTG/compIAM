@@ -44,7 +44,7 @@ class DEEPSRGM(object):
 
         ## Loading LSTM model by default
         if self.model_path is not None:
-            self.load_model(self.model_path, rnn="lstm")
+            self.load_model(rnn="lstm")
 
         self.mapping_path = mapping_path
         self.selected_ragas = [
@@ -94,13 +94,17 @@ class DEEPSRGM(object):
         """
         if rnn == "gru":
             self.model = deepsrgmModel(rnn=rnn).to(self.device)
-            # This is the case for automatic loading of provided weights
             if model_path is None:
-                weights_path = os.path.join(model_path, "gru_30_checkpoint.pth")
+                # This is the case for automatic loading of provided weights
+                weights_path = os.path.join(self.model_path, "gru_30_checkpoint.pth")
+            else:
+                weights_path = model_path
         else:
-            # This is the case for automatic loading of provided weights
             if model_path is None:
-                weights_path = os.path.join(model_path, "lstm_25_checkpoint.pth")
+                # This is the case for automatic loading of provided weights
+                weights_path = os.path.join(self.model_path, "lstm_25_checkpoint.pth")
+            else:
+                weights_path = model_path
 
         if not os.path.exists(weights_path):
             raise ValueError(
@@ -165,8 +169,12 @@ class DEEPSRGM(object):
 
         else:
             try:
-                melodia = compiam.load_model("melody:melodia")
-                tonic_extraction = compiam.load_model("melody:tonic-multipitch")
+                melodia = compiam.melody.pitch_extraction.Melodia
+                melodia = melodia()
+                tonic_extraction = (
+                    compiam.melody.tonic_identification.TonicIndianMultiPitch
+                )
+                tonic_extraction = tonic_extraction()
             except:
                 raise ImportError(
                     "In order to use these tools to extract the features you need to have essentia installed. "
@@ -187,6 +195,7 @@ class DEEPSRGM(object):
         N = 200
         a = []
         for i in range(N):
+            print(len(feature))
             c = np.random.randint(0, len(feature) - 5000)
             a.append(feature[c : c + 5000])
         return np.array(a)

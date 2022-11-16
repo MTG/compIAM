@@ -68,3 +68,4 @@ target/
 
 # Project specific directories
 output/
+models/timbre/mridangam_stroke_classification/pre-computed_features.csv
