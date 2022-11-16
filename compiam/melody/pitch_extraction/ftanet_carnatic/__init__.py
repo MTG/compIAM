@@ -14,7 +14,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 
 
 class FTANetCarnatic(object):
-    """FTA-Net melody extraction tuned to Carnatic Music"""
+    """FTA-Net melody extraction tuned to Carnatic Music."""
 
     def __init__(self, model_path=None, sample_rate=8000):
         """FTA-Net melody extraction init method.
@@ -54,6 +54,7 @@ class FTANetCarnatic(object):
     @staticmethod
     def SF_Module(x_list, n_channel, reduction, limitation):
         """Selection and fusion module.
+        Implementation taken from https://github.com/yushuai/FTANet-melodic
 
         :param x_list: list of tensor inputs.
         :param n_channel: number of feature channels.
@@ -100,6 +101,7 @@ class FTANetCarnatic(object):
     @staticmethod
     def FTA_Module(x, shape, kt, kf):
         """Selection and fusion module.
+        Implementation taken from https://github.com/yushuai/FTANet-melodic
 
         :param x: input tensor.
         :param shape: the shape of the input tensor.
@@ -159,6 +161,7 @@ class FTANetCarnatic(object):
 
     def _build_model(self, input_shape=(320, 128, 3)):
         """Building the entire FTA-Net.
+        Implementation taken from https://github.com/yushuai/FTANet-melodic
 
         :param input_shape: input shape.
         :returns: a tensorflow Model instance of the FTA-Net.
@@ -231,6 +234,7 @@ class FTANetCarnatic(object):
 
     def predict(self, path_to_audio, hop_size=80, batch_size=5, out_step=None):
         """Extract melody from filename.
+        Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic
 
         :param filename: path to file to extract.
         :param sample_rate: sample rate of extraction process.
