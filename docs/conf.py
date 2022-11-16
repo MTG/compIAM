@@ -6,10 +6,7 @@
 import os
 import sys
 
-import compiam
-from compiam.data import WORKDIR
-
-sys.path.append(WORKDIR)
+sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information -----------------------------------------------------
