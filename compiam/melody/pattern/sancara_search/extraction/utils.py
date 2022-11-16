@@ -8,14 +8,10 @@ import random
 
 import numpy as np
 import pandas as pd
-import pymysql
-import psycopg2
 
 import sys
 
 import traceback
-
-from credentials import settings
 
 sys.path.append('../../../')
 
@@ -102,29 +98,3 @@ def interpolate_below_length(arr, val, gap):
     return interp
 
 
-def get_connection():
-    params = settings
-    try:
-        con = psycopg2.connect(**params)
-    except:
-        print("Couldn't connect to database")
-        con = None
-    return con
-
-
-def sql(sql_query, parameters=None):
-    """
-    Connect to the DWH and run <sql_query> witsh <parameters>
-    """
-    if parameters:
-        sql_query = sql_query.format_map(parameters)
-    conn = get_connection()
-    try:
-        df = pd.read_sql(sql_query, con=conn)
-    except: 
-        print("Query Failed with error message:")
-        traceback.print_exc()
-        conn.close()
-        sys.exit()        
-    conn.close()
-    return df

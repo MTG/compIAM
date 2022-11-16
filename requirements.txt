@@ -9,9 +9,8 @@ pytsmod==0.3.3
 scikit-learn~=0.24.2
 tqdm~=4.64.1
 mirdata==0.3.6
-skimage
+#skimage
 mir_eval
-hmmlearn
-validate
+hmmlearn 
 zope
 fastdtw

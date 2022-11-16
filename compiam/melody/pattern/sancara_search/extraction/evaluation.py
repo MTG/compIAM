@@ -1,6 +1,5 @@
 from collections import Counter
 
-import textgrid
 import numpy as np
 import pandas as pd
 
@@ -48,6 +47,19 @@ def load_annotations_new(annotations_path, min_m=None, max_m=None):
 
     return annotations_good[['tier', 's1', 's2', 'text', 'text_full']]
 
+def to_aeneas(annotations):
+    aeneas = []
+    for i,row in annotations.iterrows():
+        d = {
+            'begin': row.s1,
+            'end': row.s2,
+            'id': row.text,
+            'language': 'eng',
+            'lines': row.tier
+        }
+        aeneas.append(d)
+    return aeneas
+        
 
 def load_annotations_brindha(annotations_path, min_m=None, max_m=None):
 
