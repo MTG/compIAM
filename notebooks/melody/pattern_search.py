@@ -1,6 +1,9 @@
 audio_path = "/Volumes/Shruti/asplab2/cae-invar/audio/lara_wim/spleeter/2018_11_13_am_Sec_4_P1_Atana_V.2.mp3"
 
-# TODO, for each stage include a visualisation
+# Maybe include: Source separation?
+
+# TODO, for each stage include a visualisation [VIS]
+# [VIS] Audio waveform and playback
 
 # Pattern Extraction for a Given Audio
 from compiam import load_model
@@ -11,12 +14,18 @@ cae = load_model("melody:cae-carnatic")
 
 ampl, phase = cae.extract_features(audio_path)
 
+# [VIS] Feature activation
+
 # Pitch Track 
 ftanet = load_model('melody:ftanet-carnatic')
 pitch_track = ftanet.predict(audio_path)
 pitch = pitch_track[:,1]
 time  = pitch_track[:,0]
 timestep  = time[2]-time[1]
+
+# [VIS] Pitch track + waveform + audio playback
+
+# Pitch distribution using pypeaks
 
 # Stability Track
 from compiam.utils.pitch import extract_stability_mask
@@ -25,7 +34,7 @@ import numpy as np
 stability_mask = extract_stability_mask(
 	pitch=pitch, 
 	min_stab_sec=1.0, 
-	hop_sec=0.2, 
+	hop_sec=0.2,
 	var=60,
 	timestep=timestep)
 
@@ -34,12 +43,21 @@ silence_mask = pitch==0
 
 exclusion_mask = np.logical_or(silence_mask==1, stability_mask==1)
 
+# [VIS] Stability and silence annotation
+
 # Self Similarity
 from compiam.melody.pattern import self_similarity
 
 ss = self_similarity(ampl, exclusion_mask=exclusion_mask, timestep=timestep, hop_length=cae.hop_length, sr=cae.sr)
 X, orig_sparse_lookup, sparse_orig_lookup, boundaries_orig, boundaries_sparse = ss
 
+# [VIS] Self similarity matrix
+# [VIS] Self similarity matrix with boundaries annotated
+# [VIS] Self similarity matrix full silent and stable regions annotated
+
+# Segment Extraction
+
+# Segment Grouping 
 
 
 

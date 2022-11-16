@@ -1,7 +1,6 @@
 import numpy as np
 import torch
-from configobj import ConfigObj, flatten_errors
-from validate import ValidateError, Validator
+from configobj import ConfigObj
 
 from compiam.melody.pattern.sancara_search.complex_auto.cqt import to_cqt_repr, standardize
 from compiam.melody.pattern.sancara_search.complex_auto.complex import Complex
@@ -84,8 +83,8 @@ class CAEWrapper:
         configspec = ConfigObj(spec, interpolation=True,
                                list_values=False, _inspec=True)
 
-        conf = ConfigObj(path, unrepr=False, configspec=configspec)
-        self._validate_conf(conf)
+        conf = ConfigObj(path, unrepr=True, configspec=configspec)
+
         return dict(conf)
 
     def validate_conf(self, conf):
@@ -213,34 +212,3 @@ class CAEWrapper:
         ampl, phase = self.model(x)
 
         return ampl, phase
-
-    def _eval_mixed_list(list_in, *types):
-        result = []
-        for element, type in zip(list_in, types):
-            command = "result.append({0}(element))".format(type)
-            exec(command)
-        return result
-
-    def _validate_conf(self, config):
-        vtor = Validator()
-        vtor.functions['mixed_list'] = self._eval_mixed_list
-        res = config.validate(vtor, preserve_errors=True)
-        any_error = False
-        report = ""
-        for entry in flatten_errors(config, res):
-            any_error = True
-            # each entry is a tuple
-            section_list, key, error = entry
-            if key is not None:
-                section_list.append(key)
-            else:
-                section_list.append('[missing section]')
-            section_string = ', '.join(section_list)
-            if error == False:
-                error = 'missing value or section.'
-            report += "{0}: {1} \n".format(section_string, error)
-
-        if any_error:
-            raise ValidateError("Configuration file validation failed, "
-                                "(see 'util/config_spec.ini' for reference):\n{0}"
-                                .format(report))
