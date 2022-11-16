@@ -1,8 +1,5 @@
 import random
 
-from compiam.utils import remove_key
-
-
 def split_mirdata_tracks(dataloader, split=0.2):
     """Randomly plits dictionary of mirdata tracks into two track dicts given a splitting coef
 
@@ -15,5 +12,5 @@ def split_mirdata_tracks(dataloader, split=0.2):
     new_split = {}
     for idx in ids_to_split:
         new_split[idx] = tracks[idx]
-        tracks = remove_key(tracks)
+        tracks.pop(idx, None)
     return tracks, new_split
