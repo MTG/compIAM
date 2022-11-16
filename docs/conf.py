@@ -6,6 +6,7 @@
 import os
 import sys
 
+import compiam
 from compiam.data import WORKDIR
 
 sys.path.append(WORKDIR)
