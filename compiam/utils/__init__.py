@@ -48,6 +48,18 @@ def load_yaml(path):
     return d
 
 
+def remove_key(d, key):
+    """Util function to remove key from dict
+
+    :param d: original dict
+    :param key: key to remove
+    :returns: dictionary without the removed key
+    """
+    r = dict(d)
+    del r[key]
+    return r
+
+
 def get_tool_list(modules):
     """Given sys.modules[__name__], prints out the imported classes
 

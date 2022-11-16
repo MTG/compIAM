@@ -69,13 +69,13 @@ class MridangamStrokeClassification:
                     "Dataset not found, please re-run load_dataset with download=True"
                 )
         self.mridangam_ids = self.dataset.track_ids  # Load Mridangam IDs
-        self.mridangam_data = self.dataset.load_tracks()  # Load Mridangam data
+        self.mridangam_tracks = self.dataset.load_tracks()  # Load Mridangam data
 
         self.stroke_names = self.list_strokes()
         self.stroke_dict = {item: [] for item in self.stroke_names}
         for i in self.mridangam_ids:
-            self.stroke_dict[self.mridangam_data[i].stroke_name].append(
-                self.mridangam_data[i].audio_path
+            self.stroke_dict[self.mridangam_tracks[i].stroke_name].append(
+                self.mridangam_tracks[i].audio_path
             )
 
     def list_strokes(self):
@@ -93,7 +93,7 @@ class MridangamStrokeClassification:
 
         stroke_names = []
         for i in self.mridangam_ids:
-            stroke_names.append(self.mridangam_data[i].stroke_name)
+            stroke_names.append(self.mridangam_tracks[i].stroke_name)
         return list(np.unique(stroke_names))
 
     def dict_strokes(self):
@@ -111,7 +111,7 @@ class MridangamStrokeClassification:
 
         stroke_names = []
         for i in self.mridangam_ids:
-            stroke_names.append(self.mridangam_data[i].stroke_name)
+            stroke_names.append(self.mridangam_tracks[i].stroke_name)
         stroke_names = np.unique(stroke_names)
         return {idx: x for idx, x in enumerate(stroke_names)}
 
@@ -138,8 +138,8 @@ class MridangamStrokeClassification:
             )
         file_dict = {item: [] for item in self.list_strokes()}
         for i in self.mridangam_ids:
-            file_dict[self.mridangam_data[i].stroke_name].append(
-                self.mridangam_data[i].audio_path
+            file_dict[self.mridangam_tracks[i].stroke_name].append(
+                self.mridangam_tracks[i].audio_path
             )
         training_data, self.feature_list = process_strokes(
             file_dict, load_computed=load_computed
