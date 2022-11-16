@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 from configobj import ConfigObj
 
 from compiam.melody.pattern.sancara_search.complex_auto.cqt import to_cqt_repr, standardize
@@ -53,6 +52,16 @@ class CAEWrapper:
         :param map_location: cpu or gpu [optional, defaults to cpu]
         :type map_location: str
         """
+        ###
+        try:
+            global torch
+            import torch
+        except:
+            raise ImportError(
+                "In order to use this tool you need to have torch installed. "
+                "Please install torch using: pip install torch"
+            )
+
         self.conf_path = conf_path
         self.model_path = model_path
 
