@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    property="og:image"
+    content="https://raw.githubusercontent.com/naomiaro/waveform-playlist/master/img/stemtracks.png"
+  />
+  <meta
+    property="og:image:height"
+    content="401"
+  />
+  <meta
+    property="og:image:width"
+    content="1039"
+  />
+
+  <title>
+    Stereo Channel Editor
+  </title>
+  <meta
+    name="description"
+    content="Basic web audio single track stereo display waveform editor. Play, stop, pause audio. Live seeking enabled."
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+    crossorigin="anonymous"
+  />
+  <style>
+    {{ local_text("/waveform-playlist/css/main.css") }}
+    .github-corner:hover .octo-arm,
+    .github-corner:focus .octo-arm {
+      animation: octocat-wave 560ms ease-in-out;
+    }
+    @keyframes octocat-wave {
+      0%,
+      100% {
+        transform: rotate(0);
+      }
+      20%,
+      60% {
+        transform: rotate(-25deg);
+      }
+      40%,
+      80% {
+        transform: rotate(10deg);
+      }
+    }
+    @media (max-width: 500px) {
+      .github-corner:hover .octo-arm {
+        animation: none;
+      }
+      .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out;
+      }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/ef69927139.js" crossorigin="anonymous"></script>
+</head>
+
+
+  <body>
+    <main class="container">
+      <div class="wrapper">
+  <article class="post">
+    <!--
+    <header class="post-header">
+      <h1 class="post-title">Demo</h1>
+      <p class="lead">Multitrack scheduling allows to layer audio for simultaneous playback. Mute, solo, or set different volume levels for each audio track that makes up the composition. Control the master volume of the mix.</p>
+    </header>
+    -->
+<div id="top-bar" class="playlist-top-bar">
+  <div class="playlist-toolbar">
+    <div class="btn-group">
+  <button type="button" class="btn-pause btn btn-outline-warning" title="Pause">
+    <i class="fas fa-pause"></i>
+  </button>
+  <button type="button" class="btn-play btn btn-outline-success" title="Play">
+    <i class="fas fa-play"></i>
+  </button>
+  <button type="button" class="btn-stop btn btn-outline-danger" title="Stop">
+    <i class="fas fa-stop"></i>
+  </button>
+  <button
+    type="button"
+    class="btn-rewind btn btn-outline-success"
+    title="Rewind"
+  >
+    <i class="fas fa-fast-backward"></i>
+  </button>
+  <button
+    type="button"
+    class="btn-fast-forward btn btn-outline-success"
+    title="Fast forward"
+  >
+    <i class="fas fa-fast-forward"></i>
+  </button>
+</div>
+
+    <div class="btn-group">
+  <button
+    type="button"
+    title="Zoom in"
+    class="btn-zoom-in btn btn-outline-dark"
+  >
+    <i class="fas fa-search-plus"></i>
+  </button>
+  <button
+    type="button"
+    title="Zoom out"
+    class="btn-zoom-out btn btn-outline-dark"
+  >
+    <i class="fas fa-search-minus"></i>
+  </button>
+</div>
+
+    <div class="btn-group">
+      <button type="button" title="Download the annotations as json" class="btn-annotations-download btn btn-outline-dark">Download Annotations</button>
+    </div>
+  </div>
+</div>
+<div id="playlist"></div>
+<form class="form-inline">
+  <label for="master-gain" class="mr-sm-2">Master Volume</label>
+<input
+  type="range"
+  min="0"
+  max="100"
+  value="100"
+  class="master-gain form-control mr-sm-2"
+  id="master-gain"
+/>
+
+  <div class="form-check form-check-inline">
+  <input class="form-check-input automatic-scroll" type="checkbox" id="automatic_scroll" />
+  <label class="form-check-label" for="automatic_scroll"
+    >Automatic Scroll</label
+  >
+</div>
+
+  <div class="form-check form-check-inline">
+  <input class="form-check-input continuous-play" type="checkbox" id="continuous_play" />
+  <label class="form-check-label" for="continuous_play">Continuous Play</label>
+</div>
+
+  <div class="form-check form-check-inline">
+  <input
+    class="form-check-input link-endpoints"
+    type="checkbox"
+    id="link_endpoints"
+    checked
+  />
+  <label class="form-check-label" for="link_endpoints"> Link Endpoints</label>
+</div>
+
+</form>
+<form class="form-inline">
+  <select class="time-format custom-select mr-sm-2" aria-label="Time format selection">
+    <option value="seconds">seconds</option>
+    <option value="thousandths">thousandths</option>
+    <option value="hh:mm:ss">hh:mm:ss</option>
+    <option value="hh:mm:ss.u">hh:mm:ss + tenths</option>
+    <option value="hh:mm:ss.uu">hh:mm:ss + hundredths</option>
+    <option value="hh:mm:ss.uuu" selected="selected">hh:mm:ss + milliseconds</option>
+  </select>
+  <label class="sr-only" for="audio_start">Start of audio selection</label>
+  <input type="text" class="audio-start form-control mr-sm-2" id="audio_start">
+  <label class="sr-only" for="audio_end">End of audio selection</label>
+  <input type="text" class="audio-end form-control mr-sm-2" id="audio_end">
+  <span class="audio-pos" aria-label="Audio position">00:00:00.0</span>
+</form>
+
+</div>
+  </article>
+</div>
+
+    </main>
+
+
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"
+></script>
+<script type="text/javascript">
+  {{ local_text("/waveform-playlist/js/waveform-playlist.js") }}
+</script>
+<script type="text/javascript">
+  {{ local_text("/waveform-playlist/js/annotations.js") }}
+</script>
+  <script type="text/javascript">
+var playlist = WaveformPlaylist.init({
+  samplesPerPixel: 1000,
+  waveHeight: 100,
+  container: document.getElementById("playlist"),
+  timescale: true,
+  state: "cursor",
+  colors: {
+    waveOutlineColor: "#E0EFF1",
+  },
+  annotationList: {
+    annotations: {{annotations_data()}},
+    controls: actions,
+    editable: true,
+    isContinuousPlay: false,
+    linkEndpoints: true
+  },
+  controls: {
+    show: true, //whether or not to include the track controls
+    width: 200, //width of controls in pixels
+  },
+  zoomLevels: [250, 500, 1000, 3000, 5000, 7500, 10000, 12500],
+});
+
+playlist
+  .load({{ play_list_json() }})
+  .then(function () {
+    //can do stuff with the playlist.
+  });
+</script>
+<script type="text/javascript">
+{{ local_text("/waveform-playlist/js/emitter.js") }}
+</script>
+
+  </body>
+</html>

@@ -41,6 +41,21 @@ models_dict = {
             "sample_rate": 8000,
         },
     },
+    "melody:cae-carnatic": {
+        "module_name": "compiam.melody.pattern.sancara_search.models",
+        "class_name": "CAEWrapper",
+        "kwargs": {
+            "model_path": os.path.join(
+                WORKDIR, "models", "melody", "caecarnatic", "model_complex_auto_cqt.save"
+            ),
+            "conf_path": os.path.join(
+                WORKDIR, "models", "melody", "caecarnatic", "config_cqt.ini"
+            ),
+            "spec_path": os.path.join(
+                WORKDIR, "models", "melody", "caecarnatic", "config_spec.cfg"
+            ),
+        },
+    },
     "rhythm:1way-tabla": {
         "module_name": "compiam.rhythm.transcription.tabla_transcription",
         "class_name": "FourWayTabla",
