@@ -26,9 +26,13 @@ def _load_model():
 
 def _get_features():
     deepsrgm = load_model("melody:deepsrgm")
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         feat = deepsrgm.get_features(
             os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
+        )
+    with pytest.raises(ValueError):
+        feat = deepsrgm.get_features(
+            os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
         )
     
 
