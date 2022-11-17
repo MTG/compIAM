@@ -68,6 +68,7 @@ class CAEWrapper:
                 "In order to use this tool you need to have torch installed. "
                 "Please install torch using: pip install torch"
             )
+        ###
 
         self.conf_path = conf_path
         self.model_path = model_path
