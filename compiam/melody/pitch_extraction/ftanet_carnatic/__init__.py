@@ -21,7 +21,7 @@ class FTANetCarnatic(object):
 
         :param model_path: path to file to the model weights.
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global tf
             import tensorflow as tf

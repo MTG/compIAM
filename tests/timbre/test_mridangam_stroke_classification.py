@@ -2,14 +2,12 @@ import os
 import pytest
 import subprocess
 
-import numpy as np
-
 from compiam.data import WORKDIR
 from compiam.exceptions import DatasetNotLoadedError, ModelNotTrainedError
 
 test_files = [
-    os.path.join(WORKDIR, "tests/resources/timbre/224030__akshaylaya__bheem-b-001.wav"),
-    os.path.join(WORKDIR, "tests/resources/timbre/225359__akshaylaya__cha-c-001.wav"),
+    os.path.join(WORKDIR, "tests", "resources", "timbre", "224030__akshaylaya__bheem-b-001.wav"),
+    os.path.join(WORKDIR, "tests", "resources", "timbre", "225359__akshaylaya__cha-c-001.wav"),
 ]
 
 

@@ -18,6 +18,8 @@ setup(
             "pytest-cov>=2.6.1",
         ],
         "docs": [
+            "numpydoc",
+            "recommonmark",
             "sphinx>=3.4.0",
             "sphinxcontrib-napoleon",
             "sphinx_rtd_theme",
