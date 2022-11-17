@@ -35,7 +35,7 @@ class Melodia:
         For a complete and detailed list of the parameters see the documentation on the
         following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global estd
             import essentia.standard as estd

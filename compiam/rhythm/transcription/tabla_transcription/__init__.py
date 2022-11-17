@@ -16,7 +16,7 @@ class FourWayTabla:
         self, model_path=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None
     ):
         """TODO"""
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch

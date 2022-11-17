@@ -19,7 +19,10 @@ models_dict = {
         "module_name": "compiam.melody.raga_recognition.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models", "melody", "deepsrgm"),
+            "model_path": {
+                "lstm": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "lstm_25_checkpoint.pth"),
+                "gru": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "gru_30_checkpoint.pth"),
+            },
             "mapping_path": os.path.join(
                 WORKDIR,
                 "compiam",
@@ -74,15 +77,17 @@ models_dict = {
         "module_name": "compiam.structure.segmentation.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
-            "model_path": os.path.join(
+            "model_path": {
+                "net": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "net"),
+                "pakh": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "pakh"),
+                "voc": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "voc"),
+            },
+            "splits_path": os.path.join(
                 WORKDIR,
                 "models",
                 "structure",
                 "dhrupad_bandish_segmentation",
-                "pretrained_models",
-            ),
-            "splits_path": os.path.join(
-                WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "splits"
+                "splits",
             ),
             "annotations_path": os.path.join(
                 WORKDIR,
@@ -117,7 +122,7 @@ models_dict = {
 #   1. create a dataset loader in mirdata (https://github.com/mir-dataset-loaders/mirdata)
 #   2. add the dataset identifier in this list
 
-datasets_list = ["saraga_carnatic", "saraga_hindustani", "mridangam_stroke"]
+datasets_list = ["saraga_carnatic", "saraga_hindustani", "mridangam_stroke", "four_way_tabla"]
 
 
 ##############

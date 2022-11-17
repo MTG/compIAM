@@ -13,16 +13,17 @@ class DEEPSRGM(object):
     """
 
     def __init__(
-        self, model_path=None, mapping_path=None, dataset_home=None, device=None
+        self, model_path=None, rnn="lstm", mapping_path=None, dataset_home=None, device=None
     ):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
+        :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
         :param dataset_home: path to find the mirdata dataset
         :param device: torch CUDA config to route model to GPU
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch
@@ -39,12 +40,13 @@ class DEEPSRGM(object):
         if not device:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.model = self._build_model(rnn="lstm")
+        self.rnn = rnn
+        self.model = self._build_model(rnn=self.rnn)
         self.model_path = model_path
 
         ## Loading LSTM model by default
         if self.model_path is not None:
-            self.load_model(rnn="lstm")
+            self.load_model(model_path=self.model_path[self.rnn], rnn=self.rnn)
 
         self.mapping_path = mapping_path
         self.selected_ragas = [
@@ -87,26 +89,13 @@ class DEEPSRGM(object):
     def load_model(self, model_path=None, rnn="lstm"):
         """Loading weights for DEEPSRGM
 
-        :param model_path: path to model. If ".pth" not in entered path, it assumes that the
-            default weights provided in the library are used. Otherwise, make sure to enter the
-            full path to your own .pth file.
+        :param model_path: path to model.
         :param rnn: lstm (default) or gru.
         """
         if rnn == "gru":
-            self.model = deepsrgmModel(rnn=rnn).to(self.device)
-            if model_path is None:
-                # This is the case for automatic loading of provided weights
-                weights_path = os.path.join(self.model_path, "gru_30_checkpoint.pth")
-            else:
-                weights_path = model_path
-        else:
-            if model_path is None:
-                # This is the case for automatic loading of provided weights
-                weights_path = os.path.join(self.model_path, "lstm_25_checkpoint.pth")
-            else:
-                weights_path = model_path
+            self.model = self._build_model(rnn="gru")
 
-        if not os.path.exists(weights_path):
+        if not os.path.exists(model_path):
             raise ValueError(
                 """
                 Given path to model weights not found. Make sure you enter the path correctly.
@@ -117,7 +106,7 @@ class DEEPSRGM(object):
             """
             )
 
-        weights = torch.load(weights_path, map_location=self.device)
+        weights = torch.load(model_path, map_location=self.device)
         new_weights = weights.copy()
         keys_to_fix = [
             ".weight_ih_l0",
@@ -171,13 +160,11 @@ class DEEPSRGM(object):
             try:
                 melodia = compiam.melody.pitch_extraction.Melodia
                 melodia = melodia()
-                tonic_extraction = (
-                    compiam.melody.tonic_identification.TonicIndianMultiPitch
-                )
+                tonic_extraction = compiam.melody.tonic_identification.TonicIndianMultiPitch
                 tonic_extraction = tonic_extraction()
             except:
                 raise ImportError(
-                    "In order to use these tools to extract the features you need to have essentia installed. "
+                    "In order to use these tools to extract the features you need to have essentia installed."
                     "Please install essentia using: pip install essentia"
                 )
             if not os.path.exists(audio_file):
@@ -194,8 +181,11 @@ class DEEPSRGM(object):
         feature = np.round(1200 * np.log2(freqs / tonic) * (k / 100)).clip(0)
         N = 200
         a = []
+        if len(feature) <= 5000:
+            raise ValueError("""
+                Audio signal is not longer enough for a proper estimation. Please provide a larger audio.
+            """)
         for i in range(N):
-            print(len(feature))
             c = np.random.randint(0, len(feature) - 5000)
             a.append(feature[c : c + 5000])
         return np.array(a)

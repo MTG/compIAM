@@ -41,7 +41,7 @@ class DhrupadBandishSegmentation:
         :param processed_audios_path: path to file to the processed audio files
         :param device: indicate whether the model will run on the GPU.
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch
@@ -88,18 +88,8 @@ class DhrupadBandishSegmentation:
 
         if self.model_path is not None:
             path_to_model = os.path.join(
-                self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+                self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
             )
-            if not os.path.exists(path_to_model):
-                raise ModelNotFoundError(
-                    """
-                    Given path to model weights not found. Make sure you enter the path correctly.
-                    A training process for the FTA-Net tuned to Carnatic is under development right
-                    now and will be added to the library soon. Meanwhile, we provide the weights in the
-                    latest repository version (https://github.com/MTG/compIAM) so make sure you have these
-                    available before loading the Carnatic FTA-Net.
-                """
-                )
             self.load_model(path_to_model)  # Loading pre-trained model for given mode
 
         self.splits_path = splits_path
@@ -121,6 +111,12 @@ class DhrupadBandishSegmentation:
 
         :param path_to_model: path to model weights
         """
+        if not os.path.exists(path_to_model):
+            raise ModelNotFoundError("""
+                Given path to model weights not found. Make sure you enter the path correctly.
+                We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
+                so make sure you have these available before loading the tool.
+            """)
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
 
@@ -135,7 +131,7 @@ class DhrupadBandishSegmentation:
         self.mode = mode
         self.classes = pars.classes_dict[mode]
         path_to_model = os.path.join(
-            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+            self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
         )
         self.load_model(path_to_model)
 
@@ -146,7 +142,7 @@ class DhrupadBandishSegmentation:
         """
         self.fold = fold
         path_to_model = os.path.join(
-            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+            self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
         )
         self.load_model(path_to_model)
 
