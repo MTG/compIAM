@@ -42,7 +42,7 @@ models_dict = {
         },
     },
     "melody:cae-carnatic": {
-        "module_name": "compiam.melody.pattern.sancara_search.models",
+        "module_name": "compiam.melody.pattern.sancara_search",
         "class_name": "CAEWrapper",
         "kwargs": {
             "model_path": os.path.join(
