@@ -9,14 +9,6 @@ from compiam.data import WORKDIR
 
 def _load_model():
     deepsrgm = load_model("melody:deepsrgm")
-    with pytest.raises(FileNotFoundError):
-        deepsrgm.predict(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
-        )
-    with pytest.raises(ValueError):
-        deepsrgm.predict(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
-        )
     raga_mapping = deepsrgm.mapping
     assert raga_mapping == {
         0: 'Bhairav',
