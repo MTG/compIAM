@@ -1,6 +1,10 @@
 import os
 
-WORKDIR = os.path.dirname(os.path.realpath(__file__))
+WORKDIR = os.path.dirname(
+    os.path.dirname(
+        os.path.realpath(__file__)
+    )
+)
 
 #############
 # Models Dict
