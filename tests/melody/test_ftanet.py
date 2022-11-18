@@ -4,17 +4,18 @@ import pytest
 import numpy as np
 
 from compiam import load_model
-from compiam.data import WORKDIR
+
+from compiam.data import TESTDIR
 
 
 def _predict_pitch():
     ftanet = load_model("melody:ftanet-carnatic")
     with pytest.raises(ValueError):
         ftanet.predict(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     pitch = ftanet.predict(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(pitch, np.ndarray)
@@ -48,7 +49,7 @@ def _predict_pitch():
     )
 
     pitch = ftanet.predict(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav"),
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"),
         out_step=0.001,
     )
 
@@ -85,17 +86,17 @@ def _predict_normalized_pitch():
     ftanet = load_model("melody:ftanet-carnatic")
     with pytest.raises(ValueError):
         ftanet.predict(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     pitch = ftanet.predict(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     from compiam.melody.tonic_identification import TonicIndianMultiPitch
 
     tonic_multipitch = TonicIndianMultiPitch()
     tonic = tonic_multipitch.extract(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(tonic, float)
