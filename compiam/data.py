@@ -1,10 +1,14 @@
 import os
+import pathlib
 
-WORKDIR = os.path.dirname(
-    os.path.dirname(
-        os.path.realpath(__file__)
-    )
-)
+WORKDIR = os.path.join(
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
+    "compiam")
+TESTDIR = os.path.join(
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
+    "tests")
+
+
 
 #############
 # Models Dict
@@ -14,7 +18,7 @@ WORKDIR = os.path.dirname(
 # 	    {
 #           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
-#           "model_path": "<path_to_model if any>"
+#           "model_path": "<path_to_model>"
 #       }
 
 models_dict = {
@@ -28,7 +32,6 @@ models_dict = {
             },
             "mapping_path": os.path.join(
                 WORKDIR,
-                "compiam",
                 "melody",
                 "raga_recognition",
                 "deepsrgm",

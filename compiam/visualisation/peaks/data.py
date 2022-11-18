@@ -11,7 +11,7 @@ from warnings import warn
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-import compiam.visualisation.peaks.slope
+from compiam.visualisation.peaks import slope
 
 
 class PeakData:
