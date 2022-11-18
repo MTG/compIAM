@@ -5,8 +5,7 @@ import numpy as np
 
 from compiam import load_model
 
-from compiam.data import WORKDIR
-TESTDIR = os.path.dirname(WORKDIR)
+from compiam.data import TESTDIR
 
 
 def _predict_pitch():
