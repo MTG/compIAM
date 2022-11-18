@@ -12,10 +12,10 @@ def _predict_normalized_pitch():
     melodia = Melodia()
     with pytest.raises(ValueError):
         melodia.extract(
-            os.path.join(TESTDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     pitch = melodia.extract(
-        os.path.join(TESTDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(pitch, np.ndarray)
@@ -64,10 +64,10 @@ def _predict_normalized_pitch():
     tonic_multipitch = TonicIndianMultiPitch()
     with pytest.raises(ValueError):
         tonic_multipitch.extract(
-            os.path.join(TESTDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     tonic = tonic_multipitch.extract(
-        os.path.join(TESTDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(tonic, float)

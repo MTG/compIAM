@@ -2,19 +2,19 @@ import os
 import pytest
 import subprocess
 
-from compiam.data import WORKDIR
+from compiam.data import TESTDIR
 from compiam.exceptions import DatasetNotLoadedError, ModelNotTrainedError
 
 test_files = [
-    os.path.join(WORKDIR, "tests", "resources", "timbre", "224030__akshaylaya__bheem-b-001.wav"),
-    os.path.join(WORKDIR, "tests", "resources", "timbre", "225359__akshaylaya__cha-c-001.wav"),
+    os.path.join(TESTDIR, "resources", "timbre", "224030__akshaylaya__bheem-b-001.wav"),
+    os.path.join(TESTDIR, "resources", "timbre", "225359__akshaylaya__cha-c-001.wav"),
 ]
 
 
 def _predict_strokes():
-    if not os.path.exists(os.path.join(WORKDIR, "tests", "resources", "mir_datasets")):
+    if not os.path.exists(os.path.join(TESTDIR, "resources", "mir_datasets")):
         subprocess.run(
-            ["mkdir", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")]
+            ["mkdir", os.path.join(TESTDIR, "resources", "mir_datasets")]
         )
     from compiam.timbre.stroke_classification import MridangamStrokeClassification
 
@@ -26,7 +26,7 @@ def _predict_strokes():
     with pytest.raises(ModelNotTrainedError):
         mridangam_stroke_class.predict(test_files)
     mridangam_stroke_class.load_mridangam_dataset(
-        data_home=os.path.join(WORKDIR, "tests", "resources", "mir_datasets"),
+        data_home=os.path.join(TESTDIR, "resources", "mir_datasets"),
         download=True,
     )
     assert mridangam_stroke_class.list_strokes() == [
@@ -59,7 +59,7 @@ def _predict_strokes():
     assert isinstance(preds, dict)
     assert len(list(preds.keys())) == 2
     subprocess.run(
-        ["rm", "-r", os.path.join(WORKDIR, "tests", "resources", "mir_datasets")]
+        ["rm", "-r", os.path.join(TESTDIR, "resources", "mir_datasets")]
     )
 
 

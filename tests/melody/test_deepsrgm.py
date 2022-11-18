@@ -28,11 +28,11 @@ def _get_features():
     deepsrgm = load_model("melody:deepsrgm")
     with pytest.raises(FileNotFoundError):
         feat = deepsrgm.get_features(
-            os.path.join(TESTDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     with pytest.raises(ValueError):
         feat = deepsrgm.get_features(
-            os.path.join(TESTDIR, "tests", "resources", "melody", "pitch_test.wav")
+            os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
     
 

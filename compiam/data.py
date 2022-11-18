@@ -4,7 +4,9 @@ import pathlib
 WORKDIR = os.path.join(
     os.path.dirname(pathlib.Path(__file__).parent.resolve()),
     "compiam")
-TESTDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
+TESTDIR = os.path.join(
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
+    "tests")
 
 
 
