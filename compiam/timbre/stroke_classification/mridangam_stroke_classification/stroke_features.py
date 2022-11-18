@@ -12,7 +12,6 @@ except:
         "Please install essentia using: pip install essentia"
     )
 
-from compiam.data import WORKDIR
 
 SPLIT_PARAMS = {
     "fs": 44100,
