@@ -1,7 +1,10 @@
 import os
-import pathlib
 
-WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
+WORKDIR = os.path.dirname(
+    os.path.dirname(
+        os.path.realpath(__file__)
+    )
+)
 
 #############
 # Models Dict
