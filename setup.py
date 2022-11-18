@@ -10,6 +10,8 @@ setup(
     author_email=["genis.plaja@upf.edu", "thomas.nuttall@upf.edu"],
     zip_safe=False,
     include_package_data=True,
+    packages=find_packages(exclude=["test", "*.test", "*.test.*"]),
+    package_data={"compiam": ["models/*", "conf/*"]},
     long_description=open("./README.md").read(),
     install_requires=REQUIREMENTS,
     extras_require={
