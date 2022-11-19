@@ -8,6 +8,8 @@ pytsmod==0.3.3
 scikit-learn~=0.24.2
 tqdm~=4.64.1
 mirdata==0.3.6
+ipywidgets>=7.0.0,<8
+Jinja2==3.1.2
 configobj
 mir_eval
 hmmlearn 
