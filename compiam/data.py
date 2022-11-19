@@ -32,11 +32,10 @@ models_dict = {
             },
             "mapping_path": os.path.join(
                 WORKDIR,
+                "models",
                 "melody",
-                "raga_recognition",
                 "deepsrgm",
-                "conf",
-                "DEEPSRGM_mapping.json",
+                "raga_mapping.json",
             ),
         },
     },
