@@ -4,11 +4,17 @@ import pytest
 import numpy as np
 
 from compiam import load_model
-
 from compiam.data import TESTDIR
+from compiam.exceptions import ModelNotTrainedError
 
 
 def _predict_pitch():
+    from compiam.melody.pitch_extraction import FTANetCarnatic
+    ftanet = FTANetCarnatic()
+    with pytest.raises(ModelNotTrainedError):
+        ftanet.predict(
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
+        )
     ftanet = load_model("melody:ftanet-carnatic")
     with pytest.raises(ValueError):
         ftanet.predict(

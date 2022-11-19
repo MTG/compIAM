@@ -4,7 +4,7 @@ import librosa
 
 import numpy as np
 import matplotlib.pyplot as plt
-from compiam.exceptions import ModelNotFoundError
+from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
 
 from compiam.utils import get_logger
 
@@ -85,6 +85,7 @@ class DhrupadBandishSegmentation:
 
         self.model = self._build_model()
         self.model_path = model_path
+        self.trained = False
 
         if self.model_path is not None:
             path_to_model = os.path.join(
@@ -119,6 +120,7 @@ class DhrupadBandishSegmentation:
             """)
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
+        self.trained = True
 
     def update_mode(self, mode):
         """Update mode for the training and sampling. Mode is one of net, voc,
@@ -348,6 +350,7 @@ class DhrupadBandishSegmentation:
                     val_acc_epoch[-1],
                 )
             )
+        self.trained = True
 
     def predict_stm(self, path_to_file, output_dir=None):
         """Predict Dhrupad Bandish Segmentation
@@ -363,6 +366,11 @@ class DhrupadBandishSegmentation:
                 Folder to store output does not exists or it is not specified. Please enter a valid folder
                 to store the outputs."""
             )
+        if self.trained is False:
+            raise ModelNotTrainedError("""
+                Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper.
+            """)
 
         # load input audio
         audio, fs = librosa.load(path_to_file, sr=fs)
