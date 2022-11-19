@@ -10,7 +10,15 @@ setup(
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(exclude=["test", "*.test", "*.test.*"]),
-    package_data={"compiam": ["models/*", "conf/*"]},
+    package_data={
+        "compiam": [
+            "models/*",
+            "conf/*",
+            "visualisation/waveform_player/waveform-playlist/*",
+            "utils/augmentation/*",
+            "utils/NMFtoolbox/*"
+        ]
+    },
     long_description=open("./README.md").read(),
     install_requires=REQUIREMENTS,
     extras_require={
