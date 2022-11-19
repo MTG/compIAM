@@ -3,7 +3,7 @@ import math
 import librosa
 
 import numpy as np
-from compiam.exceptions import ModelNotFoundError
+from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
 
 from compiam.utils.pitch import normalisation, resampling
 from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
@@ -35,6 +35,7 @@ class FTANetCarnatic(object):
 
         self.model = self._build_model()
         self.sample_rate = sample_rate
+        self.trained = False
 
         self.model_path = model_path
         if self.model_path is not None:
@@ -229,6 +230,7 @@ class FTANetCarnatic(object):
         try:
             self.model.load_weights(model_path).expect_partial()
             self.model_path = model_path
+            self.trained = True
         except:
             raise FileNotFoundError("Model path does not exist")
 
@@ -245,10 +247,18 @@ class FTANetCarnatic(object):
         :param out_step: particular time-step duration if needed at output
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
-        xlist = []
-        timestamps = []
+        if self.trained is False:
+            raise ModelNotTrainedError("""
+                Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper.
+            """)
+
         if not os.path.exists(path_to_audio):
             raise ValueError("Target audio not found.")
+
+        xlist = []
+        timestamps = []
+
         print("CFP process in {}".format(path_to_audio))
         y, _ = librosa.load(path_to_audio, sr=self.sample_rate)
         audio_len = len(y)

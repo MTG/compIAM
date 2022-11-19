@@ -5,6 +5,7 @@ import numpy as np
 
 import compiam
 from compiam.melody.raga_recognition.deepsrgm.raga_mapping import create_mapping
+from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
 
 
 class DEEPSRGM(object):
@@ -43,6 +44,7 @@ class DEEPSRGM(object):
         self.rnn = rnn
         self.model = self._build_model(rnn=self.rnn)
         self.model_path = model_path
+        self.trained = False
 
         ## Loading LSTM model by default
         if self.model_path is not None:
@@ -60,10 +62,10 @@ class DEEPSRGM(object):
             23,
             24,
             28,
-        ]  # pre-defined for release 0.1
+        ]  # pre-defined for release 0.1.0
 
         if (mapping_path is not None) and (self.selected_ragas is not None):
-            self.load_mapping()
+            self.load_mapping(self.selected_ragas)
         # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
         self.dataset = (
             None  # To update when CompMusic Raga dataset is integrated mirdata
@@ -92,20 +94,24 @@ class DEEPSRGM(object):
         :param model_path: path to model.
         :param rnn: lstm (default) or gru.
         """
-        if rnn == "gru":
-            self.model = self._build_model(rnn="gru")
+        if model_path is None:
+            raise ValueError("""
+                Model path cannot be None. Please provide a path to the model weights.
+            """)
 
         if not os.path.exists(model_path):
-            raise ValueError(
-                """
+            raise ModelNotFoundError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
                 A training process for DEEPSRGM is under development right now and will be added 
                 to the library soon. Meanwhile, we provide the weights in the latest repository 
                 version (https://github.com/MTG/compIAM) so make sure you have these available before 
                 loading the DEEPSRGM. The weights are stored in .pth file format.
-            """
-            )
+            """)
 
+        if rnn == "gru":
+            self.model = self._build_model(rnn="gru")
+
+        self.model_path = model_path
         weights = torch.load(model_path, map_location=self.device)
         new_weights = weights.copy()
         keys_to_fix = [
@@ -119,6 +125,7 @@ class DEEPSRGM(object):
             new_weights[i.replace(rnn, "rnn")] = weights[i]
             del new_weights[i]
         self.model.load_state_dict(new_weights)
+        self.trained = True
 
     def get_features(
         self,
@@ -203,15 +210,21 @@ class DEEPSRGM(object):
                 these as input for this predict function."
             )
 
+        # Make sure model is loaded
+        if self.trained is False:
+            raise ModelNotTrainedError("""
+                Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper.
+            """)
+
         # Make sure mapping is loaded
         if self.mapping is None:
             self.load_mapping(self.selected_ragas)
-
-        # Make sure model is loaded
-        self.load_model()
-        self.model.eval()
+        list_of_ragas = list(self.mapping.values())
 
         # Predict
+        print("Performing prediction for the following {} ragas: {}"\
+            .format(len(list_of_ragas), list_of_ragas))
         with torch.no_grad():
             out = self.model.forward(torch.from_numpy(features).to(self.device).long())
         preds = torch.argmax(out, axis=-1)
