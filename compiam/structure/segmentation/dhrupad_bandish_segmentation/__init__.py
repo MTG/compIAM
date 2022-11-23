@@ -371,7 +371,7 @@ class DhrupadBandishSegmentation:
             """)
 
         # load input audio
-        audio, fs = librosa.load(path_to_file, sr=fs)
+        audio, fs = librosa.load(path_to_file, sr=None)
 
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
