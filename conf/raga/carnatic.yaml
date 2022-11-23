@@ -1,16 +1,16 @@
 Melakarta Ragam 
 
 1	Kanakāngi:
-	    arohana: ['S','R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₁', 'Ṡ'] 
+	  arohana: ['S','R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₁', 'Ṡ'] 
           avarohana:  ['S', 'N1', 'D1', 'P' 'M1' 'G1' 'R1' 'S']	        
 2	Ratnāngi:
           arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₂', 'Ṡ'] 
           avarohana: ['S', 'N2', 'D1', 'P', 'M1', 'G1', 'R1', 'S'] 	        
 3	Gānamūrti:
-      	arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₃', Ṡ]
+      	    arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₃', Ṡ]
             avarohana: ['S', 'N3', 'D1', 'P', 'M1', 'G1', 'R1', 'S']	       
 4	Vanaspati:
-       	arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
+       	    arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
             avarohana: ['S', 'N2', 'D2', 'P', 'M1', 'G1', 'R1', 'S']	        
 5	Mānavati:	
             arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₂', 'N₃', 'Ṡ'] 
@@ -19,7 +19,7 @@ Melakarta Ragam
             arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₃', 'N₃', 'Ṡ'] 
             avarohana: ['S','N3',' D3', 'P', 'M1', 'G1', 'R1', 'S']	        
 7	Senāvati:
-      	arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₁', 'Ṡ'] 
+      	    arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₁', 'Ṡ'] 
             avarohana: ['S', 'N1', 'D1', 'P', 'M1', 'G2', 'R1', 'S']	        
 8	Hanumatodi:	
             arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₂', 'Ṡ'] 
@@ -28,7 +28,7 @@ Melakarta Ragam
             arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₃', 'Ṡ'] 
             avarohana:  ['S', 'N3', 'D1', 'P', 'M1', 'G2', 'R1', 'S']	        
 10	Nātakapriyā:
-       	arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
+       	    arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
             avarohana: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R1', 'S']	       
 11	Kokilapriyā	:
             arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₂', 'N₃', 'Ṡ']	
@@ -63,7 +63,7 @@ Melakarta Ragam
                                                     
 21	Kīravāṇi:
              arohana:	['S', 'R₂', 'G₂', 'M₁', 'P', 'D₁', 'N₃', 'Ṡ']
-           	 avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G2', 'R2', 'S']            
+             avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G2', 'R2', 'S']            
 22	Kharaharapriyā: 
              arohana:	['S', 'R₂', 'G₂', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
              avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R2', 'S']        
@@ -76,7 +76,7 @@ Melakarta Ragam
 
 25	Māraranjani: 
               arohana:	['S', 'R₂', 'G₃', 'M₁', 'P', 'D₁', 'N₁', 'Ṡ']
-           	  avarohanam: ['S', 'N1', 'D1', 'P', 'M1', 'G3', 'R2', 'S']        
+              avarohanam: ['S', 'N1', 'D1', 'P', 'M1', 'G3', 'R2', 'S']        
 26	Chārukesi:	
               arohana: ['S', 'R₂', 'G₃', 'M₁', 'P', 'D₁', 'N₂', 'Ṡ']
               avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G3', 'R2', 'S']	         
@@ -100,10 +100,10 @@ Melakarta Ragam
               avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G3', 'R3', 'S']	    
 33	Gāngeyabhuśani: 
               arohana:	['S', 'R₃', 'G₃', 'M₁', 'P', 'D₁', 'N₃', 'Ṡ']
-           	  avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G3', 'R3', 'S']        
+              avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G3', 'R3', 'S']        
 34	Vāgadhīśvari: 
               arohana:	['S', 'R₃', 'G₃', 'M₁', 'P', 'D₂', 'N₂', 'Ṡ']
-           	  avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R3', 'S']        
+              avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R3', 'S']        
 35	Śūlini:	
               arohana: ['S', 'R₃', 'G₃', 'M₁', 'P', 'D₂', 'N₃', 'Ṡ']	
               avarohana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R3', 'S']         
@@ -115,7 +115,7 @@ Melakarta Ragam
              arohana: ['S', 'R₁', 'G₁', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ'] 
              avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
 38	Jalārnavam:
- 	        arohana: ['S',' R₁', 'G₁', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
+ 	      arohana: ['S',' R₁', 'G₁', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
               avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
 39	Jhālavarāḷi: 
               arohana: 	['S', 'R₁', 'G₁', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ'] 
@@ -123,35 +123,27 @@ Melakarta Ragam
 40	Navanītam:	
               arohana: ['S', 'R₁', 'G₁', 'M₂', 'P', 'D₂', 'N₂', 'Ṡ'] 
               avarohana: ['S', 'N2' ,'D2', 'P', 'M2', 'G1', 'R1', 'S']
-
 41	Pāvani:	
               arohana: ['S', 'R₁', 'G₁', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ']
               avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G1', 'R1', 'S']
-
 42	Raghupriyā:	
               arohana: ['S', 'R₁', 'G₁', 'M₂', 'P', 'D₃', 'N₃', 'Ṡ']
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G1', 'R1', 'S']
-
 43	Gavāmbhodi:	
              arohana: ['S', 'R₁', 'G₂', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ']
              avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
-
  44	Bhavapriyā:	
             arohana: ['S', 'R₁', 'G₂', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ']
             avarohana: [ 'S', 'N2', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
-
 45	Śubhapantuvarāḷi: 
             arohana: ['S', 'R₁', 'G₂', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ'] 
             avarohana:  ['S', 'N3', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
-
- 46	Śadvidamārgini:	
+46	Śadvidamārgini:	
             arohana: ['S', 'R₁', 'G₂', 'M₂', 'P', 'D₂', 'N₂', 'Ṡ'] 
             avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G2', 'R1', 'S']
-
- 47	Suvarnāngi: 
+47	Suvarnāngi: 
             arohana:	['S', 'R₁', 'G₂', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ'] 
             avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G2', 'R1', 'S']
-
 48	Divyamaṇi:	
              arohana: ['S', 'R₁', 'G₂', 'M₂', 'P', 'D₃', 'N₃', 'Ṡ'] 
              avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G2', 'R1', 'S'
@@ -159,91 +151,69 @@ Melakarta Ragam
 49	Dhavaḻāmbari:	
              arohana: ['S', 'R₁', 'G₃', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ'] 
              avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
-
 50	Nāmanārāyaṇi:	
              arohana: ['S', 'R₁', 'G₃', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
              avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
-
 51	Kāmavardhini:
            arohana: ['S', 'R₁', 'G₃', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ'] 
              avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
-
 52	Rāmapriyā:	
              arohana: ['S', 'R₁', 'G₃', 'M₂', 'P', 'D₂', 'N₂', 'Ṡ'] 
              avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G3', 'R1', 'S']
-
 53	Gamanāśrama: 
              arohana:	['S', 'R₁', 'G₃', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ'] 
              avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R1', 'S']
-
 54	Viśvambari:
               arohana:	['S', 'R₁', 'G₃', 'M₂', 'P', 'D₃', 'N₃', 'Ṡ'] 
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G3', 'R1', 'S']
-
-  55	Śāmaḻāngi:	
+55	Śāmaḻāngi:	
               arohana: ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ'] 
               avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
-
 56	Śanmukhapriyā:	
                arohana: ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
                avarohana: [ 'S', 'N2', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
-
 57	Simhendramadhyamam:	
               arohana: ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ']
               avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
-
 58	Hemavati:	
               arohana: ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₂', 'N₂', 'Ṡ'] 
               avarohana: ['S', 'N2', 'D2', 'P', 'M2', 'G2', 'R2', 'S']
-
 59	Dharmavati: 
               arohana:  ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ']
               avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G2', 'R2', 'S']
-
- 60	Nītimati:	
+60	Nītimati:	
               arohana: ['S', 'R₂', 'G₂', 'M₂', 'P', 'D₃', 'N₃', 'Ṡ'] 
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G2', 'R2', 'S']
-
- 61	Kāntāmaṇi:	
+61	Kāntāmaṇi:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ'] 
                avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
-
- 62	Riśabhapriyā:	
+62	Riśabhapriyā:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
                avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
-
-  63	Latāngi:	
+63	Latāngi:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ'] 
                avarohana: [ 'S', 'N3', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
-
 64	Vāchaspati:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₂', 'N₂' ,'Ṡ'] 
                avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
-
 65	Mechakalyāni:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ'] 
                avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
-
 66	Chitrāmbari:	
                arohana: ['S', 'R₂', 'G₃', 'M₂', 'P', 'D₃', 'N₃', 'Ṡ']
                avarohana:  ['S', 'N3', 'D3', 'P', 'M2', 'G3', 'R2', 'S']
-
- 67	Sucharitrā:	
+67	Sucharitrā:	
                arohana: ['S', 'R₃', 'G₃', 'M₂', 'P', 'D₁', 'N₁', 'Ṡ'] 
                avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
-
 68	Jyoti svarupini:	
                 arohana:  ['S', 'R₃', 'G₃', 'M₂', 'P', 'D₁', 'N₂', 'Ṡ'] 
                 avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
-
 69	Dhāthuvardhani:
            	arohana: ['S', 'R₃', 'G₃', 'M₂', 'P', 'D₁', 'N₃', 'Ṡ'] 
             avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
-
 70	Nāsikābhūśaṇi:	
              arohana: ['S', 'R₃', 'G₃', 'M₂', 'P', 'D₂', 'N₂', 'Ṡ'] 
              avarohana: ['S', 'N2', 'D2', 'P', 'M2', 'G3', 'R3', 'S']
-
 71	Kōsalam:	
              arohana: ['S', 'R₃', 'G₃', 'M₂', 'P', 'D₂', 'N₃', 'Ṡ'] 
              avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R3', 'S']
