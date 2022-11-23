@@ -238,5 +238,8 @@ class DEEPSRGM(object):
         majority = int(majority)
         votes = float(torch.sum(preds == majority)) / features.shape[0]
         if votes >= threshold:
-            return f"Input music sample belongs to the {self.mapping[majority]} raga"
-        return f"CONFUSED - Closest raga predicted is {self.mapping[majority]} with {(votes*100):.2f}% votes"
+            print("Input music sample belongs to the {} raga"\
+                .format(self.mapping[majority]))
+        print("CONFUSED - Closest raga predicted is {} with {} votes"\
+            .format(self.mapping[majority], (votes*100)))
+        return self.mapping[majority]

@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from configobj import ConfigObj
 
@@ -36,7 +38,7 @@ class CAEWrapper:
        grad_fn=<Atan2Backward>)
     ```
     """
-    def __init__(self, model_path, conf_path, spec_path, map_location='cpu'):
+    def __init__(self, model_path=None, conf_path=None, spec_path=None, device="cpu"):
         """
         Initialise wrapper with trained model from original CAE implementation
 
@@ -70,6 +72,9 @@ class CAEWrapper:
             )
         ###
 
+        if not device:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+
         self.conf_path = conf_path
         self.model_path = model_path
 
@@ -80,10 +85,16 @@ class CAEWrapper:
             # unpack parameters to class attributes
             setattr(self, tp, v)
 
-        self.model = self.load_model(model_path, map_location=map_location)
-        
-        self.cuda = torch.cuda.is_available()
+        # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+        try:
+            self.model = self._build_model()
+        except:
+            self.device = "cpu"
+            self.model = self._build_model()
 
+        if model_path is not None:
+            self.load_model(model_path)
+        
     def load_conf(self, path, spec):
         """
         Load .ini conf at <path>
@@ -116,52 +127,57 @@ class CAEWrapper:
         :rtype: bool
         """
         for param in [
-            'n_bins','length_ngram','n_bases','dropout',
-            'sr','bins_per_oct','fmin','hop_length']:
+            "n_bins","length_ngram","n_bases","dropout",
+            "sr","bins_per_oct","fmin","hop_length"]:
             if param not in conf:
-                raise ValueError(f'{param} not present in conf at <self.conf_path>')
+                raise ValueError(f"{param} not present in conf at <self.conf_path>")
         
-        if not isinstance(conf['n_bins'], int):
+        if not isinstance(conf["n_bins"], int):
             raise ValueError("n_bins in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['length_ngram'], int):
+        if not isinstance(conf["length_ngram"], int):
             raise ValueError("length_ngram in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['n_bases'], int):
+        if not isinstance(conf["n_bases"], int):
             raise ValueError("n_bases in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['dropout'], float):
+        if not isinstance(conf["dropout"], float):
             raise ValueError("dropout in conf at <conf_path> should be a float")
 
-        if not isinstance(conf['sr'], int):
+        if not isinstance(conf["sr"], int):
             raise ValueError("sr in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['bins_per_oct'], int):
+        if not isinstance(conf["bins_per_oct"], int):
             raise ValueError("bins_per_oct in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf['fmin'], (float,int)):
+        if not isinstance(conf["fmin"], (float,int)):
             raise ValueError("fmin in conf at <conf_path> should be an float/integer")
 
-        if not isinstance(conf['hop_length'], int):
+        if not isinstance(conf["hop_length"], int):
             raise ValueError("hop_length in conf at <conf_path> should be an integer")
 
-    def load_model(self, model_path, map_location='cpu'):
+    def _build_model(self):
+        """
+        Build de CAE model.
+
+        :returns: loaded model
+        :rtype: torch.nn.Module
+        """
+        in_size = self.n_bins * self.length_ngram
+        return Complex(in_size, self.n_bases, dropout=self.dropout).to(self.device)
+
+    def load_model(self, model_path):
         """
         Load model at <model_path>. Expects model parameters to correspond
         to those found in self.params (loaded from self.conf_path).
 
         :param model_path: path to model
         :type model_path: str
-        :param map_location: cpu or gpu
-        :type map_location: str
-
-        :returns: loaded model
-        :rtype: torch.nn.Module
         """
-        in_size = self.n_bins * self.length_ngram
-        model = Complex(in_size, self.n_bases, dropout=self.dropout)
-        model.load_state_dict(torch.load(model_path, map_location=map_location), strict=False)
-        return model
+        if not os.path.exists(model_path):
+            raise ValueError("Path to model not found.")
+            
+        self.model.load_state_dict(torch.load(model_path), strict=False)
 
     def extract_features(self, audio_path, sr=None):
         """
@@ -178,9 +194,7 @@ class CAEWrapper:
         sr = sr if sr else self.sr
 
         cqt = self.get_cqt(audio_path, sr=None)
-
         ampls, phases = self.to_amp_phase(cqt)
-
         return ampls, phases
 
     def get_cqt(self, audio_path, sr=None):
@@ -214,8 +228,7 @@ class CAEWrapper:
         :returns: amplitude vector, phases vector
         :rtype: np.ndarray, np.ndarray
         """
-        if self.cuda:
-            self.model.cuda()
+        self.model.to(self.device)
         self.model.eval()
 
         ngrams = []
