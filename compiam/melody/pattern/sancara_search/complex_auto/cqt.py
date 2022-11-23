@@ -89,7 +89,7 @@ def to_cqt_repr(fn, n_bins, bins_per_oct, fmin, hop_length,
 def get_cqts(files, cache_key='train', rebuild=False, use_nr_samples=-1,
              processes=10, sr=-1, args=None):
     assert args is not None, "args are needed."
-    cache_fn = f'{args.cache_dir}/hist_cache_{cache_key}.pyc.bz'
+    cache_fn = os.path.join(args.cache_dir, "hist_cache_" + cache_key +".pyc.bz")
     cqts = []
     if not os.path.isfile(cache_fn) or rebuild:
         if processes > 1:

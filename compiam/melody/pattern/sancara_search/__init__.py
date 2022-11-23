@@ -177,6 +177,7 @@ class CAEWrapper:
         if not os.path.exists(model_path):
             raise ValueError("Path to model not found.")
             
+        self.model.to(self.device)
         self.model.load_state_dict(torch.load(model_path), strict=False)
 
     def extract_features(self, audio_path, sr=None):
