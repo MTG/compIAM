@@ -118,6 +118,7 @@ class DhrupadBandishSegmentation:
                 We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
                 so make sure you have these available before loading the tool.
             """)
+        self.model = self._build_model()
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
         self.trained = True
@@ -238,7 +239,7 @@ class DhrupadBandishSegmentation:
         n_idle = 0
 
         if not os.path.exists(os.path.join(self.model_path, self.mode)):
-            os.makedir(os.path.join(self.model_path, self.mode))
+            os.mkdir(os.path.join(self.model_path, self.mode))
 
         for epoch in range(pars.max_epochs):
             if n_idle == 50:
@@ -360,12 +361,9 @@ class DhrupadBandishSegmentation:
         """
         if not os.path.exists(path_to_file):
             raise ValueError("Input file not found")
-        if not os.path.exists(output_dir):
-            raise FileNotFoundError(
-                """
-                Folder to store output does not exists or it is not specified. Please enter a valid folder
-                to store the outputs."""
-            )
+        if output_dir is not None:
+            if not os.path.exists(output_dir):
+                os.mkdir(output_dir)
         if self.trained is False:
             raise ModelNotTrainedError("""
                 Model is not trained. Please load model before running inference!
@@ -408,8 +406,9 @@ class DhrupadBandishSegmentation:
         plt.grid("on", linestyle="--", axis="y")
         plt.xlabel("Time (s)", fontsize=12)
         plt.ylabel("Surface tempo multiple", fontsize=12)
-        plt.savefig(
-            os.path.join(
-                output_dir, os.path.basename(path_to_file).replace(".wav", ".png")
+        if output_dir is not None:
+            plt.savefig(
+                os.path.join(
+                    output_dir, os.path.basename(path_to_file).replace(".wav", ".png")
+                )
             )
-        )
