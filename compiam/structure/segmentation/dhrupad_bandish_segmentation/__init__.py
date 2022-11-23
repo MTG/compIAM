@@ -410,6 +410,9 @@ class DhrupadBandishSegmentation:
         if output_dir is not None:
             plt.savefig(
                 os.path.join(
-                    output_dir, os.path.basename(path_to_file).replace(".wav", ".png")
+                    output_dir,
+                    ".".join(os.path.basename(path_to_file).split(".")[0]) + ".png"
                 )
             )
+        else:
+            plt.show()
