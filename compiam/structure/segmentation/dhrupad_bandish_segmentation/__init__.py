@@ -84,7 +84,12 @@ class DhrupadBandishSegmentation:
         self.fold = fold
         self.classes = pars.classes_dict[self.mode]
 
-        self.model = self._build_model()
+        # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+        try:
+            self.model = self._build_model()
+        except:
+            self.device = "cpu"
+            self.model = self._build_model()
         self.model_path = model_path
         self.trained = False
 

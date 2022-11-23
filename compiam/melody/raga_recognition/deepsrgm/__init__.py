@@ -42,7 +42,13 @@ class DEEPSRGM(object):
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.rnn = rnn
-        self.model = self._build_model(rnn=self.rnn)
+        # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+        try:
+            self.model = self._build_model(rnn=self.rnn)
+        except:
+            self.device = "cpu"
+            self.model = self._build_model(rnn=self.rnn)
+
         self.model_path = model_path
         self.trained = False
 
