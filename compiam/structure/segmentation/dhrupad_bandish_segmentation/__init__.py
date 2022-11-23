@@ -393,6 +393,7 @@ class DhrupadBandishSegmentation:
             model_in = (
                 (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
             )
+            self.model.to(self.device)
             model_out = self.model.forward(model_in)
             model_out = torch.nn.Softmax(1)(model_out).detach().numpy()
             stm_vs_time.append(np.argmax(model_out))
