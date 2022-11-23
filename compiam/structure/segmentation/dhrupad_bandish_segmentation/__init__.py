@@ -182,10 +182,10 @@ class DhrupadBandishSegmentation:
                     os.path.join(
                         self.splits_path,
                         self.mode,
-                        "fold_" + i_fold + ".csv",
-                        delimiter=",",
-                        dtype="str",
-                    )
+                        "fold_" + i_fold + ".csv"
+                    ),
+                    delimiter=",",
+                    dtype=str
                 )
             )
 
@@ -411,7 +411,7 @@ class DhrupadBandishSegmentation:
             plt.savefig(
                 os.path.join(
                     output_dir,
-                    os.path.basename(path_to_file).replace(path_to_file.split(".")[-1], ".png")
+                    os.path.basename(path_to_file).replace(path_to_file.split(".")[-1], "png")
                 )
             )
         else:
