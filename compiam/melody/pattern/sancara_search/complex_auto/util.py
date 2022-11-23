@@ -48,24 +48,16 @@ def prepare_audio_inputs(input_files):
     check_audio_files(input_files)
     return input_files
 
-def cuda_tensor(data, tocuda=True):
-    if torch.cuda.is_available() and tocuda:
-        return torch.FloatTensor(data).cuda()
-    else:
-        return torch.FloatTensor(data)
+
+def cuda_tensor(data, device):
+    return torch.FloatTensor(data).to(device)
 
 
-def cuda_variable(tensor, volatile=False):
-    if torch.cuda.is_available():
-        try:
-            return Variable(tensor.cuda(), volatile=volatile)
-        except AttributeError:
-            return Variable(torch.Tensor(tensor).cuda(), volatile=volatile)
-    else:
-        try:
-            return Variable(tensor, volatile=volatile)
-        except TypeError:
-            return Variable(torch.Tensor(tensor), volatile=volatile)
+def cuda_variable(tensor, volatile=False, device="cpu"):
+    try:
+        return Variable(tensor.to(device), volatile=volatile)
+    except TypeError:
+        return Variable(torch.Tensor(tensor).to(device), volatile=volatile)
 
 
 def to_numpy(variable):

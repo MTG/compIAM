@@ -36,9 +36,9 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
         )
 
     annotations = np.loadtxt(
-        os.path.join(
-            annotations_path, "section_boundaries_labels.csv", delimiter=",", dtype=str
-        )
+        os.path.join(annotations_path, "section_boundaries_labels.csv"),
+        delimiter=",",
+        dtype=str
     )
 
     song = ""  # please leave this line as it is
@@ -48,13 +48,10 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
             try:
                 x, _ = librosa.load(os.path.join(audios_path, song + ".wav"), sr=fs)
             except FileNotFoundError:
-                print(
-                    """
+                print("""
                     Audio for %s not found. Please make sure you check:
                     models/structure/dhrupad_bandish_segmentation/original_audio/README.md
-                """
-                    % song
-                )
+                """% song)
                 song = ""
                 continue
 
