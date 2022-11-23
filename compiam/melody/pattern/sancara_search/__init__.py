@@ -8,6 +8,8 @@ class CAEWrapper:
     """
     Wrapper for the Complex Autoencoder found at https://github.com/SonyCSLParis/cae-invar#quick-start
     specifically for the task of embedding audio to learnt CAE features.
+    This wrapper is used for inference and it is not trainable. Please initialize it using
+    compiam.load_model()
 
     Example:
     ```
@@ -38,7 +40,7 @@ class CAEWrapper:
        grad_fn=<Atan2Backward>)
     ```
     """
-    def __init__(self, model_path=None, conf_path=None, spec_path=None, device="cpu"):
+    def __init__(self, model_path, conf_path, spec_path, device="cpu"):
         """
         Initialise wrapper with trained model from original CAE implementation
 
@@ -87,12 +89,9 @@ class CAEWrapper:
 
         # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
         try:
-            self.model = self._build_model()
+            self.load_model(model_path)
         except:
             self.device = "cpu"
-            self.model = self._build_model()
-
-        if model_path is not None:
             self.load_model(model_path)
         
     def load_conf(self, path, spec):
@@ -174,10 +173,7 @@ class CAEWrapper:
         :param model_path: path to model
         :type model_path: str
         """
-        if not os.path.exists(model_path):
-            raise ValueError("Path to model not found.")
-            
-        self.model.to(self.device)
+        self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path), strict=False)
 
     def extract_features(self, audio_path, sr=None):
