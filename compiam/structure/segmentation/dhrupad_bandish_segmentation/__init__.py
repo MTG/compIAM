@@ -411,7 +411,7 @@ class DhrupadBandishSegmentation:
             plt.savefig(
                 os.path.join(
                     output_dir,
-                    ".".join(os.path.basename(path_to_file).split(".")[0]) + ".png"
+                    os.path.basename(path_to_file).replace(path_to_file.split(".")[-1], ".png")
                 )
             )
         else:
