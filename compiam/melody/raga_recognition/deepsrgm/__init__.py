@@ -42,7 +42,13 @@ class DEEPSRGM(object):
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.rnn = rnn
-        self.model = self._build_model(rnn=self.rnn)
+        # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+        try:
+            self.model = self._build_model(rnn=self.rnn)
+        except:
+            self.device = "cpu"
+            self.model = self._build_model(rnn=self.rnn)
+
         self.model_path = model_path
         self.trained = False
 
@@ -232,5 +238,8 @@ class DEEPSRGM(object):
         majority = int(majority)
         votes = float(torch.sum(preds == majority)) / features.shape[0]
         if votes >= threshold:
-            return f"Input music sample belongs to the {self.mapping[majority]} raga"
-        return f"CONFUSED - Closest raga predicted is {self.mapping[majority]} with {(votes*100):.2f}% votes"
+            print("Input music sample belongs to the {} raga"\
+                .format(self.mapping[majority]))
+        print("CONFUSED - Closest raga predicted is {} with {} votes"\
+            .format(self.mapping[majority], (votes*100)))
+        return self.mapping[majority]
