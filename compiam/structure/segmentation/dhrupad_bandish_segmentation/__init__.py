@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
 
 from compiam.utils import get_logger
+from compiam.data import WORKDIR
 
 logger = get_logger(__name__)
 
@@ -93,11 +94,46 @@ class DhrupadBandishSegmentation:
             )
             self.load_model(path_to_model)  # Loading pre-trained model for given mode
 
-        self.splits_path = splits_path
-        self.annotations_path = annotations_path
-        self.features_path = features_path
-        self.original_audios_path = original_audios_path
-        self.processed_audios_path = processed_audios_path
+        self.splits_path = splits_path if splits_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "splits"
+            )
+        self.annotations_path = annotations_path if annotations_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "annotations"
+            )
+        self.features_path = features_path if features_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "features"
+            )
+        self.original_audios_path = original_audios_path if original_audios_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_original"
+            )
+        self.processed_audios_path = processed_audios_path if processed_audios_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_sections"
+            )
 
     def _build_model(self):
         """Building non-trained model"""
@@ -152,19 +188,20 @@ class DhrupadBandishSegmentation:
     def train(self, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
 
-        :param data_dir: path to extracted features and labels.
         :param verbose: showing details of the model
         """
         print("Splitting audios...")
         split_audios(
-            self.processed_audios_path, self.annotations_path, self.original_audios_path
+            save_dir=self.processed_audios_path,
+            annotations_path=self.annotations_path,
+            audios_path=self.original_audios_path
         )
         print("Extracting features...")
         extract_features(
             self.processed_audios_path,
             self.annotations_path,
             self.features_path,
-            self.mode,
+            self.mode
         )
 
         # generate cross-validation folds for training
