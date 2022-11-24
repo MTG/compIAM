@@ -1,294 +1,294 @@
 Melakarta Ragam 
 
 kanakaangi:
-	  arohana: ['S','R1', 'G1', 'M1', 'P', 'D1', 'N1', 'Ṡ'] 
+	  arohana: ['S','R1', 'G1', 'M1', 'P', 'D1', 'N1', 'S'] 
           avarohana:  ['S', 'N1', 'D1', 'P' 'M1' 'G1' 'R1' 'S']	 
 	  number: 1
 ratnaangi:
-          arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D1', 'N2', 'Ṡ'] 
+          arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D1', 'N2', 'S'] 
           avarohana: ['S', 'N2', 'D1', 'P', 'M1', 'G1', 'R1', 'S'] 
 	  number: 2
 gaanamurti:
-      	    arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₃', Ṡ]
+      	    arohana: ['S', 'R₁', 'G₁', 'M₁', 'P', 'D₁', 'N₃', 'S']
             avarohana: ['S', 'N3', 'D1', 'P', 'M1', 'G1', 'R1', 'S']
 	    number: 3
 vanaspati:
-       	    arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D2', 'N2', 'Ṡ']
+       	    arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D2', 'N2', 'S']
             avarohana: ['S', 'N2', 'D2', 'P', 'M1', 'G1', 'R1', 'S']	
 	    number: 4
 maanavati:	
-            arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D2', 'N3', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D2', 'N3', 'S'] 
             avarohana: ['S', 'N3', 'D2', 'P', 'M1', 'G1', 'R1', 'S']	
 	    number: 5
 taanarupi:	
-            arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D3', 'N3', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D3', 'N3', 'S'] 
             avarohana: ['S','N3',' D3', 'P', 'M1', 'G1', 'R1', 'S']
 	    number: 6
 senaavati:
-      	    arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N1', 'Ṡ'] 
+      	    arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N1', 'S'] 
             avarohana: ['S', 'N1', 'D1', 'P', 'M1', 'G2', 'R1', 'S']
 	    number: 7
 hanumatodi:	
-            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N2', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N2', 'S'] 
             avarohana:  ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R1', 'S']	 
 	    number: 8
 dhenuka:
-            arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₃', 'Ṡ'] 
+            arohana: ['S', 'R₁', 'G₂', 'M₁', 'P', 'D₁', 'N₃', 'S'] 
             avarohana:  ['S', 'N3', 'D1', 'P', 'M1', 'G2', 'R1', 'S']	
 	    number: 9
 naatakapriya:
-       	    arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D2', 'N2', 'Ṡ']
+       	    arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D2', 'N2', 'S']
             avarohana: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R1', 'S']	
 	    number: 10
 	    
 kokilapriya	:
-            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D2', 'N3', 'Ṡ']	
+            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D2', 'N3', 'S']	
             avarohana: ['S', 'N3', 'D2', 'P', 'M1', 'G2', 'R1', 'S']
 	    number: 11
 rupavati:	
-            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D3', 'N3', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D3', 'N3', 'S'] 
             avarohana:  ['S', 'N3', 'D3', 'P', 'M1', 'G2', 'R1', 'S']	
 	    number: 12
 gaayakapriya:	    
-            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D1', 'N1', 'Ṡ']	
+            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D1', 'N1', 'S']	
             avarohana: ['S', 'N1', 'D1', 'P', 'M1', 'G3', 'R1', 'S']  
 	    number: 13
 vakulaabharaṇam:  
-            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D1', 'N2', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D1', 'N2', 'S'] 
             avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G3', 'R1', 'S']   
 	    number: 14
 maayaamaalavagoulai:	
-            arohanam: ['S','R1', 'G3', 'M1', 'P', 'D1', 'N3', 'Ṡ'] 
+            arohanam: ['S','R1', 'G3', 'M1', 'P', 'D1', 'N3', 'S'] 
             avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G3', 'R1', 'S']
 	    number: 15
 chakravaakam:	    
-            arohanam: ['S', 'R1', 'G3', 'M1', 'P', 'D2', 'N2', 'Ṡ'] 
+            arohanam: ['S', 'R1', 'G3', 'M1', 'P', 'D2', 'N2', 'S'] 
             avarohana: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R1', 'S']
 	    number: 16
 suryakaantam:	  
-            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D2', 'N3', 'Ṡ']
+            arohana: ['S', 'R1', 'G3', 'M1', 'P', 'D2', 'N3', 'S']
             avarohana: ['S', 'N3', 'D2', 'P' ,'M1', 'G3','R1', 'S']
 	    number: 17
 haatakaambari:    
-            arohana:	['S', 'R1', 'G3', 'M1', 'P', 'D3', 'N3', 'Ṡ']	
+            arohana:	['S', 'R1', 'G3', 'M1', 'P', 'D3', 'N3', 'S']	
             avarohanam: ['S', 'N3', 'D3', 'P', 'M1', 'G3', 'R1', 'S']
 	    number: 18
 jhankaaradhvani: 
-            arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N1', 'Ṡ'] 
+            arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N1', 'S'] 
             avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R2', 'S']
 	    number: 19
 natabhairavi: 
-            arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N2', 'Ṡ' ]
+            arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N2', 'S' ]
             avarohana: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R2', 'S']
 	    number: 20
 
 keeravaaṇi:
-             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N3', 'Ṡ']
+             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D1', 'N3', 'S']
              avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G2', 'R2', 'S']
 	     number: 21
 kharaharapriya: 
-             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N2', 'Ṡ']
+             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N2', 'S']
              avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R2', 'S']
 	     number: 22
 gourimanohari: 
-             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N3', 'Ṡ'] 
+             arohana:	['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N3', 'S'] 
              avarohanam: ['S', 'N3', 'D2', 'P', 'M1', 'G2', 'R2', 'S']
 	     number: 23
 varunapriya:	 
-             arohana: ['S', 'R2', 'G2', 'M1', 'P', 'D3', 'N3', 'Ṡ']
+             arohana: ['S', 'R2', 'G2', 'M1', 'P', 'D3', 'N3', 'S']
              avarohanam: ['S', 'N3', 'D3', 'P', 'M1', 'G2', 'R2', 'S']
 	     number: 24
 
 maararanjani: 
-              arohana:	['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N1', 'Ṡ']
+              arohana:	['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N1', 'S']
               avarohanam: ['S', 'N1', 'D1', 'P', 'M1', 'G3', 'R2', 'S'] 
 	      number: 25
 chaarukesi:	
-              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N2', 'Ṡ']
+              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N2', 'S']
               avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G3', 'R2', 'S']
 	      number: 26
 sarasaangi:	
-              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N3', 'Ṡ']
+              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D1', 'N3', 'S']
               avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G3', 'R2', 'S']
 	      number: 27
 harikaambhoji:
-              arohana:	['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N2', 'Ṡ']
+              arohana:	['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N2', 'S']
               avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
 	      number: 28
 dheerashankaraabharanam:
-              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N3', 'Ṡ']
+              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N3', 'S']
               avarohanam: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
 	      number: 29
 naaganandini:	
-              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D3', 'N3', 'Ṡ'] 
+              arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D3', 'N3', 'S'] 
               avarohanam: ['S', 'N3', 'D3', 'P', 'M1', 'G3', 'R2', 'S']
 	      number: 30
 yaagapriya:	
-               arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N1', 'Ṡ'] 
+               arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N1', 'S'] 
                avarohanam: ['S', 'N1', 'D1', 'P', 'M1', 'G3', 'R3', 'S']
 	       number: 31
 raagavardhini: 
-              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N2', 'Ṡ']
+              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N2', 'S']
               avarohanam: ['S', 'N2', 'D1', 'P', 'M1', 'G3', 'R3', 'S']
 	      number: 32
 gaangeyabhushani: 
-              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N3', 'Ṡ']
+              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D1', 'N3', 'S']
               avarohanam: ['S', 'N3', 'D1', 'P', 'M1', 'G3', 'R3', 'S'] 
 	      number: 33
 vaagadheeshvari: 
-              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D2', 'N2', 'Ṡ']
+              arohana:	['S', 'R3', 'G3', 'M1', 'P', 'D2', 'N2', 'S']
               avarohanam: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R3', 'S']
 	      number: 34
 shoolini:	
-              arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D2', 'N3', 'Ṡ']	
+              arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D2', 'N3', 'S']	
               avarohana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R3', 'S']
 	      number: 35
 chalanaata:	
-              arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D3', 'N3', 'Ṡ']
+              arohana: ['S', 'R3', 'G3', 'M1', 'P', 'D3', 'N3', 'S']
               avarohana: ['S', 'N3', 'D3', 'P', 'M1', 'G3', 'R3', 'S']
 	      number: 36
 
 saalagam:	
-             arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
+             arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D1', 'N1', 'S'] 
              avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
 	     number: 37
 jalaarnavam:
- 	      arohana: ['S',' R1', 'G1', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
+ 	      arohana: ['S',' R1', 'G1', 'M2', 'P', 'D1', 'N2', 'S'] 
               avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
 	      number: 38
 jhaalavaraali: 
-              arohana: 	['S', 'R1', 'G1', 'M2', 'P', 'D1', 'N3', 'Ṡ'] 
+              arohana: 	['S', 'R1', 'G1', 'M2', 'P', 'D1', 'N3', 'S'] 
               avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
 	      number: 39
 navaneetam:	
-              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D2', 'N2', 'Ṡ'] 
+              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D2', 'N2', 'S'] 
               avarohana: ['S', 'N2' ,'D2', 'P', 'M2', 'G1', 'R1', 'S']
 	      number: 40
 paavani:	
-              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D2', 'N3', 'Ṡ']
+              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D2', 'N3', 'S']
               avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G1', 'R1', 'S']
 	      number: 41
 raghupriya:	
-              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D3', 'N3', 'Ṡ']
+              arohana: ['S', 'R1', 'G1', 'M2', 'P', 'D3', 'N3', 'S']
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G1', 'R1', 'S']
 	      number: 42
 gavaambhodi:	
-             arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N1', 'Ṡ']
+             arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N1', 'S']
              avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
 	     number: 43
  bhavapriya:	
-            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N2', 'Ṡ']
+            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N2', 'S']
             avarohana: [ 'S', 'N2', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
 	    number: 44
 shubhapantuvaraali: 
-            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N3', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D1', 'N3', 'S'] 
             avarohana:  ['S', 'N3', 'D1', 'P', 'M2', 'G2', 'R1', 'S']
 	    number: 45
 shadvidamaargini:	
-            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D2', 'N2', 'Ṡ'] 
+            arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D2', 'N2', 'S'] 
             avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G2', 'R1', 'S']
 	    number: 46
 suvarnaangi: 
-            arohana:	['S', 'R1', 'G2', 'M2', 'P', 'D2', 'N3', 'Ṡ'] 
+            arohana:	['S', 'R1', 'G2', 'M2', 'P', 'D2', 'N3', 'S'] 
             avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G2', 'R1', 'S']
 	    number: 47
 divyamani:	
-             arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D3', 'N3', 'Ṡ'] 
+             arohana: ['S', 'R1', 'G2', 'M2', 'P', 'D3', 'N3', 'S'] 
              avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G2', 'R1', 'S']
 	     number: 48
 dhavalaambari:	
-             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
+             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N1', 'S'] 
              avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
 	     number: 49
 naamanaaraayani:	
-             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
+             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N2', 'S'] 
              avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
 	     number: 50
 kaamavardhini:
-           arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N3', 'Ṡ'] 
+           arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N3', 'S'] 
              avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
 	     number: 51
 raamapriya:	
-             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D2', 'N2', 'Ṡ'] 
+             arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D2', 'N2', 'S'] 
              avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G3', 'R1', 'S']
 	     number: 52
 gamanaashrama: 
-             arohana:	['S', 'R1', 'G3', 'M2', 'P', 'D2', 'N3', 'Ṡ'] 
+             arohana:	['S', 'R1', 'G3', 'M2', 'P', 'D2', 'N3', 'S'] 
              avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R1', 'S']
 	     number: 53
 vishvambari:
-              arohana:	['S', 'R1', 'G3', 'M2', 'P', 'D3', 'N3', 'Ṡ'] 
+              arohana:	['S', 'R1', 'G3', 'M2', 'P', 'D3', 'N3', 'S'] 
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G3', 'R1', 'S']
 	      number: 54
 shaamalaangi:	
-              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
+              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N1', 'S'] 
               avarohana: ['S', 'N1', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
 	      number: 55
 shanmukhapriya:	
-               arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
+               arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N2', 'S'] 
                avarohana: [ 'S', 'N2', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
 	       number: 56
 simhendramadhyamam:	
-              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N3', 'Ṡ']
+              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N3', 'S']
               avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
 	      number: 57
 hemavati:	
-              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D2', 'N2', 'Ṡ'] 
+              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D2', 'N2', 'S'] 
               avarohana: ['S', 'N2', 'D2', 'P', 'M2', 'G2', 'R2', 'S']
 	      number: 58
 dharmavati: 
-              arohana:  ['S', 'R2', 'G2', 'M2', 'P', 'D2', 'N3', 'Ṡ']
+              arohana:  ['S', 'R2', 'G2', 'M2', 'P', 'D2', 'N3', 'S']
               avarohana: ['S', 'N3', 'D2', 'P', 'M2', 'G2', 'R2', 'S']
 	      number: 59
 neetimati:	
-              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D3', 'N3', 'Ṡ'] 
+              arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D3', 'N3', 'S'] 
               avarohana: ['S', 'N3', 'D3', 'P', 'M2', 'G2', 'R2', 'S']
 	      number: 60
 kaantaamaṇi:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N1', 'S'] 
                avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 61
 rishabhapriya:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N2', 'S'] 
                avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 62
 lataangi:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N3', 'Ṡ'] 
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D1', 'N3', 'S'] 
                avarohana: [ 'S', 'N3', 'D1', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 63
 vaachaspati:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N2' ,'Ṡ'] 
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N2' ,'S'] 
                avarohana: [ 'S', 'N2', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 64
 mechakalyaani:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N3', 'Ṡ'] 
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N3', 'S'] 
                avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 65
 chitraambari:	
-               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D3', 'N3', 'Ṡ']
+               arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D3', 'N3', 'S']
                avarohana:  ['S', 'N3', 'D3', 'P', 'M2', 'G3', 'R2', 'S']
 	       number: 66
 sucharitra:	
-               arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
+               arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N1', 'S'] 
                avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
 	       number: 67
 jyoti_svarupini:	
-                arohana:  ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
+                arohana:  ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N2', 'S'] 
                 avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
 		number: 68
 dhaathuvardhani:
-           	arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N3', 'Ṡ'] 
+           	arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N3', 'S'] 
             avarohana: ['S', 'N3', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
 	    number: 69
 naasikaabhushaṇi:	
-             arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D2', 'N2', 'Ṡ'] 
+             arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D2', 'N2', 'S'] 
              avarohana: ['S', 'N2', 'D2', 'P', 'M2', 'G3', 'R3', 'S']
 	     number: 70
 kosalam:	
-             arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D2', 'N3', 'Ṡ'] 
+             arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D2', 'N3', 'S'] 
              avarohana: [ 'S', 'N3', 'D2', 'P', 'M2', 'G3', 'R3', 'S']
 	     number: 71
 rasikapriya: 
-             arohana:	['S', 'R3', 'G3', 'M2', 'P', 'D3', 'N3', 'Ṡ'] 
+             arohana:	['S', 'R3', 'G3', 'M2', 'P', 'D3', 'N3', 'S'] 
              avarohana: [ 'S', 'N3', 'D3', 'P', 'M2', 'G3', 'R3', 'S']
 	     number: 72
