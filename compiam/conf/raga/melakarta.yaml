@@ -1,9 +1,9 @@
 Melakarta Ragam 
 
 kanakaangi:
-   arohana: ['S','R1', 'G1', 'M1', 'P', 'D1', 'N1', 'S'] 
-   avarohana:  ['S', 'N1', 'D1', 'P' 'M1' 'G1' 'R1' 'S']	 
-   number: 1
+          arohana: ['S','R1', 'G1', 'M1', 'P', 'D1', 'N1', 'S'] 
+          avarohana:  ['S', 'N1', 'D1', 'P' 'M1' 'G1' 'R1' 'S']	 
+          number: 1
 ratnaangi:
           arohana: ['S', 'R1', 'G1', 'M1', 'P', 'D1', 'N2', 'S'] 
           avarohana: ['S', 'N2', 'D1', 'P', 'M1', 'G1', 'R1', 'S'] 
