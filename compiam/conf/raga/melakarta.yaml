@@ -272,7 +272,7 @@ sucharitra:
                arohana: ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N1', 'Ṡ'] 
                avarohana: [ 'S', 'N1', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
 	       number: 67
-jyoti svarupini:	
+jyoti_svarupini:	
                 arohana:  ['S', 'R3', 'G3', 'M2', 'P', 'D1', 'N2', 'Ṡ'] 
                 avarohana: ['S', 'N2', 'D1', 'P', 'M2', 'G3', 'R3', 'S']
 		number: 68
@@ -292,66 +292,3 @@ rasikapriya:
              arohana:	['S', 'R3', 'G3', 'M2', 'P', 'D3', 'N3', 'Ṡ'] 
              avarohana: [ 'S', 'N3', 'D3', 'P', 'M2', 'G3', 'R3', 'S']
 	     number: 72
-
-Janya Ragas 
-
-anandabhairavi:
-  arohana: ['S', 'G2', 'R2', 'G2', 'M1', 'P', 'D2', 'P', 'N2', 'S']
-  avorahana: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R2', 'S']
-  parent_raga: Natabhairavi- 20th Melakarta
-
-begada:
-  arohana: ['S', 'G3', 'R2', 'G3', 'M1', 'P', 'D2', 'N2', 'D2', 'P', 'S']
-  avorahana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
-  parent_raga: Dhira Sankarabharanam- 29th Melakarta
-
-bhairavi: 
-  arohana: ['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N2', 'S']
-  avorahana: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R2', 'S']
-  parent_raga: Natabhairavi- 20th Melakarta
-
-bilahari:
-  arohana: ['S', 'R2', 'G3', 'P', 'D2', 'S']
-  avorahana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
-  parent_raga:  Dhira Sankarabharanam- 29th Melakarta
-
-kalyani:
-  arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N3', 'S']
-  avorahana: ['S', 'N3', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
-  parent_raga: Mechakalyani-65th Melakarta
-
-ritigaula:
-  arohana: ['S', 'G2', 'R2', 'G2', 'M1', 'N2', 'D2', 'M1', 'N2', 'N2', 'S']
-  avorahana: ['S', 'N2', 'D2', 'M1', 'G2', 'M1', 'P', 'M1', 'G2', 'R2', 'S']
-  parent_raga: Kharaharapriya- 22nd Melakarta
-
-sankarabharanam:
-  arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N3', 'S']
-  avorahana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
-  
-todi:
-  arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N2', 'S']
-  avorahana: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R1', 'S']
-  
-varaali:
-  arohana: ['S', 'G1', 'R1', 'G1', 'M2', 'P', 'D1', 'N3', 'S']
-  avorahana: ['S', 'N3', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
-  parent_raga: Jhalavarali- 39th Melakarta
-
-saveri:
-    arohana: ['S','R1','M1','P','D1','S']
-    avarohana: ['S','N3','D1','P','M1','G3','R1','S']
-    parent_raga: Mayamalava Gowla-15th Melakarta
-mohanam:
-   arohana: ['S','R2','G2','P','D2','S']
-   avarohana: ['S','D2','P','G2','R2','S']
-   parent_raga: Harikambhoji- 29th Melakarta
-
-amritavarshini: 
-     arohana: ['S','G3','M2','P','N3','S']
-     avarohana: ['S','N3','P','M2','G3','S']
-     parent_raga: Chitrambari -66th Melakarta
-Shuddha Dhanyasi:
-     arohana: ['S','G1','M1','P','N1','S']
-     avarohana: ['S','N1','P','M1','G1','S']
-     parent_raga: Kharaharapriya-22nd Melakarta
