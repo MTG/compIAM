@@ -38,9 +38,22 @@ FTANet-Carnatic
    :members:
 
 FTANet-Carnatic utils
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing
+   :members:
+
+
+Melodic Pattern Discovery
++++++++++++++++++++++++++
+
+Sancara search
+--------------
+
+.. note::
+    REQUIRES: torch
+
+.. automodule:: compiam.melody.pattern.sancara_search
    :members:
 
 
@@ -57,7 +70,7 @@ DEEPSRGM
    :members:
 
 DEEPSRGM utils
---------------
+^^^^^^^^^^^^^^
 
 .. automodule:: compiam.melody.raga_recognition.deepsrgm.model
    :members:

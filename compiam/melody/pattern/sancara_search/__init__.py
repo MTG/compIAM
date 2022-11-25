@@ -1,6 +1,5 @@
-import os
-
 import numpy as np
+
 from configobj import ConfigObj
 
 
