@@ -56,6 +56,24 @@ Sancara search
 .. automodule:: compiam.melody.pattern.sancara_search
    :members:
 
+CAE-Carnatic (Wrapper)
+----------------------
+
+.. note::
+    REQUIRES: torch
+
+.. automodule:: compiam.melody.pattern.sancara_search.complex_auto
+   :members:
+
+Self-similarity matrix
+----------------------
+
+.. note::
+    REQUIRES: torch
+
+.. automodule:: compiam.melody.pattern.sancara_search.extraction
+   :members:
+
 
 Raga Recognition
 ++++++++++++++++
