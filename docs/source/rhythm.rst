@@ -16,12 +16,22 @@ Four-Way Tabla Classification
    :members:
 
 Four-Way Tabla Classification utils
------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: compiam.rhythm.transcription.tabla_transcription.model
    :members:
 
 .. automodule:: compiam.rhythm.transcription.tabla_transcription.utils
+   :members:
+
+
+Mnemonic Transcription
+----------------------
+
+.. note::
+    REQUIRES: torch
+
+.. automodule:: compiam.rhythm.transcription.mnemonic_transcription
    :members:
 
 
