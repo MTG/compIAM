@@ -15,10 +15,10 @@ class CAEWrapper:
     model_path = "<model_output_folder>/model_complex_auto_cqt.save"
     conf_path  = "cae-invar/config_cqt_old.ini"
     spec_path  = "cae-invar/config_spec.cfg"
-    audio_path = "<path_to_audio>"
+    file_path = "<path_to_audio>"
 
     model = CAEWrapper(model_path, conf_path, spec_path)
-    ampls, phase = model.extract_features(audio_path)
+    ampls, phase = model.extract_features(file_path)
     ampls
     >> tensor([[1.2935, 4.0693, 1.0390,  ..., 0.4740, 1.3497, 0.5319],
         [1.5923, 2.4673, 3.4847,  ..., 0.4998, 1.3553, 1.4519],
@@ -175,13 +175,13 @@ class CAEWrapper:
         self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path), strict=False)
 
-    def extract_features(self, audio_path, sr=None):
+    def extract_features(self, file_path, sr=None):
         """
-        Extract CAE features using self.model on audio at <audio_path>
+        Extract CAE features using self.model on audio at <file_path>
 
-        :param audio_path: path to audio
-        :type audio_path: str
-        :param sr: sampling rate of audio at <audio_path>, if None, use self.sr
+        :param file_path: path to audio
+        :type file_path: str
+        :param sr: sampling rate of audio at <file_path>, if None, use self.sr
         :type sr: int
 
         :returns: amplitude vector, phases vector
@@ -189,18 +189,18 @@ class CAEWrapper:
         """
         sr = sr if sr else self.sr
 
-        cqt = self.get_cqt(audio_path, sr=None)
+        cqt = self.get_cqt(file_path, sr=None)
         ampls, phases = self.to_amp_phase(cqt)
         return ampls, phases
 
-    def get_cqt(self, audio_path, sr=None):
+    def get_cqt(self, file_path, sr=None):
         """
-        Extract CQT representation from audio at <audio_path> according
+        Extract CQT representation from audio at <file_path> according
         to parameters specified in conf at self.conf_path
 
-        :param audio_path: path to audio
-        :type audio_path: str
-        :param sr: sampling rate of audio at <audio_path>, if None, use self.sr
+        :param file_path: path to audio
+        :type file_path: str
+        :param sr: sampling rate of audio at <file_path>, if None, use self.sr
         :type sr: int
 
         :returns: cqt representation
@@ -208,7 +208,7 @@ class CAEWrapper:
         """
         sr = sr if sr else self.sr
 
-        repres = to_cqt_repr(audio_path, self.n_bins, self.bins_per_oct, self.fmin,
+        repres = to_cqt_repr(file_path, self.n_bins, self.bins_per_oct, self.fmin,
                   self.hop_length, use_nr_samples=-1, sr=sr, standard=True, mult=1.)
 
         return repres.transpose()

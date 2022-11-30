@@ -472,11 +472,12 @@ class AksharaPulseTracker:
         self.Nbins = maxLen / binWidth + 1
         self.wtolHistAv = round(20e-3 / binWidth)
 
-    def extract(self, fname, verbose=True):
-
+    def extract(self, file_path, verbose=True):
+        """TODO
+        """
         # Get onset functions
         onsFns = self.getOnsetFunctions(
-            fname,
+            file_path,
             self.Nfft,
             self.frmSize,
             self.Fs,
@@ -570,7 +571,7 @@ class AksharaPulseTracker:
         return aksharaTimes
 
     def getOnsetFunctions(
-        self, fname, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
+        self, file_path, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
     ):
         zeropadLen = Nfft - frmSize
         zz = np.zeros((zeropadLen,), dtype="float32")
@@ -582,8 +583,8 @@ class AksharaPulseTracker:
         if verbose:
             logger.info("Reading audio file...")
 
-        # audio = ess.MonoLoader(filename=fname)()
-        audio, _ = librosa.load(fname, sr=Fs)
+        # audio = ess.MonoLoader(filename=file_path)()
+        audio, _ = librosa.load(file_path, sr=Fs)
 
         # fft = ess.FFT(size=Nfft)  # this gives us a complex FFT
         # c2p = ess.CartesianToPolar()  # and this turns it into a pair (magnitude, phase)

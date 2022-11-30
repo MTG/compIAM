@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_waveform(path_to_audio, t1, t2, labels=None, sr=44100, filepath=None):
+def plot_waveform(file_path, t1, t2, labels=None, sr=44100, output_path=None):
     """TODO"""
     # get data
-    y, _ = librosa.load(path_to_audio, sr=sr)
+    y, _ = librosa.load(file_path, sr=sr)
     y1 = t1 * sr
     y2 = t2 * sr
     y = y[y1:y2]
@@ -31,7 +31,7 @@ def plot_waveform(path_to_audio, t1, t2, labels=None, sr=44100, filepath=None):
                 plt.axvline(o, color="firebrick", linestyle="--")
                 plt.text(o, max_y + max_y * 0.11, l, color="firebrick")
 
-    if filepath:
-        plt.savefig(filepath)
+    if output_path:
+        plt.savefig(output_path)
     else:
         plt.show()

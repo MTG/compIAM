@@ -259,13 +259,13 @@ class FourWayTabla:
                 )
                 plot_losses(train_loss_epoch, val_loss_epoch, plot_save_filepath)
 
-    def predict(self, path_to_audio, predict_thresh=0.3):
+    def predict(self, file_path, predict_thresh=0.3):
         """TODO"""
         if not self.models:
             raise ModelNotTrainedError("Please load or train model before predicting")
 
         # get log-mel-spectrogram of audio
-        melgrams = gen_melgrams(path_to_audio, stats=self.stats)
+        melgrams = gen_melgrams(file_path, stats=self.stats)
 
         # get frame-wise onset predictions
         n_frames = melgrams.shape[-1] - self.seq_length

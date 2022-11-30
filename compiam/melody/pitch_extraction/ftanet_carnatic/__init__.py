@@ -234,11 +234,11 @@ class FTANetCarnatic(object):
         except:
             raise FileNotFoundError("Model path does not exist")
 
-    def predict(self, path_to_audio, hop_size=80, batch_size=5, out_step=None):
-        """Extract melody from filename.
+    def predict(self, file_path, hop_size=80, batch_size=5, out_step=None):
+        """Extract melody from file_path.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic
 
-        :param filename: path to file to extract.
+        :param file_path: path to file to extract.
         :param sample_rate: sample rate of extraction process.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
@@ -253,14 +253,14 @@ class FTANetCarnatic(object):
                 You can load the pre-trained instance with the load_model wrapper.
             """)
 
-        if not os.path.exists(path_to_audio):
+        if not os.path.exists(file_path):
             raise ValueError("Target audio not found.")
 
         xlist = []
         timestamps = []
 
-        print("CFP process in {}".format(path_to_audio))
-        y, _ = librosa.load(path_to_audio, sr=self.sample_rate)
+        print("CFP process in {}".format(file_path))
+        y, _ = librosa.load(file_path, sr=self.sample_rate)
         audio_len = len(y)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []

@@ -247,15 +247,15 @@ class Corpora:
                 "No writing method available for data type: {} and {}", thetype, subtype
             )
 
-    def download_mp3(self, recordingid, location):
+    def download_mp3(self, recordingid, output_dir):
         """Download the mp3 of a document and save it to the specificed directory.
 
         :param recordingid: The MBID of the recording.
-        :param location: Where to save the mp3 to.
+        :param output_dir: Where to save the mp3 to.
         :returns: name of the saved file.
         """
-        if not os.path.exists(location):
-            raise Exception("Location %s doesn't exist; can't save" % location)
+        if not os.path.exists(output_dir):
+            raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
 
         recording = self.get_recording(recordingid)
         concert = self.get_concert(recording["concert"][0]["mbid"])
@@ -264,25 +264,25 @@ class Corpora:
         contents = get_mp3(recordingid)
         name = "%s - %s.mp3" % (artists, title)
         name = name.replace("/", "-")
-        path = os.path.join(location, name)
+        path = os.path.join(output_dir, name)
         open(path, "wb").write(contents)
         return name
 
-    def download_concert(self, concert_id, location):
+    def download_concert(self, concertid, output_dir):
         """Download the mp3s of all recordings in a concert and save them to the specificed directory.
 
-        :param concert: The MBID of the concert.
+        :param concertid: The MBID of the concert.
         :param location: Where to save the mp3s to.
         """
-        if not os.path.exists(location):
-            raise Exception("Location %s doesn't exist; can't save" % location)
+        if not os.path.exists(output_dir):
+            raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
 
-        concert = self.get_concert(concert_id)
+        concert = self.get_concert(concertid)
         artists = " and ".join([a["name"] for a in concert["concert_artists"]])
         concertname = concert["title"]
         concertdir = "%s - %s" % (artists, concertname)
         concertdir = concertdir.replace("/", "-")
-        concertdir = os.path.join(location, concertdir)
+        concertdir = os.path.join(output_dir, concertdir)
         try:
             os.makedirs(concertdir)
         except OSError as exc:
