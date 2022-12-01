@@ -22,7 +22,7 @@ class TonicIndianMultiPitch:
         For a complete and detailed list of the parameters see the documentation on the
         following link: https://essentia.upf.edu/reference/std_TonicIndianArtMusic.html.
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global estd
             import essentia.standard as estd

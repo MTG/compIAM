@@ -3,19 +3,19 @@ import pytest
 
 import numpy as np
 
-from compiam.melody.pitch_extraction import Melodia
-from compiam.melody.tonic_identification import TonicIndianMultiPitch
-from compiam.data import WORKDIR
+from compiam.data import TESTDIR
 
 
 def _predict_normalized_pitch():
+    from compiam.melody.pitch_extraction import Melodia
+
     melodia = Melodia()
     with pytest.raises(ValueError):
         melodia.extract(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     pitch = melodia.extract(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(pitch, np.ndarray)
@@ -59,13 +59,15 @@ def _predict_normalized_pitch():
         )
     )
 
+    from compiam.melody.tonic_identification import TonicIndianMultiPitch
+
     tonic_multipitch = TonicIndianMultiPitch()
     with pytest.raises(ValueError):
         tonic_multipitch.extract(
-            os.path.join(WORKDIR, "tests", "resources", "melody", "hola.wav")
+            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     tonic = tonic_multipitch.extract(
-        os.path.join(WORKDIR, "tests", "resources", "melody", "pitch_test.wav")
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
     assert isinstance(tonic, float)

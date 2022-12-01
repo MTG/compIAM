@@ -1,4 +1,3 @@
-tests/data/output.wav
 *.DS_Store
 
 # Byte-compiled / optimized / DLL files
@@ -68,3 +67,8 @@ target/
 
 # Project specific directories
 output/
+compiam/models/timbre/mridangam_stroke_classification/pre-computed_features.csv
+compiam/models/structure/dhrupad_bandish_segmentation/annotations/section_boundaries_labels.csv
+compiam/models/structure/dhrupad_bandish_segmentation/annotations/cycle_boundaries/
+tests/resources/mir_datasets/*
+

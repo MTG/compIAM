@@ -16,7 +16,7 @@ class FourWayTabla:
         self, model_path=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None
     ):
         """TODO"""
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch
@@ -63,7 +63,13 @@ class FourWayTabla:
         # Load model if passed
         self.model_path = model_path
         if self.model_path:
-            self.load_models(model_path)
+            # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+            try:
+                self.load_models(model_path)
+            except:
+                self.device = "cpu"
+                self.load_models(model_path)
+            
 
     def load_models(self, model_path):
         """TODO"""

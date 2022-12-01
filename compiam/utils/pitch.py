@@ -18,7 +18,7 @@ def normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
         pitch values per timestamp.
     """
     pitch_values = pitch[:, 1]
-    eps = np.finfo(np.float).eps
+    eps = np.finfo(float).eps
     normalised_pitch = bins_per_octave * np.log2(2.0 * (pitch_values + eps) / tonic)
     indexes = np.where(normalised_pitch <= 0)
     normalised_pitch[indexes] = 0

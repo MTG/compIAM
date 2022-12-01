@@ -168,7 +168,7 @@ def write_array(a, path):
             file.write('\n')
 
 
-def read_array(path, dtype=np.float):
+def read_array(path, dtype=float):
     """
     load array from<path>
 

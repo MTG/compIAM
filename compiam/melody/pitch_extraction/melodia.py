@@ -35,7 +35,7 @@ class Melodia:
         For a complete and detailed list of the parameters see the documentation on the
         following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global estd
             import essentia.standard as estd
@@ -99,9 +99,7 @@ class Melodia:
             voicingTolerance=self.voicingTolerance,
         )
         pitch, _ = extractor(audio)
-        TStamps = (
-            np.array(range(0, len(pitch))) * np.float(self.hopSize) / self.sampleRate
-        )
+        TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
         return np.array([TStamps, pitch]).transpose()
 
     @staticmethod

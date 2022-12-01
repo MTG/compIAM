@@ -21,11 +21,11 @@ sobel = np.asarray([[-1, 0, 1],
 
 sobel_x = np.array([[-1, 0, 1],
                     [-2, 0, 2],
-                    [-1, 0, 1]], dtype=np.float)
+                    [-1, 0, 1]], dtype=float)
 
 sobel_y = np.array([[1,  2, 1], 
                     [0,  0, 0], 
-                    [-1,-2,-1]], dtype = np.float)
+                    [-1,-2,-1]], dtype = float)
 
 def remove_diagonal(X):
     X_ = X.copy()

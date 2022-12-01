@@ -4,9 +4,10 @@ import librosa
 
 import numpy as np
 import matplotlib.pyplot as plt
-from compiam.exceptions import ModelNotFoundError
+from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
 
 from compiam.utils import get_logger
+from compiam.data import WORKDIR
 
 logger = get_logger(__name__)
 
@@ -41,7 +42,7 @@ class DhrupadBandishSegmentation:
         :param processed_audios_path: path to file to the processed audio files
         :param device: indicate whether the model will run on the GPU.
         """
-        ###
+        ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch
@@ -83,30 +84,61 @@ class DhrupadBandishSegmentation:
         self.fold = fold
         self.classes = pars.classes_dict[self.mode]
 
-        self.model = self._build_model()
+        # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
+        try:
+            self.model = self._build_model()
+        except:
+            self.device = "cpu"
+            self.model = self._build_model()
         self.model_path = model_path
+        self.trained = False
 
         if self.model_path is not None:
             path_to_model = os.path.join(
-                self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+                self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
             )
-            if not os.path.exists(path_to_model):
-                raise ModelNotFoundError(
-                    """
-                    Given path to model weights not found. Make sure you enter the path correctly.
-                    A training process for the FTA-Net tuned to Carnatic is under development right
-                    now and will be added to the library soon. Meanwhile, we provide the weights in the
-                    latest repository version (https://github.com/MTG/compIAM) so make sure you have these
-                    available before loading the Carnatic FTA-Net.
-                """
-                )
             self.load_model(path_to_model)  # Loading pre-trained model for given mode
 
-        self.splits_path = splits_path
-        self.annotations_path = annotations_path
-        self.features_path = features_path
-        self.original_audios_path = original_audios_path
-        self.processed_audios_path = processed_audios_path
+        self.splits_path = splits_path if splits_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "splits"
+            )
+        self.annotations_path = annotations_path if annotations_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "annotations"
+            )
+        self.features_path = features_path if features_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "features"
+            )
+        self.original_audios_path = original_audios_path if original_audios_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_original"
+            )
+        self.processed_audios_path = processed_audios_path if processed_audios_path is not None \
+            else os.path.join(
+                WORKDIR,
+                "models",
+                "structure",
+                "dhrupad_bandish_segmentation",
+                "audio_sections"
+            )
 
     def _build_model(self):
         """Building non-trained model"""
@@ -121,8 +153,16 @@ class DhrupadBandishSegmentation:
 
         :param path_to_model: path to model weights
         """
+        if not os.path.exists(path_to_model):
+            raise ModelNotFoundError("""
+                Given path to model weights not found. Make sure you enter the path correctly.
+                We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
+                so make sure you have these available before loading the tool.
+            """)
+        self.model = self._build_model()
         self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model.eval()
+        self.trained = True
 
     def update_mode(self, mode):
         """Update mode for the training and sampling. Mode is one of net, voc,
@@ -135,7 +175,7 @@ class DhrupadBandishSegmentation:
         self.mode = mode
         self.classes = pars.classes_dict[mode]
         path_to_model = os.path.join(
-            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+            self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
         )
         self.load_model(path_to_model)
 
@@ -146,26 +186,27 @@ class DhrupadBandishSegmentation:
         """
         self.fold = fold
         path_to_model = os.path.join(
-            self.model_path, self.mode, "saved_model_fold_" + str(self.fold) + ".pt"
+            self.model_path[self.mode], "saved_model_fold_" + str(self.fold) + ".pt"
         )
         self.load_model(path_to_model)
 
     def train(self, verbose=0):
         """Train the Dhrupad Bandish Segmentation model
 
-        :param data_dir: path to extracted features and labels.
         :param verbose: showing details of the model
         """
         print("Splitting audios...")
         split_audios(
-            self.processed_audios_path, self.annotations_path, self.original_audios_path
+            save_dir=self.processed_audios_path,
+            annotations_path=self.annotations_path,
+            audios_path=self.original_audios_path
         )
         print("Extracting features...")
         extract_features(
             self.processed_audios_path,
             self.annotations_path,
             self.features_path,
-            self.mode,
+            self.mode
         )
 
         # generate cross-validation folds for training
@@ -183,10 +224,10 @@ class DhrupadBandishSegmentation:
                     os.path.join(
                         self.splits_path,
                         self.mode,
-                        "fold_" + i_fold + ".csv",
-                        delimiter=",",
-                        dtype="str",
-                    )
+                        "fold_" + i_fold + ".csv"
+                    ),
+                    delimiter=",",
+                    dtype=str
                 )
             )
 
@@ -240,7 +281,7 @@ class DhrupadBandishSegmentation:
         n_idle = 0
 
         if not os.path.exists(os.path.join(self.model_path, self.mode)):
-            os.makedir(os.path.join(self.model_path, self.mode))
+            os.mkdir(os.path.join(self.model_path, self.mode))
 
         for epoch in range(pars.max_epochs):
             if n_idle == 50:
@@ -352,6 +393,7 @@ class DhrupadBandishSegmentation:
                     val_acc_epoch[-1],
                 )
             )
+        self.trained = True
 
     def predict_stm(self, path_to_file, output_dir=None):
         """Predict Dhrupad Bandish Segmentation
@@ -361,15 +403,17 @@ class DhrupadBandishSegmentation:
         """
         if not os.path.exists(path_to_file):
             raise ValueError("Input file not found")
-        if not os.path.exists(output_dir):
-            raise FileNotFoundError(
-                """
-                Folder to store output does not exists or it is not specified. Please enter a valid folder
-                to store the outputs."""
-            )
+        if output_dir is not None:
+            if not os.path.exists(output_dir):
+                os.mkdir(output_dir)
+        if self.trained is False:
+            raise ModelNotTrainedError("""
+                Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper.
+            """)
 
         # load input audio
-        audio, fs = librosa.load(path_to_file, sr=fs)
+        audio, fs = librosa.load(path_to_file, sr=None)
 
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
@@ -391,6 +435,7 @@ class DhrupadBandishSegmentation:
             model_in = (
                 (torch.tensor(chunk).unsqueeze(0)).unsqueeze(1).float().to(self.device)
             )
+            self.model.to(self.device)
             model_out = self.model.forward(model_in)
             model_out = torch.nn.Softmax(1)(model_out).detach().numpy()
             stm_vs_time.append(np.argmax(model_out))
@@ -404,8 +449,12 @@ class DhrupadBandishSegmentation:
         plt.grid("on", linestyle="--", axis="y")
         plt.xlabel("Time (s)", fontsize=12)
         plt.ylabel("Surface tempo multiple", fontsize=12)
-        plt.savefig(
-            os.path.join(
-                output_dir, os.path.basename(path_to_file).replace(".wav", ".png")
+        if output_dir is not None:
+            plt.savefig(
+                os.path.join(
+                    output_dir,
+                    os.path.basename(path_to_file).replace(path_to_file.split(".")[-1], "png")
+                )
             )
-        )
+        else:
+            plt.show()

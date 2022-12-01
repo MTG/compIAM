@@ -21,7 +21,7 @@ def STFT(x, fr, fs, Hop, h):
     window_size = len(h)
     f = fs * np.linspace(0, 0.5, int(np.round(N / 2)), endpoint=True)
     Lh = int(np.floor(float(window_size - 1) / 2))
-    tfr = np.zeros((int(N), len(t)), dtype=np.float)
+    tfr = np.zeros((int(N), len(t)), dtype=float)
 
     for icol in range(0, len(t)):
         ti = int(t[icol])
@@ -66,7 +66,7 @@ def Freq2LogFreqMapping(tfr, f, fr, fc, tc, NumPerOct):
             break
 
     Nest = len(central_freq)
-    freq_band_transformation = np.zeros((Nest - 1, len(f)), dtype=np.float)
+    freq_band_transformation = np.zeros((Nest - 1, len(f)), dtype=float)
     for i in range(1, Nest - 1):
         l = int(round(central_freq[i - 1] / fr))
         r = int(round(central_freq[i + 1] / fr) + 1)
@@ -101,7 +101,7 @@ def Quef2LogFreqMapping(ceps, q, fs, fc, tc, NumPerOct):
             break
     f = 1 / q
     Nest = len(central_freq)
-    freq_band_transformation = np.zeros((Nest - 1, len(f)), dtype=np.float)
+    freq_band_transformation = np.zeros((Nest - 1, len(f)), dtype=float)
     for i in range(1, Nest - 1):
         for j in range(
             int(round(fs / central_freq[i + 1])),

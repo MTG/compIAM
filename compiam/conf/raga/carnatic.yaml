@@ -1,0 +1,61 @@
+anandabhairavi:
+  arohana: ['S', 'G2', 'R2', 'G2', 'M1', 'P', 'D2', 'P', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D2', 'P', 'M1', 'G2', 'R2', 'S']
+
+begada:
+  arohana: ['S', 'G3', 'R2', 'G3', 'M1', 'P', 'D2', 'N2', 'D2', 'P', 'S']
+  avorohana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
+
+bhairavi: 
+  arohana: ['S', 'R2', 'G2', 'M1', 'P', 'D2', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R2', 'S']
+
+bilahari:
+  arohana: ['S', 'R2', 'G3', 'P', 'D2', 'S']
+  avorohana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
+
+kalyani:
+  arohana: ['S', 'R2', 'G3', 'M2', 'P', 'D2', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D2', 'P', 'M2', 'G3', 'R2', 'S']
+
+ritigaula:
+  arohana: ['S', 'G2', 'R2', 'G2', 'M1', 'N2', 'D2', 'M1', 'N2', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D2', 'M1', 'G2', 'M1', 'P', 'M1', 'G2', 'R2', 'S']
+
+sankarabharanam:
+  arohana: ['S', 'R2', 'G3', 'M1', 'P', 'D2', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
+
+todi:
+  arohana: ['S', 'R1', 'G2', 'M1', 'P', 'D1', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D1', 'P', 'M1', 'G2', 'R1', 'S']
+
+varaali:
+  arohana: ['S', 'G1', 'R1', 'G1', 'M2', 'P', 'D1', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D1', 'P', 'M2', 'G1', 'R1', 'S']
+
+kamas:
+  arohana: ['S', 'M1', 'G3', 'M1', 'P', 'D2', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'R2', 'S']
+
+saurastram: 
+  arohana: ['S', 'R1', 'G3', 'M1', 'P', 'M1', 'D2', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D2', 'N2', 'D2', 'P', 'M1', 'G3', 'R1', 'S']
+
+behag: 
+  arohana: ['S', 'G3', 'M1', 'P', 'N3', 'D2', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D2', 'P', 'M2', 'G3', 'M1', 'G3', 'R2', 'S']
+
+surati: 
+  arohana: ['S', 'R2', 'M1', 'P', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D2', 'P', 'M1', 'G3', 'P', 'M1', 'R2', 'S']
+
+sanmukhapriya: 
+  arohana: ['S', 'R2', 'G2', 'M2', 'P', 'D1', 'N2', 'S']
+  avorohana: ['S', 'N2', 'D1', 'P', 'M2', 'G2', 'R2', 'S']
+
+mohanam:
+  arohana: ['S', 'R2', 'G3', 'P', 'D2', 'S']
+  avorohana: ['S', 'D2', 'P', 'G3', 'R2', 'S']
+
+

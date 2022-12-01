@@ -28,6 +28,20 @@ Nonetheless, to get the latest version of the library with the fresher updates, 
     pip install -r requirements.txt
 
 
+License
++++++++
+compIAM is Copyright 2022 Music Technology Group - Universitat Pompeu Fabra
+
+compIAM is released under the terms of the GNU Affero General Public License (v3 or later). 
+See the COPYING file for more information. For the case of a particular tool or implementation 
+that has a specific different licence, this is explicitly specified in the files related to this
+tool, and these terms must be followed.
+
+For any licensing enquires, please contact us at `mtg-info@upf.edu`_.
+
+.. _mtg-info@upf.edu: mailto:mtg-info@upf.edu
+
+
 Citation
 ++++++++
 If you use compIAM for your research, please consider citing our work as:

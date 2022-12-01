@@ -1,7 +1,14 @@
 import os
 import pathlib
 
-WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
+WORKDIR = os.path.join(
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
+    "compiam")
+TESTDIR = os.path.join(
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
+    "tests")
+
+
 
 #############
 # Models Dict
@@ -11,7 +18,7 @@ WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 # 	    {
 #           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
-#           "model_path": "<path_to_model if any>"
+#           "model_path": "<path_to_model>"
 #       }
 
 models_dict = {
@@ -19,15 +26,16 @@ models_dict = {
         "module_name": "compiam.melody.raga_recognition.deepsrgm",
         "class_name": "DEEPSRGM",
         "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models", "melody", "deepsrgm"),
+            "model_path": {
+                "lstm": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "lstm_25_checkpoint.pth"),
+                "gru": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "gru_30_checkpoint.pth"),
+            },
             "mapping_path": os.path.join(
                 WORKDIR,
-                "compiam",
+                "models",
                 "melody",
-                "raga_recognition",
                 "deepsrgm",
-                "conf",
-                "DEEPSRGM_mapping.json",
+                "raga_mapping.json",
             ),
         },
     },
@@ -74,37 +82,11 @@ models_dict = {
         "module_name": "compiam.structure.segmentation.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
-            "model_path": os.path.join(
-                WORKDIR,
-                "models",
-                "structure",
-                "dhrupad_bandish_segmentation",
-                "pretrained_models",
-            ),
-            "splits_path": os.path.join(
-                WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "splits"
-            ),
-            "annotations_path": os.path.join(
-                WORKDIR,
-                "models",
-                "structure",
-                "dhrupad_bandish_segmentation",
-                "annotations",
-            ),
-            "original_audios_path": os.path.join(
-                WORKDIR,
-                "models",
-                "structure",
-                "dhrupad_bandish_segmentation",
-                "audio_original",
-            ),
-            "processed_audios_path": os.path.join(
-                WORKDIR,
-                "models",
-                "structure",
-                "dhrupad_bandish_segmentation",
-                "audio_sections",
-            ),
+            "model_path": {
+                "net": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "net"),
+                "pakh": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "pakh"),
+                "voc": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "voc"),
+            },
         },
     },
 }
@@ -117,7 +99,16 @@ models_dict = {
 #   1. create a dataset loader in mirdata (https://github.com/mir-dataset-loaders/mirdata)
 #   2. add the dataset identifier in this list
 
-datasets_list = ["saraga_carnatic", "saraga_hindustani", "mridangam_stroke"]
+datasets_list = [
+    "saraga_carnatic",
+    "saraga_hindustani",
+    "mridangam_stroke", 
+    "four_way_tabla",
+    "compmusic_carnatic_rhythm",
+    "compmusic_hindustani_rhythm",
+    "compmusic_raga",
+    "compmusic_indian_tonic"
+]
 
 
 ##############

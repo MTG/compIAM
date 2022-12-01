@@ -1,7 +1,7 @@
 .. _datasets:
 
 Load IAM datasets using mirdata
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===============================
 
 compIAM includes an alias function for ``mirdata.initialize()`` to directly
 initialize the mirdata loaders of Indian Art Music datasets.
@@ -13,7 +13,7 @@ initialize the mirdata loaders of Indian Art Music datasets.
     
 
 Access the Dunya corpora
-^^^^^^^^^^^^^^^^^^^^^^^^
+========================
 
 Use the Corpora class to access the Indian Art Music corpora in CompMusic.
 Please note that to access the corpora in CompMusic, you need to first
