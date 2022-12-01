@@ -254,7 +254,7 @@ class FTANetCarnatic(object):
             """)
 
         if not os.path.exists(file_path):
-            raise ValueError("Target audio not found.")
+            raise FileNotFoundError("Target audio not found.")
 
         xlist = []
         timestamps = []

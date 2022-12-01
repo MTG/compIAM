@@ -473,7 +473,12 @@ class AksharaPulseTracker:
         self.wtolHistAv = round(20e-3 / binWidth)
 
     def extract(self, file_path, verbose=True):
-        """TODO
+        """Run extraction of akshara pulses from input audio file
+
+        :param file_path: path to audio for extraction
+        :param verbose: verbose level
+
+        :returns: array of akshara pulses
         """
         # Get onset functions
         onsFns = self.getOnsetFunctions(

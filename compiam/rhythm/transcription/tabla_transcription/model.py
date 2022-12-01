@@ -7,12 +7,10 @@ except:
         "Please install torch using: pip install torch"
     )
 
-# from compiam.utils.core import get_logger
-# logger = get_logger(__name__)
 
-# model definition for resonant bass and resonant both categories
 class onsetCNN(nn.Module):
-    """TODO"""
+    """Model definition for resonant bass and resonant both categories
+    """
 
     def __init__(self):
         super(onsetCNN, self).__init__()
@@ -39,9 +37,9 @@ class onsetCNN(nn.Module):
         return y
 
 
-# model definition for damped category
 class onsetCNN_D(nn.Module):
-    """TODO"""
+    """Model definition for damped category
+    """
 
     def __init__(self):
         super(onsetCNN_D, self).__init__()
@@ -68,9 +66,9 @@ class onsetCNN_D(nn.Module):
         return y
 
 
-# model definition for resonant treble category
 class onsetCNN_RT(nn.Module):
-    """TODO"""
+    """Model definition for resonant treble category
+    """
 
     def __init__(self):
         super(onsetCNN_RT, self).__init__()

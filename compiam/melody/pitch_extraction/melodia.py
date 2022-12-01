@@ -74,7 +74,7 @@ class Melodia:
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         if not os.path.exists(file_path):
-            raise ValueError("Target audio not found.")
+            raise FileNotFoundError("Target audio not found.")
         audio = estd.EqloudLoader(filename=file_path)()
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,

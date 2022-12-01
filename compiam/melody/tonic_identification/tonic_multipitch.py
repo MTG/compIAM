@@ -52,7 +52,7 @@ class TonicIndianMultiPitch:
         :returns: a floating point number representing the tonic of the input recording.
         """
         if not os.path.exists(file_path):
-            raise ValueError("Target audio not found.")
+            raise FileNotFoundError("Target audio not found.")
         audio = estd.MonoLoader(filename=file_path)()
         extractor = estd.TonicIndianArtMusic(
             binResolution=self.binResolution,

@@ -4,7 +4,15 @@ import numpy as np
 
 
 def plot_waveform(file_path, t1, t2, labels=None, sr=44100, output_path=None):
-    """TODO"""
+    """Plotting waveform between two given points with optional labels
+    
+    :param file_path: path audio to plot
+    :param t1: starting point for plotting
+    :param t2: ending point for plotting
+    :param labels: dictionary {time_stamp:label} to plot on top of waveform
+    :param sr: sampling rate
+    :param output_path: optional path (finished with .png) where the plot is saved
+    """
     # get data
     y, _ = librosa.load(file_path, sr=sr)
     y1 = t1 * sr

@@ -86,6 +86,7 @@ class CAEWrapper:
             # unpack parameters to class attributes
             setattr(self, tp, v)
 
+        self.trained = False
         # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
         try:
             self.load_model(model_path)
@@ -174,6 +175,7 @@ class CAEWrapper:
         """
         self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path), strict=False)
+        self.trained = True
 
     def extract_features(self, file_path, sr=None):
         """
