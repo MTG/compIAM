@@ -27,26 +27,6 @@ def create_if_not_exists(path):
         os.makedirs(directory)
 
 
-def load_yaml(path):
-    """Load yaml at <path> to dictionary, d
-
-    :param path: input file
-    """
-    import zope.dottedname.resolve
-
-    def constructor_dottedname(loader, node):
-        value = loader.construct_scalar(node)
-        return zope.dottedname.resolve.resolve(value)
-
-    yaml.add_constructor("!dottedname", constructor_dottedname)
-
-    if not os.path.isfile(path):
-        return None
-    with open(path) as f:
-        d = yaml.load(f, Loader=yaml.FullLoader)
-    return d
-
-
 def get_tool_list(modules):
     """Given sys.modules[__name__], prints out the imported classes
 

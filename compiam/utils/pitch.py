@@ -5,6 +5,7 @@ import numpy as np
 ###############
 # Melody utils
 ###############
+
 def normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     """Normalize pitch given a tonic.
 
@@ -54,6 +55,7 @@ def resampling(pitch, new_len):
 #####################
 ## Pitch Stability ##
 #####################
+
 def extract_stability_mask(pitch, min_stab_sec, hop_sec, var, timestep):
     """
     Extract boolean array corresponding to <pitch> - yes/no does point correspond
@@ -122,6 +124,13 @@ def reduce_stability_mask(stable_mask, min_stab_sec, timestep):
 
 
 def is_stable(seq, max_var):
+    """Compute is sequence of value has stability given an input tolerance
+
+    :param seq: sequence of values to study
+    :param max_var: Maximum tolerance to consider stable/not stable
+
+    :returns: 1 (stable) or 0 (not stable)
+    """
     if None in seq:
         return 0
     seq = seq.astype(float)
