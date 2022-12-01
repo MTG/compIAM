@@ -26,7 +26,7 @@ from .conn import (
     _file_for_document,
     set_token,
 )
-from compiam.io import write_1d_csv, write_2d_csv, write_json, write_scalar_txt
+from compiam.io import write_csv, write_json, write_scalar_txt
 
 
 class Corpora:
@@ -239,9 +239,9 @@ class Corpora:
         elif "section" in subtype:
             write_json(data, location)
         elif "APcurve" in subtype:
-            write_2d_csv(data, location)
+            write_csv(data, location)
         elif ("pitch" in subtype) or ("aksharaTicks" in subtype):
-            write_1d_csv(data, location)
+            write_csv(data, location)
         else:
             raise ValueError(
                 "No writing method available for data type: {} and {}", thetype, subtype

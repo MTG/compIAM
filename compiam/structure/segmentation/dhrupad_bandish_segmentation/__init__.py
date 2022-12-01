@@ -91,6 +91,7 @@ class DhrupadBandishSegmentation:
             self.device = "cpu"
             self.model = self._build_model()
         self.model_path = model_path
+        self.loaded_model_path = None
         self.trained = False
 
         if self.model_path is not None:
@@ -159,10 +160,10 @@ class DhrupadBandishSegmentation:
                 We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
                 so make sure you have these available before loading the tool.
             """)
-        self.model_path = model_path
         self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
+        self.loaded_model_path = model_path
         self.trained = True
 
     def update_mode(self, mode):
@@ -403,7 +404,7 @@ class DhrupadBandishSegmentation:
         :param output_dir: directory to store printed outputs
         """
         if not os.path.exists(file_path):
-            raise ValueError("Input file not found")
+            raise FileNotFoundError("Input file not found")
         if output_dir is not None:
             if not os.path.exists(output_dir):
                 os.mkdir(output_dir)

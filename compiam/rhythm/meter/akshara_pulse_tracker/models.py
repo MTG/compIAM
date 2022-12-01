@@ -8,13 +8,15 @@ Originally created on Sep 12, 2013
 @author: Ajay Srinivasamurthy
 """
 
-from scipy.fft import fft
-import librosa
+import os
 import math
+import librosa
 
 import numpy as np
+
 import scipy.stats as scistats
 import scipy.signal as scisig
+from scipy.fft import fft
 
 from compiam.rhythm.meter.akshara_pulse_tracker import parameters as params
 from compiam.utils import get_logger
@@ -480,6 +482,9 @@ class AksharaPulseTracker:
 
         :returns: array of akshara pulses
         """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
+
         # Get onset functions
         onsFns = self.getOnsetFunctions(
             file_path,
