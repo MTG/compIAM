@@ -103,7 +103,7 @@ def line_through_points(x0, y0, x1, y1):
     return get_x, get_y
 
 
-def extract_segments_new(X):
+def segments_from_matrix(X):
     # size of square array
     n1, n2 = X.shape
 
@@ -194,73 +194,6 @@ def extract_segments_new(X):
         
         if not any([roundit(x1) < roundit(x0), roundit(y1) < roundit(y1)]):
             all_segments.append([(roundit(x0), roundit(y0)), (roundit(x1), roundit(y1))])
-
-    return all_segments
-
-
-def extract_segments(matrix, angle, dist, min_diff, cqt_window, sr, padding=None):
-    """
-    Extract start and end coordinates of non-zero elements along hough line defined
-    by <angle> and <dist>. If <padding>, extend length of each segment by <padding>%
-    along the line.
-    """
-    # traverse hough lines and identify non-zero segments 
-    l = matrix.shape[0]-1
-
-    x, y = get_indices_of_line(l, angle, dist)
-    
-    # line defined outside of grid
-    if x is None:
-        return []
-
-    max_l = len(x)-1
-
-    # Extract the values along the line
-    zi = matrix[x, y]
-
-    # Get index of non-zero elements along line
-    non_zero = np.where(zi != 0)[0]
-    if len(non_zero) == 0:
-        return []
-
-    # Identify segments of continuous non-zero along line
-    segments = []
-    this_segment = []
-    for i in range(len(non_zero)):
-        # First non zero must be a start point of segment
-        if i == 0:
-            this_segment.append(non_zero[i])
-            continue
-
-        # Number of elements along hypotenuse
-        n_elems = non_zero[i] - non_zero[i-1]
-
-        # Time corresponding to gap found between this silence and previous
-        #   - n_elems is length of hypotonuse in cqt space
-        #   - (assume equilateral) divide by sqrt(2) to get adjacent length (length of gap)
-        #   - mulitply by cqt_window and divide by sample rate to get adjacent length in seconds
-        T = (cqt_window * n_elems) / (sr * 2**0.5)
-
-        # If gap is smaller than min_diff, ignore it
-        if T <= min_diff:
-            continue
-        else:
-            # consider gap the end of found segment and store
-            this_segment.append(non_zero[i-1])
-            segments.append(this_segment)
-            this_segment = [non_zero[i]]
-
-    this_segment.append(non_zero[-1])
-
-    if padding:
-        this_segment = extend_segment(this_segment, max_l, padding)
-
-    segments.append(this_segment)
-
-    all_segments = []
-    for i1, i2 in segments:
-        # (x start, y start), (x end, y end)
-        all_segments.append([(x[i1], y[i1]), (x[i2], y[i2])])
 
     return all_segments
 
@@ -412,9 +345,9 @@ def break_segment(segment_pair, mask, cqt_window, sr, timestep):
     stab_y = mask[y_start_ts:y_end_ts]
 
     # If either sequence contains a masked region, divide
-    if any([2 in stab_x, 2 in stab_y]):
-        break_points_x = np.where(stab_x==2)[0]
-        break_points_y = np.where(stab_y==2)[0]
+    if any([1 in stab_x, 1 in stab_y]):
+        break_points_x = np.where(stab_x==1)[0]
+        break_points_y = np.where(stab_y==1)[0]
         if len(break_points_y) > len(break_points_x):
             bpy_ = break_points_y
             # break points x should correspond to the same proportion through the sequence
@@ -481,9 +414,7 @@ def get_overlap(x0, x1, y0, y1):
 
 
 def do_patterns_overlap(x0, x1, y0, y1, perc_overlap):
-    
     o1, o2 = get_overlap(x0, x1, y0, y1)
-
     return o1>perc_overlap and o2>perc_overlap
 
 
@@ -1610,7 +1541,7 @@ def get_segment_grouping(new_segments, matches_dict, silence_and_stable_mask, cq
 def group_segments(all_segments, min_length_cqt, match_tol, silence_and_stable_mask, cqt_window, timestep, sr, raw_pitch):
     print('...learning relationship between (sub)segments\n')
     new_segments, contains_dict, is_subset_dict, shares_common = learn_relationships(all_segments, min_length_cqt, raw_pitch, cqt_window, sr, timestep)
-
+    
     print('...identifying matches\n')
     matches_dict = get_matches_dict(new_segments, min_length_cqt, match_tol)
     
@@ -1756,7 +1687,7 @@ def group_overlapping(all_groups, dupl_perc_overlap, group_len_var):
             # If already paired, do not compute distance
             if i in group_match_dict[j] or j in group_match_dict[i]:
                 continue
-
+            
             if same_group(ag1, ag2, dupl_perc_overlap, group_len_var, 1):
                 update_dict(group_match_dict, i, j)
                 update_dict(group_match_dict, j, i)

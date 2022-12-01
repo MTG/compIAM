@@ -280,23 +280,3 @@ def save_object(obj, filename):
     with open(filename, 'wb') as outp:  # Overwrites any existing file.
         pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
 
-
-def run_or_cache(func, inputs, cache):
-    if os.path.isfile(cache):
-        try:
-            print(f'loading from cache, {cache}')
-            file = open(cache,'rb')
-            results = pickle.load(file)
-            return results
-        except:
-            print('Error loading from cache, recomputing')
-    print(f'running function {func.__name__}')
-    results = func(*inputs)
-    try:
-        create_if_not_exists(cache)
-        save_object(results, cache)
-    except:
-        print('Error saving object')
-    return results
-
-    

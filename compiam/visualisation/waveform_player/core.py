@@ -46,6 +46,8 @@ def local_text(filename):
 def make_playlist_iframe(titles, files, gains = None, mutes = None, solos = None, annotations=None, template_name="multi-channel.html"):
     templateLoader = jinja2.FileSystemLoader(searchpath=WPDIR)
     templateEnv = jinja2.Environment(loader=templateLoader)
+    print(WPDIR)
+    print(template_name)
     template = templateEnv.get_template(template_name)
 
     return template.render({
