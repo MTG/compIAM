@@ -4,15 +4,11 @@ import pandas as pd
 
 import librosa
 
-from spleeter.separator import Separator
-from spleeter.audio.adapter import AudioAdapter
-
-import essentia.standard as estd
-
 from scipy.ndimage import gaussian_filter1d
 
 from compiam.melody.pattern.sancara_search.extraction.sequence import get_stability_mask, add_center_to_mask
 from compiam.melody.pattern.sancara_search.extraction.io import get_timeseries, write_timeseries
+from compiam.utils.pitch import interpolate_below_length
 
 def pitch_to_cents(p, tonic):
     """
@@ -58,36 +54,6 @@ def pitch_seq_to_cents(pseq, tonic):
     :rtype: np.array
     """
     return np.vectorize(lambda y: pitch_to_cents(y, tonic))(pseq)
-
-
-def interpolate_below_length(arr, val, gap):
-    """
-    Interpolate gaps of value, <val> of 
-    length equal to or shorter than <gap> in <arr>
-    
-    :param arr: Array to interpolate
-    :type arr: np.array
-    :param val: Value expected in gaps to interpolate
-    :type val: number
-    :param gap: Maximum gap length to interpolate, gaps of <val> longer than <g> will not be interpolated
-    :type gap: number
-
-    :return: interpolated array
-    :rtype: np.array
-    """
-    s = np.copy(arr)
-    is_zero = s == val
-    cumsum = np.cumsum(is_zero).astype('float')
-    diff = np.zeros_like(s)
-    diff[~is_zero] = np.diff(cumsum[~is_zero], prepend=0)
-    for i,d in enumerate(diff):
-        if d <= gap:
-            s[int(i-d):i] = np.nan
-    interp = pd.Series(s).interpolate(method='linear', axis=0)\
-                         .ffill()\
-                         .bfill()\
-                         .values
-    return interp
 
 
 def silence_stability_from_file(inpath, outpath, tonic=None, min_stability_length_secs=1, stab_hop_secs=0.2, freq_var_thresh_stab=8, gap_interp=0.250):
