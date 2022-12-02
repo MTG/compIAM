@@ -45,19 +45,6 @@ def _test_model():
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
 
-    #dbs.load_model(
-    #    os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "voc")
-    #)
-
-    #dbs.predict_stm(
-    #    file_path=os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"),
-    #    output_dir=os.path.join(TESTDIR, "resources", "melody")
-    #)
-
-    #subprocess.run(
-    #    ["rm", os.path.join(TESTDIR, "resources", "melody", "pitch_test.png")]
-    #)
-
 
 @pytest.mark.torch
 def test_predict_tf():
