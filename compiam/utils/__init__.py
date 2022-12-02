@@ -2,7 +2,19 @@ import os
 import yaml
 import inspect
 import logging
+import pathlib
+import pickle
+import IPython.display as ipd
 
+import difflib
+
+from compiam.io import save_object
+from compiam.utils.pitch import cents_to_pitch
+
+WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
+
+svara_cents_carnatic_path = os.path.join(WORKDIR, "..", "conf", "raga", "svara_cents.yaml")
+svara_lookup_carnatic_path = os.path.join(WORKDIR, "..", "conf", "raga", "carnatic.yaml")
 
 def get_logger(name):
     logging.basicConfig(
@@ -57,3 +69,103 @@ def get_tool_list(modules):
         if inspect.isclass(obj):
             list_of_tools.append(obj.__name__)
     return list_of_tools
+
+
+
+def run_or_cache(func, inputs, cache):
+    """
+    Run function, <func> with inputs, <inputs> and save
+    to <cache>. If <cache> already exists, load rather than
+    run anew
+
+    :param func: python function
+    :type func: function
+    :param inputs: parameters to pass to <func>, in order
+    :type inputs: tuple
+    :param cache: .pkl filepath
+    :type cache: str or None
+
+    :returns: output of <func>
+    :rtype: equal to type returned by <func>
+    """
+    if cache:
+        if os.path.isfile(cache):
+            try:
+                file = open(cache,'rb')
+                results = pickle.load(file)
+                return results
+            except:
+                print('Error loading from cache, recomputing')
+    results = func(*inputs)
+
+    if cache:
+        try:
+            create_if_not_exists(cache)
+            save_object(results, cache)
+        except Exception as e:
+            print(f'Error saving object: {e}')
+    
+    return results
+
+
+def myround(x, base=5):
+    return base * round(x/base)
+
+
+def get_timestamp(secs, divider='-'):
+    """
+    Convert seconds into timestamp
+
+    :param secs: seconds
+    :type secs: int
+    :param divider: divider between minute and second, default "-"
+    :type divider: str
+
+    :return: timestamp
+    :rtype: str
+    """
+    minutes = int(secs/60)
+    seconds = round(secs%60, 2)
+    return f'{minutes}min{divider}{seconds}sec'
+
+
+def ipy_audio(y, t1, t2, sr=44100):
+    y_ = y[round(t1*sr):round(t2*sr)]
+    return ipd.Audio(y_, rate=sr, autoplay=False)
+
+
+def get_svara_pitch_carnatic(raga, tonic=None):
+    svara_pitch = get_svara_pitch(raga, tonic, svara_cents_carnatic_path, svara_lookup_carnatic_path)
+    return svara_pitch
+
+
+def get_svara_pitch(raga, tonic, svara_cents_path, svara_lookup_path):
+    
+    svara_cents = load_yaml(svara_cents_path)
+    svara_lookup = load_yaml(svara_lookup_path)
+    
+    if not raga in svara_lookup:
+        all_ragas = list(svara_lookup.keys())
+        close = difflib.get_close_matches(raga, all_ragas)
+        error_message = f"Raga, {raga} not available in conf."
+        if close:
+            error_message += f" Nearest matches: {close}"
+        raise ValueError(error_message)
+    
+    arohana = svara_lookup[raga]['arohana']
+    avorohana = svara_lookup[raga]['avorohana']
+    all_svaras = list(set(arohana+avorohana))
+    
+    if tonic:
+        svara_pitch = {cents_to_pitch(k,tonic):v for k,v in svara_cents.items()}
+    else:
+        svara_pitch = svara_cents
+
+    final_dict = {}
+    for svara in all_svaras:
+        for c, sl in svara_pitch.items():
+            for s in sl:
+                if svara==s:
+                    final_dict[c]=s
+    
+    return final_dict
