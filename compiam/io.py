@@ -3,6 +3,7 @@ import csv
 import json
 import yaml
 
+import compiam.utils
 
 def write_csv(data, out_path, header=None):
     """Writing two dimensional data into a file (.csv)
@@ -20,6 +21,33 @@ def write_csv(data, out_path, header=None):
             writer.writerow(header)
         for row in D:
             writer.writerow(row)
+
+
+def save_object(obj, filename):
+    import pickle
+    with open(filename, 'wb') as outp:  # Overwrites any existing file.
+        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
+
+
+def write_json(j, path):
+    """
+    Write json, <j>, to <path>
+
+    :param j: json
+    :type path: json
+    :param path: path to write to, 
+        if the directory doesn't exist, one will be created
+    :type path: str
+    """ 
+    compiam.utils.create_if_not_exists(path)
+    # Opening JSON file 
+    with open(path, 'w') as f:
+        json.dump(j, f)
+
+
+#####################
+# Dunya writing utils
+#####################
 
 
 def write_json(sections, output_path):

@@ -135,9 +135,9 @@ def plot_pitch(
     plt.plot(times_samp, pitch_masked_samp, linewidth=0.7)
 
     if yticks_dict:
-        tick_names = list(yticks_dict.keys())
+        tick_names = list(yticks_dict.values())
         tick_loc = [pitch_to_cents(p, tonic) if cents else p \
-                    for p in yticks_dict.values()]
+                    for p in yticks_dict.keys()]
         ax.set_yticks(tick_loc)
         ax.set_yticklabels(tick_names)
     

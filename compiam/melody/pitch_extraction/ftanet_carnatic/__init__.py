@@ -260,7 +260,6 @@ class FTANetCarnatic(object):
         xlist = []
         timestamps = []
 
-        print("CFP process in {}".format(file_path))
         y, _ = librosa.load(file_path, sr=self.sample_rate)
         audio_len = len(y)
         batch_min = self.sample_rate * 60 * batch_size
@@ -293,6 +292,9 @@ class FTANetCarnatic(object):
             estimation = get_est_arr(self.model, xlist, timestamps, batch_size=16)
             freqs = estimation[:, 1]
         TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
+
+        freqs[freqs<50] = 0
+        
         output = np.array([TStamps, freqs]).transpose()
 
         if out_step is not None:
