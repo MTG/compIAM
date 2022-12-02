@@ -1,6 +1,8 @@
 include ACKNOWLEDGEMENTS
+include COPYING
 include AUTHORS
 include requirements.txt
+include optional_requirements.txt
 recursive-include compiam/models *
 recursive-include compiam/conf *
 recursive-include compiam/visualisation/waveform_player/waveform-playlist *
