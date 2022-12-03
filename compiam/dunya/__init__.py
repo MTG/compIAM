@@ -72,7 +72,7 @@ class Corpora:
         """Get specific information about a recording.
 
         :param rmbid: A recording MBID.
-        :returns: mbid, title, artists, raaga, taala, work.
+        :returns: mbid, title, artists, raga, tala, work.
             ``artists`` includes performance relationships attached to the recording, the release, and the release artists.
         """
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
@@ -129,47 +129,47 @@ class Corpora:
         """Get specific information about a work.
 
         :param wmbid: A work mbid.
-        :returns: mbid, title, composers, raagas, taalas, recordings.
+        :returns: mbid, title, composers, ragas, talas, recordings.
         """
         return _dunya_query_json("api/" + self.tradition + "/work/%s" % (wmbid))
 
-    def list_raagas(self):
-        """List the raagas in the database. This function will automatically page through API results.
+    def list_ragas(self):
+        """List the ragas in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing raaga information:
-            ``{"uuid": raaga UUID, "name": name of the raaga}``
-            For additional information about each raaga use :func:`get_raaga`.
+        :returns: A list of dictionaries containing raga information:
+            ``{"uuid": raga UUID, "name": name of the raga}``
+            For additional information about each raga use :func:`get_raga`.
         """
-        return _get_paged_json("api/" + self.tradition + "/raaga")
+        return _get_paged_json("api/" + self.tradition + "/raga")
 
-    def get_raaga(self, rid):
-        """Get specific information about a raaga.
+    def get_raga(self, raga_id):
+        """Get specific information about a raga.
 
-        :param rid: A raaga id or uuid.
+        :param raga_id: A raga id or uuid.
         :returns: uuid, name, artists, works, composers.
             ``artists`` includes artists with recording- and release-
-            level relationships to a recording with this raaga.
+            level relationships to a recording with this raga.
         """
-        return _dunya_query_json("api/" + self.tradition + "/raaga/%s" % str(rid))
+        return _dunya_query_json("api/" + self.tradition + "/raga/%s" % str(raga_id))
 
-    def list_taalas(self):
-        """List the taalas in the database. This function will automatically page through API results.
+    def list_talas(self):
+        """List the talas in the database. This function will automatically page through API results.
 
-        :returns: A list of dictionaries containing taala information:
-            ``{"uuid": taala UUID, "name": name of the taala}``
-            For additional information about each taala use :func:`get_taala`.
+        :returns: A list of dictionaries containing tala information:
+            ``{"uuid": tala UUID, "name": name of the tala}``
+            For additional information about each tala use :func:`get_tala`.
         """
-        return _get_paged_json("api/" + self.tradition + "/taala")
+        return _get_paged_json("api/" + self.tradition + "/tala")
 
-    def get_taala(self, tid):
-        """Get specific information about a taala.
+    def get_tala(self, tala_id):
+        """Get specific information about a tala.
 
-        :param tid: A taala id or uuid.
+        :param tala_id: A tala id or uuid.
         :returns: uuid, name, artists, works, composers.
             ``artists`` includes artists with recording- and release-
-            level relationships to a recording with this raaga.
+            level relationships to a recording with this raga.
         """
-        return _dunya_query_json("api/" + self.tradition + "/taala/%s" % str(tid))
+        return _dunya_query_json("api/" + self.tradition + "/tala/%s" % str(tala_id))
 
     def list_instruments(self):
         """List the instruments in the database. This function will automatically page through API results.
@@ -180,34 +180,34 @@ class Corpora:
         """
         return _get_paged_json("api/" + self.tradition + "/instrument")
 
-    def get_instrument(self, iid):
+    def get_instrument(self, instrument_id):
         """Get specific information about an instrument.
 
-        :param iid: An instrument id
+        :param instrument_id: An instrument id
         :returns: id, name, artists.
             ``artists`` includes artists with recording- and release-
             level performance relationships of this instrument.
         """
-        return _dunya_query_json("api/" + self.tradition + "/instrument/%s" % str(iid))
+        return _dunya_query_json("api/" + self.tradition + "/instrument/%s" % str(instrument_id))
 
     @staticmethod
-    def list_available_types(recordingid):
+    def list_available_types(recording_id):
         """Get the available source filetypes for a Musicbrainz recording.
 
-        :param recordingid: Musicbrainz recording ID.
+        :param recording_id: Musicbrainz recording ID.
         :returns: a list of filetypes in the database for this recording.
         """
-        document = _dunya_query_json("document/by-id/%s" % recordingid)
+        document = _dunya_query_json("document/by-id/%s" % recording_id)
         return {
             x: list(document["derivedfiles"][x].keys())
             for x in list(document["derivedfiles"].keys())
         }
 
     @staticmethod
-    def get_annotation(recordingid, thetype, subtype=None, part=None, version=None):
+    def get_annotation(recording_id, thetype, subtype=None, part=None, version=None):
         """Alias function of _file_for_document in the Corpora class.
 
-        :param recordingid: Musicbrainz recording ID.
+        :param recording_id: Musicbrainz recording ID.
         :param thetype: the computed filetype.
         :param subtype: a subtype if the module has one.
         :param part: the file part if the module has one.
@@ -215,16 +215,16 @@ class Corpora:
         :returns: The contents of the most recent version of the derived file.
         """
         return _file_for_document(
-            recordingid, thetype, subtype=subtype, part=part, version=version
+            recording_id, thetype, subtype=subtype, part=part, version=version
         )
 
     @staticmethod
     def save_annotation(
-        recordingid, thetype, location, subtype=None, part=None, version=None
+        recording_id, thetype, location, subtype=None, part=None, version=None
     ):
         """A version of get_annotation that writes the parsed data into a file.
 
-        :param recordingid: Musicbrainz recording ID.
+        :param recording_id: Musicbrainz recording ID.
         :param thetype: the computed filetype.
         :param subtype: a subtype if the module has one.
         :param part: the file part if the module has one.
@@ -232,7 +232,7 @@ class Corpora:
         :returns: None (a file containing the parsed data is written).
         """
         data = _file_for_document(
-            recordingid, thetype, subtype=subtype, part=part, version=version
+            recording_id, thetype, subtype=subtype, part=part, version=version
         )
         if ("tonic" in subtype) or ("aksharaPeriod" in subtype):
             write_scalar_txt(data, location)
@@ -247,17 +247,17 @@ class Corpora:
                 "No writing method available for data type: {} and {}", thetype, subtype
             )
 
-    def download_mp3(self, recordingid, output_dir):
+    def download_mp3(self, recording_id, output_dir):
         """Download the mp3 of a document and save it to the specificed directory.
 
-        :param recordingid: The MBID of the recording.
+        :param recording_id: The MBID of the recording.
         :param output_dir: Where to save the mp3 to.
         :returns: name of the saved file.
         """
         if not os.path.exists(output_dir):
             raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
 
-        recording = self.get_recording(recordingid)
+        recording = self.get_recording(recording_id)
         if "concert" in list(recording.keys()):
             concert = self.get_concert(recording["concert"][0]["mbid"])
             title = recording["title"]
@@ -265,22 +265,22 @@ class Corpora:
             name = "%s - %s.mp3" % (artists, title)
             name = name.replace("/", "-")
         else:
-            name = recordingid + ".mp3"
-        contents = get_mp3(recordingid)
+            name = recording_id + ".mp3"
+        contents = get_mp3(recording_id)
         path = os.path.join(output_dir, name)
         open(path, "wb").write(contents)
         return name
 
-    def download_concert(self, concertid, output_dir):
+    def download_concert(self, concert_id, output_dir):
         """Download the mp3s of all recordings in a concert and save them to the specificed directory.
 
-        :param concertid: The MBID of the concert.
+        :param concert_id: The MBID of the concert.
         :param location: Where to save the mp3s to.
         """
         if not os.path.exists(output_dir):
             raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
 
-        concert = self.get_concert(concertid)
+        concert = self.get_concert(concert_id)
         artists = " and ".join([a["name"] for a in concert["concert_artists"]])
         concertname = concert["title"]
         concertdir = "%s - %s" % (artists, concertname)
@@ -295,11 +295,11 @@ class Corpora:
                 raise
 
         for r in concert["recordings"]:
-            rid = r["mbid"]
+            raga_id = r["mbid"]
             title = r["title"]
             disc = r["disc"]
             disctrack = r["disctrack"]
-            contents = get_mp3(rid)
+            contents = get_mp3(raga_id)
             name = "%s - %s - %s - %s.mp3" % (disc, disctrack, artists, title)
             path = os.path.join(concertdir, name)
             open(path, "wb").write(contents)

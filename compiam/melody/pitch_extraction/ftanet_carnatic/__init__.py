@@ -20,7 +20,7 @@ class FTANetCarnatic(object):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
-        :param sample_rate: Sample rate to which we audio is sampled for extraction.
+        :param sample_rate: Sample rate to which the audio is sampled for extraction.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
