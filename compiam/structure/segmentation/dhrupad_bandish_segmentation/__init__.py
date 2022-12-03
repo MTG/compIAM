@@ -91,6 +91,7 @@ class DhrupadBandishSegmentation:
             self.device = "cpu"
             self.model = self._build_model()
         self.model_path = model_path
+        self.loaded_model_path = None
         self.trained = False
 
         if self.model_path is not None:
@@ -148,20 +149,21 @@ class DhrupadBandishSegmentation:
             .to(self.device)
         )
 
-    def load_model(self, path_to_model):
+    def load_model(self, model_path):
         """Loading weights for model, given self.mode and self.fold
 
-        :param path_to_model: path to model weights
+        :param model_path: path to model weights
         """
-        if not os.path.exists(path_to_model):
+        if not os.path.exists(model_path):
             raise ModelNotFoundError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
                 We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
                 so make sure you have these available before loading the tool.
             """)
         self.model = self._build_model()
-        self.model.load_state_dict(torch.load(path_to_model, map_location=self.device))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
+        self.loaded_model_path = model_path
         self.trained = True
 
     def update_mode(self, mode):
@@ -395,14 +397,14 @@ class DhrupadBandishSegmentation:
             )
         self.trained = True
 
-    def predict_stm(self, path_to_file, output_dir=None):
+    def predict_stm(self, file_path, output_dir=None):
         """Predict Dhrupad Bandish Segmentation
 
-        :param path_to_file: path of the input file
+        :param file_path: path of the input file
         :param output_dir: directory to store printed outputs
         """
-        if not os.path.exists(path_to_file):
-            raise ValueError("Input file not found")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Input file not found")
         if output_dir is not None:
             if not os.path.exists(output_dir):
                 os.mkdir(output_dir)
@@ -413,7 +415,7 @@ class DhrupadBandishSegmentation:
             """)
 
         # load input audio
-        audio, fs = librosa.load(path_to_file, sr=None)
+        audio, fs = librosa.load(file_path, sr=None)
 
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
@@ -453,7 +455,7 @@ class DhrupadBandishSegmentation:
             plt.savefig(
                 os.path.join(
                     output_dir,
-                    os.path.basename(path_to_file).replace(path_to_file.split(".")[-1], "png")
+                    os.path.basename(file_path).replace(file_path.split(".")[-1], "png")
                 )
             )
         else:

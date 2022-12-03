@@ -135,27 +135,27 @@ class DEEPSRGM(object):
 
     def get_features(
         self,
-        audio_file=None,
-        pitch_file=None,
-        tonic_file=None,
+        audio_path=None,
+        pitch_path=None,
+        tonic_path=None,
         from_mirdata=False,
         track_id=None,
         k=5,
     ):
         """Computing features for prediction of DEEPSRM
 
-        :param audio_file: path to file from which to extract the features
-        :param pitch_file: path to pre-computed pitch file (if available)
-        :param tonic_file: path to pre-computed tonic file (if available)
+        :param audio_path: path to file from which to extract the features
+        :param pitch_path: path to pre-computed pitch file (if available)
+        :param tonic_path: path to pre-computed tonic file (if available)
         :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
             Indian Art Music Raga Recognition Dataset (must be specifically this one)
         :param track_id: track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is
             set to True
         :param k: k indicating the precision of the pitch feature.
         """
-        if (pitch_file is not None) and (tonic_file is not None):
-            freqs = open(pitch_file).read().strip().split("\n")
-            tonic = eval(open(tonic_file).read().strip())
+        if (pitch_path is not None) and (tonic_path is not None):
+            freqs = open(pitch_path).read().strip().split("\n")
+            tonic = eval(open(tonic_path).read().strip())
 
         elif from_mirdata:
             if track_id is None:
@@ -180,15 +180,15 @@ class DEEPSRGM(object):
                     "In order to use these tools to extract the features you need to have essentia installed."
                     "Please install essentia using: pip install essentia"
                 )
-            if not os.path.exists(audio_file):
+            if not os.path.exists(audio_path):
                 raise FileNotFoundError("Input audio not found.")
             print("Extracting pitch track using melodia...")
-            freqs = melodia.extract(audio_file)[:, 1]
+            freqs = melodia.extract(audio_path)[:, 1]
 
-            if not os.path.exists(audio_file):
+            if not os.path.exists(audio_path):
                 raise FileNotFoundError("Input audio not found.")
             print("Extracting tonic using multi-pitch approach...")
-            tonic = tonic_extraction.extract(audio_file)
+            tonic = tonic_extraction.extract(audio_path)
 
         # Normalise pitch
         feature = np.round(1200 * np.log2(freqs / tonic) * (k / 100)).clip(0)

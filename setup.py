@@ -15,7 +15,7 @@ setup(
             "models/*",
             "conf/*",
             "visualisation/waveform_player/waveform-playlist/*",
-            "utils/augmentation/*",
+            "utils/augment/*",
             "utils/NMFtoolbox/*",
             "notebooks/*"
         ]

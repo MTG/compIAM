@@ -67,15 +67,15 @@ class Melodia:
         self.voiceVibrato = voiceVibrato
         self.voicingTolerance = voicingTolerance
 
-    def extract(self, path_to_audio):
+    def extract(self, file_path):
         """Extract the melody from a given file.
 
-        :param filename: path to file to extract.
+        :param file_path: path to file to extract.
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
-        if not os.path.exists(path_to_audio):
-            raise ValueError("Target audio not found.")
-        audio = estd.EqloudLoader(filename=path_to_audio)()
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
+        audio = estd.EqloudLoader(filename=file_path)()
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,
             filterIterations=self.filterIterations,

@@ -10,12 +10,21 @@ logger = get_logger(__name__)
 
 
 class FourWayTabla:
-    """TODO"""
+    """Four Way Tabla
+    """
 
     def __init__(
         self, model_path=None, n_folds=3, seq_length=15, hop_dur=10e-3, device=None
     ):
-        """TODO"""
+        """Four Way Tabla tool init method
+        
+        :param model_path: path to model weights
+        :param n_folds: number of validation folds
+        :param seq_length: length of sequence for training
+        :param hop_dur: hop size
+        :param device: device where to allocate the model
+
+        """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
@@ -54,6 +63,7 @@ class FourWayTabla:
             "RB": onsetCNN,
             "B": onsetCNN,
         }
+        self.trained = False
         self.models = {}
         self.stats = None
         self.n_folds = n_folds
@@ -72,7 +82,10 @@ class FourWayTabla:
             
 
     def load_models(self, model_path):
-        """TODO"""
+        """Loading models for each stroke type
+        
+        :param model_path: Path to directoy where all models live
+        """
         stats_path = os.path.join(model_path, "means_stds.npy")
         self.stats = np.load(stats_path)
         for cat in self.categories:
@@ -88,8 +101,18 @@ class FourWayTabla:
                 model.eval()
 
                 self.models[cat][fold] = model
+                self.trained = True
 
     def train_epoch(self, model, training_generator, optimizer, criterion=None):
+        """Train the four-way tabla transcription model for a single epoch
+        
+        :param model: train model instance
+        :param validation_generator: training set batch data generator
+        :param optimizer: optimizer to user for training
+        :param criterion: criterion to compute loss per estimation
+
+        :returns: model and average loss
+        """
         # Torch is imported inside __init__
         if criterion == None:
             criterion = torch.nn.BCELoss(reduction="none")
@@ -125,7 +148,14 @@ class FourWayTabla:
         return model, loss_epoch / n_batch
 
     def validate(self, model, criterion, validation_generator):
-        """TODO"""
+        """Validate a trained model for the Four Way Tabla tool
+        
+        :param model: train model instance
+        :param criterion: criterion to compute loss per estimation
+        :param validation_generator: validation set batch data generator
+
+        :returns: model and average loss
+        """
         model.eval()
         n_batch = 0
         loss_epoch = 0
@@ -151,7 +181,7 @@ class FourWayTabla:
 
     def train(
         self,
-        model_path,
+        data_path,
         categories=["D", "RT", "RB", "B"],
         model_kwargs={},
         criterion=None,
@@ -170,6 +200,22 @@ class FourWayTabla:
     ):
         """Train 4-way model on input data. By default, four separate models will be trained on
         the input data. Adam optimizer
+
+        :param data_path: path to workspace
+        :param categories: model categories
+        :param criterion: threshold for prediction decision
+        :param max_epochs: maximum number of parameters
+        :param early_stop_patience: early stopping parameter
+        :param lr: learning rate
+        :param val_fold: fold identifier for validation
+        :param batch_size: size of data batches
+        :param num_workers: number of workers to perform the task
+        :param seq_length: length of sequence to use for training
+        :param n_channels: number of channels of featues
+        :param gpu_id: ID of the GPU to allocate the model
+        :param aug_method: data augmentation strategy to use
+        :param model_save_dir: directory to save the trained model
+        :param plot_save_dir: directory to save the loss plots
         """
         if not isinstance(categories, (np.ndarray, list)):
             categories = [categories]
@@ -205,7 +251,7 @@ class FourWayTabla:
 
             logger.info("Getting train and val generators")
             training_generator, validation_generator = self.get_generators(
-                model_path,
+                data_path,
                 aug_method,
                 val_fold,
                 c,
@@ -259,13 +305,22 @@ class FourWayTabla:
                 )
                 plot_losses(train_loss_epoch, val_loss_epoch, plot_save_filepath)
 
-    def predict(self, path_to_audio, predict_thresh=0.3):
-        """TODO"""
+    def predict(self, file_path, predict_thresh=0.3):
+        """Predict tabla onsets and stroke types in a given file path
+        
+        :param file_path: path to file for inference
+        :param predict_thresh: threshold for prediction decision
+
+        :returns: model and average loss
+        """
         if not self.models:
             raise ModelNotTrainedError("Please load or train model before predicting")
 
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
+
         # get log-mel-spectrogram of audio
-        melgrams = gen_melgrams(path_to_audio, stats=self.stats)
+        melgrams = gen_melgrams(file_path, stats=self.stats)
 
         # get frame-wise onset predictions
         n_frames = melgrams.shape[-1] - self.seq_length
@@ -303,7 +358,7 @@ class FourWayTabla:
 
     def get_generators(
         self,
-        model_path,
+        data_path,
         aug_method,
         fold,
         category,
@@ -312,6 +367,19 @@ class FourWayTabla:
         batch_size,
         num_workers,
     ):
+        """Get data batch generators for training and testing
+        
+        :param data_path: path to workspace
+        :param aug_method: data augmentation strategy to use
+        :param fold: fold identifier for validation
+        :param category: category of the model
+        :param seq_length: length of sequence to use for training
+        :param n_channels: number of channels of featues
+        :param batch_size: size of data batches
+        :param num_workers: number of workers to perform the task
+
+        :returns: training generator, validation generator
+        """
         # make train-val splits
         logger.info("Making train-val splits")
         # these are temp files that will be created and overwritten during every
@@ -319,15 +387,15 @@ class FourWayTabla:
         # and weights to be applied during loss computation
         train_val_data_filepaths = {
             "train": os.path.join(
-                model_path, f"labels_weights_train_{aug_method}.hdf5"
+                data_path, f"labels_weights_train_{aug_method}.hdf5"
             ),
             "validation": os.path.join(
-                model_path, f"labels_weights_val_{aug_method}.hdf5"
+                data_path, f"labels_weights_val_{aug_method}.hdf5"
             ),
         }
 
         # get list of audios in each CV fold
-        split_dir = os.path.join(model_path, "cv_folds", "")
+        split_dir = os.path.join(data_path, "cv_folds", "")
         folds = {"val": fold, "train": np.delete([0, 1, 2], fold)}
         splits = dict(
             zip(
@@ -343,10 +411,10 @@ class FourWayTabla:
 
         # create training and validation splits of data and save them to disk as temporary files
         labels_weights_orig_filepath = os.path.join(
-            model_path, f"labels_weights_orig_{category}.hdf5"
+            data_path, f"labels_weights_orig_{category}.hdf5"
         )
         labels_weights_aug_filepath = os.path.join(
-            model_path, f"labels_weights_{aug_method}_{category}.hdf5"
+            data_path, f"labels_weights_{aug_method}_{category}.hdf5"
         )
         make_train_val_split(
             folds,
@@ -357,14 +425,14 @@ class FourWayTabla:
 
         # load all melgram-label pairs as a dict to memory for faster training (ensure sufficient RAM size apriori)
         songlist_orig = np.loadtxt(
-            os.path.join(model_path, "songlists", "songlist_orig.txt"), dtype=str
+            os.path.join(data_path, "songlists", "songlist_orig.txt"), dtype=str
         )
         songlist_aug = np.loadtxt(
             os.path.join(
-                model_path, "songlists", "songlist_" + str(aug_method) + ".txt"
+                data_path, "songlists", "songlist_" + str(aug_method) + ".txt"
             ),
         )
-        mel_data = load_mel_data(model_path, folds, splits, songlist_orig, songlist_aug)
+        mel_data = load_mel_data(data_path, folds, splits, songlist_orig, songlist_aug)
 
         # data loaders
         params = {"batch_size": batch_size, "shuffle": True, "num_workers": num_workers}
