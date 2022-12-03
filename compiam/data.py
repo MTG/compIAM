@@ -44,7 +44,7 @@ models_dict = {
         "class_name": "FTANetCarnatic",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "melody", "ftanet", "carnatic", "carnatic.data-00000-of-00001"
+                WORKDIR, "models", "melody", "ftanet", "carnatic", "carnatic"
             ),
             "sample_rate": 8000,
         },
