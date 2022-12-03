@@ -75,5 +75,5 @@ tests/resources/mir_datasets/*
 
 # For next release
 compiam/models/rhythm/4wayTabla/
-compiam/tests/rhythm/test_4way_tabla.py
+tests/rhythm/test_4way_tabla.py
 compiam/rhythm/transcription/tabla_transcription/
