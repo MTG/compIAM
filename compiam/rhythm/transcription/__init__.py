@@ -3,7 +3,6 @@ import sys
 from compiam.utils import get_tool_list
 from compiam.data import models_dict
 
-from compiam.rhythm.transcription.tabla_transcription import FourWayTabla
 from compiam.rhythm.transcription.mnemonic_transcription import MnemonicTranscription
 
 # Show user the available tools

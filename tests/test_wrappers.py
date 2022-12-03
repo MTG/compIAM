@@ -50,14 +50,10 @@ def _load_tf_models():
 
 def _load_torch_models():
     from compiam import load_model
-    from compiam.rhythm.transcription.tabla_transcription import FourWayTabla
     from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
         DhrupadBandishSegmentation,
     )
-
-    tabla_class = load_model("rhythm:4way-tabla")
     dhrupad_segmentation = load_model("structure:dhrupad-bandish-segmentation")
-    assert type(tabla_class) == FourWayTabla
     assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 
 
