@@ -73,33 +73,33 @@ class MnemonicTranscription:
         self.feature_kwargs = feature_kwargs
         self.trained = False
 
-    def train(self, filepaths_audio, filepaths_annotation, sr=None):
+    def train(self, file_paths_audio, file_paths_annotation, sr=None):
         """
         Train one gaussian mixture model hidden markov model for each syllables passed at initialisation
-        on input audios and annotations passed via <filepaths_audio> and <filepaths_annotation>.
+        on input audios and annotations passed via <file_paths_audio> and <file_paths_annotation>.
         Training hyperparameters are configured upon intialisation and can be accessed/changed
         via self.model_kwargs.
 
-        :param filepaths_audio: List of filepaths to audios to train on
-        :type filepaths_audio: list
-        :param filepaths_annotation: List of filepaths to annotations to train on.
+        :param file_paths_audio: List of file_paths to audios to train on
+        :type file_paths_audio: list
+        :param file_paths_annotation: List of file_paths to annotations to train on.
             annotations should be in csv format, with no header of (timestamp in seconds, <syllable>).
             Annotated syllables that do not correspond to syllables passed at initialisation will be ignored
             One annotations path should be passed for each audio path
-        :type filepaths_annotaton: list
+        :type file_paths_annotation: list
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
         """
-        if not len(filepaths_audio) == len(filepaths_annotation):
+        if not len(file_paths_audio) == len(file_paths_annotation):
             raise Exception(
-                "filepaths_audio and filepaths_annotation must be the same length"
+                "file_paths_audio and file_paths_annotation must be the same length"
             )
 
         sr = self.sr if not sr else sr
 
         samples = {s: [] for s in self.syllables}
         # load and extract features
-        for fau, fan in zip(filepaths_audio, filepaths_annotation):
+        for fau, fan in zip(file_paths_audio, file_paths_annotation):
             audio, _ = librosa.load(fau, sr=sr)
             annotations = self.load_annotations(fan)
 
@@ -133,22 +133,22 @@ class MnemonicTranscription:
 
         self.trained = True
 
-    def predict(self, filepaths, onsets=None, sr=None):
+    def predict(self, file_paths, onsets=None, sr=None):
         """
-        Predict bōl/solkattu transcription for list of input audios at <filepaths>.
+        Predict bōl/solkattu transcription for list of input audios at <file_paths>.
 
-        :param filepaths: Either one filepath or list of filepaths to audios to predict on
-        :type filepaths: list or string
+        :param file_paths: Either one file_path or list of file_paths to audios to predict on
+        :type file_paths: list or string
         :param onsets: list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used
             to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being
-            a list of bōl/solkattu onsets in seconds. <onsets> should contain one set of onset annotations for each filepath
-            in <filepaths>
+            a list of bōl/solkattu onsets in seconds. <onsets> should contain one set of onset annotations for each file_path
+            in <file_paths>
         :type onsets: list or None
         :param sr: sampling rate of audio to train on (default <self.sr>)
         :param sr: int
 
-        :returns: if <filepaths> is a list, then return a list of transcriptions, each
-            transcription of the form [(timestamp in seconds, bōl/solkattu),...]. Or if <filepaths>
+        :returns: if <file_paths> is a list, then return a list of transcriptions, each
+            transcription of the form [(timestamp in seconds, bōl/solkattu),...]. Or if <file_paths>
             is a single fiel path string, return a single transcription.
         :rtype: list
         """
@@ -157,25 +157,25 @@ class MnemonicTranscription:
                 "Please train model before predicting using .train() method"
             )
         if onsets:
-            if not len(onsets) == len(filepaths):
-                raise Exception("One onset annotation required for each filepath")
+            if not len(onsets) == len(file_paths):
+                raise Exception("One onset annotation required for each file path")
 
         sr = self.sr if not sr else sr
-        if not isinstance(filepaths, list):
-            filepaths = list(filepaths)
+        if not isinstance(file_paths, list):
+            file_paths = list(file_paths)
         results = []
-        for i, fau in enumerate(filepaths):
+        for i, fau in enumerate(file_paths):
             ot = onsets[i] if onsets else None
             results.append(self.predict_single(fau, onsets=ot, sr=sr))
         return results[0] if len(results) == 1 else results
 
-    def predict_single(self, filepath, onsets=None, sr=None):
+    def predict_single(self, file_path, onsets=None, sr=None):
         """
         Predict bōl/solkattu transcription directly from audio time series
         (such as for example that loaded by librosa.load)
 
-        :param filepath: Filepath to audio to analyze
-        :type filepath: str
+        :param file_path: File path to audio to analyze
+        :type file_path: str
         :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically
             identify bōl/solkattu onsets. If passed <onsets> should be a list of bōl/solkattu
             onsets in seconds
@@ -189,13 +189,13 @@ class MnemonicTranscription:
         sr = self.sr if not sr else sr
         hop_length = self.feature_kwargs["hop_length"]
 
-        audio, _ = librosa.load(filepath, sr=sr)
+        audio, _ = librosa.load(file_path, sr=sr)
         features = self.extract_features(audio, sr=sr)
 
         if not onsets:
             # if not onsets are passed, extract using
             pulse = AksharaPulseTracker()
-            onsets = pulse.extract(filepath)
+            onsets = pulse.extract(file_path)
             onsets = np.append(onsets, len(audio) / sr)
 
         n_ons = len(onsets)
@@ -299,31 +299,31 @@ class MnemonicTranscription:
         features = np.concatenate((MFCC, MFCC_delta))
         return features
 
-    def load_annotations(self, path):
+    def load_annotations(self, annotation_path):
         """
-        Load onset annotations from <path>
+        Load onset annotations from <annotation_path>
 
-        :param path: path to onset annotaitons for one recording
+        :param annotation_path: path to onset annotations for one recording
             of the form (timestamp in seconds, bōl/solkattu syllable)
-        :type path: str
+        :type annotation_path: str
 
         :returns: list of onset annotations (timestamp seconds, bōl/solkattu syllable)
         :rtype: list
         """
         annotations = []
-        with open(path, "r") as f:
+        with open(annotation_path, "r") as f:
             reader = csv.reader(f)
             for row in reader:
                 annotations.append((float(row[0]), str(row[1]).strip()))
 
         return annotations
 
-    def save(self, path):
+    def save(self, model_path):
         """
         Save model at path as .pkl
 
-        :param path: Path to save model to
-        :type path: strs
+        :param model_path: Path to save model to
+        :type model_path: strs
         """
-        with open(path, "wb") as d:
+        with open(model_path, "wb") as d:
             pickle.dump(self, d)

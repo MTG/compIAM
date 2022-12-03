@@ -1,11 +1,18 @@
+import os
 import csv
 import json
-import numpy as np
-import pickle
+import yaml
 
 import compiam.utils
 
 def write_csv(data, out_path, header=None):
+    """Writing two dimensional data into a file (.csv)
+
+    :param data: the data to write
+    :param output_path: the path where the data is going to be stored
+    
+    :returns: None
+    """
     D = list(zip(*data))
     with open(out_path, "w") as f:
         writer = csv.writer(f)
@@ -41,37 +48,14 @@ def write_json(j, path):
 #####################
 # Dunya writing utils
 #####################
-def write_2d_csv(data, output_path):
-    """Writing two dimensional data into a file (.csv)
-    :param data: the data to write
-    :param output_path: the path where the data is going to be stored
-    :returns: None
-    """
-    output_path = output_path + ".csv"
-    data = np.array(data)
-    with open(output_path, "w") as f:
-        for i, j in zip(data[:, 0], data[:, 1]):
-            f.write("{}, {}\n".format(i, j))
-    f.close()
-
-
-def write_1d_csv(data, output_path):
-    """Writing one dimensional data into a file (.csv)
-    :param data: the data to write
-    :param output_path: the path where the data is going to be stored
-    :returns: None
-    """
-    output_path = output_path + ".csv"
-    with open(output_path, "w") as f:
-        for i in data:
-            f.write("{}\n".format(i))
-    f.close()
 
 
 def write_json(sections, output_path):
     """Writing json-based data into a file (.json)
+
     :param data: the data to write
     :param output_path: the path where the data is going to be stored
+
     :returns: None
     """
     output_path = output_path + ".json"
@@ -82,11 +66,33 @@ def write_json(sections, output_path):
 
 def write_scalar_txt(data, output_path):
     """Writing scalar data into a file (.txt)
+
     :param data: the data to write
     :param output_path: the path where the data is going to be stored
+
     :returns: None
     """
     output_path = output_path + ".txt"
     with open(output_path, "w") as f:
         f.write("{}".format(data))
     f.close()
+
+
+def load_yaml(path):
+    """Load yaml at <path> to dictionary, d
+
+    :param path: input file
+    """
+    import zope.dottedname.resolve
+
+    def constructor_dottedname(loader, node):
+        value = loader.construct_scalar(node)
+        return zope.dottedname.resolve.resolve(value)
+
+    yaml.add_constructor("!dottedname", constructor_dottedname)
+
+    if not os.path.isfile(path):
+        return None
+    with open(path) as f:
+        d = yaml.load(f, Loader=yaml.FullLoader)
+    return d

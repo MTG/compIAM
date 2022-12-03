@@ -45,15 +45,15 @@ class TonicIndianMultiPitch:
         self.referenceFrequency = referenceFrequency
         self.sampleRate = sampleRate
 
-    def extract(self, path_to_audio):
+    def extract(self, file_path):
         """Extract the tonic from a given file.
 
-        :param filename: path to file to extract.
+        :param file_path: path to file to extract.
         :returns: a floating point number representing the tonic of the input recording.
         """
-        if not os.path.exists(path_to_audio):
-            raise ValueError("Target audio not found.")
-        audio = estd.MonoLoader(filename=path_to_audio)()
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
+        audio = estd.MonoLoader(filename=file_path)()
         extractor = estd.TonicIndianArtMusic(
             binResolution=self.binResolution,
             frameSize=self.frameSize,

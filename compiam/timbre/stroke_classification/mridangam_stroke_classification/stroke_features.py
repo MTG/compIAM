@@ -122,7 +122,7 @@ def process_strokes(file_dict, load_computed=False, computed_path=None):
         df_features.to_csv(computed_path, index=False)
     else:
         if not os.path.exists(computed_path):
-            raise ValueError(
+            raise FileNotFoundError(
                 "Please enter a valid path for the computed features .csv path"
             )
         # Load the pre-computed dict

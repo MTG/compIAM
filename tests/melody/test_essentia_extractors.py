@@ -10,7 +10,7 @@ def _predict_normalized_pitch():
     from compiam.melody.pitch_extraction import Melodia
 
     melodia = Melodia()
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         melodia.extract(
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
@@ -62,7 +62,7 @@ def _predict_normalized_pitch():
     from compiam.melody.tonic_identification import TonicIndianMultiPitch
 
     tonic_multipitch = TonicIndianMultiPitch()
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         tonic_multipitch.extract(
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )

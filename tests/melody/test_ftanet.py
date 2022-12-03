@@ -16,7 +16,7 @@ def _predict_pitch():
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
     ftanet = load_model("melody:ftanet-carnatic")
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         ftanet.predict(
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
@@ -90,7 +90,7 @@ def _predict_pitch():
 
 def _predict_normalized_pitch():
     ftanet = load_model("melody:ftanet-carnatic")
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         ftanet.predict(
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
         )
