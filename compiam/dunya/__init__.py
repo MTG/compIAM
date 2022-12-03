@@ -258,12 +258,15 @@ class Corpora:
             raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
 
         recording = self.get_recording(recordingid)
-        concert = self.get_concert(recording["concert"][0]["mbid"])
-        title = recording["title"]
-        artists = " and ".join([a["name"] for a in concert["concert_artists"]])
+        if "concert" in list(recording.keys()):
+            concert = self.get_concert(recording["concert"][0]["mbid"])
+            title = recording["title"]
+            artists = " and ".join([a["name"] for a in concert["concert_artists"]])
+            name = "%s - %s.mp3" % (artists, title)
+            name = name.replace("/", "-")
+        else:
+            name = recordingid + ".mp3"
         contents = get_mp3(recordingid)
-        name = "%s - %s.mp3" % (artists, title)
-        name = name.replace("/", "-")
         path = os.path.join(output_dir, name)
         open(path, "wb").write(contents)
         return name
