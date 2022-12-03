@@ -44,7 +44,7 @@ models_dict = {
         "class_name": "FTANetCarnatic",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "melody", "ftanet", "carnatic", "carnatic"
+                WORKDIR, "models", "melody", "ftanet", "carnatic", "carnatic.data-00000-of-00001"
             ),
             "sample_rate": 8000,
         },
@@ -62,20 +62,6 @@ models_dict = {
             "spec_path": os.path.join(
                 WORKDIR, "models", "melody", "caecarnatic", "config_spec.cfg"
             ),
-        },
-    },
-    "rhythm:1way-tabla": {
-        "module_name": "compiam.rhythm.transcription.tabla_transcription",
-        "class_name": "FourWayTabla",
-        "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "1way")
-        },
-    },
-    "rhythm:4way-tabla": {
-        "module_name": "compiam.rhythm.transcription.tabla_transcription",
-        "class_name": "FourWayTabla",
-        "kwargs": {
-            "model_path": os.path.join(WORKDIR, "models", "rhythm", "4wayTabla", "4way")
         },
     },
     "structure:dhrupad-bandish-segmentation": {
