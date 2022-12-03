@@ -217,7 +217,9 @@ class FTANetCarnatic(object):
         return tf.keras.models.Model(inputs=visible, outputs=x)
 
     def load_model(self, model_path):
-        if not os.path.exists(self.model_path):
+        if ".data-00000-of-00001" not in model_path:
+            path_to_check = model_path + ".data-00000-of-00001"
+        if not os.path.exists(path_to_check):
             raise ModelNotFoundError(
                 """
                 Given path to model weights not found. Make sure you enter the path correctly.
