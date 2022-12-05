@@ -26,6 +26,7 @@ jobs:
           pip install ipython
           pip install scikit-image
           pip install seaborn
+          pip install opencv-python
       - name: Sphinx build
         run: |
           sphinx-build docs _build
