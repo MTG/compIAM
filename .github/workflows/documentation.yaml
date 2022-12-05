@@ -27,6 +27,7 @@ jobs:
           pip install scikit-image
           pip install seaborn
           pip install opencv-python
+          pip install pytsmod
       - name: Sphinx build
         run: |
           sphinx-build docs _build
