@@ -3,7 +3,7 @@ import inspect
 import logging
 import pathlib
 import pickle
-import IPython.display as ipd
+#import IPython.display as ipd
 
 import difflib
 
@@ -108,9 +108,9 @@ def get_timestamp(secs, divider='-'):
     return f'{minutes}min{divider}{seconds}sec'
 
 
-def ipy_audio(y, t1, t2, sr=44100):
-    y_ = y[round(t1*sr):round(t2*sr)]
-    return ipd.Audio(y_, rate=sr, autoplay=False)
+#def ipy_audio(y, t1, t2, sr=44100):
+#    y_ = y[round(t1*sr):round(t2*sr)]
+#    return ipd.Audio(y_, rate=sr, autoplay=False)
 
 
 def get_svara_pitch_carnatic(raga, tonic=None):

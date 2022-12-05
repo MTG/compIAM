@@ -22,7 +22,7 @@ class MnemonicTranscription:
     [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., & Serra, X.
     (2015, October). Discovery of Syllabic Percussion Patterns in Tabla
     Solo Recordings. In Proceedings of the 16th International Society
-    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391).
+    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385--391).
     Malaga, Spain.
     """
 
