@@ -23,7 +23,7 @@ jobs:
           pip install essentia
           pip install tensorflow
           pip install torch 
-          pip install python
+          pip install ipython
           pip install scikit-image
           pip install seaborn
       - name: Sphinx build
