@@ -1,5 +1,4 @@
 import os
-import yaml
 import inspect
 import logging
 import pathlib
@@ -37,26 +36,6 @@ def create_if_not_exists(path):
     # Do not try and create directory if path is just a filename
     if (not os.path.exists(directory)) and (directory != ""):
         os.makedirs(directory)
-
-
-def load_yaml(path):
-    """Load yaml at <path> to dictionary, d
-
-    :param path: input file
-    """
-    import zope.dottedname.resolve
-
-    def constructor_dottedname(loader, node):
-        value = loader.construct_scalar(node)
-        return zope.dottedname.resolve.resolve(value)
-
-    yaml.add_constructor("!dottedname", constructor_dottedname)
-
-    if not os.path.isfile(path):
-        return None
-    with open(path) as f:
-        d = yaml.load(f, Loader=yaml.FullLoader)
-    return d
 
 
 def get_tool_list(modules):
@@ -170,7 +149,6 @@ def get_svara_pitch(raga, tonic, svara_cents_path, svara_lookup_path):
     
     return final_dict
 
-
 def add_center_to_mask(mask):
     num_one = 0
     indices = []
@@ -186,3 +164,4 @@ def add_center_to_mask(mask):
                 num_one = 0
                 indices = []
     return mask
+

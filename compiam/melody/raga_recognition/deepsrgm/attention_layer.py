@@ -5,7 +5,8 @@ import torch.nn as nn
 # https://towardsdatascience.com/nlp-learning-series-part-3-attention-cnn-and-what-not-for-text-classification-4313930ed566
 class Attention(nn.Module):
     def __init__(self, feature_dim, step_dim, bias=True, **kwargs):
-        """
+        """Attention module init method
+
         :param feature_dim: input size at every step
         :param step_dim: total number of steps in the sequence
         :param bias: Bool param to indicate whether bias should be added

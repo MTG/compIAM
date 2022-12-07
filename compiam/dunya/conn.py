@@ -140,17 +140,17 @@ def _dunya_query_file(path, **kwargs):
         return
 
 
-def _file_for_document(recordingid, thetype, subtype=None, part=None, version=None):
+def _file_for_document(recording_id, thetype, subtype=None, part=None, version=None):
     """Get the most recent derived file given a filetype.
 
-    :param recordingid: Musicbrainz recording ID.
+    :param recording_id: Musicbrainz recording ID.
     :param thetype: the computed filetype.
     :param subtype: a subtype if the module has one.
     :param part: the file part if the module has one.
     :param version: a specific version, otherwise the most recent one will be used.
     :returns: The contents of the most recent version of the derived file.
     """
-    path = "document/by-id/%s/%s" % (recordingid, thetype)
+    path = "document/by-id/%s/%s" % (recording_id, thetype)
     args = {}
     if subtype:
         args["subtype"] = subtype
@@ -161,9 +161,9 @@ def _file_for_document(recordingid, thetype, subtype=None, part=None, version=No
     return _dunya_query_file(path, **args)
 
 
-def get_mp3(recordingid):
+def get_mp3(recording_id):
     """Get a mp3 from a specific mbid.
 
-    :param recordingid: Musicbrainz recording ID.
+    :param recording_id: Musicbrainz recording ID.
     """
-    return _file_for_document(recordingid, "mp3")
+    return _file_for_document(recording_id, "mp3")

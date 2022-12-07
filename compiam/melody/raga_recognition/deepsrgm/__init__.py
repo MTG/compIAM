@@ -1,11 +1,11 @@
 import os
-import mirdata  # TODO
+import warnings
 
 import numpy as np
 
 import compiam
 from compiam.melody.raga_recognition.deepsrgm.raga_mapping import create_mapping
-from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
+from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError, DatasetNotLoadedError
 
 
 class DEEPSRGM(object):
@@ -14,14 +14,13 @@ class DEEPSRGM(object):
     """
 
     def __init__(
-        self, model_path=None, rnn="lstm", mapping_path=None, dataset_home=None, device=None
+        self, model_path=None, rnn="lstm", mapping_path=None, device=None
     ):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
         :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
-        :param dataset_home: path to find the mirdata dataset
         :param device: torch CUDA config to route model to GPU
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -72,10 +71,7 @@ class DEEPSRGM(object):
 
         if (mapping_path is not None) and (self.selected_ragas is not None):
             self.load_mapping(self.selected_ragas)
-        # self.dataset = mirdata.initialize("compmusic_raga_dataset", data_home=dataset_home)
-        self.dataset = (
-            None  # To update when CompMusic Raga dataset is integrated mirdata
-        )
+        self.dataset = None
 
     def _build_model(self, rnn="lstm"):
         """Bulding DEEPSRM
@@ -94,17 +90,12 @@ class DEEPSRGM(object):
         selected_ragas = self.selected_ragas if selection is None else selection
         self.mapping = create_mapping(self.mapping_path, selected_ragas)
 
-    def load_model(self, model_path=None, rnn="lstm"):
+    def load_model(self, model_path, rnn="lstm"):
         """Loading weights for DEEPSRGM
 
         :param model_path: path to model.
         :param rnn: lstm (default) or gru.
         """
-        if model_path is None:
-            raise ValueError("""
-                Model path cannot be None. Please provide a path to the model weights.
-            """)
-
         if not os.path.exists(model_path):
             raise ModelNotFoundError("""
                 Given path to model weights not found. Make sure you enter the path correctly.
@@ -133,31 +124,51 @@ class DEEPSRGM(object):
         self.model.load_state_dict(new_weights)
         self.trained = True
 
+    def load_raga_dataset(self, data_home=None, download=False):
+        """Load an instance of the Compmusic raga dataset to assist the tool
+
+        :param data_home: path where to store the dataset data
+        :param download: 
+        """
+        self.dataset = compiam.load_dataset(
+            "compmusic_raga", data_home=data_home)
+        if download:
+            self.dataset.download()
+            warnings.warn("""
+                The audio of this dataset is private. Please request it in the
+                Zenodo link provided in the DOWNLOAD_INFO of the dataloader,
+                and download and unzip it following the instructions.
+            """)
+
     def get_features(
         self,
-        audio_file=None,
-        pitch_file=None,
-        tonic_file=None,
+        audio_path=None,
+        pitch_path=None,
+        tonic_path=None,
         from_mirdata=False,
         track_id=None,
         k=5,
     ):
         """Computing features for prediction of DEEPSRM
 
-        :param audio_file: path to file from which to extract the features
-        :param pitch_file: path to pre-computed pitch file (if available)
-        :param tonic_file: path to pre-computed tonic file (if available)
+        :param audio_path: path to file from which to extract the features
+        :param pitch_path: path to pre-computed pitch file (if available)
+        :param tonic_path: path to pre-computed tonic file (if available)
         :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
             Indian Art Music Raga Recognition Dataset (must be specifically this one)
         :param track_id: track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is
             set to True
         :param k: k indicating the precision of the pitch feature.
         """
-        if (pitch_file is not None) and (tonic_file is not None):
-            freqs = open(pitch_file).read().strip().split("\n")
-            tonic = eval(open(tonic_file).read().strip())
+        if (pitch_path is not None) and (tonic_path is not None):
+            freqs = open(pitch_path).read().strip().split("\n")
+            tonic = eval(open(tonic_path).read().strip())
 
         elif from_mirdata:
+            if self.dataset is None:
+                raise DatasetNotLoadedError(
+                    "Dataloader is not initialized. Have you run .load_raga_dataset()?"
+                )       
             if track_id is None:
                 raise ValueError(
                     "To load a track we need a track id. See mirdata instructions \
@@ -180,15 +191,15 @@ class DEEPSRGM(object):
                     "In order to use these tools to extract the features you need to have essentia installed."
                     "Please install essentia using: pip install essentia"
                 )
-            if not os.path.exists(audio_file):
+            if not os.path.exists(audio_path):
                 raise FileNotFoundError("Input audio not found.")
             print("Extracting pitch track using melodia...")
-            freqs = melodia.extract(audio_file)[:, 1]
+            freqs = melodia.extract(audio_path)[:, 1]
 
-            if not os.path.exists(audio_file):
+            if not os.path.exists(audio_path):
                 raise FileNotFoundError("Input audio not found.")
             print("Extracting tonic using multi-pitch approach...")
-            tonic = tonic_extraction.extract(audio_file)
+            tonic = tonic_extraction.extract(audio_path)
 
         # Normalise pitch
         feature = np.round(1200 * np.log2(freqs / tonic) * (k / 100)).clip(0)

@@ -20,6 +20,7 @@ class FTANetCarnatic(object):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
+        :param sample_rate: Sample rate to which the audio is sampled for extraction.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
@@ -39,17 +40,6 @@ class FTANetCarnatic(object):
 
         self.model_path = model_path
         if self.model_path is not None:
-            if not os.path.exists(self.model_path + ".data-00000-of-00001"):
-                raise ModelNotFoundError(
-                    """
-                    Given path to model weights not found. Make sure you enter the path correctly.
-                    A training process for the FTA-Net tuned to Carnatic is under development right
-                    now and will be added to the library soon. Meanwhile, we provide the weights in the
-                    latest repository version (https://github.com/MTG/compIAM) so make sure you have these
-                    available before loading the Carnatic FTA-Net.
-                """
-                )
-
             self.load_model(self.model_path)
 
     @staticmethod
@@ -227,18 +217,27 @@ class FTANetCarnatic(object):
         return tf.keras.models.Model(inputs=visible, outputs=x)
 
     def load_model(self, model_path):
-        try:
-            self.model.load_weights(model_path).expect_partial()
-            self.model_path = model_path
-            self.trained = True
-        except:
-            raise FileNotFoundError("Model path does not exist")
+        if ".data-00000-of-00001" not in model_path:
+            path_to_check = model_path + ".data-00000-of-00001"
+        if not os.path.exists(path_to_check):
+            raise ModelNotFoundError(
+                """
+                Given path to model weights not found. Make sure you enter the path correctly.
+                A training process for the FTA-Net tuned to Carnatic is under development right
+                now and will be added to the library soon. Meanwhile, we provide the weights in the
+                latest repository version (https://github.com/MTG/compIAM) so make sure you have these
+                available before loading the Carnatic FTA-Net.
+            """
+            )
+        self.model.load_weights(model_path).expect_partial()
+        self.model_path = model_path
+        self.trained = True
 
-    def predict(self, path_to_audio, hop_size=80, batch_size=5, out_step=None):
-        """Extract melody from filename.
-        Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic
+    def predict(self, file_path, hop_size=80, batch_size=5, out_step=None):
+        """Extract melody from file_path.
+        Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
-        :param filename: path to file to extract.
+        :param file_path: path to file to extract.
         :param sample_rate: sample rate of extraction process.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
@@ -253,8 +252,8 @@ class FTANetCarnatic(object):
                 You can load the pre-trained instance with the load_model wrapper.
             """)
 
-        if not os.path.exists(path_to_audio):
-            raise ValueError("Target audio not found.")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
 
         xlist = []
         timestamps = []

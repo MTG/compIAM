@@ -8,13 +8,15 @@ Originally created on Sep 12, 2013
 @author: Ajay Srinivasamurthy
 """
 
-from scipy.fft import fft
-import librosa
+import os
 import math
+import librosa
 
 import numpy as np
+
 import scipy.stats as scistats
 import scipy.signal as scisig
+from scipy.fft import fft
 
 from compiam.rhythm.meter.akshara_pulse_tracker import parameters as params
 from compiam.utils import get_logger
@@ -472,11 +474,20 @@ class AksharaPulseTracker:
         self.Nbins = maxLen / binWidth + 1
         self.wtolHistAv = round(20e-3 / binWidth)
 
-    def extract(self, fname, verbose=True):
+    def extract(self, file_path, verbose=True):
+        """Run extraction of akshara pulses from input audio file
+
+        :param file_path: path to audio for extraction
+        :param verbose: verbose level
+
+        :returns: array of akshara pulses
+        """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError("Target audio not found.")
 
         # Get onset functions
         onsFns = self.getOnsetFunctions(
-            fname,
+            file_path,
             self.Nfft,
             self.frmSize,
             self.Fs,
@@ -570,7 +581,7 @@ class AksharaPulseTracker:
         return aksharaTimes
 
     def getOnsetFunctions(
-        self, fname, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
+        self, file_path, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
     ):
         zeropadLen = Nfft - frmSize
         zz = np.zeros((zeropadLen,), dtype="float32")
@@ -582,8 +593,8 @@ class AksharaPulseTracker:
         if verbose:
             logger.info("Reading audio file...")
 
-        # audio = ess.MonoLoader(filename=fname)()
-        audio, _ = librosa.load(fname, sr=Fs)
+        # audio = ess.MonoLoader(filename=file_path)()
+        audio, _ = librosa.load(file_path, sr=Fs)
 
         # fft = ess.FFT(size=Nfft)  # this gives us a complex FFT
         # c2p = ess.CartesianToPolar()  # and this turns it into a pair (magnitude, phase)

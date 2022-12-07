@@ -561,7 +561,7 @@ class segmentExtractor:
 
 
     def extract_segments(
-        self, etc_kernel_size=10, binop_dim=3, perc_tail=0.5, 
+        self, etc_kernel_size=10, binop_dim=3, perc_tail=0.5,
         bin_thresh_segment=None, min_diff_trav=0.5, min_pattern_length_seconds=2, 
         boundaries=None, lookup=None, break_mask=None, timestep=None, verbose=False):
         """
@@ -717,7 +717,6 @@ class segmentExtractor:
         self.min_pattern_length_seconds = min_pattern_length_seconds
         self.min_in_group = min_in_group
 
-        
         if verbose:
             print('Identifying Segment Groups')
         self.group_path = get_param_hash_filepath(
@@ -737,6 +736,7 @@ class segmentExtractor:
 
         if verbose:
             print('Trimming Silence')
+
         all_groups_sil = trim_silence(all_groups_ext, self.pitch, self.window_size, self.sr, self.timestep)
         
         all_groups_sil = [[(i,j) for i,j in x if j>i] for x in all_groups_sil]

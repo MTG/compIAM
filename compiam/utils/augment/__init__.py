@@ -2,11 +2,11 @@ import os
 from joblib import Parallel, delayed
 
 from compiam.utils import create_if_not_exists
-from compiam.utils.augmentation.augment_data_ar import augment_data_attack_remix
-from compiam.utils.augmentation.augment_data_ps import augment_data_pitch_shift
-from compiam.utils.augmentation.augment_data_sf import augment_data_spectral_shape
-from compiam.utils.augmentation.augment_data_sr import augment_data_stroke_remix
-from compiam.utils.augmentation.augment_data_ts import augment_data_time_scale
+from compiam.utils.augment.augment_data_ar import augment_data_attack_remix
+from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
+from compiam.utils.augment.augment_data_sf import augment_data_spectral_shape
+from compiam.utils.augment.augment_data_sr import augment_data_stroke_remix
+from compiam.utils.augment.augment_data_ts import augment_data_time_scale
 
 file_dir = os.path.dirname(__file__)
 
@@ -44,7 +44,7 @@ def spectral_shape(
     sr=16000,
     n_jobs=4,
 ):
-    """Augmenting data by perturbing ‘nuisance attributes’ that
+    """Augmenting data by perturbin 'nuisance attributes' that
     are unimportant in the specific discrimination task.
 
     :param in_path: Path to input audio
