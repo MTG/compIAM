@@ -18,7 +18,7 @@ from compiam.utils import create_if_not_exists, run_or_cache
 
 
 from compiam.melody.pattern.sancara_search.extraction.sequence import (convert_seqs_to_timestep, remove_below_length, add_center_to_mask)
-from compiam.melody.pattern.sancara_search.extraction.evaluation import evaluate, load_annotations_new, get_coverage, get_grouping_accuracy
+from compiam.melody.pattern.sancara_search.extraction.evaluation import evaluate, get_coverage, get_grouping_accuracy
 from compiam.melody.pattern.sancara_search.extraction.visualisation import plot_all_sequences, plot_pitch, flush_matplotlib
 from compiam.melody.pattern.sancara_search.extraction.io import load_sim_matrix, write_all_sequence_audio, load_yaml, load_pkl, write_pkl
 from compiam.melody.pattern.sancara_search.extraction.pitch import cents_to_pitch, pitch_seq_to_cents, pitch_to_cents, get_timeseries, interpolate_below_length
@@ -561,8 +561,8 @@ class segmentExtractor:
 
 
     def extract_segments(
-        self, etc_kernel_size=10, binop_dim=3, perc_tail=0.5, 
-        bin_thresh_segment=None, min_diff_trav=0.5, min_pattern_length_seconds=1.5, 
+        self, etc_kernel_size=10, binop_dim=3, perc_tail=0.5,
+        bin_thresh_segment=None, min_diff_trav=0.5, min_pattern_length_seconds=2, 
         boundaries=None, lookup=None, break_mask=None, timestep=None, verbose=False):
         """
         From self similarity matrix, <self.X_proc>. Return list of segments,
@@ -698,8 +698,8 @@ class segmentExtractor:
         return self.all_segments_reduced
 
     def group_segments(
-        self, all_segments, break_mask, pitch, ext_mask_tol=0.5, match_tol=1, dupl_perc_overlap_inter=0.9, dupl_perc_overlap_intra=0.65, 
-        group_len_var=1.0, n_dtw=5, thresh_dtw=3.3, thresh_cos=None, min_pattern_length_seconds=1.5, min_in_group=2):
+        self, all_segments, break_mask, pitch, ext_mask_tol=0.5, match_tol=1, dupl_perc_overlap_inter=0.9, dupl_perc_overlap_intra=0.55, 
+        group_len_var=1.0, n_dtw=10, thresh_dtw=10, thresh_cos=None, min_pattern_length_seconds=2, min_in_group=2, verbose=False):
 
         ############
         ## Params ##
@@ -717,7 +717,8 @@ class segmentExtractor:
         self.min_pattern_length_seconds = min_pattern_length_seconds
         self.min_in_group = min_in_group
 
-        print('Identifying Segment Groups')
+        if verbose:
+            print('Identifying Segment Groups')
         self.group_path = get_param_hash_filepath(
             self._segment_group_cache,
             self.bin_thresh, self.gauss_sigma,
@@ -729,25 +730,21 @@ class segmentExtractor:
             self.sr, self.pitch]
         all_groups = run_or_cache(group_segments, args, self.group_path)
 
-        #all_groups = group_segments(all_segments_reduced, min_length_cqt, match_tol, silence_and_stable_mask, cqt_window, timestep, sr)
-        print(f'    {len(all_groups)} segment groups found...')
-        
-
-        print('Extending segments to silence/stability')
+        if verbose:
+            print('Extending segments to silence/stability')
         all_groups_ext = extend_groups_to_mask(all_groups, break_mask, self.window_size, self.sr, self.timestep, toler=self.ext_mask_tol)
 
-        print('Trimming Silence')
+        if verbose:
+            print('Trimming Silence')
+
         all_groups_sil = trim_silence(all_groups_ext, self.pitch, self.window_size, self.sr, self.timestep)
         
         all_groups_sil = [[(i,j) for i,j in x if j>i] for x in all_groups_sil]
         
         all_groups_sil = [remove_group_duplicates(g, self.dupl_perc_overlap_intra) for g in all_groups_sil]
 
-        print('Joining Groups of overlapping sequences')
-        all_groups_over = group_overlapping(all_groups_sil, self.dupl_perc_overlap_inter, self.group_len_var)
-        print(f'    {len(all_groups_over)} groups after join...')
-
-        print('Identifying Segment Groups')
+        if verbose:
+            print('Identifying Segment Groups')
         self.segment_overlap_path = get_param_hash_filepath(
             self._segment_group_overlap_cache,
             self.bin_thresh, self.gauss_sigma,
@@ -757,35 +754,43 @@ class segmentExtractor:
         all_groups = run_or_cache(group_overlapping, [all_groups_sil, self.dupl_perc_overlap_inter, self.group_len_var], self.segment_overlap_path)
 
         if self.thresh_dtw:
-            print('Joining geometrically close groups using pitch tracks')
+            if verbose:
+                print('Joining geometrically close groups using pitch tracks')
             all_groups_dtw = group_by_distance(
-                all_groups_over, self.pitch, self.n_dtw, self.thresh_dtw, self.thresh_cos, 
+                all_groups, self.pitch, self.n_dtw, self.thresh_dtw, self.thresh_cos, 
                 self.group_len_var, self.window_size, self.sr, self.timestep)
-            print(f'    {len(all_groups_dtw)} groups after join...')
+            if verbose:
+                print(f'    {len(all_groups_dtw)} groups after join...')
         else:
-            all_groups_dtw = all_groups_over
+            all_groups_dtw = all_groups
 
         #all_groups_over = group_overlapping(all_groups_dtw, 0.1, group_len_var)
         all_groups_rgd = [remove_group_duplicates(g, self.dupl_perc_overlap_intra) for g in all_groups_dtw]
 
-        print('Grouping overlapping')
+        if verbose:
+            print('Grouping overlapping')
         all_groups_dov = group_overlapping(all_groups_rgd, self.dupl_perc_overlap_inter, self.group_len_var)
-        print(f'    {len(all_groups_dov)} groups after join...')
+        if verbose:
+            print(f'    {len(all_groups_dov)} groups after join...')
 
-        print('Extending to mask')
+        if verbose:
+            print('Extending to mask')
         all_groups_extdov = extend_groups_to_mask(
             all_groups_dov, break_mask, self.window_size, self.sr, 
             self.timestep, toler=self.ext_mask_tol)
 
-        print('Trimming Silence')
+        if verbose:
+            print('Trimming Silence')
         all_groups_ts = trim_silence(all_groups_extdov, self.pitch, self.window_size, self.sr, self.timestep)
 
         all_groups_final = [remove_group_duplicates(g, self.dupl_perc_overlap_intra) for g in all_groups_ts]
 
-        print('Convert sequences to pitch track timesteps')
+        if verbose:
+            print('Convert sequences to pitch track timesteps')
         starts_seq, lengths_seq = convert_seqs_to_timestep(all_groups_final, self.window_size, self.sr, self.timestep)
 
-        print('Applying exclusion functions')
+        if verbose:
+            print('Applying exclusion functions')
         starts_seq_exc,  lengths_seq_exc = remove_below_length(starts_seq, lengths_seq, self.timestep, self.min_pattern_length_seconds)
 
         starts = [p for p in starts_seq_exc if len(p)>=self.min_in_group]

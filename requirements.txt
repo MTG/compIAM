@@ -3,10 +3,12 @@ numpy>=1.20.3
 librosa==0.8.0
 SoundFile==0.10.3.post1
 joblib>=1.2.0
+opencv-python
 pathlib~=1.0.1
 pytsmod==0.3.3
 scikit-learn~=0.24.2
 tqdm~=4.64.1
+scikit-image
 mirdata==0.3.7
 ipython==7.31.1
 ipywidgets>=7.0.0,<8
@@ -17,5 +19,7 @@ configobj==5.0.6
 hmmlearn==0.2.7
 fastdtw==0.3.4
 mir_eval
-seaborn
+hmmlearn 
 zope
+fastdtw
+seaborn

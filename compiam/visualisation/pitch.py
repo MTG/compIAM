@@ -510,7 +510,7 @@ def pitch_density_single_octave(p, bw, n_octaves=2):
     return summed_d
 
 
-def get_pitch_histogram(
+def get_pitch_density(
     pitch, bw=0.05, annotations={}, 
     title='', title_fontsize=12, figsize=(16,6), 
     ytick_size=None, xlim=None, cents=False, octave=False, 
