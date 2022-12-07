@@ -2,11 +2,11 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-
+pd.options.mode.chained_assignment = None
 import math
 
 
-def load_annotations_new(annotations_path, min_m=None, max_m=None):
+def load_annotations(annotations_path, min_m=2, max_m=None, underlying=False):
 
     annotations_orig = pd.read_csv(annotations_path, sep='\t')
     annotations_orig.columns = ['tier', 'not_used', 's1', 's2', 'duration', 'text']
@@ -41,27 +41,28 @@ def load_annotations_new(annotations_path, min_m=None, max_m=None):
     annotations_good = annotations_merge[annotations_merge['text'].isin(good_text)]
 
     #annotations_good = annotations_good[annotations_good['s2']- annotations_good['s1']>=1]
-    annotations_good['tier'] = annotations_good['tier'].apply(lambda y: y.replace('root','underlying'))
+    new_tier = annotations_good['tier'].apply(lambda y: y.replace('root','underlying')).values
+    annotations_good['tier'] = new_tier
 
     annotations_good = annotations_good.groupby(['s1','s2']).first().reset_index()
 
     return annotations_good[['tier', 's1', 's2', 'text', 'text_full']]
 
-def to_aeneas(annotations):
+def to_aeneas(annotations, label_row='text'):
     aeneas = []
     for i,row in annotations.iterrows():
         d = {
             'begin': row.s1,
             'end': row.s2,
-            'id': row.text,
+            'id': row[label_row],
             'language': 'eng',
-            'lines': row.tier
+            'lines': row.tier if label_row=='text' else row.tier.replace('underlying_','')
         }
         aeneas.append(d)
     return aeneas
         
 
-def load_annotations_brindha(annotations_path, min_m=None, max_m=None):
+def load_annotations_brindha(annotations_path, min_m=2, max_m=None, underlying=False):
 
     annotations_orig = pd.read_csv(annotations_path, sep='\t')
     annotations_orig.columns = ['tier', 'not_used', 's1', 's2', 'duration', 'text']
@@ -79,13 +80,18 @@ def load_annotations_brindha(annotations_path, min_m=None, max_m=None):
     if max_m:
         annotations_orig = annotations_orig[annotations_orig['duration'].astype(float)<=max_m]
 
-    annotations_orig = annotations_orig[annotations_orig['tier'].isin(['underlying_full_phrase','underlying_sancara', 'root_full_phrase','root_sancara'])]
-    good_text = [k for k,v in Counter(annotations_orig['text']).items() if v>1]
-    annotations_orig = annotations_orig[annotations_orig['text'].isin(good_text)]
+    if underlying:
+        annotations_orig = annotations_orig[annotations_orig['tier'].isin(['underlying_full_phrase','underlying_sancara', 'root_full_phrase','root_sancara'])]
+        good_text = [k for k,v in Counter(annotations_orig['text']).items() if v>1]
+        annotations_orig = annotations_orig[annotations_orig['text'].isin(good_text)]
 
-    #annotations_orig = annotations_orig[annotations_orig['s2']- annotations_orig['s1']>=1]
-    annotations_orig['tier'] = annotations_orig['tier'].apply(lambda y: y.replace('root','underlying'))
-    
+        #annotations_orig = annotations_orig[annotations_orig['s2']- annotations_orig['s1']>=1]
+        annotations_orig['tier'] = annotations_orig['tier'].apply(lambda y: y.replace('root','underlying'))
+    else:
+        annotations_orig = annotations_orig[~annotations_orig['tier'].isin(['underlying_full_phrase','underlying_sancara', 'root_full_phrase','root_sancara'])]
+        good_text = [k for k,v in Counter(annotations_orig['text']).items() if v>1]
+        annotations_orig = annotations_orig[annotations_orig['text'].isin(good_text)]
+
     # remove duplicates
     annotations_orig['s1'] = annotations_orig['s1'].apply(lambda y: round(y,1))
     annotations_orig['s2'] = annotations_orig['s2'].apply(lambda y: round(y,1))
