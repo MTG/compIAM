@@ -7,13 +7,13 @@ import IPython.display as ipd
 
 import difflib
 
-from compiam.io import save_object, load_yaml
+from compiam.io import save_object
 from compiam.utils.pitch import cents_to_pitch
 
 WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
 
-svara_cents_carnatic_path = os.path.join(WORKDIR, "..", "conf", "raga", "svara_cents.yaml")
-svara_lookup_carnatic_path = os.path.join(WORKDIR, "..", "conf", "raga", "carnatic.yaml")
+svara_cents_carnatic_path = os.path.join(WORKDIR, "conf", "raga", "svara_cents.yaml")
+svara_lookup_carnatic_path = os.path.join(WORKDIR, "conf", "raga", "carnatic.yaml")
 
 def get_logger(name):
     logging.basicConfig(
@@ -148,3 +148,20 @@ def get_svara_pitch(raga, tonic, svara_cents_path, svara_lookup_path):
                     final_dict[c]=s
     
     return final_dict
+
+def add_center_to_mask(mask):
+    num_one = 0
+    indices = []
+    for i,s in enumerate(mask):
+        if s == 1:
+            num_one += 1
+            indices.append(i)
+        else:
+            li = len(indices)
+            if li:
+                middle = indices[int(li/2)]
+                mask[middle] = 2
+                num_one = 0
+                indices = []
+    return mask
+
