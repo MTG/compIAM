@@ -1,12 +1,7 @@
 import os
 import csv
 import json
-<<<<<<< HEAD
-import numpy as np
-import pickle
-=======
 import yaml
->>>>>>> master
 
 import compiam.utils
 
