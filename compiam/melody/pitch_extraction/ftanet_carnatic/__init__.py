@@ -258,7 +258,7 @@ class FTANetCarnatic(object):
         xlist = []
         timestamps = []
 
-        y, _ = librosa.load(path_to_audio, sr=self.sample_rate)
+        y, _ = librosa.load(file_path, sr=self.sample_rate)
         audio_len = len(y)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []

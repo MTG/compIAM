@@ -11,8 +11,23 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install libsndfile1
-          pip install sphinx sphinx_rtd_theme numpydoc recommonmark ipython
-          pip install mirdata scikit-learn configobj hmmlearn zope fastdtw matplotlib scipy essentia tensorflow torch
+          pip install sphinx sphinx_rtd_theme numpydoc recommonmark
+          pip install mirdata 
+          pip install scikit-learn 
+          pip install configobj
+          pip install hmmlearn
+          pip install zope
+          pip install fastdtw
+          pip install matplotlib
+          pip install scipy
+          pip install essentia
+          pip install tensorflow
+          pip install torch 
+          pip install ipython
+          pip install scikit-image
+          pip install seaborn
+          pip install opencv-python
+          pip install pytsmod
       - name: Sphinx build
         run: |
           sphinx-build docs _build

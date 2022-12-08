@@ -10,7 +10,7 @@ scikit-learn~=0.24.2
 tqdm~=4.64.1
 scikit-image
 mirdata==0.3.7
-ipython==7.30.0
+ipython==7.31.1
 ipywidgets>=7.0.0,<8
 Jinja2==3.1.2
 scikit-image==0.19.3
