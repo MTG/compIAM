@@ -7,7 +7,7 @@ import IPython.display as ipd
 
 import difflib
 
-from compiam.io import save_object
+from compiam.io import save_object, load_yaml
 from compiam.utils.pitch import cents_to_pitch
 
 WORKDIR = os.path.dirname(pathlib.Path(__file__).parent.resolve())
