@@ -1,4 +1,4 @@
-# compIAM
+# compIAM v0.2.0
 compIAM (**comp**utational analysis of **I**ndian **A**rt **M**usic) is a collaborative initiative involving many researchers that aims at putting together a common repository of datasets, tools, and models for the computational analysis of Carnatic and Hindustani music. 
 
 You can get started on the Computational Analysis of Indian Art Music through our ISMIR 2022 Tutorial: [Computational Methods For Supporting Corpus-Based Research On Indian Art Music](https://mtg.github.io/IAM-tutorial-ismir22/landing.html).
@@ -71,7 +71,7 @@ Direct and MIR-standardized access to the datasets for the computational analysi
     - [Mridangam Stroke Dataset](https://compmusic.upf.edu/mridangam-stroke-dataset)*
     - [Four-Way Tabla Stroke (ISMIR 21)](https://zenodo.org/record/7110248)
 
-The datasets marked with * have been compiled within the framework of the [CompMusic project]().
+The datasets marked with * have been compiled within the framework of the [CompMusic project](https://compmusic.upf.edu/).
 
 
 ## Contributing
@@ -84,6 +84,9 @@ compIAM is very much open for contributions. You can contribute by:
 
 Please check the [contribution guidelines](https://mtg.github.io/compIAM/source/contributing.html) and get in touch in case you have questions or suggestions.
 
+
+## Example notebooks
+We include, in this repo, [example notebooks](https://github.com/MTG/compIAM/tree/master/notebooks) for users to better understand how to use `compiam` and also showcase 
 
 ## License
 compIAM is Copyright 2022 Music Technology Group - Universitat Pompeu Fabra
