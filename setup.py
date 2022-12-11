@@ -16,8 +16,7 @@ setup(
             "conf/*",
             "visualisation/waveform_player/waveform-playlist/*",
             "utils/augment/*",
-            "utils/NMFtoolbox/*",
-            "notebooks/*"
+            "utils/NMFtoolbox/*"
         ]
     },
     long_description=open("./README.md").read(),
