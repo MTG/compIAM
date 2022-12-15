@@ -140,7 +140,7 @@ class Corpora:
             ``{"uuid": raga UUID, "name": name of the raga}``
             For additional information about each raga use :func:`get_raga`.
         """
-        return _get_paged_json("api/" + self.tradition + "/raga")
+        return _get_paged_json("api/" + self.tradition + "/raaga")
 
     def get_raga(self, raga_id):
         """Get specific information about a raga.
@@ -150,7 +150,7 @@ class Corpora:
             ``artists`` includes artists with recording- and release-
             level relationships to a recording with this raga.
         """
-        return _dunya_query_json("api/" + self.tradition + "/raga/%s" % str(raga_id))
+        return _dunya_query_json("api/" + self.tradition + "/raaga/%s" % str(raga_id))
 
     def list_talas(self):
         """List the talas in the database. This function will automatically page through API results.
@@ -159,7 +159,7 @@ class Corpora:
             ``{"uuid": tala UUID, "name": name of the tala}``
             For additional information about each tala use :func:`get_tala`.
         """
-        return _get_paged_json("api/" + self.tradition + "/tala")
+        return _get_paged_json("api/" + self.tradition + "/taala")
 
     def get_tala(self, tala_id):
         """Get specific information about a tala.
@@ -169,7 +169,7 @@ class Corpora:
             ``artists`` includes artists with recording- and release-
             level relationships to a recording with this raga.
         """
-        return _dunya_query_json("api/" + self.tradition + "/tala/%s" % str(tala_id))
+        return _dunya_query_json("api/" + self.tradition + "/taala/%s" % str(tala_id))
 
     def list_instruments(self):
         """List the instruments in the database. This function will automatically page through API results.
