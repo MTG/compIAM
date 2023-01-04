@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Contributing pipeline &mdash; compiam 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Util functions" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> compiam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-a-tool">Integrating a tool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-a-dataset">Integrating a dataset</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Contributing pipeline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/contributing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="contributing-pipeline">
+<span id="contributing-guidelines"></span><h1>Contributing pipeline<a class="headerlink" href="#contributing-pipeline" title="Permalink to this heading">¶</a></h1>
+<section id="integrating-a-tool">
+<h2>Integrating a tool<a class="headerlink" href="#integrating-a-tool" title="Permalink to this heading">¶</a></h2>
+<p>We will present here the necessary steps to follow to integrate a tool into <code class="docutils literal notranslate"><span class="pre">compiam</span></code>:</p>
+<ul>
+<li><p>Open an issue to <code class="docutils literal notranslate"><span class="pre">compiam</span></code> lettins us know that you are integating a tool, so that we can be aware of that and rapidly provide support if needed.</p></li>
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">tool_name.py</span></code> or <code class="docutils literal notranslate"><span class="pre">tool_name/</span></code> within the most appropiate <code class="docutils literal notranslate"><span class="pre">compiam/&lt;musical-aspect&gt;/&lt;task&gt;/</span></code>. Important considerations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If you are proposing a new task, you can also create a new task folder, copying and adapting the <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file from another task.</p></li>
+<li><p>The decision between <code class="docutils literal notranslate"><span class="pre">tool_name.py</span></code> vs <code class="docutils literal notranslate"><span class="pre">tool_name/</span></code> depends on how complex your tool is. If your tool is composed by multiple files, you can use the folder for a cleaner organization.  However, you will see that some tools in <code class="docutils literal notranslate"><span class="pre">compiam</span></code> can be contained in a single file.</p></li>
+<li><p>Your tool should have a <code class="docutils literal notranslate"><span class="pre">.extract()</span></code> method in case it is knowledge-based, or a <code class="docutils literal notranslate"><span class="pre">.predict()</span></code> model in case it is data-driven.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Make sure that after integrating the tool, you add it to the <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file of the corresponding task. Make sure also to add the citation in the README file in the musical aspect.</p></li>
+<li><p>If your model is ML/DL-based and you want to allow users to load a provided pre-train weights, please include these into <code class="docutils literal notranslate"><span class="pre">compiam/models/&lt;musical-aspect&gt;</span></code> and add the model into <code class="docutils literal notranslate"><span class="pre">models_dict</span></code> in <code class="docutils literal notranslate"><span class="pre">data.py</span></code>.</p></li>
+</ul>
+<p>The case of <em>optional dependencies</em>:</p>
+<ul class="simple">
+<li><p>If your tool uses one of these dependencies: <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>, <code class="docutils literal notranslate"><span class="pre">torch</span></code>, <code class="docutils literal notranslate"><span class="pre">essentia</span></code>, or you think that</p></li>
+</ul>
+<p>one of your dependencies might be added as optional, please reach out to us, and we can discuss how
+we address it. You can follow one of the already implemented tools that include optional dependencies
+as an example. We follow a very specific method to handle this situations and we need to continue
+consistently.</p>
+</section>
+<section id="integrating-a-dataset">
+<h2>Integrating a dataset<a class="headerlink" href="#integrating-a-dataset" title="Permalink to this heading">¶</a></h2>
+<p>We use <code class="docutils literal notranslate"><span class="pre">mirdata</span></code> a backbone for dataset management. Therefore, in order to integate a dataset, please
+refer to the <code class="docutils literal notranslate"><span class="pre">mirdata</span></code> repository where very clear contribution guidelines are provided.</p>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="utils.html" class="btn btn-neutral float-left" title="Util functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

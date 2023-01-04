@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>compiam.visualisation.peaks.data &mdash; compiam 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/style.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> compiam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contributing pipeline</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../compiam.html">compiam</a> &raquo;</li>
+        
+      <li>compiam.visualisation.peaks.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for compiam.visualisation.peaks.data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Code taken with permission from https://github.com/gopalkoduri/pypeaks</span>
+
+<span class="sd">Author: Gopal Koduri</span>
+<span class="sd">Date: Oct 2022</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
+
+<span class="kn">from</span> <span class="nn">compiam.visualisation.peaks</span> <span class="kn">import</span> <span class="n">slope</span>
+
+
+<div class="viewcode-block" id="PeakData"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData">[docs]</a><span class="k">class</span> <span class="nc">PeakData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Data object for peak detection has methods necessary to handle the</span>
+<span class="sd">    histogram/time-series like data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">default_smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the data object for peak detection with x, y, smoothness</span>
+<span class="sd">        parameter and peaks (empty initially). In a histogram, x refers to bin centers (not</span>
+<span class="sd">        edges), and y refers to the corresponding count/frequency.</span>
+
+<span class="sd">        The smoothness parameter refers to the standard deviation of the</span>
+<span class="sd">        gaussian kernel used for smoothing.</span>
+
+<span class="sd">        The peaks variable is a dictionary of the following form:</span>
+<span class="sd">        {&quot;peaks&quot;:[[peak positions], [peak amplitudes]],</span>
+<span class="sd">        &quot;valleys&quot;: [[valley positions], [valley amplitudes]]}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothness</span> <span class="o">=</span> <span class="n">smoothness</span>
+        <span class="k">if</span> <span class="n">default_smooth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="PeakData.set_smoothness"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.set_smoothness">[docs]</a>    <span class="k">def</span> <span class="nf">set_smoothness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smoothness</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method (re)sets the smoothness parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothness</span> <span class="o">=</span> <span class="n">smoothness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PeakData.smooth"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Smooths the data using a gaussian kernel of the given standard deviation</span>
+<span class="sd">        (as smoothness parameter)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothness</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PeakData.normalize"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalizes the given data such that the area under the histogram/curve</span>
+<span class="sd">        comes to 1. Also re applies smoothing once done.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">median_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">bin_edges</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">median_diff</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">]</span>
+        <span class="n">bin_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">median_diff</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PeakData.serialize"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the raw (read unsmoothed) histogram data to the given path using</span>
+<span class="sd">        pickle python module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_raw</span><span class="p">],</span> <span class="n">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PeakData.get_peaks"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.get_peaks">[docs]</a>    <span class="k">def</span> <span class="nf">get_peaks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;slope&quot;</span><span class="p">,</span>
+        <span class="n">peak_amp_thresh</span><span class="o">=</span><span class="mf">0.00005</span><span class="p">,</span>
+        <span class="n">valley_thresh</span><span class="o">=</span><span class="mf">0.00003</span><span class="p">,</span>
+        <span class="n">intervals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lookahead</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">avg_interval</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function expects SMOOTHED histogram. If you run it on a raw histogram,</span>
+<span class="sd">        there is a high chance that it returns no peaks.</span>
+
+<span class="sd">        method can be interval/slope/hybrid.</span>
+<span class="sd">            The interval-based method simply steps through the whole histogram</span>
+<span class="sd">            and pick up the local maxima in each interval, from which irrelevant</span>
+<span class="sd">            peaks are filtered out by looking at the proportion of points on</span>
+<span class="sd">            either side of the detected peak in each interval, and by applying</span>
+<span class="sd">            peal_amp_thresh and valley_thresh bounds.</span>
+
+<span class="sd">            Slope approach uses, of course slope information, to find peaks,</span>
+<span class="sd">            which are then filtered by applying peal_amp_thresh and</span>
+<span class="sd">            valley_thresh bounds.</span>
+
+<span class="sd">            Hybrid approach combines the peaks obtained using slope method and</span>
+<span class="sd">            interval-based approach. It retains the peaks/valleys from slope method</span>
+<span class="sd">            if there should be a peak around the same region from each of the methods.</span>
+
+<span class="sd">        peak_amp_thresh is the minimum amplitude/height that a peak should have</span>
+<span class="sd">        in a normalized smoothed histogram, to be qualified as a peak.</span>
+<span class="sd">        valley_thresh is viceversa for valleys!</span>
+
+<span class="sd">        If the method is interval/hybrid, then the intervals argument must be passed</span>
+<span class="sd">        and it should be an instance of Intervals class.</span>
+
+<span class="sd">        If the method is slope/hybrid, then the lookahead and avg_window</span>
+<span class="sd">        arguments should be changed based on the application.</span>
+<span class="sd">        They have some default values though.</span>
+
+<span class="sd">        The method stores peaks in self.peaks in the following format:</span>
+<span class="sd">        {&quot;peaks&quot;:[[peak positions], [peak amplitudes]],</span>
+<span class="sd">        &quot;valleys&quot;: [[valley positions], [valley amplitudes]]}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">peaks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">slope_peaks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Please don&#39;t get confused with a lot of mess around</span>
+        <span class="c1"># indices around here. All indices (eg: left_index etc) refer to indices</span>
+        <span class="c1"># of x or y (of histogram).</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;slope&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">:</span>
+
+            <span class="c1"># step 1: get the peaks</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">lookahead</span><span class="o">=</span><span class="n">lookahead</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">valley_thresh</span>
+            <span class="p">)</span>
+
+            <span class="c1"># step 2: find left and right valley points for each peak</span>
+            <span class="n">peak_data</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">]</span>
+            <span class="n">valley_data</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;valleys&quot;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">nearest_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                    <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">left_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">right_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">avg_interval</span> <span class="o">/</span> <span class="mi">2</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">offset</span> <span class="o">=</span> <span class="n">nearest_index</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">nearest_index</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">offset</span><span class="p">:],</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">right_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span><span class="p">]</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">right_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">nearest_index</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">left_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">avg_interval</span> <span class="o">/</span> <span class="mi">2</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">nearest_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">nearest_index</span><span class="p">],</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="n">left_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">valley_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_index</span><span class="p">]</span>
+                        <span class="p">)</span>
+
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">peak_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">slope_peaks</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">left_index</span><span class="p">,</span> <span class="n">right_index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;slope&quot;</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="n">slope_peaks</span>
+
+        <span class="n">interval_peaks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">intervals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The interval argument is not passed.&quot;</span><span class="p">)</span>
+            <span class="c1"># step 1: get the average size of the interval, first and last</span>
+            <span class="c1"># probable centers of peaks</span>
+            <span class="n">avg_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span>
+                <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">avg_interval</span><span class="p">)</span> <span class="o">/</span> <span class="n">avg_interval</span> <span class="o">*</span> <span class="n">avg_interval</span>
+            <span class="n">first_center</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">nearest_interval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">avg_interval</span><span class="p">)</span> <span class="o">/</span> <span class="n">avg_interval</span> <span class="o">*</span> <span class="n">avg_interval</span>
+            <span class="n">last_center</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">nearest_interval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">first_center</span> <span class="o">&lt;</span> <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">first_center</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;In the interval based approach, the first center was seen</span><span class="se">\</span>
+<span class="s2">                    to be too low and is set to &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">first_center</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">last_center</span> <span class="o">&gt;</span> <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">last_center</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;In the interval based approach, the last center was seen</span><span class="se">\</span>
+<span class="s2">                     to be too high and is set to &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">last_center</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="c1"># step 2: find the peak position, and set the left and right bounds</span>
+            <span class="c1"># which are equivalent in sense to the valley points</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="n">first_center</span>
+            <span class="k">while</span> <span class="n">interval</span> <span class="o">&lt;=</span> <span class="n">last_center</span><span class="p">:</span>
+                <span class="n">prev_interval</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">prev_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+                <span class="n">next_interval</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">next_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+                <span class="n">left_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">interval</span> <span class="o">+</span> <span class="n">prev_interval</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="p">)</span>
+                <span class="n">right_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">interval</span> <span class="o">+</span> <span class="n">next_interval</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="p">)</span>
+                <span class="n">peak_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">left_index</span><span class="p">:</span><span class="n">right_index</span><span class="p">])</span>
+                <span class="c1"># add left_index to peak_pos to get the correct position in x/y</span>
+                <span class="n">peak_amp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">left_index</span> <span class="o">+</span> <span class="n">peak_pos</span><span class="p">]</span>
+                <span class="n">interval_peaks</span><span class="p">[</span><span class="n">left_index</span> <span class="o">+</span> <span class="n">peak_pos</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">peak_amp</span><span class="p">,</span>
+                    <span class="n">left_index</span><span class="p">,</span>
+                    <span class="n">right_index</span><span class="p">,</span>
+                <span class="p">]</span>
+                <span class="n">interval</span> <span class="o">=</span> <span class="n">next_interval</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span><span class="p">:</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="n">interval_peaks</span>
+
+        <span class="c1"># If its is a hybrid method merge the results. If we find same</span>
+        <span class="c1"># peak position in both results, we prefer valleys of slope-based peaks</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">:</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">slope_peaks</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">interval_peaks</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">all_peaks</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                <span class="n">near_index</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="n">near_index</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">avg_interval</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">p2</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">near_index</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                <span class="n">all_peaks</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">slope_peaks</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p2</span><span class="p">:</span>
+                <span class="n">all_peaks</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">interval_peaks</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="n">all_peaks</span>
+
+        <span class="c1"># Finally, filter the peaks and retain eligible peaks, also get</span>
+        <span class="c1"># their valley points.</span>
+
+        <span class="c1"># check 1: peak_amp_thresh</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">peaks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># pos is an index in x/y. DOES NOT refer to a cent value.</span>
+            <span class="k">if</span> <span class="n">peaks</span><span class="p">[</span><span class="n">pos</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">peak_amp_thresh</span><span class="p">:</span>
+                <span class="n">peaks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+        <span class="c1"># check 2, 3: valley_thresh, proportion of size of left and right lobes</span>
+        <span class="n">valleys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">peaks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># remember that peaks[pos][1] is left_index and</span>
+            <span class="c1"># peaks[pos][2] is the right_index</span>
+            <span class="n">left_lobe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">peaks</span><span class="p">[</span><span class="n">pos</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="n">pos</span><span class="p">]</span>
+            <span class="n">right_lobe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">peaks</span><span class="p">[</span><span class="n">pos</span><span class="p">][</span><span class="mi">2</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_lobe</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_lobe</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">peaks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">left_lobe</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_lobe</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.15</span>
+                <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_lobe</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_lobe</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.15</span>
+            <span class="p">):</span>
+                <span class="n">peaks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">left_valley_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">left_lobe</span><span class="p">)</span>
+            <span class="n">right_valley_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">right_lobe</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">abs</span><span class="p">(</span><span class="n">left_lobe</span><span class="p">[</span><span class="n">left_valley_pos</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">valley_thresh</span>
+                <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">right_lobe</span><span class="p">[</span><span class="n">right_valley_pos</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">valley_thresh</span>
+            <span class="p">):</span>
+                <span class="n">peaks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">valleys</span><span class="p">[</span><span class="n">peaks</span><span class="p">[</span><span class="n">pos</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">left_valley_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">left_lobe</span><span class="p">[</span><span class="n">left_valley_pos</span><span class="p">]</span>
+                <span class="n">valleys</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">right_valley_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">right_lobe</span><span class="p">[</span><span class="n">right_valley_pos</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">peak_amps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">peaks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="n">peak_amps</span> <span class="o">=</span> <span class="n">peak_amps</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Why do we index x with peaks.keys() and</span>
+            <span class="c1"># valleys.keys(). Just recall that pos refers to indices and</span>
+            <span class="c1"># not value corresponding to the histogram bin. If i is pos,</span>
+            <span class="c1"># x[i] is the bin value. Tada!!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;peaks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">peaks</span><span class="o">.</span><span class="n">keys</span><span class="p">()],</span> <span class="n">peak_amps</span><span class="p">],</span>
+                <span class="s2">&quot;valleys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">valleys</span><span class="o">.</span><span class="n">keys</span><span class="p">()],</span> <span class="n">valleys</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;peaks&quot;</span><span class="p">:</span> <span class="p">[[],</span> <span class="p">[]],</span> <span class="s2">&quot;valleys&quot;</span><span class="p">:</span> <span class="p">[[],</span> <span class="p">[]]}</span></div>
+
+<div class="viewcode-block" id="PeakData.extend_peaks"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.extend_peaks">[docs]</a>    <span class="k">def</span> <span class="nf">extend_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_thresh</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Each peak in the peaks of the object is checked for its presence in</span>
+<span class="sd">        other octaves. If it does not exist, it is created.</span>
+
+<span class="sd">        prop_thresh is the cent range within which the peak in the other octave</span>
+<span class="sd">        is expected to be present, i.e., only if there is a peak within this</span>
+<span class="sd">        cent range in other octaves, then the peak is considered to be present</span>
+<span class="sd">        in that octave.</span>
+
+<span class="sd">        Note that this does not change the peaks of the object. It just returns</span>
+<span class="sd">        the extended peaks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># octave propagation of the reference peaks</span>
+        <span class="n">temp_peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1200</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">temp_peaks</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1200</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">extended_peaks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">extended_peaks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">temp_peaks</span><span class="p">:</span>
+            <span class="c1"># if a peak exists around, don&#39;t add this new one.</span>
+            <span class="n">nearest_ind</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">find_nearest_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_ind</span><span class="p">]</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mi">1200</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">prop_thresh</span><span class="p">:</span>
+                <span class="n">extended_peaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">extended_peaks</span></div>
+
+<div class="viewcode-block" id="PeakData.plot"><a class="viewcode-back" href="../../../../source/visualisation.html#compiam.visualisation.peaks.data.PeakData.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function plots histogram together with its smoothed</span>
+<span class="sd">        version and peak information if provided. Just intonation</span>
+<span class="sd">        intervals are plotted for a reference.&quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">p</span>
+
+        <span class="k">if</span> <span class="n">new_fig</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+        <span class="c1"># step 1: plot histogram</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">&quot;1.5&quot;</span><span class="p">)</span>
+
+        <span class="c1"># step 2: plot peaks</span>
+        <span class="n">first_peak</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">last_peak</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">:</span>
+            <span class="n">first_peak</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">last_peak</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;peaks&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rD&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;valleys&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">[</span><span class="s2">&quot;valleys&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;yD&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># Intervals</span>
+        <span class="k">if</span> <span class="n">intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># spacing = 0.02*max(self.y)</span>
+            <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">first_peak</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">interval</span> <span class="o">&lt;=</span> <span class="n">first_peak</span> <span class="ow">or</span> <span class="n">interval</span> <span class="o">&gt;=</span> <span class="n">last_peak</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-.&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">&quot;1.5&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">interval</span> <span class="o">-</span> <span class="mi">1200</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">):</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">interval</span> <span class="o">-</span> <span class="mi">1200</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">interval</span> <span class="o">+</span> <span class="mi">1200</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">):</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">interval</span> <span class="o">+</span> <span class="mi">1200</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">interval</span> <span class="o">+</span> <span class="mi">2400</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">):</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">interval</span> <span class="o">+</span> <span class="mi">2400</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-.&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">)</span>
+                <span class="c1"># spacing *= -1</span>
+
+        <span class="c1"># p.title(&quot;Tonic-aligned complete-range pitch histogram&quot;)</span>
+        <span class="c1"># p.xlabel(&quot;Pitch value (Cents)&quot;)</span>
+        <span class="c1"># p.ylabel(&quot;Normalized frequency of occurence&quot;)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
