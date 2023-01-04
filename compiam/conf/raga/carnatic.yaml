@@ -58,4 +58,7 @@ mohanam:
   arohana: ['S', 'R2', 'G3', 'P', 'D2', 'S']
   avorohana: ['S', 'D2', 'P', 'G3', 'R2', 'S']
 
-
+kamavardani:
+  arohana: ['S', 'R1', 'G3', 'M2', 'P', 'D1', 'N3', 'S']
+  avorohana: ['S', 'N3', 'D1', 'P', 'M2', 'G3', 'R1', 'S']
+  
