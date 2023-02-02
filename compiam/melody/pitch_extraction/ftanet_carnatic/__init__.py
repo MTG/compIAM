@@ -255,7 +255,7 @@ class FTANetCarnatic(object):
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio = librosa.load(input_data, sr=self.sample_rate)
+            audio, _ = librosa.load(input_data, sr=self.sample_rate)
         elif isinstance(input_data, np.array): 
             audio = input_data
         else:
