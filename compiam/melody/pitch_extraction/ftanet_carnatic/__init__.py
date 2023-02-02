@@ -233,7 +233,7 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None):
+    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None, gpu=-1):
         """Extract melody from file_path.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
@@ -244,8 +244,12 @@ class FTANetCarnatic(object):
             (defaulted to 5, increase if enough computational power, reduce if
             needed).
         :param out_step: particular time-step duration if needed at output
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
+        ## Setting up GPU if any
+        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
+
         if self.trained is False:
             raise ModelNotTrainedError("""
                 Model is not trained. Please load model before running inference!

@@ -212,13 +212,17 @@ class DEEPSRGM(object):
             a.append(feature[c : c + 5000])
         return np.array(a)
 
-    def predict(self, features, threshold=0.6):
+    def predict(self, features, threshold=0.6, gpu=-1):
         """Predict raga for recording
 
         :param features: all subsequences for a certain music recording
         :param threshold: majority voting threshold
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
         :return: recognition result
         """
+        ## Setting up GPU if any
+        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
+
         if isinstance(features, str):
             raise ValueError(
                 "Please first extract features using .get_features() and use \
