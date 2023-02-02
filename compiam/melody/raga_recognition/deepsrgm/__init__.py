@@ -1,5 +1,6 @@
 import os
 import warnings
+import librosa
 
 import numpy as np
 
@@ -142,7 +143,7 @@ class DEEPSRGM(object):
 
     def get_features(
         self,
-        audio_path=None,
+        input_data=None,
         pitch_path=None,
         tonic_path=None,
         from_mirdata=False,
@@ -151,7 +152,7 @@ class DEEPSRGM(object):
     ):
         """Computing features for prediction of DEEPSRM
 
-        :param audio_path: path to file from which to extract the features
+        :param input_data: ppath to audio file or numpy array like audio signal.
         :param pitch_path: path to pre-computed pitch file (if available)
         :param tonic_path: path to pre-computed tonic file (if available)
         :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
@@ -191,15 +192,12 @@ class DEEPSRGM(object):
                     "In order to use these tools to extract the features you need to have essentia installed."
                     "Please install essentia using: pip install essentia"
                 )
-            if not os.path.exists(audio_path):
-                raise FileNotFoundError("Input audio not found.")
-            print("Extracting pitch track using melodia...")
-            freqs = melodia.extract(audio_path)[:, 1]
 
-            if not os.path.exists(audio_path):
-                raise FileNotFoundError("Input audio not found.")
+            print("Extracting pitch track using melodia...")
+            freqs = melodia.extract(input_data)[:, 1]
+
             print("Extracting tonic using multi-pitch approach...")
-            tonic = tonic_extraction.extract(audio_path)
+            tonic = tonic_extraction.extract(input_data)
 
         # Normalise pitch
         feature = np.round(1200 * np.log2(freqs / tonic) * (k / 100)).clip(0)
