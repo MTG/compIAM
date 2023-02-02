@@ -233,11 +233,11 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def predict(self, file_path, hop_size=80, batch_size=5, out_step=None):
+    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None):
         """Extract melody from file_path.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
-        :param file_path: path to file to extract.
+        :param input_data: ppath to audio file or numpy array like audio signal.
         :param sample_rate: sample rate of extraction process.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
@@ -252,23 +252,28 @@ class FTANetCarnatic(object):
                 You can load the pre-trained instance with the load_model wrapper.
             """)
 
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Target audio not found.")
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio = librosa.load(input_data, sr=self.sample_rate)
+        elif isinstance(input_data, np.array): 
+            audio = input_data
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
 
         xlist = []
         timestamps = []
 
-        y, _ = librosa.load(file_path, sr=self.sample_rate)
-        audio_len = len(y)
+        audio_len = len(audio)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []
-        if len(y) > batch_min:
-            iters = math.ceil(len(y) / batch_min)
+        if len(audio) > batch_min:
+            iters = math.ceil(len(audio) / batch_min)
             for i in np.arange(iters):
                 if i < iters - 1:
-                    audio_in = y[batch_min * i : batch_min * (i + 1)]
+                    audio_in = audio[batch_min * i : batch_min * (i + 1)]
                 if i == iters - 1:
-                    audio_in = y[batch_min * i :]
+                    audio_in = audio[batch_min * i :]
                 feature, _, time_arr = cfp_process(
                     audio_in, sr=self.sample_rate, hop=hop_size
                 )
@@ -282,7 +287,7 @@ class FTANetCarnatic(object):
                 else:
                     freqs = np.concatenate((freqs, estimation[:, 1]))
         else:
-            feature, _, time_arr = cfp_process(y, sr=self.sample_rate, hop=hop_size)
+            feature, _, time_arr = cfp_process(audio, sr=self.sample_rate, hop=hop_size)
             data = batchize_test(feature, size=128)
             xlist.append(data)
             timestamps.append(time_arr)
