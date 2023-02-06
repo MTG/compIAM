@@ -474,10 +474,12 @@ class AksharaPulseTracker:
         self.Nbins = maxLen / binWidth + 1
         self.wtolHistAv = round(20e-3 / binWidth)
 
-    def extract(self, input_data, verbose=True):
+    def extract(self, input_data, input_sr=44100, verbose=True):
         """Run extraction of akshara pulses from input audio file
 
         :param input_data: path to audio file or numpy array like audio signal
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath
         :param verbose: verbose level
 
         :returns: array of akshara pulses
@@ -487,7 +489,8 @@ class AksharaPulseTracker:
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.Fs)
         elif isinstance(input_data, np.ndarray): 
-            audio = input_data
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.Fs)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 

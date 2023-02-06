@@ -67,21 +67,26 @@ class Melodia:
         self.voiceVibrato = voiceVibrato
         self.voicingTolerance = voicingTolerance
 
-    def extract(self, input_data, out_step=None):
+    def extract(self, input_data, input_sr=44100, out_step=None):
         """Extract the melody from a given file.
 
         :param input_data: path to audio file or numpy array like audio signal
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
         :param out_step: particular time-step duration if needed at output
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio = estd.EqloudLoader(filename=input_data)()
-        elif isinstance(input_data, np.ndarray): 
+            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
+        elif isinstance(input_data, np.ndarray):
+            resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            input_data = resampling(input_data)
             audio = estd.EqualLoudness(signal=input_data)()
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
+
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,
             filterIterations=self.filterIterations,
