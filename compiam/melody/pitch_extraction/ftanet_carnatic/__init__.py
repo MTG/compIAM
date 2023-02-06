@@ -234,7 +234,7 @@ class FTANetCarnatic(object):
         self.trained = True
 
     def predict(self, input_data, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
-        """Extract melody from file_path.
+        """Extract melody from input_data.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
         :param input_data: path to audio file or numpy array like audio signal.
