@@ -57,11 +57,10 @@ class TonicIndianMultiPitch:
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
+            audio = estd.MonoLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
             resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
-            input_data = resampling(input_data)
-            audio = estd.EqualLoudness(signal=input_data)()
+            audio = resampling(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
             
