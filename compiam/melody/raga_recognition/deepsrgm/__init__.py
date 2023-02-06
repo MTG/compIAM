@@ -22,7 +22,7 @@ class DEEPSRGM(object):
         :param model_path: path to file to the model weights.
         :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
-        :param sample_rate: sampling rato which the model is trained
+        :param sample_rate: sampling rate which the model is trained
         :param device: torch CUDA config to route model to GPU
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -204,6 +204,7 @@ class DEEPSRGM(object):
                     raise FileNotFoundError("Target audio not found.")
                 audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
             elif isinstance(input_data, np.ndarray):
+                print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
                 resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sample_rate)
                 audio = resampling(input_data)
             else:

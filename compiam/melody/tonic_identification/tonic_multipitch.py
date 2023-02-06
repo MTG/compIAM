@@ -59,6 +59,7 @@ class TonicIndianMultiPitch:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.MonoLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
             resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
             audio = resampling(input_data)
         else:

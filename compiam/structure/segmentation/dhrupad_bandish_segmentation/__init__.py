@@ -397,10 +397,12 @@ class DhrupadBandishSegmentation:
             )
         self.trained = True
 
-    def predict_stm(self, input_data, save_output=False, output_path=None):
+    def predict_stm(self, input_data, input_sr=44100, save_output=False, output_path=None):
         """Predict Dhrupad Bandish Segmentation
 
-        :param input_data: path to audio file or numpy array like audio signal
+        :param input_data: path to audio file or numpy array like audio signal.
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
         :param save_output: boolean indicating whether the output figure for the estimation is
             stored.
         :param output_path: if the input is an array, and the user wants to save the estimation,
@@ -411,11 +413,12 @@ class DhrupadBandishSegmentation:
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio, sr = librosa.load(input_data)
+            audio, sr = librosa.load(input_data, sr=pars.fs)
             if output_path is None:
                 output_path = os.path.basename(input_data).replace(input_data.split(".")[-1], "png")
         elif isinstance(input_data, np.ndarray): 
-            audio = input_data
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=pars.fs)
             if (save_output is True) and (output_path is None):
                 raise ValueError("Please provide an output_path in order to save the estimation")
         else:
@@ -433,7 +436,7 @@ class DhrupadBandishSegmentation:
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
             audio,
-            sr=sr,
+            sr=pars.fs,
             n_fft=pars.nfft,
             hop_length=pars.hopsize,
             win_length=pars.winsize,
