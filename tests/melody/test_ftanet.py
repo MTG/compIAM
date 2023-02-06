@@ -25,10 +25,10 @@ def _predict_pitch():
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
-    audio_in, _ = librosa.load(
+    audio_in, sr = librosa.load(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
-    pitch_2 = ftanet.predict(audio_in)
+    pitch_2 = ftanet.predict(audio_in, input_sr=sr)
 
     assert np.all(np.isclose(pitch, pitch_2)) 
 
