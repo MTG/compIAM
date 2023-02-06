@@ -152,7 +152,7 @@ class DEEPSRGM(object):
     ):
         """Computing features for prediction of DEEPSRM
 
-        :param input_data: ppath to audio file or numpy array like audio signal.
+        :param input_data: path to audio file or numpy array like audio signal.
         :param pitch_path: path to pre-computed pitch file (if available)
         :param tonic_path: path to pre-computed tonic file (if available)
         :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
