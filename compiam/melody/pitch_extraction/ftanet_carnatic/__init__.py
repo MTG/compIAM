@@ -233,11 +233,11 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None, gpu=-1):
+    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
         """Extract melody from file_path.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
-        :param input_data: ppath to audio file or numpy array like audio signal.
+        :param input_data: path to audio file or numpy array like audio signal.
         :param sample_rate: sample rate of extraction process.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
@@ -271,8 +271,8 @@ class FTANetCarnatic(object):
         audio_len = len(audio)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []
-        if len(audio) > batch_min:
-            iters = math.ceil(len(audio) / batch_min)
+        if audio_len > batch_min:
+            iters = math.ceil(audio_len / batch_min)
             for i in np.arange(iters):
                 if i < iters - 1:
                     audio_in = audio[batch_min * i : batch_min * (i + 1)]

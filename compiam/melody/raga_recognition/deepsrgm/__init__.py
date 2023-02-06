@@ -212,7 +212,7 @@ class DEEPSRGM(object):
             a.append(feature[c : c + 5000])
         return np.array(a)
 
-    def predict(self, features, threshold=0.6, gpu=-1):
+    def predict(self, features, threshold=0.6, gpu="-1"):
         """Predict raga for recording
 
         :param features: all subsequences for a certain music recording
