@@ -202,7 +202,7 @@ class DEEPSRGM(object):
             if isinstance(input_data, str):
                 if not os.path.exists(input_data):
                     raise FileNotFoundError("Target audio not found.")
-                audio = estd.MonoLoader(input_data, sampleRate=self.sample_rate)()
+                audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
             elif isinstance(input_data, np.ndarray):
                 resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sample_rate)
                 audio = resampling(input_data)
