@@ -22,8 +22,8 @@ def test_load_corpora():
         load_corpora("hola")
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
-    corpora = load_corpora("carnatic", token="hola")
-    assert type(corpora) == Corpora
+    with pytest.raises(ValueError):
+        load_corpora("carnatic", token="hola")  
 
 
 def test_lists():

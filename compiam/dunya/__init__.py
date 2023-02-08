@@ -52,15 +52,22 @@ class Corpora:
         )
 
         # Initializing database
-        metadata = self._get_metadata()
+        try:
+            metadata = self._get_metadata()
 
-        self.recording_list = metadata["recording_list"]
-        self.artist_list = metadata["artist_list"]
-        self.concert_list = metadata["concert_list"]
-        self.work_list = metadata["work_list"]
-        self.raga_list = metadata["raga_list"]
-        self.tala_list = metadata["tala_list"]
-        self.instrument_list = metadata["instrument_list"]
+            self.recording_list = metadata["recording_list"]
+            self.artist_list = metadata["artist_list"]
+            self.concert_list = metadata["concert_list"]
+            self.work_list = metadata["work_list"]
+            self.raga_list = metadata["raga_list"]
+            self.tala_list = metadata["tala_list"]
+            self.instrument_list = metadata["instrument_list"]
+
+        except:
+            raise ValueError("""
+                Error accessing metadata. Have you entered the right token? If you are confident about that, consider
+                loading the Corpora instance again.
+            """)
 
     def get_collection(self):
         """Get the documents (recordings) in a collection.
