@@ -53,22 +53,6 @@ def set_token(token):
     TOKEN = token
 
 
-def _get_paged_json(path, **kwargs):
-    extra_headers = None
-    if "extra_headers" in kwargs:
-        extra_headers = kwargs.get("extra_headers")
-        del kwargs["extra_headers"]
-    nxt = _make_url(path, **kwargs)
-    logger.debug("initial paged to %s", nxt)
-    ret = []
-    while nxt:
-        res = _dunya_url_query(nxt, extra_headers=extra_headers)
-        res = res.json()
-        ret.extend(res.get("results", []))
-        nxt = res.get("next")
-    return ret
-
-
 def _dunya_url_query(url, extra_headers=None):
     logger.debug("query to '%s'" % url)
     if not TOKEN:
@@ -84,21 +68,6 @@ def _dunya_url_query(url, extra_headers=None):
     except requests.exceptions.HTTPError as e:
         raise HTTPError(e)
     return g
-
-
-def _dunya_post(url, data=None, files=None):
-    data = data or {}
-    files = files or {}
-    logger.debug("post to '%s'" % url)
-    if not TOKEN:
-        raise ConnectionError("You need to authenticate with `set_token`")
-    headers = {"Authorization": "Token %s" % TOKEN}
-    p = requests.post(url, headers=headers, data=data, files=files)
-    try:
-        p.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        raise HTTPError(e)
-    return p
 
 
 def _make_url(path, **kwargs):
