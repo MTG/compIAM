@@ -13,7 +13,8 @@ jobs:
           python-version: '3.8' 
       - name: Install dependencies
         run: |
-          sudo apt-get install libsndfile1
+          sudo apt-get update
+          sudo apt-get install libsndfile
           pip install sphinx sphinx_rtd_theme numpydoc recommonmark
           pip install mirdata 
           pip install scikit-learn 

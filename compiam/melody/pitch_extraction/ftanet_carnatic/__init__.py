@@ -233,12 +233,13 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def predict(self, input_data, hop_size=80, batch_size=5, out_step=None, gpu=-1):
-        """Extract melody from file_path.
+    def predict(self, input_data, input_sr=44100, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
+        """Extract melody from input_data.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
-        :param input_data: ppath to audio file or numpy array like audio signal.
-        :param sample_rate: sample rate of extraction process.
+        :param input_data: path to audio file or numpy array like audio signal.
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
             (defaulted to 5, increase if enough computational power, reduce if
@@ -260,8 +261,9 @@ class FTANetCarnatic(object):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.sample_rate)
-        elif isinstance(input_data, np.array): 
-            audio = input_data
+        elif isinstance(input_data, np.ndarray): 
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
@@ -271,8 +273,8 @@ class FTANetCarnatic(object):
         audio_len = len(audio)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []
-        if len(audio) > batch_min:
-            iters = math.ceil(len(audio) / batch_min)
+        if audio_len > batch_min:
+            iters = math.ceil(audio_len / batch_min)
             for i in np.arange(iters):
                 if i < iters - 1:
                     audio_in = audio[batch_min * i : batch_min * (i + 1)]

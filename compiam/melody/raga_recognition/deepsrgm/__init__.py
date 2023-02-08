@@ -15,13 +15,14 @@ class DEEPSRGM(object):
     """
 
     def __init__(
-        self, model_path=None, rnn="lstm", mapping_path=None, device=None
+        self, model_path=None, rnn="lstm", mapping_path=None, sample_rate=44100, device=None
     ):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights.
         :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
+        :param sample_rate: sampling rate which the model is trained
         :param device: torch CUDA config to route model to GPU
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -50,6 +51,7 @@ class DEEPSRGM(object):
             self.model = self._build_model(rnn=self.rnn)
 
         self.model_path = model_path
+        self.sample_rate = sample_rate
         self.trained = False
 
         ## Loading LSTM model by default
@@ -144,6 +146,7 @@ class DEEPSRGM(object):
     def get_features(
         self,
         input_data=None,
+        input_sr=44100,
         pitch_path=None,
         tonic_path=None,
         from_mirdata=False,
@@ -152,13 +155,15 @@ class DEEPSRGM(object):
     ):
         """Computing features for prediction of DEEPSRM
 
-        :param input_data: ppath to audio file or numpy array like audio signal.
-        :param pitch_path: path to pre-computed pitch file (if available)
-        :param tonic_path: path to pre-computed tonic file (if available)
+        :param input_data: path to audio file or numpy array like audio signal.
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
+        :param pitch_path: path to pre-computed pitch file (if available).
+        :param tonic_path: path to pre-computed tonic file (if available).
         :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of
-            Indian Art Music Raga Recognition Dataset (must be specifically this one)
+            Indian Art Music Raga Recognition Dataset (must be specifically this one).
         :param track_id: track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is
-            set to True
+            set to True.
         :param k: k indicating the precision of the pitch feature.
         """
         if (pitch_path is not None) and (tonic_path is not None):
@@ -183,21 +188,33 @@ class DEEPSRGM(object):
 
         else:
             try:
+                import essentia.standard as estd
                 melodia = compiam.melody.pitch_extraction.Melodia
-                melodia = melodia()
+                melodia = melodia(sampleRate=self.sample_rate)
                 tonic_extraction = compiam.melody.tonic_identification.TonicIndianMultiPitch
-                tonic_extraction = tonic_extraction()
+                tonic_extraction = tonic_extraction(sampleRate=self.sample_rate)
             except:
                 raise ImportError(
                     "In order to use these tools to extract the features you need to have essentia installed."
                     "Please install essentia using: pip install essentia"
                 )
 
+            if isinstance(input_data, str):
+                if not os.path.exists(input_data):
+                    raise FileNotFoundError("Target audio not found.")
+                audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
+            elif isinstance(input_data, np.ndarray):
+                print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+                resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sample_rate)
+                audio = resampling(input_data)
+            else:
+                raise ValueError("Input must be path to audio signal or an audio array")
+
             print("Extracting pitch track using melodia...")
-            freqs = melodia.extract(input_data)[:, 1]
+            freqs = melodia.extract(audio)[:, 1]
 
             print("Extracting tonic using multi-pitch approach...")
-            tonic = tonic_extraction.extract(input_data)
+            tonic = tonic_extraction.extract(audio)
 
         # Normalise pitch
         feature = np.round(1200 * np.log2(freqs / tonic) * (k / 100)).clip(0)
@@ -212,7 +229,7 @@ class DEEPSRGM(object):
             a.append(feature[c : c + 5000])
         return np.array(a)
 
-    def predict(self, features, threshold=0.6, gpu=-1):
+    def predict(self, features, threshold=0.6, gpu="-1"):
         """Predict raga for recording
 
         :param features: all subsequences for a certain music recording
