@@ -1,6 +1,5 @@
 import pytest
 import mirdata
-from compiam.dunya import Corpora
 from compiam import list_models, load_dataset, load_corpora, list_datasets, list_corpora
 
 

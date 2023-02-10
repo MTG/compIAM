@@ -482,7 +482,7 @@ class AksharaPulseTracker:
             relevant if the input is an array of data instead of a filepath
         :param verbose: verbose level
 
-        :returns: array of akshara pulses
+        :returns: dict containing estimation for sections, matra period, akshara pulses, and tempo curve
         """
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
@@ -527,6 +527,16 @@ class AksharaPulseTracker:
         onsTs = onsTs[offsetIndex:]
         sectEnd = np.append(sectEnd, onsTs[-1])
 
+        # Get sections
+        sections = {"startTime": 0, "endTime": 0, "label": ""}
+        sections["startTime"] = np.round(sectStart, params.roundOffLen)
+        sections["endTime"] = np.round(sectEnd, params.roundOffLen)
+        labelStr = ("Alapana", "Kriti")
+        if sectEnd.size == 2:
+            sections["label"] = labelStr
+        else:
+            sections["label"] = labelStr[1]
+
         # Construct tempogram
         TG, TCts, BPM = tempogram_viaDFT(
             onsFn.copy(),
@@ -548,7 +558,7 @@ class AksharaPulseTracker:
         mmpFromTC = self.getMatraPeriodEstimateFromTC(
             TCperRaw, self.Nbins, self.minBPM, self.wtolHistAv, verbose
         )
-        TCper, TCcorrFlag = correctOctaveErrors(
+        TCper, _ = correctOctaveErrors(
             TCperRaw, mmpFromTC, self.octCorrectParam, verbose
         )
         TC = 60.0 / TCper
@@ -574,20 +584,26 @@ class AksharaPulseTracker:
         Locs = akCandLocs
         ts = akCandTs
         Wts = akCandWts
-        TransMat = akCandTransMat
+        #TransMat = akCandTransMat
         TransMatCausal = np.triu(akCandTransMat + akCandTransMat.transpose())
         pers = TCper[getNearestIndices(akCandTs, TCts)]
 
         # Candidate selection
-        aksharaLocs, aksharaTimes = self.DPSearch(
+        _, aksharaTimes = self.DPSearch(
             TransMatCausal, ts, pers, Locs, Wts, self.backSearch, self.alphaDP, verbose
         )
 
-        # Correct for all the offsets now and save to file
+        # Correct for all the offsets now
         aksharaTimes = aksharaTimes + offsetTime
         TCts = TCts + offsetTime
 
-        return aksharaTimes
+        APcurve = [[TCts[t], TCper[t]] for t in range(TCts.size)]
+
+        return {"sections": sections,
+                "aksharaPeriod": np.asscalar(np.round(mmpFromTC, params.roundOffLen)),
+                "aksharaTicks": aksharaTimes,
+                "APcurve": APcurve}
+
 
     def getOnsetFunctions(
         self, audio, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
