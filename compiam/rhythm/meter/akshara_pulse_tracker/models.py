@@ -589,19 +589,19 @@ class AksharaPulseTracker:
         pers = TCper[getNearestIndices(akCandTs, TCts)]
 
         # Candidate selection
-        _, aksharaTimes = self.DPSearch(
+        _, aksharaPulses = self.DPSearch(
             TransMatCausal, ts, pers, Locs, Wts, self.backSearch, self.alphaDP, verbose
         )
 
         # Correct for all the offsets now
-        aksharaTimes = aksharaTimes + offsetTime
+        aksharaPulses = aksharaPulses + offsetTime
         TCts = TCts + offsetTime
 
         APcurve = [[TCts[t], TCper[t]] for t in range(TCts.size)]
 
         return {"sections": sections,
-                "aksharaPeriod": np.asscalar(np.round(mmpFromTC, params.roundOffLen)),
-                "aksharaTicks": aksharaTimes,
+                "aksharaPeriod": np.round(mmpFromTC, params.roundOffLen).item(0),
+                "aksharaPulses": aksharaPulses,
                 "APcurve": APcurve}
 
 
