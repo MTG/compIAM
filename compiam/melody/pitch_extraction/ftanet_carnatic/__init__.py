@@ -233,42 +233,53 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def predict(self, file_path, hop_size=80, batch_size=5, out_step=None):
-        """Extract melody from file_path.
+    def predict(self, input_data, input_sr=44100, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
+        """Extract melody from input_data.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
-        :param file_path: path to file to extract.
-        :param sample_rate: sample rate of extraction process.
+        :param input_data: path to audio file or numpy array like audio signal.
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
         :param hop_size: hop size between frequency estimations.
         :param batch_size: batches of seconds that are passed through the model
             (defaulted to 5, increase if enough computational power, reduce if
             needed).
         :param out_step: particular time-step duration if needed at output
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
+        ## Setting up GPU if any
+        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
+
         if self.trained is False:
             raise ModelNotTrainedError("""
                 Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper.
             """)
 
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Target audio not found.")
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio, _ = librosa.load(input_data, sr=self.sample_rate)
+        elif isinstance(input_data, np.ndarray): 
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
 
         xlist = []
         timestamps = []
 
-        y, _ = librosa.load(file_path, sr=self.sample_rate)
-        audio_len = len(y)
+        audio_len = len(audio)
         batch_min = self.sample_rate * 60 * batch_size
         freqs = []
-        if len(y) > batch_min:
-            iters = math.ceil(len(y) / batch_min)
+        if audio_len > batch_min:
+            iters = math.ceil(audio_len / batch_min)
             for i in np.arange(iters):
                 if i < iters - 1:
-                    audio_in = y[batch_min * i : batch_min * (i + 1)]
+                    audio_in = audio[batch_min * i : batch_min * (i + 1)]
                 if i == iters - 1:
-                    audio_in = y[batch_min * i :]
+                    audio_in = audio[batch_min * i :]
                 feature, _, time_arr = cfp_process(
                     audio_in, sr=self.sample_rate, hop=hop_size
                 )
@@ -282,7 +293,7 @@ class FTANetCarnatic(object):
                 else:
                     freqs = np.concatenate((freqs, estimation[:, 1]))
         else:
-            feature, _, time_arr = cfp_process(y, sr=self.sample_rate, hop=hop_size)
+            feature, _, time_arr = cfp_process(audio, sr=self.sample_rate, hop=hop_size)
             data = batchize_test(feature, size=128)
             xlist.append(data)
             timestamps.append(time_arr)

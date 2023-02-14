@@ -64,14 +64,14 @@ We do provide access to the Carnatic and Hindustani corpora in Dunya. For both c
 
 ### Dataset loaders
 Direct and MIR-standardized access to the datasets for the computational analysis of Indian Art Music is given through [mirdata](https://github.com/mir-dataset-loaders/mirdata) loaders. The current available datasets in compIAM are:
-    - [Saraga Carnatic](https://mtg.github.io/saraga/)*
-    - [Saraga Hindustani](https://mtg.github.io/saraga/)*
-    - [Indian Art Music Raga Dataset](https://zenodo.org/record/7278506)*
-    - [Indian Art Music Tonic Dataset](https://zenodo.org/record/1257114)*
-    - [Carnatic Music Rhythm](https://zenodo.org/record/1264394)*
-    - [Hindustani Music Rhythm](https://zenodo.org/record/1264742)*
-    - [Mridangam Stroke Dataset](https://compmusic.upf.edu/mridangam-stroke-dataset)*
-    - [Four-Way Tabla Stroke (ISMIR 21)](https://zenodo.org/record/7110248)
+* [Saraga Carnatic](https://mtg.github.io/saraga/)*
+* [Saraga Hindustani](https://mtg.github.io/saraga/)*
+* [Indian Art Music Raga Dataset](https://zenodo.org/record/7278506)*
+* [Indian Art Music Tonic Dataset](https://zenodo.org/record/1257114)*
+* [Carnatic Music Rhythm](https://zenodo.org/record/1264394)*
+* [Hindustani Music Rhythm](https://zenodo.org/record/1264742)*
+* [Mridangam Stroke Dataset](https://compmusic.upf.edu/mridangam-stroke-dataset)*
+* [Four-Way Tabla Stroke (ISMIR 21)](https://zenodo.org/record/7110248)
 
 The datasets marked with * have been compiled within the framework of the [CompMusic project](https://compmusic.upf.edu/).
 

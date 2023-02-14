@@ -397,30 +397,46 @@ class DhrupadBandishSegmentation:
             )
         self.trained = True
 
-    def predict_stm(self, file_path, output_dir=None):
+    def predict_stm(self, input_data, input_sr=44100, save_output=False, output_path=None):
         """Predict Dhrupad Bandish Segmentation
 
-        :param file_path: path of the input file
-        :param output_dir: directory to store printed outputs
+        :param input_data: path to audio file or numpy array like audio signal.
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
+        :param save_output: boolean indicating whether the output figure for the estimation is
+            stored.
+        :param output_path: if the input is an array, and the user wants to save the estimation,
+            the output_path must be provided, path/to/picture.png. 
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Input file not found")
-        if output_dir is not None:
-            if not os.path.exists(output_dir):
-                os.mkdir(output_dir)
+        if not isinstance(save_output, bool):
+            raise ValueError("save_output must be a boolean")
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio, sr = librosa.load(input_data, sr=pars.fs)
+            if output_path is None:
+                output_path = os.path.basename(input_data).replace(input_data.split(".")[-1], "png")
+        elif isinstance(input_data, np.ndarray): 
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=pars.fs)
+            if (save_output is True) and (output_path is None):
+                raise ValueError("Please provide an output_path in order to save the estimation")
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
+
+        if save_output is True:
+            if not os.path.exists(os.path.basename(output_path)):
+                os.mkdir(os.path.basename(output_path))
         if self.trained is False:
             raise ModelNotTrainedError("""
                 Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper.
             """)
 
-        # load input audio
-        audio, fs = librosa.load(file_path, sr=None)
-
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
             audio,
-            sr=fs,
+            sr=pars.fs,
             n_fft=pars.nfft,
             hop_length=pars.hopsize,
             win_length=pars.winsize,
@@ -451,12 +467,9 @@ class DhrupadBandishSegmentation:
         plt.grid("on", linestyle="--", axis="y")
         plt.xlabel("Time (s)", fontsize=12)
         plt.ylabel("Surface tempo multiple", fontsize=12)
-        if output_dir is not None:
-            plt.savefig(
-                os.path.join(
-                    output_dir,
-                    os.path.basename(file_path).replace(file_path.split(".")[-1], "png")
-                )
-            )
+        if save_output is True:
+            plt.savefig(output_path)
         else:
             plt.show()
+
+        return stm_vs_time

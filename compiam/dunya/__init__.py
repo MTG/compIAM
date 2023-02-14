@@ -16,17 +16,20 @@
 # this program.  If not, see http://www.gnu.org/licenses/
 
 import os
+import tqdm
 import errno
 
 from .conn import (
-    _get_paged_json,
     _dunya_query_json,
-    _get_paged_json,
     get_mp3,
     _file_for_document,
     set_token,
 )
-from compiam.io import write_csv, write_json, write_scalar_txt
+from compiam.io import (
+    write_csv,
+    write_json,
+    write_scalar_txt,
+)
 
 
 class Corpora:
@@ -48,25 +51,33 @@ class Corpora:
             "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
         )
 
+        # Initializing database
+        try:
+            metadata = self._get_metadata()
+
+            self.recording_list = metadata["recording_list"]
+            self.artist_list = metadata["artist_list"]
+            self.concert_list = metadata["concert_list"]
+            self.work_list = metadata["work_list"]
+            self.raga_list = metadata["raga_list"]
+            self.tala_list = metadata["tala_list"]
+            self.instrument_list = metadata["instrument_list"]
+
+        except:
+            raise ValueError("""
+                Error accessing metadata. Have you entered the right token? If you are confident about that, consider
+                loading the Corpora instance again.
+            """)
+
     def get_collection(self):
         """Get the documents (recordings) in a collection.
-
-        :param slug: the name of the collection.
         """
-        return _dunya_query_json("document/" + self.collection)["documents"]
-
-    def list_recordings(self, recording_detail=False):
-        """List the recordings in the database. This function will automatically page through API results.
-
-        :param recording_detail: if True, return full details for each recording like :func:`get_recording`.
-        :returns: A list of dictionaries containing recording information:
-            ``{"mbid": MusicBrainz recording ID, "title": Title of the recording}``
-            For additional information about each recording use :func:`get_recording`.
-        """
-        args = {}
-        if recording_detail:
-            args["detail"] = "1"
-        return _get_paged_json("api/" + self.tradition + "/recording", **args)
+        query = _dunya_query_json("document/" + self.collection)["documents"]
+        collection = []
+        for doc in query:
+            doc["mbid"] = doc.pop("external_identifier")
+            collection.append(doc)
+        return collection
 
     def get_recording(self, rmbid):
         """Get specific information about a recording.
@@ -77,14 +88,53 @@ class Corpora:
         """
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
 
-    def list_artists(self):
-        """List the artists in the database. This function will automatically page through API results.
+    def _get_metadata(self):
+        """Query a list of unique identifiers per each relevant tag in the Dunya database. This 
+        method is automatically run when the corpora is initialized.
 
-        :returns: A list of dictionaries containing artist information:
-            ``{"mbid": MusicBrainz artist id, "name": Name of the artist}``.
-            For additional information about each artist use :func:`get_artist`.
+        :returns: A dictionary of lists of unique identifiers per each tag: artists, concerts, works,
+        raagas, taalas, and instruments. It also includes a complete list of recording ids for the collection
         """
-        return _get_paged_json("api/" + self.tradition + "/artist")
+        recording_list = []
+        artist_list = []
+        concert_list = []
+        work_list = []
+        raga_list = []
+        tala_list = []
+        instrument_list = []
+
+        for rec in tqdm.tqdm(self.get_collection(), desc="Parsing metadata from database"):
+            try:
+                # Getting artist list
+                for artist in self.get_recording(rec["mbid"])["artists"]:
+                    if artist["lead"]:
+                        artist_list.append(artist["artist"])
+                    instrument_list.append(artist["instrument"])
+                # Getting concert list
+                for concert in self.get_recording(rec["mbid"])["concert"]:
+                    concert_list.append(concert)
+                # Getting work list
+                for work in self.get_recording(rec["mbid"])["work"]:
+                    work_list.append(work)
+                # Getting raaga list
+                for raga in self.get_recording(rec["mbid"])["raaga"]:
+                    raga_list.append(raga)
+                # Getting taala list
+                for tala in self.get_recording(rec["mbid"])["taala"]:
+                    tala_list.append(tala)
+                recording_list.append(rec["mbid"])
+            except:
+                continue
+
+        return {
+            "recording_list": recording_list,
+            "artist_list": list({a["mbid"]: a for a in artist_list}.values()),
+            "concert_list": list({c["mbid"]: c for c in concert_list}.values()),
+            "work_list": list({w["mbid"]: w for w in work_list}.values()),
+            "raga_list": list({r["uuid"]: r for r in raga_list}.values()),
+            "tala_list": list({t["uuid"]: t for t in tala_list}.values()),
+            "instrument_list": list({i["mbid"]: i for i in instrument_list}.values())
+        }
 
     def get_artist(self, ambid):
         """Get specific information about an artist.
@@ -104,7 +154,7 @@ class Corpora:
             ``{"mbid": MusicBrainz Release ID, "title": title of the concert}``
             For additional information about each concert use :func:`get_concert`.
         """
-        return _get_paged_json("api/" + self.tradition + "/concert")
+        return self.concert_list
 
     def get_concert(self, cmbid):
         """Get specific information about a concert.
@@ -123,7 +173,7 @@ class Corpora:
             ``{"mbid": MusicBrainz work ID, "name": work name}``
             For additional information about each work use :func:`get_work`.
         """
-        return _get_paged_json("api/" + self.tradition + "/work")
+        return self.work_list
 
     def get_work(self, wmbid):
         """Get specific information about a work.
@@ -140,7 +190,7 @@ class Corpora:
             ``{"uuid": raga UUID, "name": name of the raga}``
             For additional information about each raga use :func:`get_raga`.
         """
-        return _get_paged_json("api/" + self.tradition + "/raaga")
+        return self.raga_list
 
     def get_raga(self, raga_id):
         """Get specific information about a raga.
@@ -159,7 +209,7 @@ class Corpora:
             ``{"uuid": tala UUID, "name": name of the tala}``
             For additional information about each tala use :func:`get_tala`.
         """
-        return _get_paged_json("api/" + self.tradition + "/taala")
+        return self.tala_list
 
     def get_tala(self, tala_id):
         """Get specific information about a tala.
@@ -178,7 +228,7 @@ class Corpora:
             ``{"id": instrument id, "name": Name of the instrument}``
             For additional information about each instrument use :func:`get_instrument`.
         """
-        return _get_paged_json("api/" + self.tradition + "/instrument")
+        return self.instrument_list
 
     def get_instrument(self, instrument_id):
         """Get specific information about an instrument.

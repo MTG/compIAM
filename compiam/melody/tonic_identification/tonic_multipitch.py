@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 
 class TonicIndianMultiPitch:
     """MultiPitch approach to extract the tonic from IAM music signals."""
@@ -45,15 +46,25 @@ class TonicIndianMultiPitch:
         self.referenceFrequency = referenceFrequency
         self.sampleRate = sampleRate
 
-    def extract(self, file_path):
+    def extract(self, input_data, input_sr=44100):
         """Extract the tonic from a given file.
 
-        :param file_path: path to file to extract.
+        :param input_data: path to audio file or numpy array like audio signal
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
         :returns: a floating point number representing the tonic of the input recording.
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Target audio not found.")
-        audio = estd.MonoLoader(filename=file_path)()
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio = estd.MonoLoader(filename=input_data, sampleRate=self.sampleRate)()
+        elif isinstance(input_data, np.ndarray):
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            audio = resampling(input_data)
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
+            
         extractor = estd.TonicIndianArtMusic(
             binResolution=self.binResolution,
             frameSize=self.frameSize,

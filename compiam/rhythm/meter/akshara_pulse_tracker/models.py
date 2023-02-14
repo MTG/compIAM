@@ -474,20 +474,29 @@ class AksharaPulseTracker:
         self.Nbins = maxLen / binWidth + 1
         self.wtolHistAv = round(20e-3 / binWidth)
 
-    def extract(self, file_path, verbose=True):
+    def extract(self, input_data, input_sr=44100, verbose=True):
         """Run extraction of akshara pulses from input audio file
 
-        :param file_path: path to audio for extraction
+        :param input_data: path to audio file or numpy array like audio signal
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath
         :param verbose: verbose level
 
-        :returns: array of akshara pulses
+        :returns: dict containing estimation for sections, matra period, akshara pulses, and tempo curve
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Target audio not found.")
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio, _ = librosa.load(input_data, sr=self.Fs)
+        elif isinstance(input_data, np.ndarray): 
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.Fs)
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
 
         # Get onset functions
         onsFns = self.getOnsetFunctions(
-            file_path,
+            audio,
             self.Nfft,
             self.frmSize,
             self.Fs,
@@ -518,6 +527,16 @@ class AksharaPulseTracker:
         onsTs = onsTs[offsetIndex:]
         sectEnd = np.append(sectEnd, onsTs[-1])
 
+        # Get sections
+        sections = {"startTime": 0, "endTime": 0, "label": ""}
+        sections["startTime"] = np.round(sectStart, params.roundOffLen)
+        sections["endTime"] = np.round(sectEnd, params.roundOffLen)
+        labelStr = ("Alapana", "Kriti")
+        if sectEnd.size == 2:
+            sections["label"] = labelStr
+        else:
+            sections["label"] = labelStr[1]
+
         # Construct tempogram
         TG, TCts, BPM = tempogram_viaDFT(
             onsFn.copy(),
@@ -539,7 +558,7 @@ class AksharaPulseTracker:
         mmpFromTC = self.getMatraPeriodEstimateFromTC(
             TCperRaw, self.Nbins, self.minBPM, self.wtolHistAv, verbose
         )
-        TCper, TCcorrFlag = correctOctaveErrors(
+        TCper, _ = correctOctaveErrors(
             TCperRaw, mmpFromTC, self.octCorrectParam, verbose
         )
         TC = 60.0 / TCper
@@ -565,23 +584,29 @@ class AksharaPulseTracker:
         Locs = akCandLocs
         ts = akCandTs
         Wts = akCandWts
-        TransMat = akCandTransMat
+        #TransMat = akCandTransMat
         TransMatCausal = np.triu(akCandTransMat + akCandTransMat.transpose())
         pers = TCper[getNearestIndices(akCandTs, TCts)]
 
         # Candidate selection
-        aksharaLocs, aksharaTimes = self.DPSearch(
+        _, aksharaPulses = self.DPSearch(
             TransMatCausal, ts, pers, Locs, Wts, self.backSearch, self.alphaDP, verbose
         )
 
-        # Correct for all the offsets now and save to file
-        aksharaTimes = aksharaTimes + offsetTime
+        # Correct for all the offsets now
+        aksharaPulses = aksharaPulses + offsetTime
         TCts = TCts + offsetTime
 
-        return aksharaTimes
+        APcurve = [[TCts[t], TCper[t]] for t in range(TCts.size)]
+
+        return {"sections": sections,
+                "aksharaPeriod": np.round(mmpFromTC, params.roundOffLen).item(0),
+                "aksharaPulses": aksharaPulses,
+                "APcurve": APcurve}
+
 
     def getOnsetFunctions(
-        self, file_path, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
+        self, audio, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
     ):
         zeropadLen = Nfft - frmSize
         zz = np.zeros((zeropadLen,), dtype="float32")
@@ -592,9 +617,6 @@ class AksharaPulseTracker:
         )
         if verbose:
             logger.info("Reading audio file...")
-
-        # audio = ess.MonoLoader(filename=file_path)()
-        audio, _ = librosa.load(file_path, sr=Fs)
 
         # fft = ess.FFT(size=Nfft)  # this gives us a complex FFT
         # c2p = ess.CartesianToPolar()  # and this turns it into a pair (magnitude, phase)

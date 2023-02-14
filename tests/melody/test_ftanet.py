@@ -1,5 +1,6 @@
 import os
 import pytest
+import librosa
 
 import numpy as np
 
@@ -23,6 +24,13 @@ def _predict_pitch():
     pitch = ftanet.predict(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
+
+    audio_in, sr = librosa.load(
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
+    )
+    pitch_2 = ftanet.predict(audio_in, input_sr=sr)
+
+    assert np.all(np.isclose(pitch, pitch_2)) 
 
     assert isinstance(pitch, np.ndarray)
     assert np.shape(pitch) == (202, 2)
