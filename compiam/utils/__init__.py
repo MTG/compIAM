@@ -91,14 +91,6 @@ def myround(x, base=5):
     return base * round(x/base)
 
 
-def isfloat(num):
-    try:
-        float(num)
-        return True
-    except ValueError:
-        return False
-
-
 def get_timestamp(secs, divider='-'):
     """
     Convert seconds into timestamp
