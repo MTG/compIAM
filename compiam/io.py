@@ -2,29 +2,56 @@ import os
 import csv
 import json
 import yaml
+import pickle
 
-import compiam.utils
+import numpy as np
+
+from compiam import utils
 
 def write_csv(data, out_path, header=None):
-    """Writing two dimensional data into a file (.csv)
+    """Writing multi-dimensional data into a file (.csv)
 
     :param data: the data to write
     :param output_path: the path where the data is going to be stored
     
     :returns: None
     """
-    D = list(zip(*data))
+    data = np.array(data)
     with open(out_path, "w") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, delimiter=",")
         if header:
-            assert len(header) == len(D[0]), "Header and row length mismatch"
+            if len(header) != len(data[0, :]):
+                raise ValueError("Header and row length mismatch")
             writer.writerow(header)
-        for row in D:
-            writer.writerow(row)
+        writer.writerows(data)
+
+
+def read_csv(file_path):
+    """Reading a csv file (.csv)
+
+    :param file_path: path to the csv
+    
+    :returns: numpy array containing the data from the read CSV
+    """
+    output = []
+    with open(file_path, "r") as f:
+        reader = csv.reader(f)
+        # Checking if header is string
+        header = next(reader)
+        try:
+            float(header[0])
+            has_header = True
+        except:
+            has_header = True
+        #Include header if is not based on strings
+        if has_header is False:
+            output.append(header)
+        for row in reader:
+            output.append([float(x) for x in row])
+    return np.array(output, dtype=float)
 
 
 def save_object(obj, filename):
-    import pickle
     with open(filename, 'wb') as outp:  # Overwrites any existing file.
         pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
 
@@ -39,7 +66,7 @@ def write_json(j, path):
         if the directory doesn't exist, one will be created
     :type path: str
     """ 
-    compiam.utils.create_if_not_exists(path)
+    utils.create_if_not_exists(path)
     # Opening JSON file 
     with open(path, 'w') as f:
         json.dump(j, f)
