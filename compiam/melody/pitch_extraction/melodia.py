@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from compiam.utils.pitch import normalisation, resampling
+from compiam.io import write_csv
 
 
 class Melodia:
@@ -82,8 +83,8 @@ class Melodia:
             audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
             print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-            resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
-            input_data = resampling(input_data)
+            resample_audio = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            input_data = resample_audio(input_data)
             audio = estd.EqualLoudness(signal=input_data)()
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
@@ -134,3 +135,14 @@ class Melodia:
         return normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value
         )
+
+    @staticmethod
+    def write_csv(data, output_path):
+        """Calling the write_csv function in compiam.io to write the output pitch curve in a fle
+
+        :param data: the data to write
+        :param output_path: the path where the data is going to be stored
+        
+        :returns: None
+        """
+        return write_csv(data, output_path)
