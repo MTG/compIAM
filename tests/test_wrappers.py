@@ -1,6 +1,5 @@
 import pytest
 import mirdata
-from compiam.dunya import Corpora
 from compiam import list_models, load_dataset, load_corpora, list_datasets, list_corpora
 
 
@@ -22,8 +21,8 @@ def test_load_corpora():
         load_corpora("hola")
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
-    corpora = load_corpora("carnatic", token="hola")
-    assert type(corpora) == Corpora
+    with pytest.raises(ValueError):
+        load_corpora("carnatic", token="hola")  
 
 
 def test_lists():

@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from compiam.utils.pitch import normalisation
+from compiam.utils.pitch import normalisation, resampling
 
 
 class Melodia:
@@ -67,15 +67,27 @@ class Melodia:
         self.voiceVibrato = voiceVibrato
         self.voicingTolerance = voicingTolerance
 
-    def extract(self, file_path):
+    def extract(self, input_data, input_sr=44100, out_step=None):
         """Extract the melody from a given file.
 
-        :param file_path: path to file to extract.
+        :param input_data: path to audio file or numpy array like audio signal
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
+        :param out_step: particular time-step duration if needed at output
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Target audio not found.")
-        audio = estd.EqloudLoader(filename=file_path)()
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
+        elif isinstance(input_data, np.ndarray):
+            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+            resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            input_data = resampling(input_data)
+            audio = estd.EqualLoudness(signal=input_data)()
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
+
         extractor = estd.PredominantPitchMelodia(
             binResolution=self.binResolution,
             filterIterations=self.filterIterations,
@@ -100,7 +112,13 @@ class Melodia:
         )
         pitch, _ = extractor(audio)
         TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
-        return np.array([TStamps, pitch]).transpose()
+        output =  np.array([TStamps, pitch]).transpose()
+
+        if out_step is not None:
+            new_len = int((len(audio) / self.sampleRate) // out_step)
+            return resampling(output, new_len)
+
+        return output
 
     @staticmethod
     def normalise_pitch(pitch, tonic, bins_per_octave=120, max_value=4):

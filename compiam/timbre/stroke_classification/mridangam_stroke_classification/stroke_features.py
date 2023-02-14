@@ -23,7 +23,7 @@ DESCRIPTORS_TO_DISREGARD = ["sfx", "tristimulus", "sccoeffs"]
 
 from sklearn import preprocessing
 
-MIX_MAX_SCALER = preprocessing.MinMaxScaler()
+MIN_MAX_SCALER = preprocessing.MinMaxScaler()
 
 
 def split_file(filename):
@@ -140,11 +140,11 @@ def normalise_features(trainig_data, feature_list=None):
     """
     data_modif = trainig_data.copy()
     if feature_list is None:
-        data_modif.iloc[:, :] = MIX_MAX_SCALER.fit_transform(
+        data_modif.iloc[:, :] = MIN_MAX_SCALER.fit_transform(
             trainig_data.iloc[:, :].values
         )
     else:
-        data_modif.iloc[:, : len(feature_list) - 1] = MIX_MAX_SCALER.fit_transform(
+        data_modif.iloc[:, : len(feature_list) - 1] = MIN_MAX_SCALER.fit_transform(
             trainig_data.iloc[:, : len(feature_list) - 1].values
         )
     return data_modif
