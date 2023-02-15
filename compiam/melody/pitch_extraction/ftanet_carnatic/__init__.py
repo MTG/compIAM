@@ -11,6 +11,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
     get_est_arr,
 )
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
+from compiam.io import write_csv
 
 
 class FTANetCarnatic(object):
@@ -326,3 +327,14 @@ class FTANetCarnatic(object):
         return normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value
         )
+
+    @staticmethod
+    def save_pitch(data, output_path):
+        """Calling the write_csv function in compiam.io to write the output pitch curve in a fle
+
+        :param data: the data to write
+        :param output_path: the path where the data is going to be stored
+        
+        :returns: None
+        """
+        return write_csv(data, output_path)

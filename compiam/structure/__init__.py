@@ -2,7 +2,7 @@
 import inspect, importlib as implib
 from compiam.data import models_dict
 
-to_avoid = [
+TO_AVOID = [
     x[0]
     for x in inspect.getmembers(
         implib.import_module("compiam.structure"), inspect.ismodule
@@ -21,24 +21,24 @@ def list_tasks():
         for x in inspect.getmembers(
             implib.import_module("compiam.structure"), inspect.ismodule
         )
-        if x[0] not in to_avoid
+        if x[0] not in TO_AVOID
     ]
 
 
 # Show user the available tools
 def list_tools():
-    tools = [
+    tasks = [
         x[0]
         for x in inspect.getmembers(
             implib.import_module("compiam.structure"), inspect.ismodule
         )
-        if x[0] not in to_avoid
+        if x[0] not in TO_AVOID
     ]
     tools_for_tasks = [
         inspect.getmembers(
-            implib.import_module("compiam.structure." + tool), inspect.isclass
+            implib.import_module("compiam.structure." + task), inspect.isclass
         )
-        for tool in tools
+        for task in tasks
     ]
     tools_for_tasks = [
         tool[1].__module__.split(".")[-2] + "." + tool[0]
