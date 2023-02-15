@@ -329,7 +329,7 @@ class FTANetCarnatic(object):
         )
 
     @staticmethod
-    def write_csv(data, output_path):
+    def save_pitch(data, output_path):
         """Calling the write_csv function in compiam.io to write the output pitch curve in a fle
 
         :param data: the data to write

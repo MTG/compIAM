@@ -33,22 +33,8 @@ def read_csv(file_path):
     
     :returns: numpy array containing the data from the read CSV
     """
-    output = []
-    with open(file_path, "r") as f:
-        reader = csv.reader(f)
-        # Checking if header is string
-        header = next(reader)
-        try:
-            float(header[0])
-            has_header = True
-        except:
-            has_header = True
-        #Include header if is not based on strings
-        if has_header is False:
-            output.append(header)
-        for row in reader:
-            output.append([float(x) for x in row])
-    return np.array(output, dtype=float)
+    output = np.genfromtxt(file_path, delimiter=",")
+    return output[~np.isnan(output)]
 
 
 def save_object(obj, filename):
