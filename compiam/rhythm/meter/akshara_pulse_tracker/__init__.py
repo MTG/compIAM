@@ -162,8 +162,8 @@ class AksharaPulseTracker:
 
         # Get sections
         sections = {"startTime": 0, "endTime": 0, "label": ""}
-        sections["startTime"] = np.round(sectStart, params.roundOffLen)
-        sections["endTime"] = np.round(sectEnd, params.roundOffLen)
+        sections["startTime"] = np.round(sectStart, params.roundOffLen).tolist()
+        sections["endTime"] = np.round(sectEnd, params.roundOffLen).tolist()
         labelStr = ("Alapana", "Kriti")
         if sectEnd.size == 2:
             sections["label"] = labelStr
@@ -231,10 +231,9 @@ class AksharaPulseTracker:
         TCts = TCts + offsetTime
 
         APcurve = [[TCts[t], TCper[t]] for t in range(TCts.size)]
-
         return {"sections": sections,
                 "aksharaPeriod": np.round(mmpFromTC, params.roundOffLen).item(0),
-                "aksharaPulses": aksharaPulses,
+                "aksharaPulses": list(aksharaPulses),
                 "APcurve": APcurve}
 
 
