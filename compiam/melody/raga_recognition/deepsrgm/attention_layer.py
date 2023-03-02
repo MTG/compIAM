@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 # Attention layer inspired from the following blog post
 # https://towardsdatascience.com/nlp-learning-series-part-3-attention-cnn-and-what-not-for-text-classification-4313930ed566
 class Attention(nn.Module):

@@ -124,7 +124,6 @@ class PeakData:
         # indices around here. All indices (eg: left_index etc) refer to indices
         # of x or y (of histogram).
         if method == "slope" or method == "hybrid":
-
             # step 1: get the peaks
             result = slope.peaks(
                 self.x, self.y, lookahead=lookahead, delta=valley_thresh

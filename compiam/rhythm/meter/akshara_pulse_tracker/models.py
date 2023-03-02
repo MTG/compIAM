@@ -125,8 +125,6 @@ def findpeaks(x, imode="q", pmode="p", wdTol=5, ampTol=0.1, prominence=3.0):
     """
     nx = x.shape[0]
     nxp = nx + 1
-    #     if x.shape[1] != 1:
-    #         print("Error in input dimension input X. It must be a column vector")
     if pmode == "v":
         x = -x
     dx = x[1:] - x[0:-1]

@@ -10,6 +10,7 @@ except:
         "Please install torch using: pip install torch"
     )
 
+
 # class for sf layers
 class sfmodule(nn.Module):
     def __init__(self, n_ch_in):

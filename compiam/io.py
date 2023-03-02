@@ -8,12 +8,13 @@ import numpy as np
 
 from compiam import utils
 
+
 def write_csv(data, out_path, header=None):
     """Writing multi-dimensional data into a file (.csv)
 
     :param data: the data to write
     :param output_path: the path where the data is going to be stored
-    
+
     :returns: None
     """
     data = np.array(data)
@@ -30,7 +31,7 @@ def read_csv(file_path):
     """Reading a csv file (.csv)
 
     :param file_path: path to the csv
-    
+
     :returns: numpy array containing the data from the read CSV
     """
     output = np.genfromtxt(file_path, delimiter=",")
@@ -38,7 +39,7 @@ def read_csv(file_path):
 
 
 def save_object(obj, filename):
-    with open(filename, 'wb') as outp:  # Overwrites any existing file.
+    with open(filename, "wb") as outp:  # Overwrites any existing file.
         pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
 
 
@@ -48,13 +49,13 @@ def write_json(j, path):
 
     :param j: json
     :type path: json
-    :param path: path to write to, 
+    :param path: path to write to,
         if the directory doesn't exist, one will be created
     :type path: str
-    """ 
+    """
     utils.create_if_not_exists(path)
-    # Opening JSON file 
-    with open(path, 'w') as f:
+    # Opening JSON file
+    with open(path, "w") as f:
         json.dump(j, f)
 
 

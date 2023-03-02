@@ -22,8 +22,8 @@ def load_model(model_name, models_dict=models_dict):
                 "instructions for adding new model to in ``data.py`` documentation"
             )
         )
-    m_dict = models_dict[model_name]    
-    
+    m_dict = models_dict[model_name]
+
     module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
     return module(**m_dict["kwargs"])
 

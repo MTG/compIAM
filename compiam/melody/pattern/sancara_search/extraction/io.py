@@ -1,5 +1,5 @@
 import csv
-import json 
+import json
 import os
 import pickle
 import yaml
@@ -21,7 +21,7 @@ def load_sim_matrix(path):
     X = prepro(X)
     return X
 
-    
+
 def audio_loader(path, sampleRate=44100):
     """
     Load audio file from <path> to numpy array
@@ -34,7 +34,7 @@ def audio_loader(path, sampleRate=44100):
     :return: Array of waveform values for each timestep
     :rtype: numpy.array
     """
-    loader = essentia.standard.MonoLoader(filename = path, sampleRate = sampleRate)
+    loader = essentia.standard.MonoLoader(filename=path, sampleRate=sampleRate)
     audio = loader()
     return audio
 
@@ -51,13 +51,13 @@ def write_pitch_contour(pitch, time, path):
     :type path: str
     """
     ##text=List of strings to be written to file
-    with open(path,'w') as file:
+    with open(path, "w") as file:
         for t, p in zip(time, pitch):
             file.write(f"{t}\t{p}")
-            file.write('\n')
+            file.write("\n")
 
 
-def load_pitch_contour(path, delim=',', prat=False):
+def load_pitch_contour(path, delim=",", prat=False):
     """
     load pitch contour from tsv at <path>
 
@@ -71,20 +71,20 @@ def load_pitch_contour(path, delim=',', prat=False):
     pitch = []
     with open(path) as fd:
         rd = csv.reader(fd, delimiter=delim, quotechar='"')
-        for t,p in rd:
+        for t, p in rd:
             time.append(t)
             pitch.append(p)
     time = np.array(time).astype(float)
     pitch = np.array(pitch).astype(float)
-    
-    if prat:
-        i1 = (pitch!=0).argmax()
-        t1 = time[i1]
-        d = time[i1+1] - t1
 
-        new_times = np.flip(np.arange(-t1+d, 0, d)*-1)
+    if prat:
+        i1 = (pitch != 0).argmax()
+        t1 = time[i1]
+        d = time[i1 + 1] - t1
+
+        new_times = np.flip(np.arange(-t1 + d, 0, d) * -1)
         new_times = np.insert(new_times, 0, 0)
-        new_pitch = np.array([0.0]*len(new_times))
+        new_pitch = np.array([0.0] * len(new_times))
 
         time = np.concatenate((new_times, time[i1:]))
         pitch = np.concatenate((new_pitch, pitch[i1:]))
@@ -95,16 +95,16 @@ def load_pitch_contour(path, delim=',', prat=False):
 def load_json(path):
     """
     Load json at <path> to dict
-    
+
     :param path: path of json
     :type path: str
 
     :return: dict of json information
     :rtype: dict
-    """ 
-    # Opening JSON file 
-    with open(path) as f: 
-        data = json.load(f) 
+    """
+    # Opening JSON file
+    with open(path) as f:
+        data = json.load(f)
     return data
 
 
@@ -114,26 +114,27 @@ def write_json(j, path):
 
     :param j: json
     :type path: json
-    :param path: path to write to, 
+    :param path: path to write to,
         if the directory doesn't exist, one will be created
     :type path: str
-    """ 
+    """
     create_if_not_exists(path)
-    # Opening JSON file 
-    with open(path, 'w') as f:
+    # Opening JSON file
+    with open(path, "w") as f:
         json.dump(j, f)
 
 
 def load_yaml(path):
     """
     Load yaml at <path> to dictionary, d
-    
+
     Returns
     =======
     Wrapper dictionary, D where
     D = {filename: d}
     """
     import zope.dottedname.resolve
+
     def constructor_dottedname(loader, node):
         value = loader.construct_scalar(node)
         return zope.dottedname.resolve.resolve(value)
@@ -142,13 +143,13 @@ def load_yaml(path):
         value = loader.construct_sequence(node)
         return ParamList(value)
 
-    yaml.add_constructor('!paramlist', constructor_paramlist)
-    yaml.add_constructor('!dottedname', constructor_dottedname)
+    yaml.add_constructor("!paramlist", constructor_paramlist)
+    yaml.add_constructor("!dottedname", constructor_dottedname)
 
     if not os.path.isfile(path):
         return None
     with open(path) as f:
-        d = yaml.load(f, Loader=yaml.FullLoader)   
+        d = yaml.load(f, Loader=yaml.FullLoader)
     return d
 
 
@@ -162,10 +163,10 @@ def write_array(a, path):
     :type path: str
     """
     create_if_not_exists(path)
-    with open(path, 'w') as file:
+    with open(path, "w") as file:
         for e in a:
             file.write(str(e))
-            file.write('\n')
+            file.write("\n")
 
 
 def read_array(path, dtype=float):
@@ -209,29 +210,29 @@ def create_if_not_exists(path):
     """
     directory = os.path.dirname(path)
     # Do not try and create directory if path is just a filename
-    if (not os.path.exists(directory)) and (directory != ''):
+    if (not os.path.exists(directory)) and (directory != ""):
         os.makedirs(directory)
 
 
 def write_subsequences_group(y, sr, starts, lengths, timestep, output_dir):
     create_if_not_exists(output_dir)
     for i, s in enumerate(starts):
-        sec_start = s*timestep
+        sec_start = s * timestep
         timestamp = get_timestamp(sec_start)
-        out_path = os.path.join(output_dir, f'{i}_time={timestamp}.wav')
-        l = lengths[i]*sr
-        s1 = sec_start*sr
-        s2 = s1+l
-        subseq = y[int(s1):int(s2)]
+        out_path = os.path.join(output_dir, f"{i}_time={timestamp}.wav")
+        l = lengths[i] * sr
+        s1 = sec_start * sr
+        s2 = s1 + l
+        subseq = y[int(s1) : int(s2)]
         sf.write(out_path, subseq, samplerate=sr)
 
 
 def write_all_sequence_audio(audio_path, all_seqs, all_lens, timestep, output_dir):
     y, sr = librosa.load(audio_path)
     for i, seq in enumerate(all_seqs):
-        lens = [l*timestep for l in all_lens[i]]
+        lens = [l * timestep for l in all_lens[i]]
         l_sec = round(lens[0], 1)
-        out_dir = os.path.join(output_dir, f'motif_{i}_len={l_sec}/')
+        out_dir = os.path.join(output_dir, f"motif_{i}_len={l_sec}/")
         write_subsequences_group(y, sr, seq, lens, timestep, out_dir)
 
 
@@ -246,37 +247,37 @@ def load_if_exists(path, dtype=float):
 def get_timeseries(path):
     pitch = []
     time = []
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         for i in f:
-            t, f = i.replace('/n','').split(',')
+            t, f = i.replace("/n", "").split(",")
             pitch.append(float(f))
             time.append(float(t))
-    timestep = time[3]-time[2]
+    timestep = time[3] - time[2]
     return np.array(pitch), np.array(time), timestep
 
 
 def write_timeseries(seqs, path):
     create_if_not_exists(path)
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         for s in zip(*seqs):
-            string = [f'{i}, ' for i in s[:-1]] + [f'{s[-1]}\n']
-            string = ''.join(string)
+            string = [f"{i}, " for i in s[:-1]] + [f"{s[-1]}\n"]
+            string = "".join(string)
             f.write(string)
 
 
 def write_pkl(o, path):
     create_if_not_exists(path)
-    with open(path, 'wb') as f:
+    with open(path, "wb") as f:
         pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 
 
 def load_pkl(path):
-    file = open(path,'rb')
+    file = open(path, "rb")
     return pickle.load(file)
 
 
 def save_object(obj, filename):
     import pickle
-    with open(filename, 'wb') as outp:  # Overwrites any existing file.
-        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
 
+    with open(filename, "wb") as outp:  # Overwrites any existing file.
+        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)

@@ -4,6 +4,9 @@ import numpy as np
 
 from compiam.utils.pitch import normalisation, resampling
 from compiam.io import write_csv
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class Melodia:
@@ -82,8 +85,12 @@ class Melodia:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
-            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-            resample_audio = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            logger.warn(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
+            resample_audio = estd.Resample(
+                inputSampleRate=input_sr, outputSampleRate=self.sampleRate
+            )()
             input_data = resample_audio(input_data)
             audio = estd.EqualLoudness(signal=input_data)()
         else:
@@ -113,7 +120,7 @@ class Melodia:
         )
         pitch, _ = extractor(audio)
         TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
-        output =  np.array([TStamps, pitch]).transpose()
+        output = np.array([TStamps, pitch]).transpose()
 
         if out_step is not None:
             new_len = int((len(audio) / self.sampleRate) // out_step)
@@ -142,7 +149,7 @@ class Melodia:
 
         :param data: the data to write
         :param output_path: the path where the data is going to be stored
-        
+
         :returns: None
         """
         return write_csv(data, output_path)

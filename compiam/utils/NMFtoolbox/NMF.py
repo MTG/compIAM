@@ -95,7 +95,6 @@ def NMF(V, parameter):
 
     # main iterations
     for iter in tnrange(L, desc="Processing"):
-
         # compute approximation
         Lambda = EPS + W @ H
 

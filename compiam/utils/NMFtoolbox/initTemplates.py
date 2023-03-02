@@ -127,7 +127,6 @@ def initTemplates(parameter, strategy="random"):
                 initW[k][binRange, :] = 1 / (g + 1)
 
     elif strategy == "drums":
-
         dictW = load_matlab_dict(os.path.join("..", "data", "dictW.mat"), "dictW")
 
         if parameter["numBins"] == dictW.shape[0]:
