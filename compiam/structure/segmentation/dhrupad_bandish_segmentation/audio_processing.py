@@ -5,6 +5,9 @@ import numpy as np
 import soundfile as sf
 
 from compiam.structure.segmentation.dhrupad_bandish_segmentation.params import fs
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 import warnings
 
@@ -38,7 +41,7 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
     annotations = np.loadtxt(
         os.path.join(annotations_path, "section_boundaries_labels.csv"),
         delimiter=",",
-        dtype=str
+        dtype=str,
     )
 
     song = ""  # please leave this line as it is
@@ -48,11 +51,12 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
             try:
                 x, _ = librosa.load(os.path.join(audios_path, song + ".wav"), sr=fs)
             except FileNotFoundError:
-                print("""
-                    Audio for %s not found. Please make sure you check:
+                logger.error(
+                    f"""
+                    Audio for {song} not found. Please make sure you check:
                     models/structure/dhrupad_bandish_segmentation/original_audio/README.md
-                """% song)
-                song = ""
+                """
+                )
                 continue
 
         start = int(float(item[1]) * fs)

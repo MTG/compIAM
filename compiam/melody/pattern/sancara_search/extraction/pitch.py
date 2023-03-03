@@ -1,14 +1,19 @@
 import math
 import numpy as np
-import pandas as pd 
 
-import librosa
-
-from scipy.ndimage import gaussian_filter1d
-
-from compiam.melody.pattern.sancara_search.extraction.sequence import get_stability_mask, add_center_to_mask
-from compiam.melody.pattern.sancara_search.extraction.io import get_timeseries, write_timeseries
+from compiam.melody.pattern.sancara_search.extraction.sequence import (
+    get_stability_mask,
+    add_center_to_mask,
+)
+from compiam.melody.pattern.sancara_search.extraction.io import (
+    get_timeseries,
+    write_timeseries,
+)
 from compiam.utils.pitch import interpolate_below_length
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
 
 def pitch_to_cents(p, tonic):
     """
@@ -22,7 +27,7 @@ def pitch_to_cents(p, tonic):
     :return: Pitch value, <p> in cents above <tonic>
     :rtype: float
     """
-    return 1200*math.log(p/tonic, 2) if p else None
+    return 1200 * math.log(p / tonic, 2) if p else None
 
 
 def cents_to_pitch(c, tonic):
@@ -34,15 +39,15 @@ def cents_to_pitch(c, tonic):
     :param tonic: Tonic value in Hz
     :type tonic: float
 
-    :return: Pitch value, <c> in Hz 
+    :return: Pitch value, <c> in Hz
     :rtype: float
     """
-    return (2**(c/1200))*tonic
+    return (2 ** (c / 1200)) * tonic
 
 
 def pitch_seq_to_cents(pseq, tonic):
     """
-    Convert sequence of pitch values to sequence of 
+    Convert sequence of pitch values to sequence of
     cents above <tonic> values
 
     :param pseq: Array of pitch values in Hz
@@ -56,19 +61,29 @@ def pitch_seq_to_cents(pseq, tonic):
     return np.vectorize(lambda y: pitch_to_cents(y, tonic))(pseq)
 
 
-def silence_stability_from_file(inpath, outpath, tonic=None, min_stability_length_secs=1, stab_hop_secs=0.2, freq_var_thresh_stab=8, gap_interp=0.250):
-
+def silence_stability_from_file(
+    inpath,
+    outpath,
+    tonic=None,
+    min_stability_length_secs=1,
+    stab_hop_secs=0.2,
+    freq_var_thresh_stab=8,
+    gap_interp=0.250,
+):
     pitch, time, timestep = get_timeseries(inpath)
-    pitch_interp = interpolate_below_length(pitch, 0, (gap_interp/timestep))
+    pitch_interp = interpolate_below_length(pitch, 0, (gap_interp / timestep))
 
-    print('Computing stability/silence mask')
+    logger.info("Computing stability/silence mask")
     if tonic:
         pi = pitch_seq_to_cents(pitch_interp, tonic)
     else:
         pi = pitch_interp
-    stable_mask = get_stability_mask(pi, min_stability_length_secs, stab_hop_secs, freq_var_thresh_stab, timestep)
+    stable_mask = get_stability_mask(
+        pi, min_stability_length_secs, stab_hop_secs, freq_var_thresh_stab, timestep
+    )
     silence_mask = (pitch_interp == 0).astype(int)
     silence_mask = add_center_to_mask(silence_mask)
-    silence_and_stable_mask = np.array([int(any([i,j])) for i,j in zip(silence_mask, stable_mask)])
+    silence_and_stable_mask = np.array(
+        [int(any([i, j])) for i, j in zip(silence_mask, stable_mask)]
+    )
     write_timeseries([time, silence_and_stable_mask], outpath)
-

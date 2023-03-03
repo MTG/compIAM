@@ -2,6 +2,11 @@ import os
 
 import numpy as np
 
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
+
 class TonicIndianMultiPitch:
     """MultiPitch approach to extract the tonic from IAM music signals."""
 
@@ -59,12 +64,16 @@ class TonicIndianMultiPitch:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.MonoLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
-            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-            resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
+            logger.warning(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
+            resampling = estd.Resample(
+                inputSampleRate=input_sr, outputSampleRate=self.sampleRate
+            )()
             audio = resampling(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
-            
+
         extractor = estd.TonicIndianArtMusic(
             binResolution=self.binResolution,
             frameSize=self.frameSize,

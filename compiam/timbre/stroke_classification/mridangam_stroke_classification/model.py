@@ -1,5 +1,4 @@
 import random
-
 import numpy as np
 import pandas as pd
 
@@ -10,6 +9,9 @@ from sklearn.neural_network import MLPClassifier
 from compiam.timbre.stroke_classification.mridangam_stroke_classification import (
     normalise_features,
 )
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class StrokeClassification:
@@ -93,7 +95,7 @@ class StrokeClassification:
 
         # Evaluate
         y_pred = clf.predict(X_test)
-        print(
+        logger.info(
             "{} model successfully trained with accuracy {}% in the testing set".format(
                 model_type.upper(),
                 round(np.sum(y_test == y_pred) / len(y_pred) * 100),

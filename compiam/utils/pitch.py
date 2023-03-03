@@ -8,6 +8,7 @@ import pandas as pd
 # Melody utils
 ###############
 
+
 def normalisation(pitch, tonic, bins_per_octave=120, max_value=4):
     """Normalize pitch given a tonic.
 
@@ -58,27 +59,28 @@ def resampling(pitch, new_len):
 ## Pitch Stability ##
 #####################
 
+
 def extract_stability_mask(pitch, min_stab_sec, hop_sec, var, timestep):
     """
     Extract boolean array corresponding to <pitch> - yes/no does point correspond
     to a region of "stable" pitch.
-    
+
     A window is passed along the pitch track, <pitch> and the minimum and maximum values
     compared to the average for that window. Regions corresponding to windows
-    whose extremes deviate significantly from their means are marked as stable. 
-    Consecutive stable regions summing to more than <min_stab_sec> seconds in 
+    whose extremes deviate significantly from their means are marked as stable.
+    Consecutive stable regions summing to more than <min_stab_sec> seconds in
     length are annotated with 1 indicating stable. Regions which are not stable
     or that are stable but do not make up at least <min_stab_sec> in length are
     annotated with 0 - not stable.
 
     :param pitch: Pitch values in Hz or cents
     :type pitch: np.ndarray
-    :param min_stab_sec: Stable regions of at least <min_stab_sec> seconds 
+    :param min_stab_sec: Stable regions of at least <min_stab_sec> seconds
         in length are annotated as stable. Shorter regions are not annotated.
     :type min_stab_sec: float
     :param hop_sec: Hop length in seconds of window
     :type hop_sec: float
-    :param var: If the maximum/minimum pitch in a window deviates from its mean 
+    :param var: If the maximum/minimum pitch in a window deviates from its mean
         by more than this value, the window is considered unstable. Important
         to consider if the input is in cents or hertz!
     :type var: float
@@ -88,18 +90,21 @@ def extract_stability_mask(pitch, min_stab_sec, hop_sec, var, timestep):
     :return: Boolean array equal in length to <pitch>: is stable region or not?
     :rtype: np.ndarray
     """
-    stab_hop = int(hop_sec/timestep)
+    stab_hop = int(hop_sec / timestep)
     reverse_pitch = np.flip(pitch)
 
     # apply in both directions to array to account for hop_size errors
-    stable_mask_1 = [is_stable(pitch[s:s+stab_hop], var) for s in range(len(pitch))]
-    stable_mask_2 = [is_stable(reverse_pitch[s:s+stab_hop], var) for s in range(len(reverse_pitch))]
-    
+    stable_mask_1 = [is_stable(pitch[s : s + stab_hop], var) for s in range(len(pitch))]
+    stable_mask_2 = [
+        is_stable(reverse_pitch[s : s + stab_hop], var)
+        for s in range(len(reverse_pitch))
+    ]
+
     silence_mask = pitch == 0
 
     zipped = zip(stable_mask_1, np.flip(stable_mask_2), silence_mask)
-    
-    stable_mask = np.array([int((any([s1,s2]) and not sil)) for s1,s2,sil in zipped])
+
+    stable_mask = np.array([int((any([s1, s2]) and not sil)) for s1, s2, sil in zipped])
 
     stable_mask = reduce_stability_mask(stable_mask, min_stab_sec, timestep)
 
@@ -109,10 +114,10 @@ def extract_stability_mask(pitch, min_stab_sec, hop_sec, var, timestep):
 
 
 def reduce_stability_mask(stable_mask, min_stab_sec, timestep):
-    min_stability_length = int(min_stab_sec/timestep)
+    min_stability_length = int(min_stab_sec / timestep)
     num_one = 0
     indices = []
-    for i,s in enumerate(stable_mask):
+    for i, s in enumerate(stable_mask):
         if s == 1:
             num_one += 1
             indices.append(i)
@@ -149,14 +154,14 @@ def is_stable(seq, max_var):
 def add_center_to_mask(mask):
     num_one = 0
     indices = []
-    for i,s in enumerate(mask):
+    for i, s in enumerate(mask):
         if s == 1:
             num_one += 1
             indices.append(i)
         else:
             li = len(indices)
             if li:
-                middle = indices[int(li/2)]
+                middle = indices[int(li / 2)]
                 mask[middle] = 2
                 num_one = 0
                 indices = []
@@ -175,7 +180,7 @@ def pitch_to_cents(p, tonic):
     :return: Pitch value, <p> in cents above <tonic>
     :rtype: float
     """
-    return 1200*math.log(p/tonic, 2) if p else None
+    return 1200 * math.log(p / tonic, 2) if p else None
 
 
 def cents_to_pitch(c, tonic):
@@ -187,15 +192,15 @@ def cents_to_pitch(c, tonic):
     :param tonic: Tonic value in Hz
     :type tonic: float
 
-    :return: Pitch value, <c> in Hz 
+    :return: Pitch value, <c> in Hz
     :rtype: float
     """
-    return (2**(c/1200))*tonic
+    return (2 ** (c / 1200)) * tonic
 
 
 def pitch_seq_to_cents(pseq, tonic):
     """
-    Convert sequence of pitch values to sequence of 
+    Convert sequence of pitch values to sequence of
     cents above <tonic> values
 
     :param pseq: Array of pitch values in Hz
@@ -211,9 +216,9 @@ def pitch_seq_to_cents(pseq, tonic):
 
 def interpolate_below_length(arr, val, gap):
     """
-    Interpolate gaps of value, <val> of 
+    Interpolate gaps of value, <val> of
     length equal to or shorter than <gap> in <arr>
-    
+
     :param arr: Array to interpolate
     :type arr: np.array
     :param val: Value expected in gaps to interpolate
@@ -226,15 +231,11 @@ def interpolate_below_length(arr, val, gap):
     """
     s = np.copy(arr)
     is_zero = s == val
-    cumsum = np.cumsum(is_zero).astype('float')
+    cumsum = np.cumsum(is_zero).astype("float")
     diff = np.zeros_like(s)
     diff[~is_zero] = np.diff(cumsum[~is_zero], prepend=0)
-    for i,d in enumerate(diff):
+    for i, d in enumerate(diff):
         if d <= gap:
-            s[int(i-d):i] = np.nan
-    interp = pd.Series(s).interpolate(method='linear', axis=0)\
-                         .ffill()\
-                         .bfill()\
-                         .values
+            s[int(i - d) : i] = np.nan
+    interp = pd.Series(s).interpolate(method="linear", axis=0).ffill().bfill().values
     return interp
-

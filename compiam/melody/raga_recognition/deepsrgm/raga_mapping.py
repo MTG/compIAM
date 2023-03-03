@@ -3,7 +3,7 @@ import json
 
 def create_mapping(mapping_path, selection):
     """Creating a map for the ragas available in the dataset (40 out of 71)
-    
+
     :param mapping_path: Path to raga mapping JSON file
     :param selection: ids to select the given ragas
     """
