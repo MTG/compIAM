@@ -432,7 +432,7 @@ class DhrupadBandishSegmentation:
                     input_data.split(".")[-1], "png"
                 )
         elif isinstance(input_data, np.ndarray):
-            logger.warn(
+            logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=pars.fs)

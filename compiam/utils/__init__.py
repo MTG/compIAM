@@ -77,7 +77,7 @@ def run_or_cache(func, inputs, cache):
                 results = pickle.load(file)
                 return results
             except:
-                logger.warn("Error loading from cache, recomputing")
+                logger.warning("Error loading from cache, recomputing")
     results = func(*inputs)
 
     if cache:

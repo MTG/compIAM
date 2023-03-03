@@ -85,7 +85,7 @@ class Melodia:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
-            logger.warn(
+            logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             resample_audio = estd.Resample(

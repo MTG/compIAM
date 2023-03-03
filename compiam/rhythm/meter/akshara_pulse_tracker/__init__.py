@@ -120,7 +120,7 @@ class AksharaPulseTracker:
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.Fs)
         elif isinstance(input_data, np.ndarray):
-            logger.warn(
+            logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.Fs)
