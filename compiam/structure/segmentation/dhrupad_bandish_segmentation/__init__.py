@@ -100,46 +100,57 @@ class DhrupadBandishSegmentation:
             )
             self.load_model(path_to_model)  # Loading pre-trained model for given mode
 
-        self.splits_path = splits_path if splits_path is not None \
+        self.splits_path = (
+            splits_path
+            if splits_path is not None
+            else os.path.join(
+                WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "splits"
+            )
+        )
+        self.annotations_path = (
+            annotations_path
+            if annotations_path is not None
             else os.path.join(
                 WORKDIR,
                 "models",
                 "structure",
                 "dhrupad_bandish_segmentation",
-                "splits"
+                "annotations",
             )
-        self.annotations_path = annotations_path if annotations_path is not None \
+        )
+        self.features_path = (
+            features_path
+            if features_path is not None
             else os.path.join(
                 WORKDIR,
                 "models",
                 "structure",
                 "dhrupad_bandish_segmentation",
-                "annotations"
+                "features",
             )
-        self.features_path = features_path if features_path is not None \
+        )
+        self.original_audios_path = (
+            original_audios_path
+            if original_audios_path is not None
             else os.path.join(
                 WORKDIR,
                 "models",
                 "structure",
                 "dhrupad_bandish_segmentation",
-                "features"
+                "audio_original",
             )
-        self.original_audios_path = original_audios_path if original_audios_path is not None \
+        )
+        self.processed_audios_path = (
+            processed_audios_path
+            if processed_audios_path is not None
             else os.path.join(
                 WORKDIR,
                 "models",
                 "structure",
                 "dhrupad_bandish_segmentation",
-                "audio_original"
+                "audio_sections",
             )
-        self.processed_audios_path = processed_audios_path if processed_audios_path is not None \
-            else os.path.join(
-                WORKDIR,
-                "models",
-                "structure",
-                "dhrupad_bandish_segmentation",
-                "audio_sections"
-            )
+        )
 
     def _build_model(self):
         """Building non-trained model"""
@@ -155,11 +166,13 @@ class DhrupadBandishSegmentation:
         :param model_path: path to model weights
         """
         if not os.path.exists(model_path):
-            raise ModelNotFoundError("""
+            raise ModelNotFoundError(
+                """
                 Given path to model weights not found. Make sure you enter the path correctly.
                 We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
                 so make sure you have these available before loading the tool.
-            """)
+            """
+            )
         self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
@@ -192,23 +205,23 @@ class DhrupadBandishSegmentation:
         )
         self.load_model(path_to_model)
 
-    def train(self, verbose=0):
+    def train(self, verbose=True):
         """Train the Dhrupad Bandish Segmentation model
 
         :param verbose: showing details of the model
         """
-        print("Splitting audios...")
+        logger.info("Splitting audios...")
         split_audios(
             save_dir=self.processed_audios_path,
             annotations_path=self.annotations_path,
-            audios_path=self.original_audios_path
+            audios_path=self.original_audios_path,
         )
-        print("Extracting features...")
+        logger.info("Extracting features...")
         extract_features(
             self.processed_audios_path,
             self.annotations_path,
             self.features_path,
-            self.mode
+            self.mode,
         )
 
         # generate cross-validation folds for training
@@ -224,12 +237,10 @@ class DhrupadBandishSegmentation:
             all_folds.append(
                 np.loadtxt(
                     os.path.join(
-                        self.splits_path,
-                        self.mode,
-                        "fold_" + i_fold + ".csv"
+                        self.splits_path, self.mode, "fold_" + i_fold + ".csv"
                     ),
                     delimiter=",",
-                    dtype=str
+                    dtype=str,
                 )
             )
 
@@ -268,12 +279,12 @@ class DhrupadBandishSegmentation:
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         optimizer = torch.optim.Adam(self.parameters(), lr=0.0001)
 
-        if verbose == 1:
-            print(self.model)
+        if verbose:
+            logger.info(self.model)
             n_params = 0
             for param in self.model.parameters():
                 n_params += torch.prod(torch.tensor(param.shape))
-            print("Num of trainable params: %d\n" % n_params)
+            logger.info("Num of trainable params: %d\n" % n_params)
 
         ##training epochs loop
         train_loss_epoch = []
@@ -383,8 +394,8 @@ class DhrupadBandishSegmentation:
             else:
                 n_idle += 1
 
-            # print loss in current epoch
-            print(
+            # log loss in current epoch
+            logger.info(
                 "Epoch no: %d/%d\tTrain loss: %f\tTrain acc: %f\tVal loss: %f\tVal acc: %f"
                 % (
                     epoch,
@@ -397,7 +408,9 @@ class DhrupadBandishSegmentation:
             )
         self.trained = True
 
-    def predict_stm(self, input_data, input_sr=44100, save_output=False, output_path=None):
+    def predict_stm(
+        self, input_data, input_sr=44100, save_output=False, output_path=None
+    ):
         """Predict Dhrupad Bandish Segmentation
 
         :param input_data: path to audio file or numpy array like audio signal.
@@ -406,7 +419,7 @@ class DhrupadBandishSegmentation:
         :param save_output: boolean indicating whether the output figure for the estimation is
             stored.
         :param output_path: if the input is an array, and the user wants to save the estimation,
-            the output_path must be provided, path/to/picture.png. 
+            the output_path must be provided, path/to/picture.png.
         """
         if not isinstance(save_output, bool):
             raise ValueError("save_output must be a boolean")
@@ -415,12 +428,18 @@ class DhrupadBandishSegmentation:
                 raise FileNotFoundError("Target audio not found.")
             audio, sr = librosa.load(input_data, sr=pars.fs)
             if output_path is None:
-                output_path = os.path.basename(input_data).replace(input_data.split(".")[-1], "png")
-        elif isinstance(input_data, np.ndarray): 
-            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+                output_path = os.path.basename(input_data).replace(
+                    input_data.split(".")[-1], "png"
+                )
+        elif isinstance(input_data, np.ndarray):
+            logger.warning(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
             audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=pars.fs)
             if (save_output is True) and (output_path is None):
-                raise ValueError("Please provide an output_path in order to save the estimation")
+                raise ValueError(
+                    "Please provide an output_path in order to save the estimation"
+                )
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
@@ -428,10 +447,12 @@ class DhrupadBandishSegmentation:
             if not os.path.exists(os.path.basename(output_path)):
                 os.mkdir(os.path.basename(output_path))
         if self.trained is False:
-            raise ModelNotTrainedError("""
+            raise ModelNotTrainedError(
+                """
                 Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper.
-            """)
+            """
+            )
 
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(

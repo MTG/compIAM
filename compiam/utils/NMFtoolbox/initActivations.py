@@ -95,7 +95,6 @@ def initActivations(parameter, strategy):
         initH = EPS + np.zeros((parameter["numComp"], parameter["numFrames"]))
 
         for k in range(uniquePitches.size):
-
             # find corresponding note onsets and durations
             ind = np.nonzero(parameter["pitches"] == uniquePitches[k])[0]
 
@@ -130,7 +129,6 @@ def initActivations(parameter, strategy):
 
         # sanity check
         if uniqueDrums.size == parameter["numComp"]:
-
             # insert impulses at onset positions
             for k in range(len(uniqueDrums)):
                 currOns = np.nonzero(parameter["drums"] == uniqueDrums[k])[0]

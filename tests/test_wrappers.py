@@ -22,7 +22,7 @@ def test_load_corpora():
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
     with pytest.raises(ValueError):
-        load_corpora("carnatic", token="hola")  
+        load_corpora("carnatic", token="hola")
 
 
 def test_lists():
@@ -52,6 +52,7 @@ def _load_torch_models():
     from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
         DhrupadBandishSegmentation,
     )
+
     dhrupad_segmentation = load_model("structure:dhrupad-bandish-segmentation")
     assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 

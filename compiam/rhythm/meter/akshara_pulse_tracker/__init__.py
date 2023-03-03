@@ -14,7 +14,6 @@ import numpy as np
 import scipy.stats as scistats
 
 from scipy.fft import fft
-from compiam.utils import get_logger
 
 from compiam.rhythm.meter.akshara_pulse_tracker.models import (
     cust_pool,
@@ -26,10 +25,10 @@ from compiam.rhythm.meter.akshara_pulse_tracker.models import (
     getNearestIndex,
     getNearestIndices,
     getTempoCurve,
-    correctOctaveErrors
+    correctOctaveErrors,
 )
 from compiam.rhythm.meter.akshara_pulse_tracker import parameters as params
-
+from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -72,7 +71,6 @@ class AksharaPulseTracker:
         smoothTime=2560,
         pwtol=0.2,
     ):
-
         self.Nfft = Nfft
         self.frmSize = frmSize
         self.Fs = Fs
@@ -121,8 +119,10 @@ class AksharaPulseTracker:
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.Fs)
-        elif isinstance(input_data, np.ndarray): 
-            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
+        elif isinstance(input_data, np.ndarray):
+            logger.warning(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
             audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.Fs)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
@@ -162,8 +162,8 @@ class AksharaPulseTracker:
 
         # Get sections
         sections = {"startTime": 0, "endTime": 0, "label": ""}
-        sections["startTime"] = np.round(sectStart, params.roundOffLen)
-        sections["endTime"] = np.round(sectEnd, params.roundOffLen)
+        sections["startTime"] = np.round(sectStart, params.roundOffLen).tolist()
+        sections["endTime"] = np.round(sectEnd, params.roundOffLen).tolist()
         labelStr = ("Alapana", "Kriti")
         if sectEnd.size == 2:
             sections["label"] = labelStr
@@ -217,7 +217,7 @@ class AksharaPulseTracker:
         Locs = akCandLocs
         ts = akCandTs
         Wts = akCandWts
-        #TransMat = akCandTransMat
+        # TransMat = akCandTransMat
         TransMatCausal = np.triu(akCandTransMat + akCandTransMat.transpose())
         pers = TCper[getNearestIndices(akCandTs, TCts)]
 
@@ -232,11 +232,12 @@ class AksharaPulseTracker:
 
         APcurve = [[TCts[t], TCper[t]] for t in range(TCts.size)]
 
-        return {"sections": sections,
-                "aksharaPeriod": np.round(mmpFromTC, params.roundOffLen).item(0),
-                "aksharaPulses": aksharaPulses,
-                "APcurve": APcurve}
-
+        return {
+            "sections": sections,
+            "aksharaPeriod": np.round(mmpFromTC, params.roundOffLen).item(0),
+            "aksharaPulses": aksharaPulses.tolist(),
+            "APcurve": APcurve,
+        }
 
     def getOnsetFunctions(
         self, audio, Nfft, frmSize, Fs, fTicks, hop, numBands, fBands, verbose=True
@@ -426,4 +427,3 @@ class AksharaPulseTracker:
         aksharaLocs = aksharaLocs.astype(int)
         aksharaTimes = ts[aksharaLocs]
         return aksharaLocs, aksharaTimes
-

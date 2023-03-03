@@ -5,6 +5,7 @@ from compiam.data import models_dict
 
 from compiam.melody.tonic_identification.tonic_multipitch import TonicIndianMultiPitch
 
+
 # Show user the available tools
 def list_tools():
     pre_trained_models = [

@@ -39,6 +39,7 @@ class CAEWrapper:
        grad_fn=<Atan2Backward>)
     ```
     """
+
     def __init__(self, model_path, conf_path, spec_path, device="cpu"):
         """
         Initialise wrapper with trained model from original CAE implementation
@@ -47,7 +48,7 @@ class CAEWrapper:
         :type model_path: str
         :param conf_path: Path to .ini conf used to train model at <model_path>
         :type conf_path: str
-        :param spec_path: Path to .cfg configuration spec 
+        :param spec_path: Path to .cfg configuration spec
         :type spec_path: str
         :param map_location: cpu or gpu [optional, defaults to cpu]
         :type map_location: str
@@ -58,13 +59,20 @@ class CAEWrapper:
             import torch
 
             global to_cqt_repr, standardize
-            from compiam.melody.pattern.sancara_search.complex_auto.cqt import to_cqt_repr, standardize
+            from compiam.melody.pattern.sancara_search.complex_auto.cqt import (
+                to_cqt_repr,
+                standardize,
+            )
 
             global Complex
-            from compiam.melody.pattern.sancara_search.complex_auto.complex import Complex
+            from compiam.melody.pattern.sancara_search.complex_auto.complex import (
+                Complex,
+            )
 
             global cuda_variable
-            from compiam.melody.pattern.sancara_search.complex_auto.util import cuda_variable
+            from compiam.melody.pattern.sancara_search.complex_auto.util import (
+                cuda_variable,
+            )
 
         except:
             raise ImportError(
@@ -81,8 +89,8 @@ class CAEWrapper:
 
         self.params = self.load_conf(conf_path, spec_path)
         self.validate_conf(self.params)
-        
-        for tp,v in self.params.items():
+
+        for tp, v in self.params.items():
             # unpack parameters to class attributes
             setattr(self, tp, v)
 
@@ -93,7 +101,7 @@ class CAEWrapper:
         except:
             self.device = "cpu"
             self.load_model(model_path)
-        
+
     def load_conf(self, path, spec):
         """
         Load .ini conf at <path>
@@ -107,8 +115,9 @@ class CAEWrapper:
         :returns: dict of parameters
         :rtype: dict
         """
-        configspec = ConfigObj(spec, interpolation=True,
-                               list_values=False, _inspec=True)
+        configspec = ConfigObj(
+            spec, interpolation=True, list_values=False, _inspec=True
+        )
 
         conf = ConfigObj(path, unrepr=True, configspec=configspec)
 
@@ -126,11 +135,18 @@ class CAEWrapper:
         :rtype: bool
         """
         for param in [
-            "n_bins","length_ngram","n_bases","dropout",
-            "sr","bins_per_oct","fmin","hop_length"]:
+            "n_bins",
+            "length_ngram",
+            "n_bases",
+            "dropout",
+            "sr",
+            "bins_per_oct",
+            "fmin",
+            "hop_length",
+        ]:
             if param not in conf:
                 raise ValueError(f"{param} not present in conf at <self.conf_path>")
-        
+
         if not isinstance(conf["n_bins"], int):
             raise ValueError("n_bins in conf at <conf_path> should be an integer")
 
@@ -149,7 +165,7 @@ class CAEWrapper:
         if not isinstance(conf["bins_per_oct"], int):
             raise ValueError("bins_per_oct in conf at <conf_path> should be an integer")
 
-        if not isinstance(conf["fmin"], (float,int)):
+        if not isinstance(conf["fmin"], (float, int)):
             raise ValueError("fmin in conf at <conf_path> should be an float/integer")
 
         if not isinstance(conf["hop_length"], int):
@@ -210,14 +226,23 @@ class CAEWrapper:
         """
         sr = sr if sr else self.sr
 
-        repres = to_cqt_repr(file_path, self.n_bins, self.bins_per_oct, self.fmin,
-                  self.hop_length, use_nr_samples=-1, sr=sr, standard=True, mult=1.)
+        repres = to_cqt_repr(
+            file_path,
+            self.n_bins,
+            self.bins_per_oct,
+            self.fmin,
+            self.hop_length,
+            use_nr_samples=-1,
+            sr=sr,
+            standard=True,
+            mult=1.0,
+        )
 
         return repres.transpose()
 
     def to_amp_phase(self, cqt):
         """
-        Extract amplitude and phase vector from model 
+        Extract amplitude and phase vector from model
         on <cqt> representation
 
         :param cqt: CQT representation of audio
@@ -231,7 +256,7 @@ class CAEWrapper:
 
         ngrams = []
         for i in range(0, len(cqt) - self.length_ngram, 1):
-            curr_ngram = cqt[i:i + self.length_ngram].reshape((-1,))
+            curr_ngram = cqt[i : i + self.length_ngram].reshape((-1,))
             curr_ngram = standardize(curr_ngram)
             ngrams.append(curr_ngram)
 

@@ -1,12 +1,18 @@
 import os
 import warnings
-import librosa
 
 import numpy as np
 
 import compiam
 from compiam.melody.raga_recognition.deepsrgm.raga_mapping import create_mapping
-from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError, DatasetNotLoadedError
+from compiam.exceptions import (
+    ModelNotFoundError,
+    ModelNotTrainedError,
+    DatasetNotLoadedError,
+)
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class DEEPSRGM(object):
@@ -15,7 +21,12 @@ class DEEPSRGM(object):
     """
 
     def __init__(
-        self, model_path=None, rnn="lstm", mapping_path=None, sample_rate=44100, device=None
+        self,
+        model_path=None,
+        rnn="lstm",
+        mapping_path=None,
+        sample_rate=44100,
+        device=None,
     ):
         """DEEPSRGM init method.
 
@@ -100,13 +111,15 @@ class DEEPSRGM(object):
         :param rnn: lstm (default) or gru.
         """
         if not os.path.exists(model_path):
-            raise ModelNotFoundError("""
+            raise ModelNotFoundError(
+                """
                 Given path to model weights not found. Make sure you enter the path correctly.
                 A training process for DEEPSRGM is under development right now and will be added 
                 to the library soon. Meanwhile, we provide the weights in the latest repository 
                 version (https://github.com/MTG/compIAM) so make sure you have these available before 
                 loading the DEEPSRGM. The weights are stored in .pth file format.
-            """)
+            """
+            )
 
         if rnn == "gru":
             self.model = self._build_model(rnn="gru")
@@ -131,17 +144,18 @@ class DEEPSRGM(object):
         """Load an instance of the Compmusic raga dataset to assist the tool
 
         :param data_home: path where to store the dataset data
-        :param download: 
+        :param download:
         """
-        self.dataset = compiam.load_dataset(
-            "compmusic_raga", data_home=data_home)
+        self.dataset = compiam.load_dataset("compmusic_raga", data_home=data_home)
         if download:
             self.dataset.download()
-            warnings.warn("""
+            warnings.warn(
+                """
                 The audio of this dataset is private. Please request it in the
                 Zenodo link provided in the DOWNLOAD_INFO of the dataloader,
                 and download and unzip it following the instructions.
-            """)
+            """
+            )
 
     def get_features(
         self,
@@ -174,7 +188,7 @@ class DEEPSRGM(object):
             if self.dataset is None:
                 raise DatasetNotLoadedError(
                     "Dataloader is not initialized. Have you run .load_raga_dataset()?"
-                )       
+                )
             if track_id is None:
                 raise ValueError(
                     "To load a track we need a track id. See mirdata instructions \
@@ -189,9 +203,12 @@ class DEEPSRGM(object):
         else:
             try:
                 import essentia.standard as estd
+
                 melodia = compiam.melody.pitch_extraction.Melodia
                 melodia = melodia(sampleRate=self.sample_rate)
-                tonic_extraction = compiam.melody.tonic_identification.TonicIndianMultiPitch
+                tonic_extraction = (
+                    compiam.melody.tonic_identification.TonicIndianMultiPitch
+                )
                 tonic_extraction = tonic_extraction(sampleRate=self.sample_rate)
             except:
                 raise ImportError(
@@ -202,18 +219,24 @@ class DEEPSRGM(object):
             if isinstance(input_data, str):
                 if not os.path.exists(input_data):
                     raise FileNotFoundError("Target audio not found.")
-                audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
+                audio = estd.MonoLoader(
+                    filename=input_data, sampleRate=self.sample_rate
+                )()
             elif isinstance(input_data, np.ndarray):
-                print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-                resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sample_rate)
+                logger.warning(
+                    "Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+                )
+                resampling = estd.Resample(
+                    inputSampleRate=input_sr, outputSampleRate=self.sample_rate
+                )
                 audio = resampling(input_data)
             else:
                 raise ValueError("Input must be path to audio signal or an audio array")
 
-            print("Extracting pitch track using melodia...")
+            logger.info("Extracting pitch track using melodia...")
             freqs = melodia.extract(audio)[:, 1]
 
-            print("Extracting tonic using multi-pitch approach...")
+            logger.info("Extracting tonic using multi-pitch approach...")
             tonic = tonic_extraction.extract(audio)
 
         # Normalise pitch
@@ -221,9 +244,11 @@ class DEEPSRGM(object):
         N = 200
         a = []
         if len(feature) <= 5000:
-            raise ValueError("""
+            raise ValueError(
+                """
                 Audio signal is not longer enough for a proper estimation. Please provide a larger audio.
-            """)
+            """
+            )
         for i in range(N):
             c = np.random.randint(0, len(feature) - 5000)
             a.append(feature[c : c + 5000])
@@ -238,7 +263,7 @@ class DEEPSRGM(object):
         :return: recognition result
         """
         ## Setting up GPU if any
-        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
         if isinstance(features, str):
             raise ValueError(
@@ -248,10 +273,12 @@ class DEEPSRGM(object):
 
         # Make sure model is loaded
         if self.trained is False:
-            raise ModelNotTrainedError("""
+            raise ModelNotTrainedError(
+                """
                 Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper.
-            """)
+            """
+            )
 
         # Make sure mapping is loaded
         if self.mapping is None:
@@ -259,8 +286,11 @@ class DEEPSRGM(object):
         list_of_ragas = list(self.mapping.values())
 
         # Predict
-        print("Performing prediction for the following {} ragas: {}"\
-            .format(len(list_of_ragas), list_of_ragas))
+        logger.info(
+            "Performing prediction for the following {} ragas: {}".format(
+                len(list_of_ragas), list_of_ragas
+            )
+        )
         with torch.no_grad():
             out = self.model.forward(torch.from_numpy(features).to(self.device).long())
         preds = torch.argmax(out, axis=-1)
@@ -268,8 +298,14 @@ class DEEPSRGM(object):
         majority = int(majority)
         votes = float(torch.sum(preds == majority)) / features.shape[0]
         if votes >= threshold:
-            print("Input music sample belongs to the {} raga"\
-                .format(self.mapping[majority]))
-        print("CONFUSED - Closest raga predicted is {} with {} votes"\
-            .format(self.mapping[majority], (votes*100)))
+            logger.info(
+                "Input music sample belongs to the {} raga".format(
+                    self.mapping[majority]
+                )
+            )
+        logger.info(
+            "CONFUSED - Closest raga predicted is {} with {} votes".format(
+                self.mapping[majority], (votes * 100)
+            )
+        )
         return self.mapping[majority]

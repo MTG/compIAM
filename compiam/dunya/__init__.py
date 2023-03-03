@@ -64,14 +64,15 @@ class Corpora:
             self.instrument_list = metadata["instrument_list"]
 
         except:
-            raise ValueError("""
+            raise ValueError(
+                """
                 Error accessing metadata. Have you entered the right token? If you are confident about that, consider
                 loading the Corpora instance again.
-            """)
+            """
+            )
 
     def get_collection(self):
-        """Get the documents (recordings) in a collection.
-        """
+        """Get the documents (recordings) in a collection."""
         query = _dunya_query_json("document/" + self.collection)["documents"]
         collection = []
         for doc in query:
@@ -89,7 +90,7 @@ class Corpora:
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
 
     def _get_metadata(self):
-        """Query a list of unique identifiers per each relevant tag in the Dunya database. This 
+        """Query a list of unique identifiers per each relevant tag in the Dunya database. This
         method is automatically run when the corpora is initialized.
 
         :returns: A dictionary of lists of unique identifiers per each tag: artists, concerts, works,
@@ -103,7 +104,9 @@ class Corpora:
         tala_list = []
         instrument_list = []
 
-        for rec in tqdm.tqdm(self.get_collection(), desc="Parsing metadata from database"):
+        for rec in tqdm.tqdm(
+            self.get_collection(), desc="Parsing metadata from database"
+        ):
             try:
                 # Getting artist list
                 for artist in self.get_recording(rec["mbid"])["artists"]:
@@ -133,7 +136,7 @@ class Corpora:
             "work_list": list({w["mbid"]: w for w in work_list}.values()),
             "raga_list": list({r["uuid"]: r for r in raga_list}.values()),
             "tala_list": list({t["uuid"]: t for t in tala_list}.values()),
-            "instrument_list": list({i["mbid"]: i for i in instrument_list}.values())
+            "instrument_list": list({i["mbid"]: i for i in instrument_list}.values()),
         }
 
     def get_artist(self, ambid):
@@ -238,7 +241,9 @@ class Corpora:
             ``artists`` includes artists with recording- and release-
             level performance relationships of this instrument.
         """
-        return _dunya_query_json("api/" + self.tradition + "/instrument/%s" % str(instrument_id))
+        return _dunya_query_json(
+            "api/" + self.tradition + "/instrument/%s" % str(instrument_id)
+        )
 
     @staticmethod
     def list_available_types(recording_id):
@@ -305,7 +310,9 @@ class Corpora:
         :returns: name of the saved file.
         """
         if not os.path.exists(output_dir):
-            raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
+            raise Exception(
+                "Output directory %s doesn't exist; can't save" % output_dir
+            )
 
         recording = self.get_recording(recording_id)
         if "concert" in list(recording.keys()):
@@ -328,7 +335,9 @@ class Corpora:
         :param location: Where to save the mp3s to.
         """
         if not os.path.exists(output_dir):
-            raise Exception("Output directory %s doesn't exist; can't save" % output_dir)
+            raise Exception(
+                "Output directory %s doesn't exist; can't save" % output_dir
+            )
 
         concert = self.get_concert(concert_id)
         artists = " and ".join([a["name"] for a in concert["concert_artists"]])
