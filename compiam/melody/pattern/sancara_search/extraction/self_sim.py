@@ -7,19 +7,6 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from scipy.signal import convolve2d
 
-from compiam.melody.pattern.sancara_search.extraction.segments import (
-    line_through_points,
-    break_all_segments,
-    do_patterns_overlap,
-    reduce_duplicates,
-    remove_short,
-    extend_segments,
-    join_all_segments,
-    segments_from_matrix,
-    extend_groups_to_mask,
-    group_segments,
-    remove_group_duplicates,
-)
 from compiam.melody.pattern.sancara_search.extraction.img import (
     remove_diagonal,
     convolve_array,
@@ -63,10 +50,7 @@ from compiam.melody.pattern.sancara_search.extraction.pitch import (
 from compiam.melody.pattern.sancara_search.extraction.segments import (
     line_through_points,
     trim_silence,
-    get_all_segments,
     break_all_segments,
-    do_patterns_overlap,
-    reduce_duplicates,
     remove_short,
     extend_segments,
     join_all_segments,
@@ -79,7 +63,6 @@ from compiam.melody.pattern.sancara_search.extraction.segments import (
 from compiam.utils import get_logger
 
 logger = get_logger(__name__)
-
 
 def self_similarity(
     features, exclusion_mask=None, timestep=None, hop_length=None, sr=44100
