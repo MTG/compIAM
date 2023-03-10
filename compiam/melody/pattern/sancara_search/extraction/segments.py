@@ -278,34 +278,6 @@ def extend_segments(all_segments, X_in, X_conv, perc_tail, bin_thresh_segment):
     return all_segments_extended
 
 
-def get_all_segments(X, peaks, min_diff_trav, min_length_cqt, cqt_window, sr):
-    all_segments = []
-    for _, angle, dist in zip(*peaks):
-        segments = extract_segments(X, angle, dist, min_diff_trav, cqt_window, sr)
-
-        # If either of the lengths are above minimum length, add to all segments
-        for s in segments:
-            x0 = s[0][0]
-            y0 = s[0][1]
-            x1 = s[1][0]
-            y1 = s[1][1]
-
-            l0 = x1 - x0
-            l1 = y1 - y0
-
-            # temp | to_add = []
-            # temp | if max([l1, l0]) > min_length_cqt:
-            # temp | to_add.append(s)
-
-            all_segments.append(s)
-
-        # temp | all_segments += to_add
-
-    all_segments = sorted([sorted(x) for x in all_segments])
-
-    return all_segments
-
-
 #   length_change = 1
 #   while length_change != 0:
 #       l1 = len(all_segments)
