@@ -11,6 +11,10 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
     get_est_arr,
 )
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
+from compiam.io import write_csv
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class FTANetCarnatic(object):
@@ -233,7 +237,19 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
+<<<<<<< HEAD
     def predict(self, input_data, input_sr=44100, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
+=======
+    def predict(
+        self,
+        input_data,
+        input_sr=44100,
+        hop_size=80,
+        batch_size=5,
+        out_step=None,
+        gpu="-1",
+    ):
+>>>>>>> origin
         """Extract melody from input_data.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
@@ -249,21 +265,37 @@ class FTANetCarnatic(object):
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         ## Setting up GPU if any
+<<<<<<< HEAD
         os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
+=======
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+>>>>>>> origin
 
         if self.trained is False:
-            raise ModelNotTrainedError("""
+            raise ModelNotTrainedError(
+                """
                 Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper.
-            """)
+            """
+            )
 
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.sample_rate)
+<<<<<<< HEAD
         elif isinstance(input_data, np.ndarray): 
             print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
             audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
+=======
+        elif isinstance(input_data, np.ndarray):
+            logger.warning(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
+            audio = librosa.resample(
+                input_data, orig_sr=input_sr, target_sr=self.sample_rate
+            )
+>>>>>>> origin
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
@@ -302,8 +334,8 @@ class FTANetCarnatic(object):
             freqs = estimation[:, 1]
         TStamps = np.linspace(0, audio_len / self.sample_rate, len(freqs))
 
-        freqs[freqs<50] = 0
-        
+        freqs[freqs < 50] = 0
+
         output = np.array([TStamps, freqs]).transpose()
 
         if out_step is not None:
@@ -326,3 +358,14 @@ class FTANetCarnatic(object):
         return normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value
         )
+
+    @staticmethod
+    def save_pitch(data, output_path):
+        """Calling the write_csv function in compiam.io to write the output pitch curve in a fle
+
+        :param data: the data to write
+        :param output_path: the path where the data is going to be stored
+
+        :returns: None
+        """
+        return write_csv(data, output_path)

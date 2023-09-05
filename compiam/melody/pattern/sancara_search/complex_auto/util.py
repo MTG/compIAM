@@ -29,7 +29,7 @@ def normalize(x):
 
 
 def read_file(fn):
-    with open(fn, 'r') as f:
+    with open(fn, "r") as f:
         lines = f.readlines()
         for i, line in enumerate(lines):
             lines[i] = line.strip()
@@ -39,8 +39,8 @@ def read_file(fn):
 
 def check_audio_files(filelist):
     for file in filelist:
-        assert os.path.exists(file), f'File does not exist: {file}'
-        assert os.path.isfile(file), f'Not a file: {file}'
+        assert os.path.exists(file), f"File does not exist: {file}"
+        assert os.path.isfile(file), f"Not a file: {file}"
 
 
 def prepare_audio_inputs(input_files):
@@ -70,10 +70,9 @@ def to_numpy(variable):
             return variable.data.numpy()
     except:
         try:
-            return variable.numpy()     
+            return variable.numpy()
         except:
-            LOGGER.warning("Could not 'to_numpy' variable of type "
-                           f"{type(variable)}")
+            LOGGER.warning("Could not 'to_numpy' variable of type " f"{type(variable)}")
             return variable
 
 
@@ -84,7 +83,7 @@ def save_pyc_bz(data, fn):
     :param data: data to save
     :param fn: file name of dumped data
     """
-    pickle.dump(data, bz2.BZ2File(fn, 'w'))
+    pickle.dump(data, bz2.BZ2File(fn, "w"))
 
 
 def load_pyc_bz(fn):
@@ -95,13 +94,12 @@ def load_pyc_bz(fn):
     :return: loaded data
     """
     try:
-        return pickle.load(bz2.BZ2File(fn, 'r'), encoding='latin1')
+        return pickle.load(bz2.BZ2File(fn, "r"), encoding="latin1")
     except EOFError:
-        return pickle.load(bz2.BZ2File(fn, 'r'))
+        return pickle.load(bz2.BZ2File(fn, "r"))
 
 
-def cached(cache_fn, func, args=(), kwargs={}, refresh_cache=False,
-           logger=None):
+def cached(cache_fn, func, args=(), kwargs={}, refresh_cache=False, logger=None):
     """
     If `cache_fn` exists, return the unpickled contents of that file
     (the cache file is treated as a bzipped pickle file). If this
@@ -132,7 +130,7 @@ def cached(cache_fn, func, args=(), kwargs={}, refresh_cache=False,
         the result of `func`(*`args`)
 
     """
-    if logger==None:
+    if logger == None:
         LOGGER = logging.getLogger(__name__)
     else:
         LOGGER = logger
@@ -147,10 +145,13 @@ def cached(cache_fn, func, args=(), kwargs={}, refresh_cache=False,
                 result = load_pyc_bz(cache_fn)
             except UnpicklingError as e:
                 LOGGER.error(
-                    ('The file {0} exists, but cannot be unpickled.'
-                     'Is it readable? Is this a pickle file? Try '
-                     'with numpy..'
-                     '').format(cache_fn))
+                    (
+                        "The file {0} exists, but cannot be unpickled."
+                        "Is it readable? Is this a pickle file? Try "
+                        "with numpy.."
+                        ""
+                    ).format(cache_fn)
+                )
                 try:
                     result = np.load(cache_fn)
                 except Exception as g:

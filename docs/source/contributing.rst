@@ -1,13 +1,21 @@
 .. _contributing guidelines:
 
 
+<<<<<<< HEAD
 Contribution guidelines for compiam
+=======
+Contribution guidelines for compIAM
+>>>>>>> origin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Collaborators in the MTG will be able to contribute directly to the comIAM repo. It is important that you have write 
 access to the compiam repo (`speak to Genís Plaja <mailto:genis.plaja@upf.edu>`_ if this is not the case, requesting 
 access to push into the repo). 
 
+<<<<<<< HEAD
 Please contact `Genís Plaja <mailto:genis.plaja@upf.edu>`_ or `Thomas Nuttall <mailto:thomas.nutall@upf.edu>`_ for any 
+=======
+Please contact `Genís Plaja <mailto:genis.plaja@upf.edu>`_ or `Thomas Nuttall <mailto:thomas.nuttall@upf.edu>`_ for any 
+>>>>>>> origin
 questions or doubts.
 
 
@@ -26,8 +34,15 @@ There are several ways to contribute to compiam. We will now try to list them al
 Accepting a feature
 -------------------
 We recommend that, if you want to contribute into compiam through one of the candidates in the list above, 
+<<<<<<< HEAD
 you let us know through the compiam Slack channel, the `GitHub issues <https://github.com/MTG/compIAM/issues>`_ of our repo,
 or discussed in person/online call. Feel free to get in touch with us through email to organize an online meeting if necessary.
+=======
+you let us know through the compIAM Slack workspace. If you are still not signed up in the compIAM Slack workspace,
+please email us and we will create a user for you. You can also interact with us by opening an issue in 
+`GitHub issues <https://github.com/MTG/compIAM/issues>`_ of our repo, and we can even discuss in person/online call. 
+Feel free to get in touch with us through email to organize an online meeting if necessary.
+>>>>>>> origin
 
 .. important::
     We will try to also actively propose new features to include in  compiam, so stay tuned in case you are interested in

@@ -1,45 +1,46 @@
 import numpy as np
 
+
 def contains_silence(seq, thresh=0.15):
     """If more than <thresh> of <seq> is 0, return True"""
-    return sum(seq==0)/len(seq) > thresh
+    return sum(seq == 0) / len(seq) > thresh
 
 
 def moving_average(x, w):
-    return np.convolve(x, np.ones(w), 'valid') / w
+    return np.convolve(x, np.ones(w), "valid") / w
 
 
 def too_stable(seq, dev_thresh=5, perc_thresh=0.63, window=200):
     """If a sufficient proportion of <seq> is "stable" return True"""
     if window > len(seq):
-        window=len(seq)
-    mu_ = seq[:window-1]
+        window = len(seq)
+    mu_ = seq[: window - 1]
     mu = np.concatenate([mu_, moving_average(seq, window)])
 
-    dev_arr = abs(mu-seq)
+    dev_arr = abs(mu - seq)
     dev_seq = dev_arr[np.where(~np.isnan(dev_arr))]
     bel_thresh = dev_seq < dev_thresh
 
-    perc = np.count_nonzero(bel_thresh)/len(dev_seq)
+    perc = np.count_nonzero(bel_thresh) / len(dev_seq)
 
     if perc >= perc_thresh:
         is_stable = 1
     else:
         is_stable = 0
-    
+
     return is_stable
 
 
 def start_with_silence(seq):
-    return any([seq[0] == 0, all(seq[:100]==0)])
+    return any([seq[0] == 0, all(seq[:100] == 0)])
 
 
 def min_gap(seq, length=86):
     seq2 = np.trim_zeros(seq)
-    m1 = np.r_[False, seq2==0, False]
+    m1 = np.r_[False, seq2 == 0, False]
     idx = np.flatnonzero(m1[:-1] != m1[1:])
     if len(idx) > 0:
-        out = (idx[1::2]-idx[::2])
+        out = idx[1::2] - idx[::2]
         if any(o >= length for o in out):
             return True
     return False
@@ -60,10 +61,10 @@ def is_stable(seq, max_var):
 
 
 def reduce_stability_mask(stable_mask, min_stability_length_secs, timestep):
-    min_stability_length = int(min_stability_length_secs/timestep)
+    min_stability_length = int(min_stability_length_secs / timestep)
     num_one = 0
     indices = []
-    for i,s in enumerate(stable_mask):
+    for i, s in enumerate(stable_mask):
         if s == 1:
             num_one += 1
             indices.append(i)
@@ -79,14 +80,14 @@ def reduce_stability_mask(stable_mask, min_stability_length_secs, timestep):
 def add_center_to_mask(mask):
     num_one = 0
     indices = []
-    for i,s in enumerate(mask):
+    for i, s in enumerate(mask):
         if s == 1:
             num_one += 1
             indices.append(i)
         else:
             li = len(indices)
             if li:
-                middle = indices[int(li/2)]
+                middle = indices[int(li / 2)]
                 mask[middle] = 2
                 num_one = 0
                 indices = []
@@ -96,7 +97,7 @@ def add_center_to_mask(mask):
 def add_border_to_mask(mask):
     num_one = 0
     indices = []
-    for i,s in enumerate(mask):
+    for i, s in enumerate(mask):
         if s == 1:
             num_one += 1
             indices.append(i)
@@ -109,24 +110,34 @@ def add_border_to_mask(mask):
                 mask[start] = 2
                 num_one = 0
                 indices = []
-    return mask    
+    return mask
 
 
-def get_stability_mask(raw_pitch, min_stability_length_secs, stability_hop_secs, var_thresh, timestep):
-    stab_hop = int(stability_hop_secs/timestep)
+def get_stability_mask(
+    raw_pitch, min_stability_length_secs, stability_hop_secs, var_thresh, timestep
+):
+    stab_hop = int(stability_hop_secs / timestep)
     reverse_raw_pitch = np.flip(raw_pitch)
 
     # apply in both directions to array to account for hop_size errors
-    stable_mask_1 = [is_stable(raw_pitch[s:s+stab_hop], var_thresh) for s in range(len(raw_pitch))]
-    stable_mask_2 = [is_stable(reverse_raw_pitch[s:s+stab_hop], var_thresh) for s in range(len(reverse_raw_pitch))]
-    
+    stable_mask_1 = [
+        is_stable(raw_pitch[s : s + stab_hop], var_thresh)
+        for s in range(len(raw_pitch))
+    ]
+    stable_mask_2 = [
+        is_stable(reverse_raw_pitch[s : s + stab_hop], var_thresh)
+        for s in range(len(reverse_raw_pitch))
+    ]
+
     silence_mask = raw_pitch == 0
 
     zipped = zip(stable_mask_1, np.flip(stable_mask_2), silence_mask)
-    
-    stable_mask = np.array([int((any([s1,s2]) and not sil)) for s1,s2,sil in zipped])
 
-    stable_mask = reduce_stability_mask(stable_mask, min_stability_length_secs, timestep)
+    stable_mask = np.array([int((any([s1, s2]) and not sil)) for s1, s2, sil in zipped])
+
+    stable_mask = reduce_stability_mask(
+        stable_mask, min_stability_length_secs, timestep
+    )
 
     stable_mask = add_center_to_mask(stable_mask)
 
@@ -140,7 +151,7 @@ def convert_seqs_to_timestep(all_groups, cqt_window, sr, timestep):
         this_l = []
         this_s = []
         for x0, x1 in group:
-            l = x1-x0
+            l = x1 - x0
             s = x0
             if l > 0:
                 this_l.append(l)
@@ -148,16 +159,18 @@ def convert_seqs_to_timestep(all_groups, cqt_window, sr, timestep):
         lengths.append(this_l)
         starts.append(this_s)
 
-    starts_sec = [[x*cqt_window/sr for x in p] for p in starts]
-    lengths_sec = [[x*cqt_window/sr for x in l] for l in lengths]
+    starts_sec = [[x * cqt_window / sr for x in p] for p in starts]
+    lengths_sec = [[x * cqt_window / sr for x in l] for l in lengths]
 
-    starts_seq = [[int(x/timestep) for x in p] for p in starts_sec]
-    lengths_seq = [[int(x/timestep) for x in l] for l in lengths_sec]
+    starts_seq = [[int(x / timestep) for x in p] for p in starts_sec]
+    lengths_seq = [[int(x / timestep) for x in l] for l in lengths_sec]
 
     return starts_seq, lengths_seq
 
 
-def apply_exclusions(raw_pitch, starts_seq, lengths_seq, exclusion_functions, min_in_group):
+def apply_exclusions(
+    raw_pitch, starts_seq, lengths_seq, exclusion_functions, min_in_group
+):
     for i in range(len(starts_seq)):
         these_seq = starts_seq[i]
         these_lens = lengths_seq[i]
@@ -166,15 +179,15 @@ def apply_exclusions(raw_pitch, starts_seq, lengths_seq, exclusion_functions, mi
             this_start = these_seq[j]
             n_fails = 0
             for func in exclusion_functions:
-                if func(raw_pitch[this_start:this_start+this_len]):
+                if func(raw_pitch[this_start : this_start + this_len]):
                     n_fails += 1
             if n_fails > 0:
                 these_seq.pop(j)
                 these_lens.pop(j)
 
     # minimum number in group to be pattern group
-    starts_seq_exc = [seqs for seqs in starts_seq if len(seqs)>=min_in_group]
-    lengths_seq_exc = [seqs for seqs in lengths_seq if len(seqs)>=min_in_group]
+    starts_seq_exc = [seqs for seqs in starts_seq if len(seqs) >= min_in_group]
+    lengths_seq_exc = [seqs for seqs in lengths_seq if len(seqs) >= min_in_group]
 
     return starts_seq_exc, lengths_seq_exc
 
@@ -185,8 +198,8 @@ def remove_below_length(starts_seq, lengths_seq, timestep, min_length):
     for i, group in enumerate(lengths_seq):
         this_group_l = []
         this_group_s = []
-        for j,l in enumerate(group):
-            if l >= min_length/timestep:
+        for j, l in enumerate(group):
+            if l >= min_length / timestep:
                 this_group_l.append(l)
                 this_group_s.append(starts_seq[i][j])
         if this_group_s:
@@ -209,14 +222,14 @@ def extend_to_mask(starts_seq_exc, lengths_seq_exc, mask, toler=0.25):
             l = l_group[j]
             s1 = s_group[j]
             s2 = s1 + l
-            
-            s1_ = s1 - round(l*toler)
-            s2_ = s2 + round(l*toler)
 
-            midpoint = s1 + round(l/2)
+            s1_ = s1 - round(l * toler)
+            s2_ = s2 + round(l * toler)
 
-            s1_mask   = list(mask[s1_:s1])
-            s2_mask   = list(mask[s2:s2_])
+            midpoint = s1 + round(l / 2)
+
+            s1_mask = list(mask[s1_:s1])
+            s2_mask = list(mask[s2:s2_])
             s1_mask_i = list(mask_i[s1_:s1])
             s2_mask_i = list(mask_i[s2:s2_])
 
@@ -236,4 +249,3 @@ def extend_to_mask(starts_seq_exc, lengths_seq_exc, mask, toler=0.25):
         lengths_seq_ext.append(this_group_l)
 
     return starts_seq_ext, lengths_seq_ext
-

@@ -24,26 +24,23 @@ def _test_model():
     assert isinstance(dbs.loaded_model_path, str)
 
     with pytest.raises(FileNotFoundError):
-        dbs.predict_stm(
-            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
-        )
+        dbs.predict_stm(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
 
-    #dbs.predict_stm(
+    # dbs.predict_stm(
     #    file_path=os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"),
     #    output_dir=os.path.join(TESTDIR, "resources", "melody")
-    #)
+    # )
 
-    #subprocess.run(
+    # subprocess.run(
     #    ["rm", os.path.join(TESTDIR, "resources", "melody", "pitch_test.png")]
-    #)
+    # )
 
     from compiam.structure.segmentation import DhrupadBandishSegmentation
+
     dbs = DhrupadBandishSegmentation()
 
     with pytest.raises(ModelNotTrainedError):
-        dbs.predict_stm(
-            os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
-        )
+        dbs.predict_stm(os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"))
 
 
 @pytest.mark.torch
@@ -64,4 +61,3 @@ def test_predict_full():
 @pytest.mark.all
 def test_predict_all():
     _test_model()
-

@@ -4,6 +4,10 @@ import librosa
 import numpy as np
 
 from compiam.structure.segmentation.dhrupad_bandish_segmentation.params import *
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
 
 try:
     import torch
@@ -97,7 +101,7 @@ def extract_features(audio_dir, annotations_dir, save_dir, mode):
     labels_stm = {}
 
     for i, item in enumerate(songlist):
-        print("%d/%d audios" % (i + 1, len(songlist)))
+        logger.info("%d/%d audios" % (i + 1, len(songlist)))
 
         section_aug_name = item.replace(".wav", "")
         # get section details

@@ -10,6 +10,9 @@ from sklearn.neural_network import MLPClassifier
 
 from compiam.exceptions import ModelNotTrainedError, DatasetNotLoadedError
 from compiam.data import WORKDIR
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class MridangamStrokeClassification:
@@ -192,7 +195,7 @@ class MridangamStrokeClassification:
 
         # Evaluate
         y_pred = self.model.predict(X_test)
-        print(
+        logger.info(
             "{} model successfully trained with accuracy {}% in the testing set".format(
                 model_type.upper(),
                 round(np.sum(y_test == y_pred) / len(y_pred) * 100),

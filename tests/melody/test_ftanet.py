@@ -11,16 +11,13 @@ from compiam.exceptions import ModelNotTrainedError
 
 def _predict_pitch():
     from compiam.melody.pitch_extraction import FTANetCarnatic
+
     ftanet = FTANetCarnatic()
     with pytest.raises(ModelNotTrainedError):
-        ftanet.predict(
-            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
-        )
+        ftanet.predict(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
     ftanet = load_model("melody:ftanet-carnatic")
     with pytest.raises(FileNotFoundError):
-        ftanet.predict(
-            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
-        )
+        ftanet.predict(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
     pitch = ftanet.predict(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
@@ -30,7 +27,11 @@ def _predict_pitch():
     )
     pitch_2 = ftanet.predict(audio_in, input_sr=sr)
 
+<<<<<<< HEAD
     assert np.all(np.isclose(pitch, pitch_2)) 
+=======
+    assert np.all(np.isclose(pitch, pitch_2))
+>>>>>>> origin
 
     assert isinstance(pitch, np.ndarray)
     assert np.shape(pitch) == (202, 2)
@@ -99,9 +100,7 @@ def _predict_pitch():
 def _predict_normalized_pitch():
     ftanet = load_model("melody:ftanet-carnatic")
     with pytest.raises(FileNotFoundError):
-        ftanet.predict(
-            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
-        )
+        ftanet.predict(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
     pitch = ftanet.predict(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )

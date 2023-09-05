@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# Copyright 2022 Music Technology Group - Universitat Pompeu Fabra
+# Copyright 2023 Music Technology Group - Universitat Pompeu Fabra
 #
 # This file is was adapted from Dunya
 #
@@ -8,28 +7,15 @@ Originally created on Sep 12, 2013
 @author: Ajay Srinivasamurthy
 """
 
-import os
 import math
-import librosa
 
 import numpy as np
-
 import scipy.stats as scistats
-import scipy.signal as scisig
-from scipy.fft import fft
 
-from compiam.rhythm.meter.akshara_pulse_tracker import parameters as params
 from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
-# Main things to do
-# 1. Segment audio into alapana and kriti: Look at the Mridangam base
-# 2. Extract onset features from audio - using essentia
-# 2. Estimate the peaks - peak detector xx
-# 3. Compute the Tempogram xx
-# 4. Estimate the matra/akshara period, tempo tracking - DP based xx
-# 5. Track the matra/akshara - Transition matrix and DP based xx
 
 ########################################
 class cust_pool:
@@ -139,8 +125,6 @@ def findpeaks(x, imode="q", pmode="p", wdTol=5, ampTol=0.1, prominence=3.0):
     """
     nx = x.shape[0]
     nxp = nx + 1
-    #     if x.shape[1] != 1:
-    #         print("Error in input dimension input X. It must be a column vector")
     if pmode == "v":
         x = -x
     dx = x[1:] - x[0:-1]
@@ -399,6 +383,7 @@ def correctOctaveErrors(x, per, tol, verbose=True):
         pass
     pass
     return y, flag
+<<<<<<< HEAD
 
 
 class AksharaPulseTracker:
@@ -777,3 +762,5 @@ class AksharaPulseTracker:
         aksharaLocs = aksharaLocs.astype(int)
         aksharaTimes = ts[aksharaLocs]
         return aksharaLocs, aksharaTimes
+=======
+>>>>>>> origin

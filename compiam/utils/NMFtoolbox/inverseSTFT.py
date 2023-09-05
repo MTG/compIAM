@@ -143,7 +143,6 @@ def inverseSTFT(X, parameter):
 
     # then begin frame-wise reconstruction
     for k in range(numFrames):
-
         # pick spectral frame
         currSpec = deepcopy(X[:, k])
 

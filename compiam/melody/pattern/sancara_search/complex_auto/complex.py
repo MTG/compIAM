@@ -1,4 +1,3 @@
-
 """
 Created on July 05, 2019
 
@@ -14,25 +13,26 @@ import torch.nn.functional as F
 
 
 class Complex(nn.Module):
-    def __init__(self, n_in, n_out, dropout=.5, learn_norm=False):
+    def __init__(self, n_in, n_out, dropout=0.5, learn_norm=False):
         super(Complex, self).__init__()
 
-        self.layer = nn.Linear(n_in, n_out*2, bias=False)
+        self.layer = nn.Linear(n_in, n_out * 2, bias=False)
 
         self.drop = nn.Dropout(dropout)
         self.learn_norm = learn_norm
         self.n_out = n_out
-        self.norm_val = nn.Parameter(torch.Tensor([.43])) # any start value
+        self.norm_val = nn.Parameter(torch.Tensor([0.43]))  # any start value
 
     def drop_gauss(self, x):
         return torch.normal(mean=x, std=0.5)
 
     def forward(self, x):
-        out = torch.matmul(self.drop(x), self.set_to_norm_graph(
-            self.norm_val).transpose(0,1))
-        real = out[:, :self.n_out]
-        imag = out[:, self.n_out:]
-        amplitudes = (real**2 + imag**2)**.5
+        out = torch.matmul(
+            self.drop(x), self.set_to_norm_graph(self.norm_val).transpose(0, 1)
+        )
+        real = out[:, : self.n_out]
+        imag = out[:, self.n_out :]
+        amplitudes = (real**2 + imag**2) ** 0.5
         phases = torch.atan2(real, imag)
         return amplitudes, phases
 
@@ -54,7 +54,7 @@ class Complex(nn.Module):
             val = self.norm_val
         shape_x = self.layer.weight.size()
         conv_x_reshape = self.layer.weight.view(shape_x[0], -1)
-        norms_x = ((conv_x_reshape ** 2).sum(1) ** .5).view(-1, 1)
+        norms_x = ((conv_x_reshape**2).sum(1) ** 0.5).view(-1, 1)
         conv_x_reshape = conv_x_reshape / norms_x
         weight_x_new = (conv_x_reshape.view(*shape_x) * val).clone()
         self.layer.weight.data = weight_x_new
@@ -72,7 +72,7 @@ class Complex(nn.Module):
             val = self.norm_val
         shape_x = self.layer.weight.size()
         conv_x_reshape = self.layer.weight.view(shape_x[0], -1)
-        norms_x = ((conv_x_reshape ** 2).sum(1) ** .5).view(-1, 1)
+        norms_x = ((conv_x_reshape**2).sum(1) ** 0.5).view(-1, 1)
         conv_x_reshape = conv_x_reshape / norms_x
         weight_x_new = (conv_x_reshape.view(*shape_x) * val).clone()
         return weight_x_new

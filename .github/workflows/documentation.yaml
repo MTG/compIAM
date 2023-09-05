@@ -14,7 +14,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
+<<<<<<< HEAD
           sudo apt-get install libsndfile
+=======
+          sudo apt-get install libsndfile1-dev
+>>>>>>> origin
           pip install sphinx sphinx_rtd_theme numpydoc recommonmark
           pip install mirdata 
           pip install scikit-learn 

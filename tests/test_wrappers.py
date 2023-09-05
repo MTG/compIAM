@@ -1,6 +1,5 @@
 import pytest
 import mirdata
-from compiam.dunya import Corpora
 from compiam import list_models, load_dataset, load_corpora, list_datasets, list_corpora
 
 
@@ -23,7 +22,11 @@ def test_load_corpora():
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
     with pytest.raises(ValueError):
+<<<<<<< HEAD
         load_corpora("carnatic", token="hola")  
+=======
+        load_corpora("carnatic", token="hola")
+>>>>>>> origin
 
 
 def test_lists():
@@ -53,6 +56,7 @@ def _load_torch_models():
     from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
         DhrupadBandishSegmentation,
     )
+
     dhrupad_segmentation = load_model("structure:dhrupad-bandish-segmentation")
     assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 

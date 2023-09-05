@@ -3,6 +3,13 @@ import os
 import numpy as np
 
 from compiam.utils.pitch import normalisation, resampling
+<<<<<<< HEAD
+=======
+from compiam.io import write_csv
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+>>>>>>> origin
 
 
 class Melodia:
@@ -81,9 +88,19 @@ class Melodia:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
         elif isinstance(input_data, np.ndarray):
+<<<<<<< HEAD
             print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
             resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sampleRate)()
             input_data = resampling(input_data)
+=======
+            logger.warning(
+                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+            )
+            resample_audio = estd.Resample(
+                inputSampleRate=input_sr, outputSampleRate=self.sampleRate
+            )()
+            input_data = resample_audio(input_data)
+>>>>>>> origin
             audio = estd.EqualLoudness(signal=input_data)()
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
@@ -112,7 +129,11 @@ class Melodia:
         )
         pitch, _ = extractor(audio)
         TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
+<<<<<<< HEAD
         output =  np.array([TStamps, pitch]).transpose()
+=======
+        output = np.array([TStamps, pitch]).transpose()
+>>>>>>> origin
 
         if out_step is not None:
             new_len = int((len(audio) / self.sampleRate) // out_step)
@@ -134,3 +155,14 @@ class Melodia:
         return normalisation(
             pitch, tonic, bins_per_octave=bins_per_octave, max_value=max_value
         )
+
+    @staticmethod
+    def save_pitch(data, output_path):
+        """Calling the write_csv function in compiam.io to write the output pitch curve in a fle
+
+        :param data: the data to write
+        :param output_path: the path where the data is going to be stored
+
+        :returns: None
+        """
+        return write_csv(data, output_path)

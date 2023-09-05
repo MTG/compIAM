@@ -11,16 +11,16 @@ def _load_model():
     deepsrgm = load_model("melody:deepsrgm")
     raga_mapping = deepsrgm.mapping
     assert raga_mapping == {
-        0: 'Bhairav',
-        1: 'Madhukauns',
-        2: 'Mōhanaṁ',
-        3: 'Hamsadhvāni',
-        4: 'Varāḷi',
-        5: 'Dēś',
-        6: 'Kamās',
-        7: 'Yaman kalyāṇ',
-        8: 'Bilahari',
-        9: 'Ahira bhairav'
+        0: "Bhairav",
+        1: "Madhukauns",
+        2: "Mōhanaṁ",
+        3: "Hamsadhvāni",
+        4: "Varāḷi",
+        5: "Dēś",
+        6: "Kamās",
+        7: "Yaman kalyāṇ",
+        8: "Bilahari",
+        9: "Ahira bhairav",
     }
 
 
@@ -34,7 +34,7 @@ def _get_features():
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
-    
+
 
 @pytest.mark.torch
 def test_predict_tf():

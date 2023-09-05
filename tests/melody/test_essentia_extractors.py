@@ -11,9 +11,7 @@ def _predict_normalized_pitch():
 
     melodia = Melodia()
     with pytest.raises(FileNotFoundError):
-        melodia.extract(
-            os.path.join(TESTDIR, "resources", "melody", "hola.wav")
-        )
+        melodia.extract(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
     pitch = melodia.extract(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )

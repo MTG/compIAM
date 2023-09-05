@@ -2,12 +2,11 @@ import os
 import pathlib
 
 WORKDIR = os.path.join(
-    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
-    "compiam")
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()), "compiam"
+)
 TESTDIR = os.path.join(
-    os.path.dirname(pathlib.Path(__file__).parent.resolve()),
-    "tests")
-
+    os.path.dirname(pathlib.Path(__file__).parent.resolve()), "tests"
+)
 
 
 #############
@@ -27,8 +26,12 @@ models_dict = {
         "class_name": "DEEPSRGM",
         "kwargs": {
             "model_path": {
-                "lstm": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "lstm_25_checkpoint.pth"),
-                "gru": os.path.join(WORKDIR, "models", "melody", "deepsrgm", "gru_30_checkpoint.pth"),
+                "lstm": os.path.join(
+                    WORKDIR, "models", "melody", "deepsrgm", "lstm_25_checkpoint.pth"
+                ),
+                "gru": os.path.join(
+                    WORKDIR, "models", "melody", "deepsrgm", "gru_30_checkpoint.pth"
+                ),
             },
             "mapping_path": os.path.join(
                 WORKDIR,
@@ -54,7 +57,11 @@ models_dict = {
         "class_name": "CAEWrapper",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "melody", "caecarnatic", "model_complex_auto_cqt.save"
+                WORKDIR,
+                "models",
+                "melody",
+                "caecarnatic",
+                "model_complex_auto_cqt.save",
             ),
             "conf_path": os.path.join(
                 WORKDIR, "models", "melody", "caecarnatic", "config_cqt.ini"
@@ -69,9 +76,30 @@ models_dict = {
         "class_name": "DhrupadBandishSegmentation",
         "kwargs": {
             "model_path": {
-                "net": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "net"),
-                "pakh": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "pakh"),
-                "voc": os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation", "pretrained_models", "voc"),
+                "net": os.path.join(
+                    WORKDIR,
+                    "models",
+                    "structure",
+                    "dhrupad_bandish_segmentation",
+                    "pretrained_models",
+                    "net",
+                ),
+                "pakh": os.path.join(
+                    WORKDIR,
+                    "models",
+                    "structure",
+                    "dhrupad_bandish_segmentation",
+                    "pretrained_models",
+                    "pakh",
+                ),
+                "voc": os.path.join(
+                    WORKDIR,
+                    "models",
+                    "structure",
+                    "dhrupad_bandish_segmentation",
+                    "pretrained_models",
+                    "voc",
+                ),
             },
         },
     },
@@ -88,12 +116,12 @@ models_dict = {
 datasets_list = [
     "saraga_carnatic",
     "saraga_hindustani",
-    "mridangam_stroke", 
+    "mridangam_stroke",
     "four_way_tabla",
     "compmusic_carnatic_rhythm",
     "compmusic_hindustani_rhythm",
     "compmusic_raga",
-    "compmusic_indian_tonic"
+    "compmusic_indian_tonic",
 ]
 
 
