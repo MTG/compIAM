@@ -64,26 +64,13 @@ class Corpora:
             self.instrument_list = metadata["instrument_list"]
 
         except:
-<<<<<<< HEAD
             raise ValueError("""
                 Error accessing metadata. Have you entered the right token? If you are confident about that, consider
                 loading the Corpora instance again.
             """)
 
     def get_collection(self):
-        """Get the documents (recordings) in a collection.
-        """
-=======
-            raise ValueError(
-                """
-                Error accessing metadata. Have you entered the right token? If you are confident about that, consider
-                loading the Corpora instance again.
-            """
-            )
-
-    def get_collection(self):
         """Get the documents (recordings) in a collection."""
->>>>>>> origin
         query = _dunya_query_json("document/" + self.collection)["documents"]
         collection = []
         for doc in query:
@@ -101,11 +88,7 @@ class Corpora:
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
 
     def _get_metadata(self):
-<<<<<<< HEAD
         """Query a list of unique identifiers per each relevant tag in the Dunya database. This 
-=======
-        """Query a list of unique identifiers per each relevant tag in the Dunya database. This
->>>>>>> origin
         method is automatically run when the corpora is initialized.
 
         :returns: A dictionary of lists of unique identifiers per each tag: artists, concerts, works,
@@ -119,13 +102,7 @@ class Corpora:
         tala_list = []
         instrument_list = []
 
-<<<<<<< HEAD
         for rec in tqdm.tqdm(self.get_collection(), desc="Parsing metadata from database"):
-=======
-        for rec in tqdm.tqdm(
-            self.get_collection(), desc="Parsing metadata from database"
-        ):
->>>>>>> origin
             try:
                 # Getting artist list
                 for artist in self.get_recording(rec["mbid"])["artists"]:
@@ -155,11 +132,7 @@ class Corpora:
             "work_list": list({w["mbid"]: w for w in work_list}.values()),
             "raga_list": list({r["uuid"]: r for r in raga_list}.values()),
             "tala_list": list({t["uuid"]: t for t in tala_list}.values()),
-<<<<<<< HEAD
             "instrument_list": list({i["mbid"]: i for i in instrument_list}.values())
-=======
-            "instrument_list": list({i["mbid"]: i for i in instrument_list}.values()),
->>>>>>> origin
         }
 
     def get_artist(self, ambid):

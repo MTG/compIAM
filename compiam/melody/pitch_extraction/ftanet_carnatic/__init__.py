@@ -237,9 +237,6 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-<<<<<<< HEAD
-    def predict(self, input_data, input_sr=44100, hop_size=80, batch_size=5, out_step=None, gpu="-1"):
-=======
     def predict(
         self,
         input_data,
@@ -249,7 +246,6 @@ class FTANetCarnatic(object):
         out_step=None,
         gpu="-1",
     ):
->>>>>>> origin
         """Extract melody from input_data.
         Implementation taken (and slightly adapted) from https://github.com/yushuai/FTANet-melodic.
 
@@ -265,11 +261,7 @@ class FTANetCarnatic(object):
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         ## Setting up GPU if any
-<<<<<<< HEAD
-        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
-=======
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
->>>>>>> origin
 
         if self.trained is False:
             raise ModelNotTrainedError(
@@ -283,11 +275,6 @@ class FTANetCarnatic(object):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.sample_rate)
-<<<<<<< HEAD
-        elif isinstance(input_data, np.ndarray): 
-            print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
-=======
         elif isinstance(input_data, np.ndarray):
             logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
@@ -295,7 +282,6 @@ class FTANetCarnatic(object):
             audio = librosa.resample(
                 input_data, orig_sr=input_sr, target_sr=self.sample_rate
             )
->>>>>>> origin
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 

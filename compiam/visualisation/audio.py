@@ -3,13 +3,6 @@ import librosa
 
 import numpy as np
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
-
-
-def plot_waveform(input_data, t1, t2, labels=None, input_sr=44100, sr=44100, output_path=None):
-    """Plotting waveform between two given points with optional labels
-    
-=======
 
 from compiam.utils import get_logger
 
@@ -21,7 +14,6 @@ def plot_waveform(
 ):
     """Plotting waveform between two given points with optional labels
 
->>>>>>> origin
     :param input_data: path to audio file or numpy array like audio signal
     :param input_sr: sampling rate of the input array of data (if any). This variable is only
         relevant if the input is an array of data instead of a filepath.
@@ -35,15 +27,10 @@ def plot_waveform(
         if not os.path.exists(input_data):
             raise FileNotFoundError("Target audio not found.")
         audio, _ = librosa.load(input_data, sr=sr)
-<<<<<<< HEAD
-    elif isinstance(input_data, np.ndarray): 
-        print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-=======
     elif isinstance(input_data, np.ndarray):
         logger.warning(
             f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
         )
->>>>>>> origin
         audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=sr)
     else:
         raise ValueError("Input must be path to audio signal or an audio array")

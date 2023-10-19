@@ -22,11 +22,7 @@ def test_load_corpora():
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
     with pytest.raises(ValueError):
-<<<<<<< HEAD
         load_corpora("carnatic", token="hola")  
-=======
-        load_corpora("carnatic", token="hola")
->>>>>>> origin
 
 
 def test_lists():

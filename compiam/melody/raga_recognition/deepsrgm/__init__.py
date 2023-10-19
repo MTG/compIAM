@@ -22,16 +22,12 @@ class DEEPSRGM(object):
     """
 
     def __init__(
-<<<<<<< HEAD
-        self, model_path=None, rnn="lstm", mapping_path=None, sample_rate=44100, device=None
-=======
         self,
         model_path=None,
         rnn="lstm",
         mapping_path=None,
         sample_rate=44100,
         device=None,
->>>>>>> origin
     ):
         """DEEPSRGM init method.
 
@@ -208,18 +204,12 @@ class DEEPSRGM(object):
         else:
             try:
                 import essentia.standard as estd
-<<<<<<< HEAD
-                melodia = compiam.melody.pitch_extraction.Melodia
-                melodia = melodia(sampleRate=self.sample_rate)
-                tonic_extraction = compiam.melody.tonic_identification.TonicIndianMultiPitch
-=======
 
                 melodia = compiam.melody.pitch_extraction.Melodia
                 melodia = melodia(sampleRate=self.sample_rate)
                 tonic_extraction = (
                     compiam.melody.tonic_identification.TonicIndianMultiPitch
                 )
->>>>>>> origin
                 tonic_extraction = tonic_extraction(sampleRate=self.sample_rate)
             except:
                 raise ImportError(
@@ -230,12 +220,6 @@ class DEEPSRGM(object):
             if isinstance(input_data, str):
                 if not os.path.exists(input_data):
                     raise FileNotFoundError("Target audio not found.")
-<<<<<<< HEAD
-                audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
-            elif isinstance(input_data, np.ndarray):
-                print("Resampling... (input sampling rate is {}Hz, make sure this is correct)".format(input_sr))
-                resampling = estd.Resample(inputSampleRate=input_sr, outputSampleRate=self.sample_rate)
-=======
                 audio = estd.MonoLoader(
                     filename=input_data, sampleRate=self.sample_rate
                 )()
@@ -246,22 +230,14 @@ class DEEPSRGM(object):
                 resampling = estd.Resample(
                     inputSampleRate=input_sr, outputSampleRate=self.sample_rate
                 )
->>>>>>> origin
                 audio = resampling(input_data)
             else:
                 raise ValueError("Input must be path to audio signal or an audio array")
 
-<<<<<<< HEAD
-            print("Extracting pitch track using melodia...")
-            freqs = melodia.extract(audio)[:, 1]
-
-            print("Extracting tonic using multi-pitch approach...")
-=======
             logger.info("Extracting pitch track using melodia...")
             freqs = melodia.extract(audio)[:, 1]
 
             logger.info("Extracting tonic using multi-pitch approach...")
->>>>>>> origin
             tonic = tonic_extraction.extract(audio)
 
         # Normalise pitch
@@ -288,11 +264,7 @@ class DEEPSRGM(object):
         :return: recognition result
         """
         ## Setting up GPU if any
-<<<<<<< HEAD
-        os.environ["CUDA_VISIBLE_DEVICES"]=str(gpu)
-=======
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
->>>>>>> origin
 
         if isinstance(features, str):
             raise ValueError(

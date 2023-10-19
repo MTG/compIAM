@@ -72,7 +72,7 @@ class PeakData:
         Saves the raw (read unsmoothed) histogram data to the given path using
         pickle python module.
         """
-        pickle.dump([self.x, self.y_raw], file(path, "w"))
+        pickle.dump([self.x, self.y_raw], file(path, "w"))  ## TODO: file producing problems here?
 
     def get_peaks(
         self,
@@ -133,7 +133,7 @@ class PeakData:
             peak_data = result["peaks"]
             valley_data = result["valleys"]
 
-            for i in xrange(len(peak_data[0])):
+            for i in range(len(peak_data[0])):
                 nearest_index = slope.find_nearest_index(
                     valley_data[0], peak_data[0][i]
                 )

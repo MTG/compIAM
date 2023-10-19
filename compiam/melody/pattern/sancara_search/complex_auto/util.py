@@ -9,7 +9,6 @@ Sony CSL Paris, France
 import os
 import bz2
 
-import soundfile
 import torch
 import pickle
 import logging
