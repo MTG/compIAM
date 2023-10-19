@@ -103,6 +103,16 @@ models_dict = {
             },
         },
     },
+    "separation:cold-diff-sep": {
+        "module_name": "compiam.separation.singing_voice_extraction.cold_diff_sep",
+        "class_name": "ColdDiffSep",
+        "kwargs": {
+            "model_path": os.path.join(
+                WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8"
+            ),
+            "sample_rate": 22050,
+        },
+    },
 }
 
 

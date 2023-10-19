@@ -4,7 +4,10 @@ import inspect
 import pathlib
 import pickle
 import difflib
+import librosa
+
 import IPython.display as ipd
+import numpy as np
 
 from compiam.io import save_object, load_yaml
 from compiam.utils.pitch import cents_to_pitch
@@ -88,6 +91,36 @@ def run_or_cache(func, inputs, cache):
             logger.error(f"Error saving object: {e}")
 
     return results
+
+
+def load_and_resample(input_data, input_sr, output_sr):
+    """
+    Load and resample input data allowing a file path o an audio array as input
+
+    :param input_data: input file path or audio array
+    :type input_data: str or array
+    :param input_sr: input sampling rate
+    :type input_sr: int
+    :param output_sr: target sampling rate
+    :type output_sr: int
+
+    :return: audio signal
+    :rtype: array
+    """
+    if isinstance(input_data, str):
+        if not os.path.exists(input_data):
+            raise FileNotFoundError("Target audio not found.")
+        audio, _ = librosa.load(input_data, sr=output_sr)
+    elif isinstance(input_data, np.ndarray):
+        logger.warning(
+            f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+        )
+        audio = librosa.resample(
+            input_data, orig_sr=input_sr, target_sr=output_sr
+        )
+    else:
+        raise ValueError("Input must be path to audio signal or an audio array")
+    return audio
 
 
 def myround(x, base=5):

@@ -30,7 +30,7 @@ pip install -r requirements.txt
 compIAM does not have terminal functionalities but it is to be used within Python based-projects. First, import the library to your Python project with: ``import compiam``.
 
 The integrated tools and models are organized by:
-1) The following fundamental musical aspects: melody, rhythm, structure and timbre. 
+1) The following fundamental musical aspects: *melody*, *rhythm*, *structure* and *timbre* (in v0.3.0 we are introducing new section, *separation*)
 2) The task these tools tackle.
 
 You can access the several included tools by importing them from their corresponding modules:
@@ -58,6 +58,7 @@ compIAM is structured by the fundamental aspects of music in which we classify t
 - **[Rhtyhmic analysis](./compiam/rhythm/README.md)**
 - **[Structure analysis](./compiam/structure/README.md)**
 - **[Timbre analysis](./compiam/timbre/README.md)**
+- **[Music source separation](./compiam/separation/README.md)**
 
 ### Accessing the Dunya corpora
 We do provide access to the Carnatic and Hindustani corpora in Dunya. For both corpora, there is access to the CC and the non-CC parts. More details on accessing the Dunya corpora are [given here](./compiam/dunya/README.md)
@@ -72,6 +73,7 @@ Direct and MIR-standardized access to the datasets for the computational analysi
 * [Hindustani Music Rhythm](https://zenodo.org/record/1264742)*
 * [Mridangam Stroke Dataset](https://compmusic.upf.edu/mridangam-stroke-dataset)*
 * [Four-Way Tabla Stroke (ISMIR 21)](https://zenodo.org/record/7110248)
+* [SCMS (Saraga Carnatic Melody Synth)](https://zenodo.org/records/5553925)
 
 The datasets marked with * have been compiled within the framework of the [CompMusic project](https://compmusic.upf.edu/).
 
@@ -91,7 +93,7 @@ Please check the [contribution guidelines](https://mtg.github.io/compIAM/source/
 We include, in this repo, [example notebooks](https://github.com/MTG/compIAM/tree/master/notebooks) for users to better understand how to use `compiam` and also showcase 
 
 ## License
-compIAM is Copyright 2022 Music Technology Group - Universitat Pompeu Fabra
+compIAM is Copyright 2023 Music Technology Group - Universitat Pompeu Fabra
 
 compIAM is released under the terms of the GNU Affero General Public License (v3 or later). See the COPYING file for more information. For the case of a particular tool or implementation that has a specific different licence, this is explicitly specified in the files related to this tool, and these terms must be followed.
 

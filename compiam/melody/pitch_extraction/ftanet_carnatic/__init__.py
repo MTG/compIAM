@@ -12,7 +12,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
 )
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 from compiam.io import write_csv
-from compiam.utils import get_logger
+from compiam.utils import get_logger, load_and_resample
 
 logger = get_logger(__name__)
 
@@ -270,20 +270,9 @@ class FTANetCarnatic(object):
                 You can load the pre-trained instance with the load_model wrapper.
             """
             )
-
-        if isinstance(input_data, str):
-            if not os.path.exists(input_data):
-                raise FileNotFoundError("Target audio not found.")
-            audio, _ = librosa.load(input_data, sr=self.sample_rate)
-        elif isinstance(input_data, np.ndarray):
-            logger.warning(
-                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
-            )
-            audio = librosa.resample(
-                input_data, orig_sr=input_sr, target_sr=self.sample_rate
-            )
-        else:
-            raise ValueError("Input must be path to audio signal or an audio array")
+        
+        # Loading and resampling audio
+        audio = load_and_resample(input_data, input_sr, self.sample_rate)
 
         xlist = []
         timestamps = []

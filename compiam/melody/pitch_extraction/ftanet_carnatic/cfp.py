@@ -4,7 +4,6 @@ Created on May 18, 2018
 TODO: Port documentation to sphinx
 """
 
-import librosa
 import scipy
 import scipy.signal
 
