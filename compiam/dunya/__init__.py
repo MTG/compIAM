@@ -31,6 +31,10 @@ from compiam.io import (
     write_scalar_txt,
 )
 
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
 
 class Corpora:
     """Dunya corpora class with access functions"""
@@ -50,6 +54,31 @@ class Corpora:
         self.collection = (
             "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
         )
+        logger.warning(
+            f"To load the full metadata of the initialized corpora, run .get_metadata().
+            Please note that it might take a while..."
+        )
+
+    def get_collection(self):
+        """Get the documents (recordings) in a collection."""
+        query = _dunya_query_json("document/" + self.collection)["documents"]
+        collection = []
+        for doc in query:
+            doc["mbid"] = doc.pop("external_identifier")
+            collection.append(doc)
+        return collection
+
+    def get_recording(self, rmbid):
+        """Get specific information about a recording.
+
+        :param rmbid: A recording MBID.
+        :returns: mbid, title, artists, raga, tala, work.
+            ``artists`` includes performance relationships attached to the recording, the release, and the release artists.
+        """
+        return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
+    
+    def get_metadata(self):
+        """Get the full metadata of the initialized corpora. It might take a while..."""
 
         # Initializing database
         try:
@@ -70,24 +99,6 @@ class Corpora:
                 loading the Corpora instance again.
             """
             )
-
-    def get_collection(self):
-        """Get the documents (recordings) in a collection."""
-        query = _dunya_query_json("document/" + self.collection)["documents"]
-        collection = []
-        for doc in query:
-            doc["mbid"] = doc.pop("external_identifier")
-            collection.append(doc)
-        return collection
-
-    def get_recording(self, rmbid):
-        """Get specific information about a recording.
-
-        :param rmbid: A recording MBID.
-        :returns: mbid, title, artists, raga, tala, work.
-            ``artists`` includes performance relationships attached to the recording, the release, and the release artists.
-        """
-        return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
 
     def _get_metadata(self):
         """Query a list of unique identifiers per each relevant tag in the Dunya database. This

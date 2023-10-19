@@ -22,7 +22,7 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
-**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.7``, ``3.8``, and ``3.9``.
+**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.7``, ``3.8``, ``3.9``, ``3.10``.
 
 
 ## Basic usage
