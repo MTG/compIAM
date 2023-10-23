@@ -1,5 +1,7 @@
 import os
 import math
+import gdown
+import zipfile
 import librosa
 
 import numpy as np
@@ -12,7 +14,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
 )
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 from compiam.io import write_csv
-from compiam.utils import get_logger
+from compiam.utils import get_logger, load_and_resample, load_and_resample_to_1d, WORKDIR
 
 logger = get_logger(__name__)
 
@@ -224,18 +226,26 @@ class FTANetCarnatic(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            raise ModelNotFoundError(
-                """
-                Given path to model weights not found. Make sure you enter the path correctly.
-                A training process for the FTA-Net tuned to Carnatic is under development right
-                now and will be added to the library soon. Meanwhile, we provide the weights in the
-                latest repository version (https://github.com/MTG/compIAM) so make sure you have these
-                available before loading the Carnatic FTA-Net.
-            """
-            )
+            self.download_model() # Dowloading model weights
         self.model.load_weights(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
+
+    def download_model(self):
+        """Download pre-trained model."""
+        url = "https://drive.google.com/uc?id=1YxJKyaNg7_4T_P-BmK6AJMZ8FgRQsgie&export=download"
+        unzip_path = os.path.join(WORKDIR, "models", "melody", "ftanet")
+        output =  os.path.join(
+            WORKDIR, "models", "melody", "ftanet", "carnatic.zip")
+        gdown.download(url, output, quiet=False) 
+
+        # Unzip file
+        with zipfile.ZipFile(output, 'r') as zip_ref:
+            zip_ref.extractall(unzip_path)
+
+        # Delete zip file after extraction
+        os.remove(output)
+        logger.warning("Files downloaded and extracted successfully.")
 
     def predict(
         self,
@@ -270,20 +280,27 @@ class FTANetCarnatic(object):
                 You can load the pre-trained instance with the load_model wrapper.
             """
             )
-
+        
+        # Loading and resampling audio
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = librosa.load(input_data, sr=self.sample_rate)
         elif isinstance(input_data, np.ndarray):
             logger.warning(
-                f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+                f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
+                    make sure this is correct and change input_sr otherwise)"
             )
-            audio = librosa.resample(
-                input_data, orig_sr=input_sr, target_sr=self.sample_rate
-            )
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
+        audio_shape = audio.shape
+        if len(audio_shape) > 1:
+            audio_channels = min(audio_shape)
+            if audio_channels == 1:
+                audio = audio.flatten()
+            else:
+                audio = np.mean(audio, axis=np.argmin(audio_shape))
 
         xlist = []
         timestamps = []

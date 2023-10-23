@@ -1,4 +1,6 @@
 import os
+import gdown
+import zipfile
 import warnings
 
 import numpy as np
@@ -10,7 +12,7 @@ from compiam.exceptions import (
     ModelNotTrainedError,
     DatasetNotLoadedError,
 )
-from compiam.utils import get_logger
+from compiam.utils import get_logger, WORKDIR
 
 logger = get_logger(__name__)
 
@@ -111,15 +113,7 @@ class DEEPSRGM(object):
         :param rnn: lstm (default) or gru.
         """
         if not os.path.exists(model_path):
-            raise ModelNotFoundError(
-                """
-                Given path to model weights not found. Make sure you enter the path correctly.
-                A training process for DEEPSRGM is under development right now and will be added 
-                to the library soon. Meanwhile, we provide the weights in the latest repository 
-                version (https://github.com/MTG/compIAM) so make sure you have these available before 
-                loading the DEEPSRGM. The weights are stored in .pth file format.
-            """
-            )
+            self.download_model()
 
         if rnn == "gru":
             self.model = self._build_model(rnn="gru")
@@ -139,6 +133,22 @@ class DEEPSRGM(object):
             del new_weights[i]
         self.model.load_state_dict(new_weights)
         self.trained = True
+
+    def download_model(self):
+        """Download pre-trained model."""
+        url = "https://drive.google.com/uc?id=1H2FU7q5Nl1e6LAP7c1jml3etFtTv3_lM&export=download"
+        unzip_path = os.path.join(WORKDIR, "models", "melody", "deepsrgm")
+        output =  os.path.join(
+            WORKDIR, "models", "melody", "deepsrgm", "baseline.zip")
+        gdown.download(url, output, quiet=False) 
+
+        # Unzip file
+        with zipfile.ZipFile(output, 'r') as zip_ref:
+            zip_ref.extractall(unzip_path)
+
+        # Delete zip file after extraction
+        os.remove(output)
+        logger.warning("Files downloaded and extracted successfully.")
 
     def load_raga_dataset(self, data_home=None, download=False):
         """Load an instance of the Compmusic raga dataset to assist the tool
