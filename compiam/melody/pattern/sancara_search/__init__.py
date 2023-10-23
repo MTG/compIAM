@@ -1,6 +1,14 @@
+import os
+import gdown
+import zipfile
+
 import numpy as np
 
 from configobj import ConfigObj
+
+from compiam.utils import get_logger, WORKDIR
+
+logger = get_logger(__name__)
 
 
 class CAEWrapper:
@@ -87,20 +95,14 @@ class CAEWrapper:
         self.conf_path = conf_path
         self.model_path = model_path
 
-        self.params = self.load_conf(conf_path, spec_path)
-        self.validate_conf(self.params)
-
-        for tp, v in self.params.items():
-            # unpack parameters to class attributes
-            setattr(self, tp, v)
-
         self.trained = False
         # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
         try:
-            self.load_model(model_path)
+            self.load_model(model_path, conf_path, spec_path)
+
         except:
             self.device = "cpu"
-            self.load_model(model_path)
+            self.load_model(model_path, conf_path, spec_path)
 
     def load_conf(self, path, spec):
         """
@@ -181,7 +183,7 @@ class CAEWrapper:
         in_size = self.n_bins * self.length_ngram
         return Complex(in_size, self.n_bases, dropout=self.dropout).to(self.device)
 
-    def load_model(self, model_path):
+    def load_model(self, model_path, conf_path, spec_path):
         """
         Load model at <model_path>. Expects model parameters to correspond
         to those found in self.params (loaded from self.conf_path).
@@ -189,9 +191,36 @@ class CAEWrapper:
         :param model_path: path to model
         :type model_path: str
         """
+        if not os.path.exists(model_path):
+            self.download_model()
+
+        print(conf_path, spec_path)
+        self.params = self.load_conf(conf_path, spec_path)
+        self.validate_conf(self.params)
+
+        for tp, v in self.params.items():
+            # unpack parameters to class attributes
+            setattr(self, tp, v)
+
         self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path), strict=False)
         self.trained = True
+
+    def download_model(self):
+        """Download pre-trained model."""
+        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"
+        unzip_path = os.path.join(WORKDIR, "models", "melody", "caecarnatic")
+        output =  os.path.join(
+            WORKDIR, "models", "melody", "caecarnatic", "caecarnatic.zip")
+        gdown.download(url, output, quiet=False) 
+
+        # Unzip file
+        with zipfile.ZipFile(output, 'r') as zip_ref:
+            zip_ref.extractall(unzip_path)
+
+        # Delete zip file after extraction
+        os.remove(output)
+        logger.warning("Files downloaded and extracted successfully.")
 
     def extract_features(self, file_path, sr=None):
         """

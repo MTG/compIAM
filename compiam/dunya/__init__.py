@@ -55,8 +55,8 @@ class Corpora:
             "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
         )
         logger.warning(
-            f"To load the full metadata of the initialized corpora, run .get_metadata().
-            Please note that it might take a while..."
+            "To load the full metadata of the initialized corpora, run .get_metadata(). " + 
+            "Please note that it might take a while..."
         )
 
     def get_collection(self):
@@ -94,10 +94,8 @@ class Corpora:
 
         except:
             raise ValueError(
-                """
-                Error accessing metadata. Have you entered the right token? If you are confident about that, consider
-                loading the Corpora instance again.
-            """
+                """Error accessing metadata. Have you entered the right token? If you are confident about that, 
+                consider loading the Corpora instance again."""
             )
 
     def _get_metadata(self):

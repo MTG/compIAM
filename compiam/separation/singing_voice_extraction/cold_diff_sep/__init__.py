@@ -1,6 +1,8 @@
 import os
 import tqdm
-import json
+import gdown
+import zipfile
+import librosa
 import math
 
 import numpy as np
@@ -15,7 +17,7 @@ from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_proc
     next_power_of_2
 )
 from compiam.exceptions import ModelNotTrainedError, ModelNotFoundError
-from compiam.utils import get_logger, load_and_resample
+from compiam.utils import get_logger, load_and_resample, WORKDIR
 
 logger = get_logger(__name__)
 
@@ -67,9 +69,7 @@ class ColdDiffSep(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            raise ModelNotFoundError(
-                """Given path to model weights not found. Make sure you enter the path correctly."""
-            )
+            self.download_model()  # Dowloading model weights
         self.model.restore(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
@@ -100,7 +100,18 @@ class ColdDiffSep(object):
             )
         
         # Loading and resampling audio
-        audio = load_and_resample(input_data, input_sr, self.sample_rate)
+        if isinstance(input_data, str):
+            if not os.path.exists(input_data):
+                raise FileNotFoundError("Target audio not found.")
+            audio, _ = librosa.load(input_data, sr=self.sample_rate)
+        elif isinstance(input_data, np.ndarray):
+            logger.warning(
+                f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
+                    make sure this is correct and change input_sr otherwise)"
+            )
+            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
         mixture = tf.convert_to_tensor(audio, dtype=tf.float32)
         if mixture.shape[0] == 2:
             mixture = tf.reduce_mean(mixture, axis=0)
@@ -172,3 +183,18 @@ class ColdDiffSep(object):
         #    output_voc,
         #    22050) # Writing to file
 
+    def download_model(self):
+        """Download pre-trained model."""
+        url = "https://drive.google.com/uc?id=1yj9iHTY7nCh2qrIM2RIUOXhLXt1K8WcE&export=download"
+        unzip_path = os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
+        output =  os.path.join(
+            WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8.zip")
+        gdown.download(url, output, quiet=False) 
+
+        # Unzip file
+        with zipfile.ZipFile(output, 'r') as zip_ref:
+            zip_ref.extractall(unzip_path)
+
+        # Delete zip file after extraction
+        os.remove(output)
+        logger.warning( "Files downloaded and extracted successfully.")

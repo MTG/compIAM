@@ -27,10 +27,10 @@ models_dict = {
         "kwargs": {
             "model_path": {
                 "lstm": os.path.join(
-                    WORKDIR, "models", "melody", "deepsrgm", "lstm_25_checkpoint.pth"
+                    WORKDIR, "models", "melody", "deepsrgm", "baseline", "lstm_25_checkpoint.pth"
                 ),
                 "gru": os.path.join(
-                    WORKDIR, "models", "melody", "deepsrgm", "gru_30_checkpoint.pth"
+                    WORKDIR, "models", "melody", "deepsrgm", "baseline", "gru_30_checkpoint.pth"
                 ),
             },
             "mapping_path": os.path.join(
@@ -38,6 +38,7 @@ models_dict = {
                 "models",
                 "melody",
                 "deepsrgm",
+                "baseline",
                 "raga_mapping.json",
             ),
         },
@@ -61,13 +62,14 @@ models_dict = {
                 "models",
                 "melody",
                 "caecarnatic",
+                "carnatic",
                 "model_complex_auto_cqt.save",
             ),
             "conf_path": os.path.join(
-                WORKDIR, "models", "melody", "caecarnatic", "config_cqt.ini"
+                WORKDIR, "models", "melody", "caecarnatic", "carnatic", "config_cqt.ini"
             ),
             "spec_path": os.path.join(
-                WORKDIR, "models", "melody", "caecarnatic", "config_spec.cfg"
+                WORKDIR, "models", "melody", "caecarnatic", "carnatic", "config_spec.cfg"
             ),
         },
     },
@@ -108,7 +110,7 @@ models_dict = {
         "class_name": "ColdDiffSep",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8"
+                WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8.ckpt-1",
             ),
             "sample_rate": 22050,
         },

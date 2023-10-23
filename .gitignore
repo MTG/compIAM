@@ -77,3 +77,9 @@ tests/resources/mir_datasets/*
 compiam/models/rhythm/4wayTabla/
 tests/rhythm/test_4way_tabla.py
 compiam/rhythm/transcription/tabla_transcription/
+
+# Models
+compiam/models/melody/deepsrgm/*
+compiam/models/melody/ftanet/*
+compiam/models/melody/caecarnatic/*
+compiam/models/separation/cold_diff_sep/*
