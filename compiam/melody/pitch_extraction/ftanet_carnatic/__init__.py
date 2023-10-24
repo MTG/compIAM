@@ -275,10 +275,8 @@ class FTANetCarnatic(object):
 
         if self.trained is False:
             raise ModelNotTrainedError(
-                """
-                Model is not trained. Please load model before running inference!
-                You can load the pre-trained instance with the load_model wrapper.
-            """
+                """Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper."""
             )
         
         # Loading and resampling audio

@@ -21,8 +21,8 @@ def test_load_corpora():
         load_corpora("hola")
     with pytest.raises(ValueError):
         load_corpora("hola", cc="hola")
-    with pytest.raises(ValueError):
-        load_corpora("carnatic", token="hola")
+    with pytest.raises(ImportError):
+        load_corpora("carnatic", token=None)
 
 
 def test_lists():
@@ -41,10 +41,10 @@ def test_lists():
 
 def _load_tf_models():
     from compiam import load_model
-    from compiam.melody.pitch_extraction.ftanet_carnatic import FTANetCarnatic
+    from compiam.melody.raga_recognition import DEEPSRGM
 
-    ftanet = load_model("melody:ftanet-carnatic")
-    assert type(ftanet) == FTANetCarnatic
+    ftanet = load_model("melody:deepsrgm")
+    assert type(ftanet) == DEEPSRGM
 
 
 def _load_torch_models():
