@@ -217,7 +217,7 @@ def feature_extraction(
         tfrLQ: generalized cepstrum of spectrum (GCOS)
     """
     fr = 2.0  # frequency resolution
-    h = scipy.signal.blackmanharris(Window)  # window size
+    h = scipy.signal.windows.blackmanharris(Window)  # window size
     g = np.array([0.24, 0.6, 1])  # gamma value
 
     tfrL0, tfrLF, tfrLQ, f, q, t, CenFreq = CFP_filterbank(
