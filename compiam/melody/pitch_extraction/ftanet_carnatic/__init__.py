@@ -14,7 +14,7 @@ from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
 )
 from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 from compiam.io import write_csv
-from compiam.utils import get_logger, load_and_resample, load_and_resample_to_1d, WORKDIR
+from compiam.utils import get_logger, WORKDIR
 
 logger = get_logger(__name__)
 
