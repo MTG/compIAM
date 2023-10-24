@@ -8,7 +8,8 @@ from compiam.data import TESTDIR
 
 
 def _load_model():
-    deepsrgm = load_model("melody:deepsrgm")
+    from compiam.melody.raga_recognition import DEEPSRGM
+    deepsrgm = DEEPSRGM(mapping_path=os.path.join(TESTDIR, "resources", "melody", "raga_mapping.json"))
     raga_mapping = deepsrgm.mapping
     assert raga_mapping == {
         0: "Bhairav",
@@ -25,7 +26,9 @@ def _load_model():
 
 
 def _get_features():
-    deepsrgm = load_model("melody:deepsrgm")
+    from compiam.melody.raga_recognition import DEEPSRGM
+    deepsrgm = DEEPSRGM(mapping_path=os.path.join(TESTDIR, "resources", "melody", "raga_mapping.json"))
+    raga_mapping = deepsrgm.mapping
     with pytest.raises(FileNotFoundError):
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "hola.wav")
