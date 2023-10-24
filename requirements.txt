@@ -22,3 +22,4 @@ hmmlearn
 zope
 fastdtw
 seaborn
+gdown
