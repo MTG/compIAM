@@ -17,7 +17,7 @@ from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_proc
     next_power_of_2
 )
 from compiam.exceptions import ModelNotTrainedError, ModelNotFoundError
-from compiam.utils import get_logger, load_and_resample, WORKDIR
+from compiam.utils import get_logger, WORKDIR
 
 logger = get_logger(__name__)
 
