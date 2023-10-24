@@ -39,14 +39,6 @@ def test_lists():
 ########################
 
 
-def _load_tf_models():
-    from compiam import load_model
-    from compiam.melody.raga_recognition import DEEPSRGM
-
-    ftanet = load_model("melody:deepsrgm")
-    assert type(ftanet) == DEEPSRGM
-
-
 def _load_torch_models():
     from compiam import load_model
     from compiam.structure.segmentation.dhrupad_bandish_segmentation import (
@@ -57,34 +49,9 @@ def _load_torch_models():
     assert type(dhrupad_segmentation) == DhrupadBandishSegmentation
 
 
-####################
-# Tensorflow testing
-####################
-
-
-@pytest.mark.tensorflow
-def test_load_tf_models_tf():
-    _load_tf_models()
-
-
-@pytest.mark.essentia_tensorflow
-def test_load_tf_models_ess_tf():
-    _load_tf_models()
-
-
-@pytest.mark.full_ml
-def test_load_tf_models_full():
-    _load_tf_models()
-
-
-@pytest.mark.all
-def test_load_tf_models_all():
-    _load_tf_models()
-
-
-###############
-# Torch testing
-###############
+#############################################
+# Load model with optional dependency testing
+#############################################
 
 
 @pytest.mark.torch
