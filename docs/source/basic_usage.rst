@@ -49,3 +49,8 @@ compIAM also includes wrappers to easily initialize relevant datasets, corpora, 
 .. tip::
     When listing available tools using the ``list_tools()`` functions, some will appear with a "*" at the end. That is meant to 
     indicate that such tools have pre-trained models available, which may be loaded using the wrapper ``compiam.load_model()``.
+
+Model weights are large in size and therefore, not included in the library from v0.2.1 on. We have included a ``.download_model()``
+function to all ML/DL models that require pre-trained weights, so that the user can download them on demand. This function is
+automatically run when invoking the model through the ``compiam.load_model()`` wrapper. The model weights are then stored in the
+corresponding default folder ``./compiam/model/``. If the model is already downloaded, the function will not download it again.
