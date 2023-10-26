@@ -31,6 +31,10 @@ from compiam.io import (
     write_scalar_txt,
 )
 
+from compiam.utils import get_logger
+
+logger = get_logger(__name__)
+
 
 class Corpora:
     """Dunya corpora class with access functions"""
@@ -50,26 +54,10 @@ class Corpora:
         self.collection = (
             "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
         )
-
-        # Initializing database
-        try:
-            metadata = self._get_metadata()
-
-            self.recording_list = metadata["recording_list"]
-            self.artist_list = metadata["artist_list"]
-            self.concert_list = metadata["concert_list"]
-            self.work_list = metadata["work_list"]
-            self.raga_list = metadata["raga_list"]
-            self.tala_list = metadata["tala_list"]
-            self.instrument_list = metadata["instrument_list"]
-
-        except:
-            raise ValueError(
-                """
-                Error accessing metadata. Have you entered the right token? If you are confident about that, consider
-                loading the Corpora instance again.
-            """
-            )
+        logger.warning(
+            "To load the full metadata of the initialized corpora, run .get_metadata(). " + 
+            "Please note that it might take a while..."
+        )
 
     def get_collection(self):
         """Get the documents (recordings) in a collection."""
@@ -88,6 +76,27 @@ class Corpora:
             ``artists`` includes performance relationships attached to the recording, the release, and the release artists.
         """
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
+    
+    def get_metadata(self):
+        """Get the full metadata of the initialized corpora. It might take a while..."""
+
+        # Initializing database
+        try:
+            metadata = self._get_metadata()
+
+            self.recording_list = metadata["recording_list"]
+            self.artist_list = metadata["artist_list"]
+            self.concert_list = metadata["concert_list"]
+            self.work_list = metadata["work_list"]
+            self.raga_list = metadata["raga_list"]
+            self.tala_list = metadata["tala_list"]
+            self.instrument_list = metadata["instrument_list"]
+
+        except:
+            raise ValueError(
+                """Error accessing metadata. Have you entered the right token? If you are confident about that, 
+                consider loading the Corpora instance again."""
+            )
 
     def _get_metadata(self):
         """Query a list of unique identifiers per each relevant tag in the Dunya database. This

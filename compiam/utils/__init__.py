@@ -4,7 +4,10 @@ import inspect
 import pathlib
 import pickle
 import difflib
+import librosa
+
 import IPython.display as ipd
+import numpy as np
 
 from compiam.io import save_object, load_yaml
 from compiam.utils.pitch import cents_to_pitch
