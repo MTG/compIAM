@@ -4,7 +4,6 @@ import librosa
 
 import numpy as np
 
-from compiam import load_model
 from compiam.data import TESTDIR
 from compiam.exceptions import ModelNotTrainedError
 

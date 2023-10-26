@@ -8,7 +8,6 @@ import numpy as np
 import compiam
 from compiam.melody.raga_recognition.deepsrgm.raga_mapping import create_mapping
 from compiam.exceptions import (
-    ModelNotFoundError,
     ModelNotTrainedError,
     DatasetNotLoadedError,
 )

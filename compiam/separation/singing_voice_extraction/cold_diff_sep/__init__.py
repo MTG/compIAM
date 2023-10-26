@@ -16,7 +16,7 @@ from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_proc
     compute_signal_from_stft,
     next_power_of_2
 )
-from compiam.exceptions import ModelNotTrainedError, ModelNotFoundError
+from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger, WORKDIR
 
 logger = get_logger(__name__)
@@ -85,7 +85,11 @@ class ColdDiffSep(object):
         """Separate singing voice from mixture.
 
         :param input_data: Audio signal to separate.
-        TODO: add missing params
+        :param input_sr: sampling rate of the input array of data (if any). This variable is only
+            relevant if the input is an array of data instead of a filepath.
+        :param clusters: Number of clusters to use to build the separation masks.
+        :param scheduler: Scheduler factor to weight the clusters to be more or less restirctive with the interferences.
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
         :return: Singing voice signal.
         """
         ## Setting up GPU if any
@@ -93,10 +97,8 @@ class ColdDiffSep(object):
 
         if self.trained is False:
             raise ModelNotTrainedError(
-                """
-                Model is not trained. Please load model before running inference!
-                You can load the pre-trained instance with the load_model wrapper.
-            """
+                """ Model is not trained. Please load model before running inference!
+                You can load the pre-trained instance with the load_model wrapper."""
             )
         
         # Loading and resampling audio

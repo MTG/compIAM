@@ -5,7 +5,7 @@ import zipfile
 import librosa
 
 import numpy as np
-from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
+from compiam.exceptions import ModelNotTrainedError
 
 from compiam.utils.pitch import normalisation, resampling
 from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
