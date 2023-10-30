@@ -1,6 +1,8 @@
 import os
 import glob
+import gdown
 import librosa
+import zipfile
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -166,18 +168,31 @@ class DhrupadBandishSegmentation:
         :param model_path: path to model weights
         """
         if not os.path.exists(model_path):
-            raise ModelNotFoundError(
-                """
-                Given path to model weights not found. Make sure you enter the path correctly.
-                We provide the weights in the latest repository version (https://github.com/MTG/compIAM) 
-                so make sure you have these available before loading the tool.
-            """
-            )
-        self.model = self._build_model()
+            self.download_model(model_path)
+
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         self.loaded_model_path = model_path
         self.trained = True
+
+    def download_model(self, model_path=None):
+        """Download pre-trained model."""
+        url = "https://drive.google.com/uc?id=1SVkvHFjL5yh5M7cjnM98JK-b1QnHYw7a&export=download"
+        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-4]) \
+            if model_path is not None else \
+                os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation")
+        if not os.path.exists(unzip_path):
+            os.makedirs(unzip_path)
+        output =  os.path.join(unzip_path,  "baseline.zip")
+        gdown.download(url, output, quiet=False) 
+
+        # Unzip file
+        with zipfile.ZipFile(output, 'r') as zip_ref:
+            zip_ref.extractall(unzip_path)
+
+        # Delete zip file after extraction
+        os.remove(output)
+        logger.warning("Files downloaded and extracted successfully.")
 
     def update_mode(self, mode):
         """Update mode for the training and sampling. Mode is one of net, voc,

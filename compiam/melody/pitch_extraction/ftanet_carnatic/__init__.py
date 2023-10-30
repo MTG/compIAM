@@ -226,17 +226,20 @@ class FTANetCarnatic(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            self.download_model() # Dowloading model weights
+            self.download_model(model_path) # Dowloading model weights
         self.model.load_weights(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
 
-    def download_model(self):
+    def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1YxJKyaNg7_4T_P-BmK6AJMZ8FgRQsgie&export=download"
-        unzip_path = os.path.join(WORKDIR, "models", "melody", "ftanet")
-        output =  os.path.join(
-            WORKDIR, "models", "melody", "ftanet", "carnatic.zip")
+        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
+            if model_path is not None else \
+                os.path.join(WORKDIR, "models", "melody", "ftanet")
+        if not os.path.exists(unzip_path):
+            os.makedirs(unzip_path)
+        output =  os.path.join(unzip_path,  "carnatic.zip")
         gdown.download(url, output, quiet=False) 
 
         # Unzip file

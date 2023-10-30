@@ -1,14 +1,15 @@
+import os
 import mirdata
 
 from importlib import import_module
 
 from compiam import melody, rhythm, structure, timbre
 from compiam.dunya import Corpora
-from compiam.data import models_dict, datasets_list, corpora_list
+from compiam.data import models_dict, datasets_list, corpora_list, WORKDIR
 from compiam.exceptions import ModelNotDefinedError
 
 
-def load_model(model_name, models_dict=models_dict):
+def load_model(model_name, data_home=None, models_dict=models_dict):
     """Wrapper for loading pre-trained models.
 
     :param model_name: name of the model, extractors, or algorithm to load.
@@ -23,6 +24,15 @@ def load_model(model_name, models_dict=models_dict):
             )
         )
     m_dict = models_dict[model_name]
+    kwarg_paths = [x for x in list(m_dict["kwargs"].keys()) if "_path" in x]
+    for kp in kwarg_paths:
+        if isinstance(m_dict["kwargs"][kp], dict):
+            for k in list(m_dict["kwargs"][kp].keys()):
+                m_dict["kwargs"][kp][k] = os.path.join(data_home, m_dict["kwargs"][kp][k]) \
+                    if data_home is not None else os.path.join(WORKDIR, m_dict["kwargs"][kp][k])
+        else:
+            m_dict["kwargs"][kp] = os.path.join(data_home, m_dict["kwargs"][kp]) \
+                if data_home is not None else os.path.join(WORKDIR, m_dict["kwargs"][kp])
 
     module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
     return module(**m_dict["kwargs"])

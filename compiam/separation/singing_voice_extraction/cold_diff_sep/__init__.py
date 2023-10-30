@@ -69,7 +69,7 @@ class ColdDiffSep(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            self.download_model()  # Dowloading model weights
+            self.download_model(model_path)  # Dowloading model weights
         self.model.restore(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
@@ -185,12 +185,15 @@ class ColdDiffSep(object):
         #    output_voc,
         #    22050) # Writing to file
 
-    def download_model(self):
+    def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1yj9iHTY7nCh2qrIM2RIUOXhLXt1K8WcE&export=download"
-        unzip_path = os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
-        output =  os.path.join(
-            WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8.zip")
+        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
+            if model_path is not None else \
+                os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
+        if not os.path.exists(unzip_path):
+            os.makedirs(unzip_path)
+        output =  os.path.join(unzip_path,  "saraga-8.zip")
         gdown.download(url, output, quiet=False) 
 
         # Unzip file
@@ -199,4 +202,4 @@ class ColdDiffSep(object):
 
         # Delete zip file after extraction
         os.remove(output)
-        logger.warning( "Files downloaded and extracted successfully.")
+        logger.warning("Files downloaded and extracted successfully.")
