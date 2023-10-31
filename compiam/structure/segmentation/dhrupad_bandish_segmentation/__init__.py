@@ -170,6 +170,7 @@ class DhrupadBandishSegmentation:
         if not os.path.exists(model_path):
             self.download_model(model_path)
 
+        self.model = self._build_model()
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         self.loaded_model_path = model_path
