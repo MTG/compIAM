@@ -27,14 +27,13 @@ models_dict = {
         "kwargs": {
             "model_path": {
                 "lstm": os.path.join(
-                    WORKDIR, "models", "melody", "deepsrgm", "baseline", "lstm_25_checkpoint.pth"
+                    "models", "melody", "deepsrgm", "baseline", "lstm_25_checkpoint.pth"
                 ),
                 "gru": os.path.join(
-                    WORKDIR, "models", "melody", "deepsrgm", "baseline", "gru_30_checkpoint.pth"
+                    "models", "melody", "deepsrgm", "baseline", "gru_30_checkpoint.pth"
                 ),
             },
             "mapping_path": os.path.join(
-                WORKDIR,
                 "models",
                 "melody",
                 "deepsrgm",
@@ -48,7 +47,7 @@ models_dict = {
         "class_name": "FTANetCarnatic",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "melody", "ftanet", "carnatic", "carnatic"
+                "models", "melody", "ftanet", "carnatic", "carnatic"
             ),
             "sample_rate": 8000,
         },
@@ -58,7 +57,6 @@ models_dict = {
         "class_name": "CAEWrapper",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR,
                 "models",
                 "melody",
                 "caecarnatic",
@@ -66,10 +64,10 @@ models_dict = {
                 "model_complex_auto_cqt.save",
             ),
             "conf_path": os.path.join(
-                WORKDIR, "models", "melody", "caecarnatic", "carnatic", "config_cqt.ini"
+                "models", "melody", "caecarnatic", "carnatic", "config_cqt.ini"
             ),
             "spec_path": os.path.join(
-                WORKDIR, "models", "melody", "caecarnatic", "carnatic", "config_spec.cfg"
+                "models", "melody", "caecarnatic", "carnatic", "config_spec.cfg"
             ),
         },
     },
@@ -79,26 +77,26 @@ models_dict = {
         "kwargs": {
             "model_path": {
                 "net": os.path.join(
-                    WORKDIR,
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
+                    "baseline",
                     "pretrained_models",
                     "net",
                 ),
                 "pakh": os.path.join(
-                    WORKDIR,
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
+                    "baseline",
                     "pretrained_models",
                     "pakh",
                 ),
                 "voc": os.path.join(
-                    WORKDIR,
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
+                    "baseline",
                     "pretrained_models",
                     "voc",
                 ),
@@ -110,7 +108,7 @@ models_dict = {
         "class_name": "ColdDiffSep",
         "kwargs": {
             "model_path": os.path.join(
-                WORKDIR, "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8.ckpt-1",
+                "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8.ckpt-1",
             ),
             "sample_rate": 22050,
         },

@@ -112,7 +112,7 @@ class DEEPSRGM(object):
         :param rnn: lstm (default) or gru.
         """
         if not os.path.exists(model_path):
-            self.download_model()
+            self.download_model(model_path)
 
         if rnn == "gru":
             self.model = self._build_model(rnn="gru")
@@ -133,12 +133,15 @@ class DEEPSRGM(object):
         self.model.load_state_dict(new_weights)
         self.trained = True
 
-    def download_model(self):
+    def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1H2FU7q5Nl1e6LAP7c1jml3etFtTv3_lM&export=download"
-        unzip_path = os.path.join(WORKDIR, "models", "melody", "deepsrgm")
-        output =  os.path.join(
-            WORKDIR, "models", "melody", "deepsrgm", "baseline.zip")
+        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
+            if model_path is not None else \
+                os.path.join(WORKDIR, "models", "melody", "deepsrgm")
+        if not os.path.exists(unzip_path):
+            os.makedirs(unzip_path)
+        output =  os.path.join(unzip_path,  "baseline.zip")
         gdown.download(url, output, quiet=False) 
 
         # Unzip file

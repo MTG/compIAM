@@ -192,7 +192,7 @@ class CAEWrapper:
         :type model_path: str
         """
         if not os.path.exists(model_path):
-            self.download_model()
+            self.download_model(model_path)
 
         print(conf_path, spec_path)
         self.params = self.load_conf(conf_path, spec_path)
@@ -206,12 +206,15 @@ class CAEWrapper:
         self.model.load_state_dict(torch.load(model_path), strict=False)
         self.trained = True
 
-    def download_model(self):
+    def download_model(self, model_path=None):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"
-        unzip_path = os.path.join(WORKDIR, "models", "melody", "caecarnatic")
-        output =  os.path.join(
-            WORKDIR, "models", "melody", "caecarnatic", "caecarnatic.zip")
+        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"        
+        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
+            if model_path is not None else \
+                os.path.join(WORKDIR, "models", "melody", "caecarnatic")
+        if not os.path.exists(unzip_path):
+            os.makedirs(unzip_path)
+        output =  os.path.join(unzip_path,  "caecarnatic.zip")
         gdown.download(url, output, quiet=False) 
 
         # Unzip file
