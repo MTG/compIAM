@@ -80,7 +80,7 @@ class ColdDiffSep(object):
         input_sr=44100,
         clusters=5,
         scheduler=4,
-        chunk_size=1,
+        chunk_size=3,
         gpu="-1"
     ):
         """Separate singing voice from mixture.

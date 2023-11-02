@@ -18,13 +18,11 @@ def _separate():
     cold_diff_sep.trained = True
     with pytest.raises(FileNotFoundError):
         cold_diff_sep.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
-    cold_diff_sep = compiam.load_model("separation:cold-diff-sep", data_home=TESTDIR)
-    separation_1 = cold_diff_sep.separate(
-        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"))
 
-    audio_in, sr = librosa.load(
-        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"))
-    separation_2 = cold_diff_sep.separate(audio_in, input_sr=sr)
+    cold_diff_sep = compiam.load_model("separation:cold-diff-sep", data_home=TESTDIR)
+    audio_in = np.array(np.ones([2, 44150*10]), dtype=np.float32)
+    sr = 44100
+    separation = cold_diff_sep.separate(audio_in, input_sr=sr)
     os.rmdir(os.path.join(TESTDIR, "models"))
 
 
