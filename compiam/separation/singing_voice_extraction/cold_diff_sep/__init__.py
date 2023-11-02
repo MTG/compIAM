@@ -142,12 +142,13 @@ class ColdDiffSep(object):
             # Normalize features, all energy curves having same range
             normalized_feat = []
             for j in np.arange(diff_feat_t.shape[1]):
-                normalized_curve = diff_feat_t[:, j] / (np.max(np.abs(diff_feat_t[:, j]))+1e-6)
+                normalized_curve = diff_feat_t[:, j] / (np.max(np.abs(diff_feat_t[:, j])) + 1e-6)
                 normalized_feat.append(normalized_curve)
             normalized_feat = np.array(normalized_feat, dtype=np.float32)
 
             # Compute mask using unsupervised clustering and reshape to magnitude spec shape
             mask = get_mask(normalized_feat, clusters, scheduler)
+            mask = tf.convert_to_tensor(mask, dtype=tf.float32)  # Move mask to tensor and cast to float
             mask = tf.reshape(mask, mix_mag_trim.shape)
 
             # Getting last step of computed features and applying mask
@@ -156,6 +157,7 @@ class ColdDiffSep(object):
 
             # Silence unvoiced regions
             output_signal = compute_signal_from_stft(output_signal, mix_phase_trim, self.unet_config)
+            # From here on, pred_audio is numpy
             pred_audio = tf.squeeze(output_signal, axis=0).numpy()
             vad = VAD(pred_audio, sr=22050, nFFT=512, win_length=0.025, hop_length=0.01, theshold=0.99)
             if np.sum(vad) / len(vad) < 0.25:
@@ -171,7 +173,7 @@ class ColdDiffSep(object):
             output_voc += placehold_voc
             trim_low += pred_audio.shape[0] // 2
 
-        output_voc = output_voc * (np.max(np.abs(mixture.numpy())) / np.max(np.abs(output_voc)))
+        output_voc = output_voc * (np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6))
         
         return output_voc
         

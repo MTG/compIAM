@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 from sklearn.cluster import KMeans
 
 def get_mask(normalized_feat, clusters, scheduler):
@@ -17,4 +16,4 @@ def get_mask(normalized_feat, clusters, scheduler):
     weights = []
     for j in kmeans.labels_:
         weights.append(label_and_dist[j])
-    return tf.math.divide(weights, float(clusters-1))
+    return weights / float(clusters-1)
