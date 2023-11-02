@@ -11,11 +11,7 @@ import soundfile as sf
 from scipy.signal import get_window
 
 from compiam.separation.singing_voice_extraction.cold_diff_sep.model.vad import VAD
-from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_processing import (
-    compute_stft,
-    compute_signal_from_stft,
-    next_power_of_2
-)
+
 from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger, WORKDIR
 
@@ -47,7 +43,12 @@ class ColdDiffSep(object):
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.config import Config as UnetConfig
             global get_mask
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.clustering import get_mask
-
+            global compute_stft, compute_signal_from_stft, next_power_of_2
+            from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_processing import (
+                compute_stft,
+                compute_signal_from_stft,
+                next_power_of_2
+            )
         except:
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
