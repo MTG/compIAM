@@ -132,6 +132,7 @@ datasets_list = [
     "compmusic_hindustani_rhythm",
     "compmusic_raga",
     "compmusic_indian_tonic",
+    "compmusic_carnatic_varnam",
     "scms",
 ]
 

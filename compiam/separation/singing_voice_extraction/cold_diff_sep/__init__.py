@@ -80,7 +80,7 @@ class ColdDiffSep(object):
         input_sr=44100,
         clusters=5,
         scheduler=4,
-        chunk_size=3,
+        chunk_size=1,
         gpu="-1"
     ):
         """Separate singing voice from mixture.
@@ -141,7 +141,7 @@ class ColdDiffSep(object):
             # Normalize features, all energy curves having same range
             normalized_feat = []
             for j in np.arange(diff_feat_t.shape[1]):
-                normalized_curve = diff_feat_t[:, j] / np.max(np.abs(diff_feat_t[:, j]))
+                normalized_curve = diff_feat_t[:, j] / (np.max(np.abs(diff_feat_t[:, j]))+1e-6)
                 normalized_feat.append(normalized_curve)
             normalized_feat = np.array(normalized_feat, dtype=np.float32)
 

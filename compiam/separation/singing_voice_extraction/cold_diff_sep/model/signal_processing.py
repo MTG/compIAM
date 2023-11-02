@@ -20,9 +20,9 @@ def compute_stft(signal, unet_config):
         check_shape_3d(
             tf.signal.stft(
                 signal,
-                frame_length=unet_config.model.win,
-                frame_step=unet_config.model.hop,
-                fft_length=unet_config.model.win,
+                frame_length=unet_config.win,
+                frame_step=unet_config.hop,
+                fft_length=unet_config.win,
                 window_fn=tf.signal.hann_window), 1), 2)
     mag = tf.abs(signal_stft)
     phase = tf.math.angle(signal_stft)
@@ -34,10 +34,10 @@ def compute_signal_from_stft(spec, phase, config):
         tf.multiply(tf.complex(spec, tf.zeros(spec.shape)), tf.complex(tf.zeros(phase.shape), tf.math.sin(phase)))
     return tf.signal.inverse_stft(
         polar_spec,
-        frame_length=config.model.win,
-        frame_step=config.model.hop,
+        frame_length=config.win,
+        frame_step=config.hop,
         window_fn=tf.signal.inverse_stft_window_fn(
-            config.model.hop,
+            config.hop,
             forward_window_fn=tf.signal.hann_window))
 
 
