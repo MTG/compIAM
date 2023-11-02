@@ -136,16 +136,18 @@ class DEEPSRGM(object):
     def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1H2FU7q5Nl1e6LAP7c1jml3etFtTv3_lM&export=download"
-        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
-            if model_path is not None else \
-                os.path.join(WORKDIR, "models", "melody", "deepsrgm")
+        unzip_path = (
+            os.sep + os.path.join(*model_path.split(os.sep)[:-2])
+            if model_path is not None
+            else os.path.join(WORKDIR, "models", "melody", "deepsrgm")
+        )
         if not os.path.exists(unzip_path):
             os.makedirs(unzip_path)
-        output =  os.path.join(unzip_path,  "baseline.zip")
-        gdown.download(url, output, quiet=False) 
+        output = os.path.join(unzip_path, "baseline.zip")
+        gdown.download(url, output, quiet=False)
 
         # Unzip file
-        with zipfile.ZipFile(output, 'r') as zip_ref:
+        with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(unzip_path)
 
         # Delete zip file after extraction

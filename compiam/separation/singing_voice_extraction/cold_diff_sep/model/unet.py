@@ -6,7 +6,9 @@
 # Python 3.7
 
 
-from compiam.separation.singing_voice_extraction.cold_diff_sep.model.unet_utils import get_timestep_embedding
+from compiam.separation.singing_voice_extraction.cold_diff_sep.model.unet_utils import (
+    get_timestep_embedding,
+)
 
 import tensorflow as tf
 import keras.backend as K
@@ -28,7 +30,9 @@ class Upsample(layers.Layer):
         super(Upsample, self).__init__()
         self.channels = channels
         self.with_conv = with_conv
-        self.conv = layers.Conv2DTranspose(self.channels, (3, 3), padding="same", strides=2)
+        self.conv = layers.Conv2DTranspose(
+            self.channels, (3, 3), padding="same", strides=2
+        )
 
     def call(self, inputs):
         batch_size, height, width, _ = inputs.shape
@@ -50,13 +54,15 @@ class Downsample(layers.Layer):
         if self.with_conv:
             x = self.conv(inputs)
         else:
-            x = self.avg_pool(inputs)	
+            x = self.avg_pool(inputs)
         assert x.shape == [batch_size, height // 2, width // 2, self.channels]
         return x
 
 
 class ResNetBlock(layers.Layer):
-    def __init__(self, in_ch, cond_track=None, out_ch=None, conv_shortcut=False, dropout=0.):
+    def __init__(
+        self, in_ch, cond_track=None, out_ch=None, conv_shortcut=False, dropout=0.0
+    ):
         super(ResNetBlock, self).__init__()
         self.in_ch = in_ch
         self.cond_track = cond_track
@@ -71,22 +77,23 @@ class ResNetBlock(layers.Layer):
         # Layers.
         self.group_norm1 = tf.keras.layers.BatchNormalization()
         self.non_linear1 = layers.Activation("swish")
-        self.conv1 = layers.Conv2D(self.out_ch, (3,3), padding="same")
+        self.conv1 = layers.Conv2D(self.out_ch, (3, 3), padding="same")
 
         self.non_linear2 = layers.Activation("swish")
         self.dense2 = layers.Dense(self.out_ch)
 
-        self.group_norm3 =  tf.keras.layers.BatchNormalization()
+        self.group_norm3 = tf.keras.layers.BatchNormalization()
         self.non_linear3 = layers.Activation("swish")
         self.dropout3 = layers.Dropout(self.dropout)
         self.conv3 = layers.Conv2D(self.out_ch, (3, 3), padding="same")
         if self.cond_track is not None:
-            self.downsample_cond = layers.Conv2D(self.out_ch, (3, 3), padding="same", strides=2*self.cond_track)
+            self.downsample_cond = layers.Conv2D(
+                self.out_ch, (3, 3), padding="same", strides=2 * self.cond_track
+            )
             self.proj_cond = tf.keras.layers.Conv1D(self.out_ch, 1, padding="same")
 
         self.conv4 = layers.Conv2D(self.out_ch, (3, 3), padding="same")
         self.dense4 = layers.Dense(self.out_ch)
-
 
     def call(self, inputs, temb, cond=None):
         x = inputs
@@ -123,16 +130,21 @@ class AttentionBlock(layers.Layer):
         super(AttentionBlock, self).__init__()
         self.channels = channels
 
-        self.avg_pool = tf.keras.layers.Lambda(lambda x: K.mean(x, axis=3, keepdims=True))
-        self.max_pool = tf.keras.layers.Lambda(lambda x: K.max(x, axis=3, keepdims=True))
+        self.avg_pool = tf.keras.layers.Lambda(
+            lambda x: K.mean(x, axis=3, keepdims=True)
+        )
+        self.max_pool = tf.keras.layers.Lambda(
+            lambda x: K.max(x, axis=3, keepdims=True)
+        )
         self.cbam_feature = tf.keras.layers.Conv2D(
             filters=1,
             kernel_size=(3, 3),
             strides=1,
-            padding='same',
-            activation='sigmoid',
-            kernel_initializer='he_normal',
-            use_bias=False)
+            padding="same",
+            activation="sigmoid",
+            kernel_initializer="he_normal",
+            use_bias=False,
+        )
 
     def call(self, inputs):
         x = inputs
@@ -144,8 +156,16 @@ class AttentionBlock(layers.Layer):
 
 
 class UNet(models.Model):
-    def __init__(self, config, num_res_blocks=2, attn_resolutions=(8, 16, 32), channels=16,
-                 ch_mult=(1, 2, 4, 8, 16, 32, 64), dropout=0.2, resample_with_conv=False):
+    def __init__(
+        self,
+        config,
+        num_res_blocks=2,
+        attn_resolutions=(8, 16, 32),
+        channels=16,
+        ch_mult=(1, 2, 4, 8, 16, 32, 64),
+        dropout=0.2,
+        resample_with_conv=False,
+    ):
         super(UNet, self).__init__()
         self.config = config
         self.num_res_blocks = num_res_blocks
@@ -158,15 +178,21 @@ class UNet(models.Model):
 
         self.in_embed = [
             TimestepEmbedding(self.channels),
-            layers.Dense(self.channels*4),
+            layers.Dense(self.channels * 4),
             layers.Activation("swish"),
-            layers.Dense(self.channels*4)]
+            layers.Dense(self.channels * 4),
+        ]
 
         self.upsample_cond = [
-            tf.keras.layers.Conv2DTranspose(self.channels*2, [32, 3], [1, 1], padding='same') for _ in range(1)]
+            tf.keras.layers.Conv2DTranspose(
+                self.channels * 2, [32, 3], [1, 1], padding="same"
+            )
+            for _ in range(1)
+        ]
         # mel-downsampler
         self.downsample_cond = [
-            tf.keras.layers.Conv2D(1, [16, 3], [1, 8], padding='same') for _ in range(2)]
+            tf.keras.layers.Conv2D(1, [16, 3], [1, 8], padding="same") for _ in range(2)
+        ]
 
         # Downsampling.
         self.pre_process = layers.Conv2D(self.channels, (3, 3), padding="same")
@@ -183,35 +209,40 @@ class UNet(models.Model):
                         ResNetBlock(
                             in_ch=channel_track,
                             cond_track=cond_track,
-                            out_ch=self.channels*self.ch_mult[i_level],
-                            dropout=self.dropout)
+                            out_ch=self.channels * self.ch_mult[i_level],
+                            dropout=self.dropout,
+                        )
                     )
                 else:
                     downsampling_block.append(
                         ResNetBlock(
                             in_ch=channel_track,
                             cond_track=cond_track,
-                            out_ch=self.channels*self.ch_mult[i_level],
-                            dropout=self.dropout))
-            if i_level != self.num_resolutions-1:
+                            out_ch=self.channels * self.ch_mult[i_level],
+                            dropout=self.dropout,
+                        )
+                    )
+            if i_level != self.num_resolutions - 1:
                 downsampling_block.append(
                     Downsample(
-                        channels=self.channels*self.ch_mult[i_level],
-                        with_conv=self.resample_with_conv))
+                        channels=self.channels * self.ch_mult[i_level],
+                        with_conv=self.resample_with_conv,
+                    )
+                )
                 cond_track *= 2
                 input_track //= 2
-            channel_track = self.channels*self.ch_mult[i_level]
+            channel_track = self.channels * self.ch_mult[i_level]
             self.downsampling.append(downsampling_block)
 
-         # Middle.
+        # Middle.
         self.middle = [
             ResNetBlock(in_ch=channel_track, dropout=self.dropout),
-            ResNetBlock(in_ch=channel_track, dropout=self.dropout)
+            ResNetBlock(in_ch=channel_track, dropout=self.dropout),
         ]
 
         # Upsampling.
         self.upsampling = []
-        channel_track = self.channels*self.ch_mult[-1]*2
+        channel_track = self.channels * self.ch_mult[-1] * 2
         for i_level in reversed(range(self.num_resolutions)):
             upsampling_block = []
             # Residual blocks for this resolution.
@@ -221,33 +252,37 @@ class UNet(models.Model):
                         ResNetBlock(
                             in_ch=channel_track,
                             cond_track=cond_track,
-                            out_ch=self.channels*self.ch_mult[i_level],
-                            dropout=0.2)
+                            out_ch=self.channels * self.ch_mult[i_level],
+                            dropout=0.2,
+                        )
                     )
                 else:
                     upsampling_block.append(
                         ResNetBlock(
                             in_ch=channel_track,
                             cond_track=cond_track,
-                            out_ch=self.channels*self.ch_mult[i_level],
-                            dropout=0.2))
+                            out_ch=self.channels * self.ch_mult[i_level],
+                            dropout=0.2,
+                        )
+                    )
             # Upsample.
             if i_level != 0:
                 upsampling_block.append(
                     Upsample(
-                        channels=self.channels*self.ch_mult[i_level],
-                        with_conv=self.resample_with_conv))
+                        channels=self.channels * self.ch_mult[i_level],
+                        with_conv=self.resample_with_conv,
+                    )
+                )
                 cond_track //= 2
                 input_track *= 2
-            channel_track = self.channels*self.ch_mult[i_level]
+            channel_track = self.channels * self.ch_mult[i_level]
             self.upsampling.append(upsampling_block)
 
         # End.
         self.end = [
             layers.Conv2D(self.channels, (3, 3), padding="same"),
-            layers.Conv2D(1, (3, 3), (1, 1), padding='same')
+            layers.Conv2D(1, (3, 3), (1, 1), padding="same"),
         ]
-
 
     def call(self, inputs, temb, cond=None):
 
@@ -287,7 +322,7 @@ class UNet(models.Model):
                         h = block[idx_block](hs[-1], temb)
                     hs.append(h)
             if len(block) > self.num_res_blocks:
-                for extra_lay in block[self.num_res_blocks:]:
+                for extra_lay in block[self.num_res_blocks :]:
                     hs.append(extra_lay(hs[-1]))
 
         # Middle.
@@ -298,21 +333,25 @@ class UNet(models.Model):
         # Upsampling.
         for block in self.upsampling:
             # Residual blocks for this resolution.
-            for idx_block in range(self.num_res_blocks+1):
+            for idx_block in range(self.num_res_blocks + 1):
                 if isinstance(block[idx_block], list):
                     if cond is not None:
-                        h = block[idx_block][0](tf.concat([h, hs.pop()], axis=-1), temb, cond)
-                    else: 
+                        h = block[idx_block][0](
+                            tf.concat([h, hs.pop()], axis=-1), temb, cond
+                        )
+                    else:
                         h = block[idx_block][0](tf.concat([h, hs.pop()], axis=-1), temb)
                     h = block[idx_block][1](h)
                 else:
                     if cond is not None:
-                        h = block[idx_block](tf.concat([h, hs.pop()], axis=-1), temb, cond)
-                    else: 
+                        h = block[idx_block](
+                            tf.concat([h, hs.pop()], axis=-1), temb, cond
+                        )
+                    else:
                         h = block[idx_block](tf.concat([h, hs.pop()], axis=-1), temb)
             # Upsample.
-            if len(block) > self.num_res_blocks+1:
-                for extra_lay in block[self.num_res_blocks+1:]:
+            if len(block) > self.num_res_blocks + 1:
+                for extra_lay in block[self.num_res_blocks + 1 :]:
                     h = extra_lay(h)
 
         # End.
@@ -323,4 +362,3 @@ class UNet(models.Model):
         h = tf.squeeze(h, axis=-1)
 
         return tf.multiply(inputs, h)
-

@@ -208,17 +208,19 @@ class CAEWrapper:
 
     def download_model(self, model_path=None):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"        
-        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
-            if model_path is not None else \
-                os.path.join(WORKDIR, "models", "melody", "caecarnatic")
+        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"
+        unzip_path = (
+            os.sep + os.path.join(*model_path.split(os.sep)[:-2])
+            if model_path is not None
+            else os.path.join(WORKDIR, "models", "melody", "caecarnatic")
+        )
         if not os.path.exists(unzip_path):
             os.makedirs(unzip_path)
-        output =  os.path.join(unzip_path,  "caecarnatic.zip")
-        gdown.download(url, output, quiet=False) 
+        output = os.path.join(unzip_path, "caecarnatic.zip")
+        gdown.download(url, output, quiet=False)
 
         # Unzip file
-        with zipfile.ZipFile(output, 'r') as zip_ref:
+        with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(unzip_path)
 
         # Delete zip file after extraction

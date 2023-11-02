@@ -19,12 +19,7 @@ logger = get_logger(__name__)
 class ColdDiffSep(object):
     """Leakage-aware singing voice separation model for Carnatic Music."""
 
-    def __init__(
-        self,
-        model_path=None,
-        config_path=None,
-        sample_rate=22050
-    ):
+    def __init__(self, model_path=None, config_path=None, sample_rate=22050):
         """Leakage-aware singing voice separation init method.
 
         :param model_path: path to file to the model weights.
@@ -35,19 +30,30 @@ class ColdDiffSep(object):
         try:
             global tf
             import tensorflow as tf
+
             global DiffWave
-            from compiam.separation.singing_voice_extraction.cold_diff_sep.model import DiffWave
+            from compiam.separation.singing_voice_extraction.cold_diff_sep.model import (
+                DiffWave,
+            )
+
             global UnetConfig
-            from compiam.separation.singing_voice_extraction.cold_diff_sep.model.config import Config as UnetConfig
+            from compiam.separation.singing_voice_extraction.cold_diff_sep.model.config import (
+                Config as UnetConfig,
+            )
+
             global get_mask
-            from compiam.separation.singing_voice_extraction.cold_diff_sep.model.clustering import get_mask
+            from compiam.separation.singing_voice_extraction.cold_diff_sep.model.clustering import (
+                get_mask,
+            )
+
             global compute_stft, compute_signal_from_stft, next_power_of_2, get_overlap_window
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_processing import (
                 get_overlap_window,
                 compute_stft,
                 compute_signal_from_stft,
-                next_power_of_2
+                next_power_of_2,
             )
+
         except:
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
@@ -81,7 +87,7 @@ class ColdDiffSep(object):
         clusters=5,
         scheduler=4,
         chunk_size=3,
-        gpu="-1"
+        gpu="-1",
     ):
         """Separate singing voice from mixture.
 
@@ -101,7 +107,7 @@ class ColdDiffSep(object):
                 """ Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper."""
             )
-        
+
         # Loading and resampling audio
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
@@ -112,7 +118,9 @@ class ColdDiffSep(object):
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
             )
-            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
+            audio = librosa.resample(
+                input_data, orig_sr=input_sr, target_sr=self.sample_rate
+            )
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
         mixture = tf.convert_to_tensor(audio, dtype=tf.float32)
@@ -120,11 +128,11 @@ class ColdDiffSep(object):
             mixture = tf.reduce_mean(mixture, axis=0)
 
         output_voc = np.zeros(mixture.shape)
-        hopsized_chunk = int((chunk_size*22050) / 2)
+        hopsized_chunk = int((chunk_size * 22050) / 2)
         runs = math.floor(mixture.shape[0] / hopsized_chunk)
         trim_low = 0
-        for trim in tqdm.tqdm(np.arange((runs*2)-1)):
-            trim_high = int(trim_low + (hopsized_chunk*2))
+        for trim in tqdm.tqdm(np.arange((runs * 2) - 1)):
+            trim_high = int(trim_low + (hopsized_chunk * 2))
 
             # Get input mixture spectrogram
             mix_trim = mixture[trim_low:trim_high]
@@ -136,53 +144,75 @@ class ColdDiffSep(object):
             # Get and stack cold diffusion steps
             diff_feat = self.model(mix_mag_trim, mode="train")
             diff_feat = tf.transpose(diff_feat, [1, 0, 2, 3])
-            diff_feat_t = tf.squeeze(tf.reshape(diff_feat, [1, 8, diff_feat.shape[-2]*diff_feat.shape[-1]]), axis=0).numpy()
+            diff_feat_t = tf.squeeze(
+                tf.reshape(
+                    diff_feat, [1, 8, diff_feat.shape[-2] * diff_feat.shape[-1]]
+                ),
+                axis=0,
+            ).numpy()
 
             # Normalize features, all energy curves having same range
             normalized_feat = []
             for j in np.arange(diff_feat_t.shape[1]):
-                normalized_curve = diff_feat_t[:, j] / (np.max(np.abs(diff_feat_t[:, j])) + 1e-6)
+                normalized_curve = diff_feat_t[:, j] / (
+                    np.max(np.abs(diff_feat_t[:, j])) + 1e-6
+                )
                 normalized_feat.append(normalized_curve)
             normalized_feat = np.array(normalized_feat, dtype=np.float32)
 
             # Compute mask using unsupervised clustering and reshape to magnitude spec shape
             mask = get_mask(normalized_feat, clusters, scheduler)
-            mask = tf.convert_to_tensor(mask, dtype=tf.float32)  # Move mask to tensor and cast to float
+            mask = tf.convert_to_tensor(
+                mask, dtype=tf.float32
+            )  # Move mask to tensor and cast to float
             mask = tf.reshape(mask, mix_mag_trim.shape)
 
             # Getting last step of computed features and applying mask
             diff_feat_t = tf.reshape(diff_feat_t[-1, :], mix_mag_trim.shape)
             output_signal = tf.math.multiply(diff_feat_t, mask)
 
-            # Silence unvoiced regions
-            output_signal = compute_signal_from_stft(output_signal, mix_phase_trim, self.unet_config)
+            # Silence unvoiced regions
+            output_signal = compute_signal_from_stft(
+                output_signal, mix_phase_trim, self.unet_config
+            )
             # From here on, pred_audio is numpy
             pred_audio = tf.squeeze(output_signal, axis=0).numpy()
-            vad = VAD(pred_audio, sr=22050, nFFT=512, win_length=0.025, hop_length=0.01, theshold=0.99)
+            vad = VAD(
+                pred_audio,
+                sr=22050,
+                nFFT=512,
+                win_length=0.025,
+                hop_length=0.01,
+                theshold=0.99,
+            )
             if np.sum(vad) / len(vad) < 0.25:
                 pred_audio = np.zeros(pred_audio.shape)
 
             # Get boundary
             boundary = None
             boundary = "start" if trim == 0 else None
-            boundary = "end" if trim == runs-2 else None
+            boundary = "end" if trim == runs - 2 else None
 
             placehold_voc = np.zeros(output_voc.shape)
-            placehold_voc[trim_low:trim_low+pred_audio.shape[0]] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
+            placehold_voc[
+                trim_low : trim_low + pred_audio.shape[0]
+            ] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
             output_voc += placehold_voc
             trim_low += pred_audio.shape[0] // 2
 
-        output_voc = output_voc * (np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6))
-        
+        output_voc = output_voc * (
+            np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
+        )
+
         return output_voc
-        
+
         # TODO: write a function to store audio
         # Building intuitive filename with model config
-        #filefolder = os.path.join(args.input_signal.split("/")[:-1])
-        #filename = args.input_signal.split("/")[-1].split(".")[:-1]
-        #filename = filename[0] if len(filename) == 1 else ".".join(filename)
-        #filename = filename + "_" + str(clusters) + "_" + str(scheduler) + "pred_voc"
-        #sf.write(
+        # filefolder = os.path.join(args.input_signal.split("/")[:-1])
+        # filename = args.input_signal.split("/")[-1].split(".")[:-1]
+        # filename = filename[0] if len(filename) == 1 else ".".join(filename)
+        # filename = filename + "_" + str(clusters) + "_" + str(scheduler) + "pred_voc"
+        # sf.write(
         #    os.path.join(filefolder, filename + ".wav"),
         #    output_voc,
         #    22050) # Writing to file
@@ -190,16 +220,18 @@ class ColdDiffSep(object):
     def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1yj9iHTY7nCh2qrIM2RIUOXhLXt1K8WcE&export=download"
-        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
-            if model_path is not None else \
-                os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
+        unzip_path = (
+            os.sep + os.path.join(*model_path.split(os.sep)[:-2])
+            if model_path is not None
+            else os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
+        )
         if not os.path.exists(unzip_path):
             os.makedirs(unzip_path)
-        output =  os.path.join(unzip_path,  "saraga-8.zip")
-        gdown.download(url, output, quiet=False) 
+        output = os.path.join(unzip_path, "saraga-8.zip")
+        gdown.download(url, output, quiet=False)
 
         # Unzip file
-        with zipfile.ZipFile(output, 'r') as zip_ref:
+        with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(unzip_path)
 
         # Delete zip file after extraction

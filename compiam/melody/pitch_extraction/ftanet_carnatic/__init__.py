@@ -226,7 +226,7 @@ class FTANetCarnatic(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            self.download_model(model_path) # Dowloading model weights
+            self.download_model(model_path)  # Dowloading model weights
         self.model.load_weights(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
@@ -234,16 +234,18 @@ class FTANetCarnatic(object):
     def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1YxJKyaNg7_4T_P-BmK6AJMZ8FgRQsgie&export=download"
-        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-2]) \
-            if model_path is not None else \
-                os.path.join(WORKDIR, "models", "melody", "ftanet")
+        unzip_path = (
+            os.sep + os.path.join(*model_path.split(os.sep)[:-2])
+            if model_path is not None
+            else os.path.join(WORKDIR, "models", "melody", "ftanet")
+        )
         if not os.path.exists(unzip_path):
             os.makedirs(unzip_path)
-        output =  os.path.join(unzip_path,  "carnatic.zip")
-        gdown.download(url, output, quiet=False) 
+        output = os.path.join(unzip_path, "carnatic.zip")
+        gdown.download(url, output, quiet=False)
 
         # Unzip file
-        with zipfile.ZipFile(output, 'r') as zip_ref:
+        with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(unzip_path)
 
         # Delete zip file after extraction
@@ -281,7 +283,7 @@ class FTANetCarnatic(object):
                 """Model is not trained. Please load model before running inference!
                 You can load the pre-trained instance with the load_model wrapper."""
             )
-        
+
         # Loading and resampling audio
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
@@ -292,7 +294,9 @@ class FTANetCarnatic(object):
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
             )
-            audio = librosa.resample(input_data, orig_sr=input_sr, target_sr=self.sample_rate)
+            audio = librosa.resample(
+                input_data, orig_sr=input_sr, target_sr=self.sample_rate
+            )
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
         audio_shape = audio.shape

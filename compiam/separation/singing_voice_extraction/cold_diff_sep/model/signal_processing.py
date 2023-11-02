@@ -6,12 +6,12 @@ def get_overlap_window(signal, boundary=None):
     window_out = np.ones(signal.shape)
     midpoint = window_out.shape[0] // 2
     if boundary == "start":
-        window_out[midpoint:] = np.linspace(1, 0, window_out.shape[0]-midpoint)
+        window_out[midpoint:] = np.linspace(1, 0, window_out.shape[0] - midpoint)
     elif boundary == "end":
-        window_out[:midpoint] = np.linspace(0, 1, window_out.shape[0]-midpoint)
+        window_out[:midpoint] = np.linspace(0, 1, window_out.shape[0] - midpoint)
     else:
-        window_out[:midpoint] = np.linspace(0, 1, window_out.shape[0]-midpoint)
-        window_out[midpoint:] = np.linspace(1, 0, window_out.shape[0]-midpoint)
+        window_out[:midpoint] = np.linspace(0, 1, window_out.shape[0] - midpoint)
+        window_out[midpoint:] = np.linspace(1, 0, window_out.shape[0] - midpoint)
     return window_out
 
 
@@ -30,15 +30,20 @@ def compute_stft(signal, unet_config):
 
 
 def compute_signal_from_stft(spec, phase, config):
-    polar_spec = tf.complex(tf.multiply(spec, tf.math.cos(phase)), tf.zeros(spec.shape)) + \
-        tf.multiply(tf.complex(spec, tf.zeros(spec.shape)), tf.complex(tf.zeros(phase.shape), tf.math.sin(phase)))
+    polar_spec = tf.complex(
+        tf.multiply(spec, tf.math.cos(phase)), tf.zeros(spec.shape)
+    ) + tf.multiply(
+        tf.complex(spec, tf.zeros(spec.shape)),
+        tf.complex(tf.zeros(phase.shape), tf.math.sin(phase)),
+    )
     return tf.signal.inverse_stft(
         polar_spec,
         frame_length=config.win,
         frame_step=config.hop,
         window_fn=tf.signal.inverse_stft_window_fn(
-            config.hop,
-            forward_window_fn=tf.signal.hann_window))
+            config.hop, forward_window_fn=tf.signal.hann_window
+        ),
+    )
 
 
 def log2(x, base):
@@ -51,18 +56,18 @@ def next_power_of_2(n):
     # calculate the position of the last set bit of `n`
     lg = log2(n, 2)
     # next power of two will have a bit set at position `lg+1`.
-    return 1 << lg #+ 1
+    return 1 << lg  # + 1
 
 
 def check_shape_3d(data, dim):
     n = data.shape[dim]
     if n % 2 != 0:
         n = data.shape[dim] - 1
-    if dim==0:
+    if dim == 0:
         return data[:n, :, :]
-    if dim==1:
+    if dim == 1:
         return data[:, :n, :]
-    if dim==2:
+    if dim == 2:
         return data[:, :, :n]
 
 

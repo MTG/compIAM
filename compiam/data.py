@@ -108,7 +108,11 @@ models_dict = {
         "class_name": "ColdDiffSep",
         "kwargs": {
             "model_path": os.path.join(
-                "models", "separation", "cold_diff_sep", "saraga-8", "saraga-8.ckpt-1",
+                "models",
+                "separation",
+                "cold_diff_sep",
+                "saraga-8",
+                "saraga-8.ckpt-1",
             ),
             "sample_rate": 22050,
         },

@@ -8,6 +8,7 @@ class DiffWave(tf.keras.Model):
     """Code copied and modified from DiffWave: A Versatile Diffusion Model for Audio Synthesis.
     Zhifeng Kong et al., 2020.
     """
+
     def __init__(self, config):
         """Initializer.
         Args:
@@ -25,7 +26,7 @@ class DiffWave(tf.keras.Model):
             signal: tf.Tensor, [B, T], predicted output.
         """
         base = tf.ones([tf.shape(signal)[0]], dtype=tf.int32)
-        if mode=="train":
+        if mode == "train":
             features = []
         for t in range(self.config.iter, step_stop, -1):
             signal = self.pred_noise(signal, base * t)
@@ -37,12 +38,13 @@ class DiffWave(tf.keras.Model):
             return signal
 
     def diffusion(self, mixture, vocal, alpha_bar):
-        """Compute conditions
-        """
-        diffusion_step = lambda x : self._diffusion(x[0], x[1], x[2])
+        """Compute conditions"""
+        diffusion_step = lambda x: self._diffusion(x[0], x[1], x[2])
         return tf.map_fn(
-            fn=diffusion_step, elems=[mixture, vocal, alpha_bar],
-            fn_output_signature=(tf.float32))
+            fn=diffusion_step,
+            elems=[mixture, vocal, alpha_bar],
+            fn_output_signature=(tf.float32),
+        )
 
     def _diffusion(self, mixture, vocals, alpha_bar):
         """Trans to next state with diffusion process.
@@ -57,30 +59,46 @@ class DiffWave(tf.keras.Model):
         """
         mix_mag = self.check_shape(
             self.check_shape(
-                tf.abs(tf.signal.stft(
-                    mixture,
-                    frame_length=self.config.win,
-                    frame_step=self.config.hop,
-                    fft_length=self.config.win,
-                    window_fn=tf.signal.hann_window)), 0), 1)
-        #print(mix_mag.shape)
+                tf.abs(
+                    tf.signal.stft(
+                        mixture,
+                        frame_length=self.config.win,
+                        frame_step=self.config.hop,
+                        fft_length=self.config.win,
+                        window_fn=tf.signal.hann_window,
+                    )
+                ),
+                0,
+            ),
+            1,
+        )
+        # print(mix_mag.shape)
         vocal_mag = self.check_shape(
             self.check_shape(
-                tf.abs(tf.signal.stft(
-                    vocals,
-                    frame_length=self.config.win,
-                    frame_step=self.config.hop,
-                    fft_length=self.config.win,
-                    window_fn=tf.signal.hann_window)), 0), 1)
-        return tf.dtypes.cast(alpha_bar, tf.float32) * vocal_mag + \
-            tf.dtypes.cast(1 - tf.sqrt(alpha_bar), tf.float32) * mix_mag
+                tf.abs(
+                    tf.signal.stft(
+                        vocals,
+                        frame_length=self.config.win,
+                        frame_step=self.config.hop,
+                        fft_length=self.config.win,
+                        window_fn=tf.signal.hann_window,
+                    )
+                ),
+                0,
+            ),
+            1,
+        )
+        return (
+            tf.dtypes.cast(alpha_bar, tf.float32) * vocal_mag
+            + tf.dtypes.cast(1 - tf.sqrt(alpha_bar), tf.float32) * mix_mag
+        )
 
     @staticmethod
     def check_shape(data, dim):
         n = data.shape[dim]
         if n % 2 != 0:
             n = data.shape[dim] - 1
-        if dim==0:
+        if dim == 0:
             return data[:n, :]
         else:
             return data[:, :n]
@@ -111,7 +129,10 @@ class DiffWave(tf.keras.Model):
         eps = tf.dtypes.cast(eps, tf.float64)
 
         # Compute mean (our estimation) using diffusion formulation
-        mean = (signal - (1 - alpha) / tf.dtypes.cast(tf.sqrt(1 - alpha_bar), tf.float64) * eps) / tf.dtypes.cast(tf.sqrt(alpha), tf.float64)
+        mean = (
+            signal
+            - (1 - alpha) / tf.dtypes.cast(tf.sqrt(1 - alpha_bar), tf.float64) * eps
+        ) / tf.dtypes.cast(tf.sqrt(alpha), tf.float64)
         stddev = np.sqrt((1 - alpha_bar / alpha) / (1 - alpha_bar) * (1 - alpha))
         return mean, stddev
 
@@ -122,9 +143,9 @@ class DiffWave(tf.keras.Model):
             optim: Optional[tf.keras.optimizers.Optimizer]
                 , optional optimizer.
         """
-        kwargs = {'model': self}
+        kwargs = {"model": self}
         if optim is not None:
-            kwargs['optim'] = optim
+            kwargs["optim"] = optim
         ckpt = tf.train.Checkpoint(**kwargs)
         ckpt.save(path)
 
@@ -135,11 +156,8 @@ class DiffWave(tf.keras.Model):
             optim: Optional[tf.keras.optimizers.Optimizer]
                 , optional optimizer.
         """
-        kwargs = {'model': self}
+        kwargs = {"model": self}
         if optim is not None:
-            kwargs['optim'] = optim
+            kwargs["optim"] = optim
         ckpt = tf.train.Checkpoint(**kwargs)
         return ckpt.restore(path)
-
-        
-

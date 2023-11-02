@@ -55,8 +55,8 @@ class Corpora:
             "dunya-" + self.tradition + "-cc" if cc else "dunya-" + self.tradition
         )
         logger.warning(
-            "To load the full metadata of the initialized corpora, run .get_metadata(). " + 
-            "Please note that it might take a while..."
+            "To load the full metadata of the initialized corpora, run .get_metadata(). "
+            + "Please note that it might take a while..."
         )
 
     def get_collection(self):
@@ -76,7 +76,7 @@ class Corpora:
             ``artists`` includes performance relationships attached to the recording, the release, and the release artists.
         """
         return _dunya_query_json("api/" + self.tradition + "/recording/%s" % rmbid)
-    
+
     def get_metadata(self):
         """Get the full metadata of the initialized corpora. It might take a while..."""
 
