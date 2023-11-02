@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 
-def get_window(signal, boundary=None):
+def get_overlap_window(signal, boundary=None):
     window_out = np.ones(signal.shape)
     midpoint = window_out.shape[0] // 2
     if boundary == "start":

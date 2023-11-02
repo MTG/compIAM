@@ -8,8 +8,6 @@ import math
 import numpy as np
 import soundfile as sf
 
-from scipy.signal import get_window
-
 from compiam.separation.singing_voice_extraction.cold_diff_sep.model.vad import VAD
 
 from compiam.exceptions import ModelNotTrainedError
@@ -43,8 +41,9 @@ class ColdDiffSep(object):
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.config import Config as UnetConfig
             global get_mask
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.clustering import get_mask
-            global compute_stft, compute_signal_from_stft, next_power_of_2
+            global compute_stft, compute_signal_from_stft, next_power_of_2, get_overlap_window
             from compiam.separation.singing_voice_extraction.cold_diff_sep.model.signal_processing import (
+                get_overlap_window,
                 compute_stft,
                 compute_signal_from_stft,
                 next_power_of_2
@@ -169,7 +168,7 @@ class ColdDiffSep(object):
             boundary = "end" if trim == runs-2 else None
 
             placehold_voc = np.zeros(output_voc.shape)
-            placehold_voc[trim_low:trim_low+pred_audio.shape[0]] = pred_audio * get_window(pred_audio, boundary=boundary)
+            placehold_voc[trim_low:trim_low+pred_audio.shape[0]] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
             output_voc += placehold_voc
             trim_low += pred_audio.shape[0] // 2
 
