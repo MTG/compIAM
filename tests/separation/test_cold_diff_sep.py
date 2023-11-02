@@ -4,6 +4,7 @@ import librosa
 
 import numpy as np
 
+import compiam
 from compiam.data import TESTDIR
 from compiam.exceptions import ModelNotTrainedError
 
@@ -17,14 +18,14 @@ def _separate():
     cold_diff_sep.trained = True
     with pytest.raises(FileNotFoundError):
         cold_diff_sep.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
-    pitch = cold_diff_sep.separate(
-        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
-    )
+    cold_diff_sep = compiam.load_model("separation:cold-diff-sep", data_home=TESTDIR)
+    separation_1 = cold_diff_sep.separate(
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"))
 
     audio_in, sr = librosa.load(
-        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
-    )
-    pitch_2 = cold_diff_sep.separate(audio_in, input_sr=sr)
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"))
+    separation_2 = cold_diff_sep.separate(audio_in, input_sr=sr)
+    os.rmdir(os.path.join(TESTDIR, "models"))
 
 
 @pytest.mark.tensorflow
