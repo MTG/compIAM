@@ -80,6 +80,7 @@ class ColdDiffSep(object):
         input_sr=44100,
         clusters=5,
         scheduler=4,
+        chunk_size=3,
         gpu="-1"
     ):
         """Separate singing voice from mixture.
@@ -118,13 +119,12 @@ class ColdDiffSep(object):
         if mixture.shape[0] == 2:
             mixture = tf.reduce_mean(mixture, axis=0)
 
-        TRIMS = self.batch_size
         output_voc = np.zeros(mixture.shape)
-        hopsized_batch = int((TRIMS*22050) / 2)
-        runs = math.floor(mixture.shape[0] / hopsized_batch)
+        hopsized_chunk = int((chunk_size*22050) / 2)
+        runs = math.floor(mixture.shape[0] / hopsized_chunk)
         trim_low = 0
         for trim in tqdm.tqdm(np.arange((runs*2)-1)):
-            trim_high = int(trim_low + (hopsized_batch*2))
+            trim_high = int(trim_low + (hopsized_chunk*2))
 
             # Get input mixture spectrogram
             mix_trim = mixture[trim_low:trim_high]
