@@ -77,3 +77,6 @@ tests/resources/mir_datasets/*
 compiam/models/rhythm/4wayTabla/
 tests/rhythm/test_4way_tabla.py
 compiam/rhythm/transcription/tabla_transcription/
+
+# To avoid dependency clashes
+compiam/utils/augment/augment_data_ps.py

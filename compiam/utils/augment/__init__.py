@@ -3,7 +3,7 @@ from joblib import Parallel, delayed
 
 from compiam.utils import create_if_not_exists
 from compiam.utils.augment.augment_data_ar import augment_data_attack_remix
-from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
+#from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
 from compiam.utils.augment.augment_data_sf import augment_data_spectral_shape
 from compiam.utils.augment.augment_data_sr import augment_data_stroke_remix
 from compiam.utils.augment.augment_data_ts import augment_data_time_scale
@@ -11,28 +11,28 @@ from compiam.utils.augment.augment_data_ts import augment_data_time_scale
 file_dir = os.path.dirname(__file__)
 
 
-def pitch_shift(in_path, out_dir, shifts=-1.0, sr=16000, n_jobs=4):
-    """Pitch shift audio at <in_path>, by shifts in <shifts>. Output to <out_dir>
-
-    :param in_path: Path to input audio
-    :type in_path: str
-    :param out_dir: Directory to output pitch shifted audios
-    :type out_dir: str
-    :param shifts: Pitch shifts value in semitones (or list of values for multiple outputs)
-    :type shifts: float or list
-    :param sr: Sampling rate of input audio
-    :type sr: float
-    :param n_jobs: n jobs for parrelelization
-    :type n_jobs: int
-    """
-    create_if_not_exists(out_dir)
-
-    if not isinstance(shifts, list):
-        shifts = [shifts]
-
-    _ = Parallel(n_jobs=n_jobs)(
-        delayed(augment_data_pitch_shift)(in_path, out_dir, sr, ps) for ps in shifts
-    )
+#def pitch_shift(in_path, out_dir, shifts=-1.0, sr=16000, n_jobs=4):
+#    """Pitch shift audio at <in_path>, by shifts in <shifts>. Output to <out_dir>
+#
+#    :param in_path: Path to input audio
+#    :type in_path: str
+#    :param out_dir: Directory to output pitch shifted audios
+#    :type out_dir: str
+#    :param shifts: Pitch shifts value in semitones (or list of values for multiple outputs)
+#    :type shifts: float or list
+#    :param sr: Sampling rate of input audio
+#    :type sr: float
+#    :param n_jobs: n jobs for parrelelization
+#    :type n_jobs: int
+#    """
+#    create_if_not_exists(out_dir)
+#
+#    if not isinstance(shifts, list):
+#        shifts = [shifts]
+#
+#    _ = Parallel(n_jobs=n_jobs)(
+#        delayed(augment_data_pitch_shift)(in_path, out_dir, sr, ps) for ps in shifts
+#    )
 
 
 def spectral_shape(
