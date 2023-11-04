@@ -26,4 +26,5 @@ fastdtw~=0.3.4
 
 # Data
 mirdata==0.3.8
+smart_open
 mir_eval
