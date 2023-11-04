@@ -6,7 +6,7 @@ import zipfile
 
 import numpy as np
 import matplotlib.pyplot as plt
-from compiam.exceptions import ModelNotFoundError, ModelNotTrainedError
+from compiam.exceptions import ModelNotTrainedError
 
 from compiam.utils import get_logger
 from compiam.data import WORKDIR
@@ -179,16 +179,20 @@ class DhrupadBandishSegmentation:
     def download_model(self, model_path=None):
         """Download pre-trained model."""
         url = "https://drive.google.com/uc?id=1SVkvHFjL5yh5M7cjnM98JK-b1QnHYw7a&export=download"
-        unzip_path = os.sep + os.path.join(*model_path.split(os.sep)[:-4]) \
-            if model_path is not None else \
-                os.path.join(WORKDIR, "models", "structure", "dhrupad_bandish_segmentation")
+        unzip_path = (
+            os.sep + os.path.join(*model_path.split(os.sep)[:-4])
+            if model_path is not None
+            else os.path.join(
+                WORKDIR, "models", "structure", "dhrupad_bandish_segmentation"
+            )
+        )
         if not os.path.exists(unzip_path):
             os.makedirs(unzip_path)
-        output =  os.path.join(unzip_path,  "baseline.zip")
-        gdown.download(url, output, quiet=False) 
+        output = os.path.join(unzip_path, "baseline.zip")
+        gdown.download(url, output, quiet=False)
 
         # Unzip file
-        with zipfile.ZipFile(output, 'r') as zip_ref:
+        with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(unzip_path)
 
         # Delete zip file after extraction

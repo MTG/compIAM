@@ -1,3 +1,4 @@
 tensorflow==2.9.3
+tensorflow_addons
 torch==1.13.0
 essentia

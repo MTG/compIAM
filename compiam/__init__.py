@@ -28,11 +28,17 @@ def load_model(model_name, data_home=None, models_dict=models_dict):
     for kp in kwarg_paths:
         if isinstance(m_dict["kwargs"][kp], dict):
             for k in list(m_dict["kwargs"][kp].keys()):
-                m_dict["kwargs"][kp][k] = os.path.join(data_home, m_dict["kwargs"][kp][k]) \
-                    if data_home is not None else os.path.join(WORKDIR, m_dict["kwargs"][kp][k])
+                m_dict["kwargs"][kp][k] = (
+                    os.path.join(data_home, m_dict["kwargs"][kp][k])
+                    if data_home is not None
+                    else os.path.join(WORKDIR, m_dict["kwargs"][kp][k])
+                )
         else:
-            m_dict["kwargs"][kp] = os.path.join(data_home, m_dict["kwargs"][kp]) \
-                if data_home is not None else os.path.join(WORKDIR, m_dict["kwargs"][kp])
+            m_dict["kwargs"][kp] = (
+                os.path.join(data_home, m_dict["kwargs"][kp])
+                if data_home is not None
+                else os.path.join(WORKDIR, m_dict["kwargs"][kp])
+            )
 
     module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
     return module(**m_dict["kwargs"])

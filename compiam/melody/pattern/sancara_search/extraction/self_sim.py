@@ -64,6 +64,7 @@ from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
+
 def self_similarity(
     features, exclusion_mask=None, timestep=None, hop_length=None, sr=44100
 ):

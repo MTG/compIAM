@@ -1,12 +1,13 @@
 import numpy as np
 import tensorflow as tf
 
+
 class Config:
-    """Configuration for DiffWave implementation.
-    """
+    """Configuration for DiffWave implementation."""
+
     def __init__(self):
         self.model_type = None
-        
+
         self.sr = 22050
 
         self.hop = 256
@@ -45,10 +46,10 @@ class Config:
         self.num_cycles = 3
 
         # noise schedule
-        self.iter = 8                 # 20, 40, 50
-        self.noise_policy = 'linear'
+        self.iter = 8  # 20, 40, 50
+        self.noise_policy = "linear"
         self.noise_start = 1e-4
-        self.noise_end = 0.5           # 0.02 for 200
+        self.noise_end = 0.5  # 0.02 for 200
 
     def beta(self):
         """Generate beta-sequence.
@@ -56,10 +57,10 @@ class Config:
             List[float], [iter], beta values.
         """
         mapper = {
-            'linear': self._linear_sched,
+            "linear": self._linear_sched,
         }
         if self.noise_policy not in mapper:
-            raise ValueError('invalid beta policy')
+            raise ValueError("invalid beta policy")
         return mapper[self.noise_policy]()
 
     def _linear_sched(self):
@@ -68,7 +69,8 @@ class Config:
             List[float], [iter], beta values.
         """
         return np.linspace(
-            self.noise_start, self.noise_end, self.iter, dtype=np.float32)
+            self.noise_start, self.noise_end, self.iter, dtype=np.float32
+        )
 
     def window_fn(self):
         """Return window generator.
@@ -76,11 +78,8 @@ class Config:
             Callable, window function of tf.signal
                 , which corresponds to self.win_fn.
         """
-        mapper = {
-            'hann': tf.signal.hann_window,
-            'hamming': tf.signal.hamming_window
-        }
+        mapper = {"hann": tf.signal.hann_window, "hamming": tf.signal.hamming_window}
         if self.win_fn in mapper:
             return mapper[self.win_fn]
-        
-        raise ValueError('invalid window function: ' + self.win_fn)
+
+        raise ValueError("invalid window function: " + self.win_fn)

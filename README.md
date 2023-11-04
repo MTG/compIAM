@@ -72,6 +72,7 @@ Direct and MIR-standardized access to the datasets for the computational analysi
 * [Carnatic Music Rhythm](https://zenodo.org/record/1264394)*
 * [Hindustani Music Rhythm](https://zenodo.org/record/1264742)*
 * [Mridangam Stroke Dataset](https://compmusic.upf.edu/mridangam-stroke-dataset)*
+* [Carnatic Varnam](https://zenodo.org/records/7726167)*
 * [Four-Way Tabla Stroke (ISMIR 21)](https://zenodo.org/record/7110248)
 * [SCMS (Saraga Carnatic Melody Synth)](https://zenodo.org/records/5553925)
 
