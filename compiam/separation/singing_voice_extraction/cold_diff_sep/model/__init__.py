@@ -65,13 +65,7 @@ class DiffWave(tf.keras.Model):
                         frame_length=self.config.win,
                         frame_step=self.config.hop,
                         fft_length=self.config.win,
-                        window_fn=tf.signal.hann_window,
-                    )
-                ),
-                0,
-            ),
-            1,
-        )
+                        window_fn=tf.signal.hann_window)), 0), 1)
         # print(mix_mag.shape)
         vocal_mag = self.check_shape(
             self.check_shape(
@@ -81,13 +75,7 @@ class DiffWave(tf.keras.Model):
                         frame_length=self.config.win,
                         frame_step=self.config.hop,
                         fft_length=self.config.win,
-                        window_fn=tf.signal.hann_window,
-                    )
-                ),
-                0,
-            ),
-            1,
-        )
+                        window_fn=tf.signal.hann_window)), 0), 1)
         return (
             tf.dtypes.cast(alpha_bar, tf.float32) * vocal_mag
             + tf.dtypes.cast(1 - tf.sqrt(alpha_bar), tf.float32) * mix_mag
