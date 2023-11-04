@@ -71,6 +71,7 @@ If you use compIAM for your research, please consider citing our work as:
    source/rhythm
    source/structure
    source/timbre
+   source/separation
 
 .. toctree::
    :caption: Datasets

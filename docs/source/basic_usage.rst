@@ -54,3 +54,7 @@ Model weights are large in size and therefore, not included in the library from 
 function to all ML/DL models that require pre-trained weights, so that the user can download them on demand. This function is
 automatically run when invoking the model through the ``compiam.load_model()`` wrapper. The model weights are then stored in the
 corresponding default folder ``./compiam/model/``. If the model is already downloaded, the function will not download it again.
+
+.. note::
+    From v0.3.0 on, ``compiam.load_model()`` wrapper has an argument ``data_home``, in where you can specify to which folder you
+    want the models to be downloaded and read from.
