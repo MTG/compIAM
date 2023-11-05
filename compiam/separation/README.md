@@ -1,4 +1,4 @@
-# Melodic analysis tools
+# Source separation tools
 
 | **Tool**                  | **Task**                         | **Paper** |
 |---------------------------|----------------------------------|-----------|
