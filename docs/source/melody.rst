@@ -34,15 +34,8 @@ FTANet-Carnatic
 .. note::
     REQUIRES: tensorflow
 
-.. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic
+.. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic.*
    :members:
-
-FTANet-Carnatic utils
-^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing
-   :members:
-
 
 Melodic Pattern Discovery
 +++++++++++++++++++++++++
@@ -53,7 +46,7 @@ Sancara search
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.melody.pattern.sancara_search
+.. automodule:: compiam.melody.pattern.sancara_search.*
    :members:
 
 CAE-Carnatic (Wrapper)
@@ -62,7 +55,7 @@ CAE-Carnatic (Wrapper)
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.melody.pattern.sancara_search.complex_auto
+.. automodule:: compiam.melody.pattern.sancara_search.complex_auto.*
    :members:
 
 Self-similarity matrix
@@ -71,7 +64,7 @@ Self-similarity matrix
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.melody.pattern.sancara_search.extraction
+.. automodule:: compiam.melody.pattern.sancara_search.extraction.*
    :members:
 
 
@@ -84,12 +77,12 @@ DEEPSRGM
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.melody.raga_recognition.deepsrgm
+.. automodule:: compiam.melody.raga_recognition.deepsrgm.*
    :members:
 
 DEEPSRGM utils
 ^^^^^^^^^^^^^^
 
-.. automodule:: compiam.melody.raga_recognition.deepsrgm.model
+.. automodule:: compiam.melody.raga_recognition.deepsrgm.model.*
    :members:
 
