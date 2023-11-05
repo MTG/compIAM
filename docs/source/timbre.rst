@@ -12,6 +12,6 @@ Mridangam Stroke Classification
 .. note::
     REQUIRES: essentia
 
-.. automodule:: compiam.timbre.stroke_classification.mridangam_stroke_classification.*
+.. automodule:: compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification
    :members:
    :inherited-members:

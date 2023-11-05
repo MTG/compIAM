@@ -80,3 +80,4 @@ compiam/rhythm/transcription/tabla_transcription/
 
 # To avoid dependency clashes
 compiam/utils/augment/augment_data_ps.py
+compiam/utils/augment/augment_data_ts.py

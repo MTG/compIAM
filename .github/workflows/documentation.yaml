@@ -26,6 +26,7 @@ jobs:
           pip install scipy
           pip install essentia
           pip install tensorflow
+          pip install tensorflow_addons
           pip install torch 
           pip install ipython
           pip install scikit-image

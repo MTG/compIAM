@@ -12,7 +12,7 @@ questions or doubts.
 
 
 How can I contribute?
-------------------
+---------------------
 
 There are several ways to contribute to compiam. We will now try to list them all:
 

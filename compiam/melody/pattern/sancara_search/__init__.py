@@ -49,17 +49,12 @@ class CAEWrapper:
     """
 
     def __init__(self, model_path, conf_path, spec_path, device="cpu"):
-        """
-        Initialise wrapper with trained model from original CAE implementation
+        """Initialise wrapper with trained model from original CAE implementation
 
-        :param model_path: Path to .save model trained using original CAE implementation
-        :type model_path: str
-        :param conf_path: Path to .ini conf used to train model at <model_path>
-        :type conf_path: str
-        :param spec_path: Path to .cfg configuration spec
-        :type spec_path: str
-        :param map_location: cpu or gpu [optional, defaults to cpu]
-        :type map_location: str
+        :param model_path: Path to .save model trained using original CAE implementation.
+        :param conf_path: Path to .ini conf used to train model at <model_path>.
+        :param spec_path: Path to .cfg configuration spec.
+        :param map_location: cpu or gpu [optional, defaults to cpu].
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:

@@ -31,7 +31,7 @@ class DEEPSRGM(object):
     ):
         """DEEPSRGM init method.
 
-        :param model_path: path to file to the model weights.
+        :param model_path: path to file to the model weights
         :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
         :param sample_rate: sampling rate which the model is trained

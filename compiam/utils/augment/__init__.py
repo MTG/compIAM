@@ -6,7 +6,7 @@ from compiam.utils.augment.augment_data_ar import augment_data_attack_remix
 #from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
 from compiam.utils.augment.augment_data_sf import augment_data_spectral_shape
 from compiam.utils.augment.augment_data_sr import augment_data_stroke_remix
-from compiam.utils.augment.augment_data_ts import augment_data_time_scale
+#from compiam.utils.augment.augment_data_ts import augment_data_time_scale
 
 file_dir = os.path.dirname(__file__)
 
@@ -118,28 +118,28 @@ def stroke_remix(
     )
 
 
-def time_scale(in_path, out_dir, time_shifts=0.8, sr=16000, n_jobs=4):
-    """Time scaling of input audio, pitch maintained.
-
-    :param in_path: Path to input audio
-    :type in_path: str
-    :param out_dir: Directory to output pitch shifted audios
-    :type out_dir: str
-    :param time_shifts: time scale value (or list of)
-    :type time_shifts: float or list
-    :param sr: Sampling rate of input audio
-    :type sr: float
-    :param n_jobs: n jobs for parrelelization
-    :type n_jobs: int
-    """
-    create_if_not_exists(out_dir)
-
-    if not isinstance(time_shifts, list):
-        time_shifts = [time_shifts]
-
-    _ = Parallel(n_jobs=n_jobs)(
-        delayed(augment_data_time_scale)(in_path, out_dir, sr, ts) for ts in time_shifts
-    )
+#def time_scale(in_path, out_dir, time_shifts=0.8, sr=16000, n_jobs=4):
+#    """Time scaling of input audio, pitch maintained.
+#
+#    :param in_path: Path to input audio
+#    :type in_path: str
+#    :param out_dir: Directory to output pitch shifted audios
+#    :type out_dir: str
+#    :param time_shifts: time scale value (or list of)
+#    :type time_shifts: float or list
+#    :param sr: Sampling rate of input audio
+#    :type sr: float
+#    :param n_jobs: n jobs for parrelelization
+#    :type n_jobs: int
+#    """
+#    create_if_not_exists(out_dir)
+#
+#    if not isinstance(time_shifts, list):
+#        time_shifts = [time_shifts]
+#
+#    _ = Parallel(n_jobs=n_jobs)(
+#        delayed(augment_data_time_scale)(in_path, out_dir, sr, ts) for ts in time_shifts
+#    )
 
 
 def attack_remix(
