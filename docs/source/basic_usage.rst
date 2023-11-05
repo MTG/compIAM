@@ -9,7 +9,7 @@ your Python project with: ``import compiam``.
 
 The integrated tools and models are organized by:
 
-#. First, the following fundamental musical aspects: melody, rhythm, structure and timbre. 
+#. First, the following fundamental musical aspects: melody, rhythm, structure, timbre, and from v0.3.0 we have included separation as well.
 #. Then, the tools are grouped by tasks.
 
 You can access the several included tools by importing them from their corresponding modules:
