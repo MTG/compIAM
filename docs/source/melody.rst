@@ -28,13 +28,14 @@ Melodia
 .. automodule:: compiam.melody.pitch_extraction.melodia
    :members:
 
+
 FTANet-Carnatic
 ---------------
 
 .. note::
     REQUIRES: tensorflow
 
-.. autoclass:: compiam.melody.pitch_extraction.ftanet_carnatic.FTANetCarnatic
+.. autoclass:: compiam.melody.pitch_extraction.FTANetCarnatic
    :members:
 
 Melodic Pattern Discovery
