@@ -157,7 +157,7 @@ Development step 4: creating a pull request (PR)
 Post-development
 ----------------
 
-Cool :) Your tool is now merged in compiam, and will be published in ``pypi`` in the next release.
+Cool!! Your tool is now merged in compiam, and will be published in ``pypi`` in the next release.
 Make sure you also take advantage of this feature, spread the word, and please keep being part of the compiam community. 
 
 Some future PRs might involve your tool (change of inner structure of the library, updating dependencies, etc…).
