@@ -16,7 +16,7 @@ project = "compiam"
 copyright = "2022, Music Technology Group, Universitat Pompeu Fabra \
     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra)"
 author = "Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra"
-release = "0.1.0"
+release = "0.3.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

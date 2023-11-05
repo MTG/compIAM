@@ -16,7 +16,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libsndfile1-dev
           pip install sphinx sphinx_rtd_theme numpydoc recommonmark
-          pip install mirdata 
+          pip install mirdata
           pip install scikit-learn 
           pip install configobj
           pip install hmmlearn
@@ -31,7 +31,7 @@ jobs:
           pip install scikit-image
           pip install seaborn
           pip install opencv-python
-          pip install pytsmod
+          pip install gdown
       - name: Sphinx build
         run: |
           sphinx-build docs _build
