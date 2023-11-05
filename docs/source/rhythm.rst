@@ -13,7 +13,7 @@ Mnemonic Transcription
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.rhythm.transcription.mnemonic_transcription.*
+.. autoclass:: compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription
    :members:
 
 
@@ -23,5 +23,5 @@ Meter tracking
 Akshara Pulse Tracker
 ---------------------
 
-.. automodule:: compiam.rhythm.meter.akshara_pulse_tracker.*
+.. autoclass:: compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker
    :members:

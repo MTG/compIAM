@@ -12,6 +12,6 @@ Dhrupad Bandish Segmentation
 .. note::
     REQUIRES: torch
 
-.. automodule:: compiam.structure.segmentation.dhrupad_bandish_segmentation.*
+.. autoclass:: compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation
    :members:
    :inherited-members:
