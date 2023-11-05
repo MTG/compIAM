@@ -103,11 +103,11 @@ For any licensing enquires, please contact us at [mtg-info@upf.edu](mailto:mtg-i
 
 ## Citing
 ```bibtex
-@software{compiam_mtg_2022,
+@software{compiam_mtg_2023,
   author = {{Genís Plaja-Roglans and Thomas Nuttall and Xavier Serra}},
   title = {compIAM},
   url = {https://mtg.github.io/compIAM/},
-  version = {0.1.0},
-  year = {2022}
+  version = {0.3.0},
+  year = {2023}
 }
 ```
