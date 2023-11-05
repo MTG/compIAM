@@ -17,35 +17,6 @@ class CAEWrapper:
     specifically for the task of embedding audio to learnt CAE features.
     This wrapper is used for inference and it is not trainable. Please initialize it using
     compiam.load_model()
-
-    Example:
-    ```
-    model_path = "<model_output_folder>/model_complex_auto_cqt.save"
-    conf_path  = "cae-invar/config_cqt_old.ini"
-    spec_path  = "cae-invar/config_spec.cfg"
-    file_path = "<path_to_audio>"
-
-    model = CAEWrapper(model_path, conf_path, spec_path)
-    ampls, phase = model.extract_features(file_path)
-    ampls
-    >> tensor([[1.2935, 4.0693, 1.0390,  ..., 0.4740, 1.3497, 0.5319],
-        [1.5923, 2.4673, 3.4847,  ..., 0.4998, 1.3553, 1.4519],
-        [1.2482, 1.0292, 2.1280,  ..., 0.7126, 1.4086, 1.9351],
-        ...,
-        [7.7372, 5.1458, 1.2539,  ..., 1.0162, 0.3583, 0.9603],
-        [7.4559, 4.9839, 1.7646,  ..., 1.2773, 0.2818, 1.1203],
-        [7.3733, 5.0220, 1.8748,  ..., 1.1992, 0.4380, 1.2692]],
-       grad_fn=<PowBackward0>)
-    phase
-    >> tensor([[-0.3304, -2.3667, -2.6688,  ...,  1.2986, -0.7942,  1.8279],
-        [ 0.1712, -2.7483,  0.8825,  ...,  1.6427,  2.7336,  0.6940],
-        [ 1.5836, -0.6167,  0.4733,  ...,  2.7312,  2.2416,  0.3589],
-        ...,
-        [-2.6896, -1.4801,  0.6764,  ...,  1.9469,  2.1927,  0.2756],
-        [-2.5489, -1.5051,  0.8178,  ...,  1.9912,  2.0662,  0.1495],
-        [-2.3444, -1.6104,  0.6585,  ...,  1.9241,  0.7816,  0.0332]],
-       grad_fn=<Atan2Backward>)
-    ```
     """
 
     def __init__(self, model_path, conf_path, spec_path, device="cpu"):
