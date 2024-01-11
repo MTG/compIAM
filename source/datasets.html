@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Load IAM datasets using mirdata &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=c02300dd"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Visualisation tools" href="visualisation.html" />
+    <link rel="prev" title="Separation" href="separation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Load IAM datasets using mirdata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compiam.load_dataset"><code class="docutils literal notranslate"><span class="pre">load_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#access-the-dunya-corpora">Access the Dunya corpora</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compiam.dunya.Corpora"><code class="docutils literal notranslate"><span class="pre">Corpora</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.download_concert"><code class="docutils literal notranslate"><span class="pre">Corpora.download_concert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.download_mp3"><code class="docutils literal notranslate"><span class="pre">Corpora.download_mp3()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_annotation"><code class="docutils literal notranslate"><span class="pre">Corpora.get_annotation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_artist"><code class="docutils literal notranslate"><span class="pre">Corpora.get_artist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_collection"><code class="docutils literal notranslate"><span class="pre">Corpora.get_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_concert"><code class="docutils literal notranslate"><span class="pre">Corpora.get_concert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_instrument"><code class="docutils literal notranslate"><span class="pre">Corpora.get_instrument()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_metadata"><code class="docutils literal notranslate"><span class="pre">Corpora.get_metadata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_raga"><code class="docutils literal notranslate"><span class="pre">Corpora.get_raga()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_recording"><code class="docutils literal notranslate"><span class="pre">Corpora.get_recording()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_tala"><code class="docutils literal notranslate"><span class="pre">Corpora.get_tala()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.get_work"><code class="docutils literal notranslate"><span class="pre">Corpora.get_work()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_available_types"><code class="docutils literal notranslate"><span class="pre">Corpora.list_available_types()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_concerts"><code class="docutils literal notranslate"><span class="pre">Corpora.list_concerts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_instruments"><code class="docutils literal notranslate"><span class="pre">Corpora.list_instruments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_ragas"><code class="docutils literal notranslate"><span class="pre">Corpora.list_ragas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_talas"><code class="docutils literal notranslate"><span class="pre">Corpora.list_talas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.list_works"><code class="docutils literal notranslate"><span class="pre">Corpora.list_works()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.dunya.Corpora.save_annotation"><code class="docutils literal notranslate"><span class="pre">Corpora.save_annotation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#compiam.dunya.conn.get_mp3"><code class="docutils literal notranslate"><span class="pre">get_mp3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compiam.dunya.conn.set_hostname"><code class="docutils literal notranslate"><span class="pre">set_hostname()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compiam.dunya.conn.set_token"><code class="docutils literal notranslate"><span class="pre">set_token()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Load IAM datasets using mirdata</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/datasets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="load-iam-datasets-using-mirdata">
+<span id="datasets"></span><h1>Load IAM datasets using mirdata<a class="headerlink" href="#load-iam-datasets-using-mirdata" title="Permalink to this heading"></a></h1>
+<p>compIAM includes an alias function for <code class="docutils literal notranslate"><span class="pre">mirdata.initialize()</span></code> to directly
+initialize the mirdata loaders of Indian Art Music datasets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Print out the available datasets to load: <code class="docutils literal notranslate"><span class="pre">compiam.list_datasets()</span></code>.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.load_dataset">
+<span class="sig-prename descclassname"><span class="pre">compiam.</span></span><span class="sig-name descname"><span class="pre">load_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam.html#load_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.load_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Alias function to load a mirdata Dataset class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> – the dataset’s name, see mirdata.DATASETS for a
+complete list of possibilities.</p></li>
+<li><p><strong>data_home</strong> – path where the data lives. If None uses the default
+home location.</p></li>
+<li><p><strong>version</strong> – which version of the dataset to load. If None, the
+default version is loaded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a mirdata.core.Dataset object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="access-the-dunya-corpora">
+<h1>Access the Dunya corpora<a class="headerlink" href="#access-the-dunya-corpora" title="Permalink to this heading"></a></h1>
+<p>Use the Corpora class to access the Indian Art Music corpora in CompMusic.
+Please note that to access the corpora in CompMusic, you need to first
+register and get a personal access token. Said token will be required
+to use the functions to access the database.</p>
+<span class="target" id="module-compiam.dunya"></span><dl class="py class">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.dunya.</span></span><span class="sig-name descname"><span class="pre">Corpora</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tradition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora" title="Permalink to this definition"></a></dt>
+<dd><p>Dunya corpora class with access functions</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.download_concert">
+<span class="sig-name descname"><span class="pre">download_concert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concert_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.download_concert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.download_concert" title="Permalink to this definition"></a></dt>
+<dd><p>Download the mp3s of all recordings in a concert and save them to the specificed directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>concert_id</strong> – The MBID of the concert.</p></li>
+<li><p><strong>location</strong> – Where to save the mp3s to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.download_mp3">
+<span class="sig-name descname"><span class="pre">download_mp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recording_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.download_mp3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.download_mp3" title="Permalink to this definition"></a></dt>
+<dd><p>Download the mp3 of a document and save it to the specificed directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recording_id</strong> – The MBID of the recording.</p></li>
+<li><p><strong>output_dir</strong> – Where to save the mp3 to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>name of the saved file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_annotation">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recording_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_annotation" title="Permalink to this definition"></a></dt>
+<dd><p>Alias function of _file_for_document in the Corpora class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recording_id</strong> – Musicbrainz recording ID.</p></li>
+<li><p><strong>thetype</strong> – the computed filetype.</p></li>
+<li><p><strong>subtype</strong> – a subtype if the module has one.</p></li>
+<li><p><strong>part</strong> – the file part if the module has one.</p></li>
+<li><p><strong>version</strong> – a specific version, otherwise the most recent one will be used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The contents of the most recent version of the derived file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_artist">
+<span class="sig-name descname"><span class="pre">get_artist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ambid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_artist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_artist" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about an artist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ambid</strong> – An artist MBID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mbid, name, concerts, instruments, recordings.
+<code class="docutils literal notranslate"><span class="pre">concerts</span></code>, <code class="docutils literal notranslate"><span class="pre">instruments</span></code> and <code class="docutils literal notranslate"><span class="pre">recordings</span></code> include
+information from recording- and release-level
+relationships, as well as release artists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_collection">
+<span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_collection" title="Permalink to this definition"></a></dt>
+<dd><p>Get the documents (recordings) in a collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_concert">
+<span class="sig-name descname"><span class="pre">get_concert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmbid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_concert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_concert" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about a concert.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cmbid</strong> – A concert mbid.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mbid, title, artists, tracks.
+<code class="docutils literal notranslate"><span class="pre">artists</span></code> includes performance relationships attached
+to the recordings, the release, and the release artists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_instrument">
+<span class="sig-name descname"><span class="pre">get_instrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_instrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_instrument" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about an instrument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>instrument_id</strong> – An instrument id</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>id, name, artists.
+<code class="docutils literal notranslate"><span class="pre">artists</span></code> includes artists with recording- and release-
+level performance relationships of this instrument.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_metadata">
+<span class="sig-name descname"><span class="pre">get_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Get the full metadata of the initialized corpora. It might take a while…</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_raga">
+<span class="sig-name descname"><span class="pre">get_raga</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raga_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_raga"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_raga" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about a raga.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>raga_id</strong> – A raga id or uuid.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>uuid, name, artists, works, composers.
+<code class="docutils literal notranslate"><span class="pre">artists</span></code> includes artists with recording- and release-
+level relationships to a recording with this raga.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_recording">
+<span class="sig-name descname"><span class="pre">get_recording</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmbid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_recording" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about a recording.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rmbid</strong> – A recording MBID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mbid, title, artists, raga, tala, work.
+<code class="docutils literal notranslate"><span class="pre">artists</span></code> includes performance relationships attached to the recording, the release, and the release artists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_tala">
+<span class="sig-name descname"><span class="pre">get_tala</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tala_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_tala"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_tala" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about a tala.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tala_id</strong> – A tala id or uuid.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>uuid, name, artists, works, composers.
+<code class="docutils literal notranslate"><span class="pre">artists</span></code> includes artists with recording- and release-
+level relationships to a recording with this raga.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.get_work">
+<span class="sig-name descname"><span class="pre">get_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmbid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.get_work"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.get_work" title="Permalink to this definition"></a></dt>
+<dd><p>Get specific information about a work.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wmbid</strong> – A work mbid.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mbid, title, composers, ragas, talas, recordings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_available_types">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_available_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recording_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_available_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_available_types" title="Permalink to this definition"></a></dt>
+<dd><p>Get the available source filetypes for a Musicbrainz recording.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>recording_id</strong> – Musicbrainz recording ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of filetypes in the database for this recording.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_concerts">
+<span class="sig-name descname"><span class="pre">list_concerts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_concerts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_concerts" title="Permalink to this definition"></a></dt>
+<dd><p>List the concerts in the database. This function will automatically page through API results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries containing concert information:
+<code class="docutils literal notranslate"><span class="pre">{&quot;mbid&quot;:</span> <span class="pre">MusicBrainz</span> <span class="pre">Release</span> <span class="pre">ID,</span> <span class="pre">&quot;title&quot;:</span> <span class="pre">title</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">concert}</span></code>
+For additional information about each concert use <a class="reference internal" href="#compiam.dunya.Corpora.get_concert" title="compiam.dunya.Corpora.get_concert"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_concert()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_instruments">
+<span class="sig-name descname"><span class="pre">list_instruments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_instruments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_instruments" title="Permalink to this definition"></a></dt>
+<dd><p>List the instruments in the database. This function will automatically page through API results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries containing instrument information:
+<code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;:</span> <span class="pre">instrument</span> <span class="pre">id,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">Name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">instrument}</span></code>
+For additional information about each instrument use <a class="reference internal" href="#compiam.dunya.Corpora.get_instrument" title="compiam.dunya.Corpora.get_instrument"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instrument()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_ragas">
+<span class="sig-name descname"><span class="pre">list_ragas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_ragas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_ragas" title="Permalink to this definition"></a></dt>
+<dd><p>List the ragas in the database. This function will automatically page through API results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries containing raga information:
+<code class="docutils literal notranslate"><span class="pre">{&quot;uuid&quot;:</span> <span class="pre">raga</span> <span class="pre">UUID,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">raga}</span></code>
+For additional information about each raga use <a class="reference internal" href="#compiam.dunya.Corpora.get_raga" title="compiam.dunya.Corpora.get_raga"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_raga()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_talas">
+<span class="sig-name descname"><span class="pre">list_talas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_talas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_talas" title="Permalink to this definition"></a></dt>
+<dd><p>List the talas in the database. This function will automatically page through API results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries containing tala information:
+<code class="docutils literal notranslate"><span class="pre">{&quot;uuid&quot;:</span> <span class="pre">tala</span> <span class="pre">UUID,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">tala}</span></code>
+For additional information about each tala use <a class="reference internal" href="#compiam.dunya.Corpora.get_tala" title="compiam.dunya.Corpora.get_tala"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_tala()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.list_works">
+<span class="sig-name descname"><span class="pre">list_works</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.list_works"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.list_works" title="Permalink to this definition"></a></dt>
+<dd><p>List the works in the database. This function will automatically page through API results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries containing work information:
+<code class="docutils literal notranslate"><span class="pre">{&quot;mbid&quot;:</span> <span class="pre">MusicBrainz</span> <span class="pre">work</span> <span class="pre">ID,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">work</span> <span class="pre">name}</span></code>
+For additional information about each work use <a class="reference internal" href="#compiam.dunya.Corpora.get_work" title="compiam.dunya.Corpora.get_work"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_work()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.dunya.Corpora.save_annotation">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recording_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya.html#Corpora.save_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.Corpora.save_annotation" title="Permalink to this definition"></a></dt>
+<dd><p>A version of get_annotation that writes the parsed data into a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recording_id</strong> – Musicbrainz recording ID.</p></li>
+<li><p><strong>thetype</strong> – the computed filetype.</p></li>
+<li><p><strong>subtype</strong> – a subtype if the module has one.</p></li>
+<li><p><strong>part</strong> – the file part if the module has one.</p></li>
+<li><p><strong>version</strong> – a specific version, otherwise the most recent one will be used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None (a file containing the parsed data is written).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-compiam.dunya.conn"></span><dl class="py function">
+<dt class="sig sig-object py" id="compiam.dunya.conn.get_mp3">
+<span class="sig-prename descclassname"><span class="pre">compiam.dunya.conn.</span></span><span class="sig-name descname"><span class="pre">get_mp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recording_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya/conn.html#get_mp3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.conn.get_mp3" title="Permalink to this definition"></a></dt>
+<dd><p>Get a mp3 from a specific mbid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>recording_id</strong> – Musicbrainz recording ID.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.dunya.conn.set_hostname">
+<span class="sig-prename descclassname"><span class="pre">compiam.dunya.conn.</span></span><span class="sig-name descname"><span class="pre">set_hostname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya/conn.html#set_hostname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.conn.set_hostname" title="Permalink to this definition"></a></dt>
+<dd><p>Change the hostname of the dunya API endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hostname</strong> – The new dunya hostname to set. If you want to access over http or a different port,
+include them in the hostname, e.g. <cite>http://localhost:8000</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.dunya.conn.set_token">
+<span class="sig-prename descclassname"><span class="pre">compiam.dunya.conn.</span></span><span class="sig-name descname"><span class="pre">set_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/dunya/conn.html#set_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.dunya.conn.set_token" title="Permalink to this definition"></a></dt>
+<dd><p>Get an access token. You must call this before you can make.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> – your access token.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="separation.html" class="btn btn-neutral float-left" title="Separation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="visualisation.html" class="btn btn-neutral float-right" title="Visualisation tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

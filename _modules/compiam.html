@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=c02300dd"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">mirdata</span>
+
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
+
+<span class="kn">from</span> <span class="nn">compiam</span> <span class="kn">import</span> <span class="n">melody</span><span class="p">,</span> <span class="n">rhythm</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">timbre</span>
+<span class="kn">from</span> <span class="nn">compiam.dunya</span> <span class="kn">import</span> <span class="n">Corpora</span>
+<span class="kn">from</span> <span class="nn">compiam.data</span> <span class="kn">import</span> <span class="n">models_dict</span><span class="p">,</span> <span class="n">datasets_list</span><span class="p">,</span> <span class="n">corpora_list</span><span class="p">,</span> <span class="n">WORKDIR</span>
+<span class="kn">from</span> <span class="nn">compiam.exceptions</span> <span class="kn">import</span> <span class="n">ModelNotDefinedError</span>
+
+
+<span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">models_dict</span><span class="o">=</span><span class="n">models_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for loading pre-trained models.</span>
+
+<span class="sd">    :param model_name: name of the model, extractors, or algorithm to load.</span>
+<span class="sd">    :param models_dict: dict object including the available models.</span>
+<span class="sd">    :returns: specific Class of the selected model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">models_dict</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModelNotDefinedError</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Model, </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> does not exist in compiam.data.models_dict, please follow &quot;</span>
+                <span class="s2">&quot;instructions for adding new model to in ``data.py`` documentation&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">m_dict</span> <span class="o">=</span> <span class="n">models_dict</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+    <span class="n">kwarg_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="s2">&quot;_path&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">kp</span> <span class="ow">in</span> <span class="n">kwarg_paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_home</span><span class="p">,</span> <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">data_home</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">WORKDIR</span><span class="p">,</span> <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_home</span><span class="p">,</span> <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">data_home</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">WORKDIR</span><span class="p">,</span> <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">][</span><span class="n">kp</span><span class="p">])</span>
+            <span class="p">)</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;module_name&quot;</span><span class="p">]),</span> <span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;class_name&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">module</span><span class="p">(</span><span class="o">**</span><span class="n">m_dict</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="load_dataset"><a class="viewcode-back" href="../source/datasets.html#compiam.load_dataset">[docs]</a><span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alias function to load a mirdata Dataset class.</span>
+
+<span class="sd">    :param dataset_name: the dataset&#39;s name, see mirdata.DATASETS for a</span>
+<span class="sd">        complete list of possibilities.</span>
+<span class="sd">    :param data_home: path where the data lives. If None uses the default</span>
+<span class="sd">        home location.</span>
+<span class="sd">    :param version: which version of the dataset to load. If None, the</span>
+<span class="sd">        default version is loaded.</span>
+<span class="sd">    :returns: a mirdata.core.Dataset object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">datasets_list</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid dataset </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">mirdata</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="n">data_home</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">load_corpora</span><span class="p">(</span><span class="n">tradition</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to load access to the Dunya corpora.</span>
+
+<span class="sd">    :param tradition: carnatic or hindustani.</span>
+<span class="sd">    :param cc: boolean indicating if the CC version of the corpora is loaded.</span>
+<span class="sd">    :param token: Dunya personal access token.</span>
+<span class="sd">    :returns: a compiam.Corpora object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tradition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">corpora_list</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Please enter a valid tradition in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">corpora_list</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Parameter cc must be a boolean to indicate whether to load the open or </span>
+<span class="sd">            the restricted portion of the corpora.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Please initialize the Corpora introducing your Dunya API token as parameter. </span>
+<span class="sd">            To get your token, first register to https://dunya.compmusic.upf.edu/ and then go to your user </span>
+<span class="sd">            page by clicking at your username at te right top of the webpage. You will find the API token </span>
+<span class="sd">            in the &quot;API Access&quot; section. Request restricted access if needed. Thanks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Corpora</span><span class="p">(</span><span class="n">tradition</span><span class="o">=</span><span class="n">tradition</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="n">cc</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">list_models</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Just listing the available models.</span>
+
+<span class="sd">    :returns: a list of available models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">models_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">get_model_info</span><span class="p">(</span><span class="n">model_key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get complete info in data/models_dict for a particular pre-trained model</span>
+
+<span class="sd">    :param model_key: model key from models_dict</span>
+<span class="sd">    :returns: infomation about a particular model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">model_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">models_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Please enter a valid model key from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">models_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">models_dict</span><span class="p">[</span><span class="n">model_key</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">list_datasets</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Just listing the available datasets.</span>
+
+<span class="sd">    :returns: a list of available datasets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datasets_list</span>
+
+
+<span class="k">def</span> <span class="nf">list_corpora</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Just listing the available corpora. For each corpora we do have</span>
+<span class="sd">            a restricted and a CC version. To indicate which of the two</span>
+<span class="sd">            is loaded with ``load_corpora`` function, use the input</span>
+<span class="sd">            parameter cc as True or False.</span>
+
+<span class="sd">    :returns: a list of available corpora.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">corpora_list</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
