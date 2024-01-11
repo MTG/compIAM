@@ -21,7 +21,7 @@ soundfile>=0.12.1
 scikit-learn~=1.2.2
 scikit-image~=0.19.3
 opencv-python~=4.6.0
-hmmlearn~=0.2.7
+hmmlearn==0.3.0
 fastdtw~=0.3.4
 
 # Data
