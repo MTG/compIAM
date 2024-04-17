@@ -146,7 +146,7 @@ def extract_features(audio_dir, annotations_dir, save_dir, mode):
 
         # get log mel spectrogram
         melgram = librosa.feature.melspectrogram(
-            x,
+            y=x,
             sr=fs,
             n_fft=nfft,
             hop_length=hopsize,

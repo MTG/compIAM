@@ -476,7 +476,7 @@ class DhrupadBandishSegmentation:
 
         # convert to mel-spectrogram
         melgram = librosa.feature.melspectrogram(
-            audio,
+            y=audio,
             sr=pars.fs,
             n_fft=pars.nfft,
             hop_length=pars.hopsize,
