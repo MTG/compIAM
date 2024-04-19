@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 class ColdDiffSep(object):
     """Leakage-aware singing voice separation model for Carnatic Music."""
 
-    def __init__(self, model_path=None, config_path=None, sample_rate=22050):
+    def __init__(self, model_path=None, config_path=None, sample_rate=22050, gpu="-1"):
         """Leakage-aware singing voice separation init method.
 
         :param model_path: path to file to the model weights.
@@ -61,6 +61,10 @@ class ColdDiffSep(object):
             )
         ###
 
+        ## Setting up GPU if specified
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        self.gpu = gpu
+
         self.unet_config = UnetConfig()
 
         self.model = DiffWave(self.unet_config)
@@ -100,7 +104,9 @@ class ColdDiffSep(object):
         :return: Singing voice signal.
         """
         ## Setting up GPU if any
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        if gpu != self.gpu:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            self.gpu = gpu
 
         if self.trained is False:
             raise ModelNotTrainedError(

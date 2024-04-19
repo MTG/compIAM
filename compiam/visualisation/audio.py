@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 
 def plot_waveform(
-    input_data, t1, t2, labels=None, input_sr=44100, sr=44100, output_path=None
+    input_data, t1, t2, labels=None, input_sr=44100, sr=44100, output_path=None, verbose=False
 ):
     """Plotting waveform between two given points with optional labels
 
@@ -23,6 +23,8 @@ def plot_waveform(
     :param sr: sampling rate
     :param output_path: optional path (finished with .png) where the plot is saved
     """
+    if verbose is False:
+        logger.setLevel("ERROR")
     if isinstance(input_data, str):
         if not os.path.exists(input_data):
             raise FileNotFoundError("Target audio not found.")

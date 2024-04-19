@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music."""
 
-    def __init__(self, model_path=None, sample_rate=8000):
+    def __init__(self, model_path=None, sample_rate=8000, gpu="-1"):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
@@ -39,6 +39,10 @@ class FTANetCarnatic(object):
                 "Please install tensorflow using: pip install tensorflow==2.7.2"
             )
         ###
+
+        ## Setting up GPU if specified
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        self.gpu = gpu
 
         self.model = self._build_model()
         self.sample_rate = sample_rate
@@ -276,7 +280,9 @@ class FTANetCarnatic(object):
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         ## Setting up GPU if any
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        if gpu != self.gpu:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            self.gpu = gpu
 
         if self.trained is False:
             raise ModelNotTrainedError(
