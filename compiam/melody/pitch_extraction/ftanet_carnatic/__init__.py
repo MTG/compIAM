@@ -230,7 +230,7 @@ class FTANetCarnatic(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            self.download_model(model_path)  # Dowloading model weights
+            self.download_model(model_path)  # Downloading model weights
         self.model.load_weights(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True

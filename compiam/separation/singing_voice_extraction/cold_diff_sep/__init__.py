@@ -138,79 +138,85 @@ class ColdDiffSep(object):
         runs = math.floor(mixture.shape[0] / hopsized_chunk)
         trim_low = 0
         for trim in tqdm.tqdm(np.arange((runs * 2) - 1)):
-            trim_high = int(trim_low + (hopsized_chunk * 2))
+            try:
+                trim_high = int(trim_low + (hopsized_chunk * 2))
 
-            # Get input mixture spectrogram
-            mix_trim = mixture[trim_low:trim_high]
-            mix_mag, mix_phase = compute_stft(mix_trim[None], self.unet_config)
-            new_len = next_power_of_2(mix_mag.shape[1])
-            mix_mag_trim = mix_mag[:, :new_len, :]
-            mix_phase_trim = mix_phase[:, :new_len, :]
+                # Get input mixture spectrogram
+                mix_trim = mixture[trim_low:trim_high]
+                mix_mag, mix_phase = compute_stft(mix_trim[None], self.unet_config)
+                new_len = next_power_of_2(mix_mag.shape[1])
+                mix_mag_trim = mix_mag[:, :new_len, :]
+                mix_phase_trim = mix_phase[:, :new_len, :]
 
-            # Get and stack cold diffusion steps
-            diff_feat = self.model(mix_mag_trim, mode="train")
-            diff_feat = tf.transpose(diff_feat, [1, 0, 2, 3])
-            diff_feat_t = tf.squeeze(
-                tf.reshape(
-                    diff_feat, [1, 8, diff_feat.shape[-2] * diff_feat.shape[-1]]
-                ),
-                axis=0,
-            ).numpy()
+                # Get and stack cold diffusion steps
+                diff_feat = self.model(mix_mag_trim, mode="train")
+                diff_feat = tf.transpose(diff_feat, [1, 0, 2, 3])
+                diff_feat_t = tf.squeeze(
+                    tf.reshape(
+                        diff_feat, [1, 8, diff_feat.shape[-2] * diff_feat.shape[-1]]
+                    ),
+                    axis=0,
+                ).numpy()
 
-            # Normalize features, all energy curves having same range
-            normalized_feat = []
-            for j in np.arange(diff_feat_t.shape[1]):
-                normalized_curve = diff_feat_t[:, j] / (
-                    np.max(np.abs(diff_feat_t[:, j])) + 1e-6
+                # Normalize features, all energy curves having same range
+                normalized_feat = []
+                for j in np.arange(diff_feat_t.shape[1]):
+                    normalized_curve = diff_feat_t[:, j] / (
+                        np.max(np.abs(diff_feat_t[:, j])) + 1e-6
+                    )
+                    normalized_feat.append(normalized_curve)
+                normalized_feat = np.array(normalized_feat, dtype=np.float32)
+
+                # Compute mask using unsupervised clustering and reshape to magnitude spec shape
+                mask = get_mask(normalized_feat, clusters, scheduler)
+                mask = tf.convert_to_tensor(
+                    mask, dtype=tf.float32
+                )  # Move mask to tensor and cast to float
+                mask = tf.reshape(mask, mix_mag_trim.shape)
+
+                # Getting last step of computed features and applying mask
+                diff_feat_t = tf.reshape(diff_feat_t[-1, :], mix_mag_trim.shape)
+                output_signal = tf.math.multiply(diff_feat_t, mask)
+
+                # Silence unvoiced regions
+                output_signal = compute_signal_from_stft(
+                    output_signal, mix_phase_trim, self.unet_config
                 )
-                normalized_feat.append(normalized_curve)
-            normalized_feat = np.array(normalized_feat, dtype=np.float32)
+                # From here on, pred_audio is numpy
+                pred_audio = tf.squeeze(output_signal, axis=0).numpy()
+                vad = VAD(
+                    pred_audio,
+                    sr=22050,
+                    nFFT=512,
+                    win_length=0.025,
+                    hop_length=0.01,
+                    theshold=0.99,
+                )
+                if np.sum(vad) / len(vad) < 0.25:
+                    pred_audio = np.zeros(pred_audio.shape)
 
-            # Compute mask using unsupervised clustering and reshape to magnitude spec shape
-            mask = get_mask(normalized_feat, clusters, scheduler)
-            mask = tf.convert_to_tensor(
-                mask, dtype=tf.float32
-            )  # Move mask to tensor and cast to float
-            mask = tf.reshape(mask, mix_mag_trim.shape)
+                # Get boundary
+                boundary = None
+                boundary = "start" if trim == 0 else None
+                boundary = "end" if trim == runs - 2 else None
 
-            # Getting last step of computed features and applying mask
-            diff_feat_t = tf.reshape(diff_feat_t[-1, :], mix_mag_trim.shape)
-            output_signal = tf.math.multiply(diff_feat_t, mask)
+                placehold_voc = np.zeros(output_voc.shape)
+                placehold_voc[
+                    trim_low : trim_low + pred_audio.shape[0]
+                ] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
+                output_voc += placehold_voc
+                trim_low += pred_audio.shape[0] // 2
 
-            # Silence unvoiced regions
-            output_signal = compute_signal_from_stft(
-                output_signal, mix_phase_trim, self.unet_config
-            )
-            # From here on, pred_audio is numpy
-            pred_audio = tf.squeeze(output_signal, axis=0).numpy()
-            vad = VAD(
-                pred_audio,
-                sr=22050,
-                nFFT=512,
-                win_length=0.025,
-                hop_length=0.01,
-                theshold=0.99,
-            )
-            if np.sum(vad) / len(vad) < 0.25:
-                pred_audio = np.zeros(pred_audio.shape)
-
-            # Get boundary
-            boundary = None
-            boundary = "start" if trim == 0 else None
-            boundary = "end" if trim == runs - 2 else None
-
-            placehold_voc = np.zeros(output_voc.shape)
-            placehold_voc[
-                trim_low : trim_low + pred_audio.shape[0]
-            ] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
-            output_voc += placehold_voc
-            trim_low += pred_audio.shape[0] // 2
-
-        output_voc = output_voc * (
+            except:
+                output_voc =  output_voc * (
+                    np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
+                )
+                output_voc = output_voc[:trim_low]
+                return output_voc
+            
+        return output_voc * (
             np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
         )
-
-        return output_voc
 
         # TODO: write a function to store audio
         # Building intuitive filename with model config
@@ -243,3 +249,4 @@ class ColdDiffSep(object):
         # Delete zip file after extraction
         os.remove(output)
         logger.warning("Files downloaded and extracted successfully.")
+

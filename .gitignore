@@ -72,6 +72,7 @@ compiam/models/timbre/mridangam_stroke_classification/pre-computed_features.csv
 compiam/models/structure/dhrupad_bandish_segmentation/annotations/section_boundaries_labels.csv
 compiam/models/structure/dhrupad_bandish_segmentation/annotations/cycle_boundaries/
 tests/resources/mir_datasets/*
+compiam/models/separation/
 
 # For next release
 compiam/models/rhythm/4wayTabla/
