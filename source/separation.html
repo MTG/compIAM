@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Separation &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=c02300dd"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Load IAM datasets using mirdata" href="datasets.html" />
+    <link rel="prev" title="Timbre analysis" href="timbre.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Separation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#singing-voice-extraction">Singing voice extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#leakage-aware-carnatic-singing-voice-separation">Leakage-aware Carnatic Singing Voice Separation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep"><code class="docutils literal notranslate"><span class="pre">ColdDiffSep</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Separation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/separation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="separation">
+<span id="id1"></span><h1>Separation<a class="headerlink" href="#separation" title="Permalink to this heading"></a></h1>
+<section id="singing-voice-extraction">
+<h2>Singing voice extraction<a class="headerlink" href="#singing-voice-extraction" title="Permalink to this heading"></a></h2>
+<section id="leakage-aware-carnatic-singing-voice-separation">
+<h3>Leakage-aware Carnatic Singing Voice Separation<a class="headerlink" href="#leakage-aware-carnatic-singing-voice-separation" title="Permalink to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: tensorflow</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.separation.singing_voice_extraction.cold_diff_sep.</span></span><span class="sig-name descname"><span class="pre">ColdDiffSep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22050</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/separation/singing_voice_extraction/cold_diff_sep.html#ColdDiffSep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep" title="Permalink to this definition"></a></dt>
+<dd><p>Leakage-aware singing voice separation model for Carnatic Music.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep.download_model">
+<span class="sig-name descname"><span class="pre">download_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/separation/singing_voice_extraction/cold_diff_sep.html#ColdDiffSep.download_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep.download_model" title="Permalink to this definition"></a></dt>
+<dd><p>Download pre-trained model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep.separate">
+<span class="sig-name descname"><span class="pre">separate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/separation/singing_voice_extraction/cold_diff_sep.html#ColdDiffSep.separate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.separation.singing_voice_extraction.cold_diff_sep.ColdDiffSep.separate" title="Permalink to this definition"></a></dt>
+<dd><p>Separate singing voice from mixture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – Audio signal to separate.</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+<li><p><strong>clusters</strong> – Number of clusters to use to build the separation masks.</p></li>
+<li><p><strong>scheduler</strong> – Scheduler factor to weight the clusters to be more or less restirctive with the interferences.</p></li>
+<li><p><strong>gpu</strong> – Id of the available GPU to use (-1 by default, to run on CPU)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Singing voice signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="timbre.html" class="btn btn-neutral float-left" title="Timbre analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="datasets.html" class="btn btn-neutral float-right" title="Load IAM datasets using mirdata" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
