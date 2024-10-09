@@ -1,6 +1,6 @@
 # Basics
 matplotlib>=3.0.0
-numpy>=1.20.3
+numpy>=1.20.3,<=1.26.4
 joblib>=1.2.0
 pathlib~=1.0.1
 #pytsmod~=0.3.7 Needs update
