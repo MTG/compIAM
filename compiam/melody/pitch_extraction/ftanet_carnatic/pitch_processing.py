@@ -112,3 +112,18 @@ def get_est_arr(model, x_list, y_list, batch_size):
         est_arr = est(preds, CenFreq, y)
 
     return est_arr
+
+
+def std_normalize(data): 
+    """Standardize the input data.
+    
+    :param data: input data.
+    :returns: standardized data.
+    """
+    data = data.astype(np.float64)
+    mean = np.mean(data)
+    std = np.std(data)
+    data = data.copy() - mean
+    if std != 0.:
+        data = data / std
+    return data.astype(np.float32)

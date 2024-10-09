@@ -9,7 +9,7 @@ from compiam.data import models_dict, datasets_list, corpora_list, WORKDIR
 from compiam.exceptions import ModelNotDefinedError
 
 
-def load_model(model_name, data_home=None, models_dict=models_dict):
+def load_model(model_name, data_home=None, models_dict=models_dict, **kwargs):
     """Wrapper for loading pre-trained models.
 
     :param model_name: name of the model, extractors, or algorithm to load.
@@ -41,6 +41,7 @@ def load_model(model_name, data_home=None, models_dict=models_dict):
             )
 
     module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
+    m_dict["kwargs"].update(kwargs)
     return module(**m_dict["kwargs"])
 
 
@@ -103,7 +104,7 @@ def get_model_info(model_key):
     """Get complete info in data/models_dict for a particular pre-trained model
 
     :param model_key: model key from models_dict
-    :returns: infomation about a particular model.
+    :returns: information about a particular model.
     """
     if model_key not in list(models_dict.keys()):
         raise ValueError(

@@ -27,6 +27,7 @@ class FTANetCarnatic(object):
 
         :param model_path: path to file to the model weights.
         :param sample_rate: Sample rate to which the audio is sampled for extraction.
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
@@ -276,7 +277,7 @@ class FTANetCarnatic(object):
             (defaulted to 5, increase if enough computational power, reduce if
             needed).
         :param out_step: particular time-step duration if needed at output
-        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
         ## Setting up GPU if any
