@@ -73,6 +73,9 @@ compiam/models/structure/dhrupad_bandish_segmentation/annotations/section_bounda
 compiam/models/structure/dhrupad_bandish_segmentation/annotations/cycle_boundaries/
 tests/resources/mir_datasets/*
 compiam/models/separation/
+compiam/models/structure/
+compiam/models/melody/
+compiam/models/rhythm/
 
 # For next release
 compiam/models/rhythm/4wayTabla/
