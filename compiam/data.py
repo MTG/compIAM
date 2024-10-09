@@ -124,7 +124,7 @@ models_dict = {
                 "saraga-8",
                 "saraga-8.ckpt-1",
             ),
-            "sample_rate": 22050,
+            #"sample_rate": 22050,  # Already contained in the model config
         },
     },
 }
