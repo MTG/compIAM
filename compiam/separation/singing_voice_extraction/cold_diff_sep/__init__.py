@@ -19,12 +19,11 @@ logger = get_logger(__name__)
 class ColdDiffSep(object):
     """Leakage-aware singing voice separation model for Carnatic Music."""
 
-    def __init__(self, model_path=None, config_path=None, sample_rate=22050, gpu="-1"):
+    def __init__(self, model_path=None, gpu="-1"):
         """Leakage-aware singing voice separation init method.
 
         :param model_path: path to file to the model weights.
-        :param config_path: path to config for the model.
-        :param sample_rate: sample rate to which the audio is sampled for extraction.
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
@@ -79,7 +78,7 @@ class ColdDiffSep(object):
         if ".data-00000-of-00001" not in model_path:
             path_to_check = model_path + ".data-00000-of-00001"
         if not os.path.exists(path_to_check):
-            self.download_model(model_path)  # Dowloading model weights
+            self.download_model(model_path)  # Downloading model weights
         self.model.restore(model_path).expect_partial()
         self.model_path = model_path
         self.trained = True
@@ -100,7 +99,7 @@ class ColdDiffSep(object):
             relevant if the input is an array of data instead of a filepath.
         :param clusters: Number of clusters to use to build the separation masks.
         :param scheduler: Scheduler factor to weight the clusters to be more or less restirctive with the interferences.
-        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)
+        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :return: Singing voice signal.
         """
         ## Setting up GPU if any
