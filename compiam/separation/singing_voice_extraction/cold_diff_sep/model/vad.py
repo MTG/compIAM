@@ -9,7 +9,7 @@ import numpy as np
 from compiam.separation.singing_voice_extraction.cold_diff_sep.model.estnoise_ms import *
 
 
-def VAD(signal, sr, nFFT=512, win_length=0.025, hop_length=0.01, theshold=0.7):
+def VAD(signal, sr, nFFT=512, win_length=0.025, hop_length=0.01, threshold=0.7):
     """Voice Activity Detector
     Parameters
     ----------
@@ -101,7 +101,7 @@ def VAD(signal, sr, nFFT=512, win_length=0.025, hop_length=0.01, theshold=0.7):
         )
 
         previousGainedaPosSNR = (gain**2) * aPosterioriSNR_frame
-        probRatio[probRatio > theshold] = 1
-        probRatio[probRatio < theshold] = 0
+        probRatio[probRatio > threshold] = 1
+        probRatio[probRatio < threshold] = 0
 
     return probRatio

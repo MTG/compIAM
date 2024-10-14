@@ -13,6 +13,7 @@ import torch.nn.functional as F
 
 
 class Complex(nn.Module):
+    """CAE model."""
     def __init__(self, n_in, n_out, dropout=0.5, learn_norm=False):
         super(Complex, self).__init__()
 

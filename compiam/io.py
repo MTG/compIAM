@@ -38,14 +38,18 @@ def read_csv(file_path):
     return output[~np.isnan(output)]
 
 
-def save_object(obj, filename):
-    with open(filename, "wb") as outp:  # Overwrites any existing file.
+def save_object(obj, file_path):
+    """Saves object to pickle file
+    
+    :param obj: an object to save to pickle file
+    :param file_path: path to save the object
+    """
+    with open(file_path, "wb") as outp:  # Overwrites any existing file.
         pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
 
 
 def write_json(j, path):
-    """
-    Write json, <j>, to <path>
+    """Write json, <j>, to <path>
 
     :param j: json
     :type path: json

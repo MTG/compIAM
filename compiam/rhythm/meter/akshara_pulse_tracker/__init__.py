@@ -71,6 +71,7 @@ class AksharaPulseTracker:
         smoothTime=2560,
         pwtol=0.2,
     ):
+        """Akshara onset detection init method"""
         self.Nfft = Nfft
         self.frmSize = frmSize
         self.Fs = Fs

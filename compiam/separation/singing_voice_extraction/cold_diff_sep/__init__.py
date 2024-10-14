@@ -189,7 +189,7 @@ class ColdDiffSep(object):
                     nFFT=512,
                     win_length=0.025,
                     hop_length=0.01,
-                    theshold=0.99,
+                    threshold=0.99,
                 )
                 if np.sum(vad) / len(vad) < 0.25:
                     pred_audio = np.zeros(pred_audio.shape)

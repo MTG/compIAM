@@ -14,26 +14,26 @@ class Melodia:
 
     def __init__(
         self,
-        binResolution=10,
-        filterIterations=3,
-        frameSize=2048,
-        guessUnvoiced=False,
-        harmonicWeight=0.8,
-        hopSize=128,
-        magnitudeCompression=1,
-        magnitudeThreshold=40,
-        maxFrequency=20000,
-        minDuration=100,
-        minFrequency=80,
-        numberHarmonics=20,
-        peakDistributionThreshold=0.9,
-        peakFrameThreshold=0.9,
-        pitchContinuity=27.5625,
-        referenceFrequency=55,
-        sampleRate=44100,
-        timeContinuity=100,
-        voiceVibrato=False,
-        voicingTolerance=0.2,
+        bin_resolution=10,
+        filter_iterations=3,
+        frame_size=2048,
+        guess_unvoiced=False,
+        harmonic_weight=0.8,
+        hop_size=128,
+        magnitude_compression=1,
+        magnitude_threshold=40,
+        max_frequency=20000,
+        min_duration=100,
+        min_frequency=80,
+        num_harmonics=20,
+        peak_distribution_threshold=0.9,
+        peak_frame_threshold=0.9,
+        pitch_continuity=27.5625,
+        reference_frequency=55,
+        sample_rate=44100,
+        time_continuity=100,
+        voice_vibrato=False,
+        voicing_tolerance=0.2,
     ):
         """Melodia predominant melody extraction init method
         For a complete and detailed list of the parameters see the documentation on the
@@ -50,26 +50,26 @@ class Melodia:
             )
         ###
 
-        self.binResolution = binResolution
-        self.filterIterations = filterIterations
-        self.frameSize = frameSize
-        self.guessUnvoiced = guessUnvoiced
-        self.harmonicWeight = harmonicWeight
-        self.hopSize = hopSize
-        self.magnitudeCompression = magnitudeCompression
-        self.magnitudeThreshold = magnitudeThreshold
-        self.maxFrequency = maxFrequency
-        self.minDuration = minDuration
-        self.minFrequency = minFrequency
-        self.numberHarmonics = numberHarmonics
-        self.peakDistributionThreshold = peakDistributionThreshold
-        self.peakFrameThreshold = peakFrameThreshold
-        self.pitchContinuity = pitchContinuity
-        self.referenceFrequency = referenceFrequency
-        self.sampleRate = sampleRate
-        self.timeContinuity = timeContinuity
-        self.voiceVibrato = voiceVibrato
-        self.voicingTolerance = voicingTolerance
+        self.bin_resolution = bin_resolution
+        self.filter_iterations = filter_iterations
+        self.frame_size = frame_size
+        self.guess_unvoiced = guess_unvoiced
+        self.harmonic_weight = harmonic_weight
+        self.hop_size = hop_size
+        self.magnitude_compression = magnitude_compression
+        self.magnitude_threshold = magnitude_threshold
+        self.max_frequency = max_frequency
+        self.min_duration = min_duration
+        self.min_frequency = min_frequency
+        self.num_harmonics = num_harmonics
+        self.peak_distribution_threshold = peak_distribution_threshold
+        self.peak_frame_threshold = peak_frame_threshold
+        self.pitch_continuity = pitch_continuity
+        self.reference_frequency = reference_frequency
+        self.sample_rate = sample_rate
+        self.time_continuity = time_continuity
+        self.voice_vibrato = voice_vibrato
+        self.voicing_tolerance = voicing_tolerance
 
     def extract(self, input_data, input_sr=44100, out_step=None):
         """Extract the melody from a given file.
@@ -83,13 +83,13 @@ class Melodia:
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sampleRate)()
+            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sample_rate)()
         elif isinstance(input_data, np.ndarray):
             logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             resample_audio = estd.Resample(
-                inputSampleRate=input_sr, outputSampleRate=self.sampleRate
+                inputSampleRate=input_sr, outputSampleRate=self.sample_rate
             )()
             input_data = resample_audio(input_data)
             audio = estd.EqualLoudness(signal=input_data)()
@@ -97,33 +97,33 @@ class Melodia:
             raise ValueError("Input must be path to audio signal or an audio array")
 
         extractor = estd.PredominantPitchMelodia(
-            binResolution=self.binResolution,
-            filterIterations=self.filterIterations,
-            frameSize=self.frameSize,
-            guessUnvoiced=self.guessUnvoiced,
-            harmonicWeight=self.harmonicWeight,
-            hopSize=self.hopSize,
-            magnitudeCompression=self.magnitudeCompression,
-            magnitudeThreshold=self.magnitudeThreshold,
-            maxFrequency=self.maxFrequency,
-            minDuration=self.minDuration,
-            minFrequency=self.minFrequency,
-            numberHarmonics=self.numberHarmonics,
-            peakDistributionThreshold=self.peakDistributionThreshold,
-            peakFrameThreshold=self.peakFrameThreshold,
-            pitchContinuity=self.pitchContinuity,
-            referenceFrequency=self.referenceFrequency,
-            sampleRate=self.sampleRate,
-            timeContinuity=self.timeContinuity,
-            voiceVibrato=self.voiceVibrato,
-            voicingTolerance=self.voicingTolerance,
+            bin_resolution=self.bin_resolution,
+            filter_iterations=self.filter_iterations,
+            frame_size=self.frame_size,
+            guess_unvoiced=self.guess_unvoiced,
+            harmonic_weight=self.harmonic_weight,
+            hop_size=self.hop_size,
+            magnitude_compression=self.magnitude_compression,
+            magnitude_threshold=self.magnitude_threshold,
+            max_frequency=self.max_frequency,
+            min_duration=self.min_duration,
+            min_frequency=self.min_frequency,
+            num_harmonics=self.num_harmonics,
+            peak_distribution_threshold=self.peak_distribution_threshold,
+            peak_frame_threshold=self.peak_frame_threshold,
+            pitch_continuity=self.pitch_continuity,
+            reference_frequency=self.reference_frequency,
+            sample_rate=self.sample_rate,
+            time_continuity=self.time_continuity,
+            voice_vibrato=self.voice_vibrato,
+            voicing_tolerance=self.voicing_tolerance,
         )
         pitch, _ = extractor(audio)
-        TStamps = np.array(range(0, len(pitch))) * float(self.hopSize) / self.sampleRate
+        TStamps = np.array(range(0, len(pitch))) * float(self.hop_size) / self.sample_rate
         output = np.array([TStamps, pitch]).transpose()
 
         if out_step is not None:
-            new_len = int((len(audio) / self.sampleRate) // out_step)
+            new_len = int((len(audio) / self.sample_rate) // out_step)
             return resampling(output, new_len)
 
         return output

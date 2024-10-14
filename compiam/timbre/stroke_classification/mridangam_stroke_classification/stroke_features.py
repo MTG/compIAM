@@ -26,14 +26,14 @@ from sklearn import preprocessing
 MIN_MAX_SCALER = preprocessing.MinMaxScaler()
 
 
-def split_file(filename):
+def split_file(input_file):
     """Define split boundaries based on a fixed energy threshold.
 
-    :param filename: path to file to process.
+    :param input_file: path to file to process.
     :returns: a tuple with input file, energy threshold, split function, and
         start and end indexes of the detected splits.
     """
-    x = estd.MonoLoader(filename=filename, sampleRate=SPLIT_PARAMS.get("fs"))()
+    x = estd.MonoLoader(filename=input_file, sampleRate=SPLIT_PARAMS.get("fs"))()
     NRG = []
     # Main windowing and feature extraction loop
     for frame in estd.FrameGenerator(
@@ -93,7 +93,7 @@ def process_strokes(file_dict, load_computed=False, computed_path=None):
                         feat = []
                         # Get descriptor names
                         descriptors = features.descriptorNames()
-                        # Remove uneeded descriptors
+                        # Remove unneeded descriptors
                         for desc in DESCRIPTORS_TO_DISREGARD:
                             descriptors = [x for x in descriptors if desc not in x]
                         # Process MFCC
@@ -131,21 +131,21 @@ def process_strokes(file_dict, load_computed=False, computed_path=None):
     return df_features, feature_list
 
 
-def normalise_features(trainig_data, feature_list=None):
+def normalise_features(training_data, feature_list=None):
     """Normalise feature DataFrames.
 
-    :param trainig_data: DataFrame with no-normalised features.
+    :param training_data: DataFrame with no-normalised features.
     :param feature_list: list of features to prevent including the stroke label if included in the list.
     :returns: DataFrame with normalised features per split.
     """
-    data_modif = trainig_data.copy()
+    data_modif = training_data.copy()
     if feature_list is None:
         data_modif.iloc[:, :] = MIN_MAX_SCALER.fit_transform(
-            trainig_data.iloc[:, :].values
+            training_data.iloc[:, :].values
         )
     else:
         data_modif.iloc[:, : len(feature_list) - 1] = MIN_MAX_SCALER.fit_transform(
-            trainig_data.iloc[:, : len(feature_list) - 1].values
+            training_data.iloc[:, : len(feature_list) - 1].values
         )
     return data_modif
 
@@ -168,7 +168,7 @@ def features_for_pred(input_file):
     )(audio[start_indexes[max_len] : stop_indexes[max_len]])
     feat = []
     descriptors = features.descriptorNames()
-    # Remove uneeded descriptors
+    # Remove unneeded descriptors
     for desc in DESCRIPTORS_TO_DISREGARD:
         descriptors = [x for x in descriptors if desc not in x]
     # Process MFCC

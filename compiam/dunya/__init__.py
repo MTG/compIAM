@@ -312,7 +312,7 @@ class Corpora:
             )
 
     def download_mp3(self, recording_id, output_dir):
-        """Download the mp3 of a document and save it to the specificed directory.
+        """Download the mp3 of a document and save it to the specified directory.
 
         :param recording_id: The MBID of the recording.
         :param output_dir: Where to save the mp3 to.
@@ -338,7 +338,7 @@ class Corpora:
         return name
 
     def download_concert(self, concert_id, output_dir):
-        """Download the mp3s of all recordings in a concert and save them to the specificed directory.
+        """Download the mp3s of all recordings in a concert and save them to the specified directory.
 
         :param concert_id: The MBID of the concert.
         :param location: Where to save the mp3s to.
