@@ -28,7 +28,6 @@ Melodia
 .. automodule:: compiam.melody.pitch_extraction.melodia
    :members:
 
-
 FTANet-Carnatic
 ---------------
 
@@ -37,6 +36,16 @@ FTANet-Carnatic
 
 .. autoclass:: compiam.melody.pitch_extraction.FTANetCarnatic
    :members:
+
+FTAResNet-Carnatic
+---------------
+
+.. note::
+    REQUIRES: torch
+
+.. autoclass:: compiam.melody.pitch_extraction.FTAResNetCarnatic
+   :members:
+
 
 Melodic Pattern Discovery
 +++++++++++++++++++++++++
