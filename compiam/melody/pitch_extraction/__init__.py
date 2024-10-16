@@ -5,6 +5,7 @@ from compiam.data import models_dict
 
 from compiam.melody.pitch_extraction.melodia import Melodia
 from compiam.melody.pitch_extraction.ftanet_carnatic import FTANetCarnatic
+from compiam.melody.pitch_extraction.ftaresnet_carnatic import FTAResNetCarnatic
 
 
 # Show user the available tools

@@ -54,6 +54,7 @@ def set_token(token):
 
 
 def _dunya_url_query(url, extra_headers=None):
+    """Use requests to query from a given url in Dunya."""
     logger.debug("query to '%s'" % url)
     if not TOKEN:
         raise ConnectionError("You need to authenticate with `set_token`")
@@ -71,6 +72,7 @@ def _dunya_url_query(url, extra_headers=None):
 
 
 def _make_url(path, **kwargs):
+    """Create URL from path."""
     if "://" in HOSTNAME:
         protocol, hostname = HOSTNAME.split("://")
     else:

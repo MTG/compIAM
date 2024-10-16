@@ -52,6 +52,16 @@ models_dict = {
             "sample_rate": 8000,
         },
     },
+    "melody:ftaresnet-carnatic-violin": {
+        "module_name": "compiam.melody.pitch_extraction.ftaresnet_carnatic",
+        "class_name": "FTAResNetCarnatic",
+        "kwargs": {
+            "model_path": os.path.join(
+                "models", "melody", "ftanet", "fta_carnatic_violin", "FTA-ResNet_best_version.pth"
+            ),
+            "sample_rate": 44100,
+        },
+    },
     "melody:cae-carnatic": {
         "module_name": "compiam.melody.pattern.sancara_search",
         "class_name": "CAEWrapper",
@@ -114,7 +124,7 @@ models_dict = {
                 "saraga-8",
                 "saraga-8.ckpt-1",
             ),
-            "sample_rate": 22050,
+            #"sample_rate": 22050,  # Already contained in the model config
         },
     },
 }

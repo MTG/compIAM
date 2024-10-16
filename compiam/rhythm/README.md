@@ -3,8 +3,8 @@
 | **Tool**                       | **Task**                                       | **Paper** |
 |--------------------------------|------------------------------------------------|-----------|
 | Akshara Pulse Tracker Detector | Detect onsets of aksharas in tabla recordings  | [1]       |
-|--------------------------------|------------------------------------------------|-----------|
 | Mnemonic Stroke Transcription  | Bol/Solkattu trasncription using HMM           | [2]       |
+
 
 [1] Originally implemented by Ajay Srinivasamurthy as part of PyCompMusic - https://github.com/MTG/pycompmusic
 

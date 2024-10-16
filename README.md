@@ -94,7 +94,7 @@ Please check the [contribution guidelines](https://mtg.github.io/compIAM/source/
 We include, in this repo, [example notebooks](https://github.com/MTG/compIAM/tree/master/notebooks) for users to better understand how to use `compiam` and also showcase 
 
 ## License
-compIAM is Copyright 2023 Music Technology Group - Universitat Pompeu Fabra
+compIAM is Copyright 2024 Music Technology Group - Universitat Pompeu Fabra
 
 compIAM is released under the terms of the GNU Affero General Public License (v3 or later). See the COPYING file for more information. For the case of a particular tool or implementation that has a specific different licence, this is explicitly specified in the files related to this tool, and these terms must be followed.
 

@@ -40,7 +40,7 @@ def extract_features(audio_dir, annotations_dir, save_dir, mode):
     """Main feature extraction function. It computes the features from
     split audios and annotations and store these into a .npy file.
 
-    :param audio_dir: directory where splitted audios live (see ``data.py``)
+    :param audio_dir: directory where split audios live (see ``data.py``)
     :param annotations_dir: directory where annotations live (see ``data.py``)
     :param save_dir: directory to store the extracted features (see ``data.py``)
     :param mode: model mode: "voc", "pakh" or "net"

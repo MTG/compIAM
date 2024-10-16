@@ -219,11 +219,11 @@ class DEEPSRGM(object):
                 import essentia.standard as estd
 
                 melodia = compiam.melody.pitch_extraction.Melodia
-                melodia = melodia(sampleRate=self.sample_rate)
+                melodia = melodia(sample_rate=self.sample_rate)
                 tonic_extraction = (
                     compiam.melody.tonic_identification.TonicIndianMultiPitch
                 )
-                tonic_extraction = tonic_extraction(sampleRate=self.sample_rate)
+                tonic_extraction = tonic_extraction(sample_rate=self.sample_rate)
             except:
                 raise ImportError(
                     "In order to use these tools to extract the features you need to have essentia installed."
