@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.dunya &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=c02300dd"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../compiam.html">compiam</a></li>
+      <li class="breadcrumb-item active">compiam.dunya</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.dunya</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2013, 2014 Music Technology Group - Universitat Pompeu Fabra</span>
+<span class="c1">#</span>
+<span class="c1"># Several functions in this file are part of Dunya and have been ported</span>
+<span class="c1"># from pycompmusic (https://github.com/MTG/pycompmusic), the official API</span>
+<span class="c1">#</span>
+<span class="c1"># Dunya is free software: you can redistribute it and/or modify it under the</span>
+<span class="c1"># terms of the GNU Affero General Public License as published by the Free Software</span>
+<span class="c1"># Foundation (FSF), either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A</span>
+<span class="c1"># PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># this program.  If not, see http://www.gnu.org/licenses/</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+
+<span class="kn">from</span> <span class="nn">.conn</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_dunya_query_json</span><span class="p">,</span>
+    <span class="n">get_mp3</span><span class="p">,</span>
+    <span class="n">_file_for_document</span><span class="p">,</span>
+    <span class="n">set_token</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.io</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">write_csv</span><span class="p">,</span>
+    <span class="n">write_json</span><span class="p">,</span>
+    <span class="n">write_scalar_txt</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Corpora"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora">[docs]</a><span class="k">class</span> <span class="nc">Corpora</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dunya corpora class with access functions&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tradition</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dunya corpora class init method.</span>
+
+<span class="sd">        :param tradition: the name of the tradition.</span>
+<span class="sd">        :param cc: bool flag to indicate if the Creative Commons version of the corpora is chosen.</span>
+<span class="sd">        :param token: Dunya personal token to access te database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Load and set token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="n">set_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">=</span> <span class="n">tradition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;dunya-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;-cc&quot;</span> <span class="k">if</span> <span class="n">cc</span> <span class="k">else</span> <span class="s2">&quot;dunya-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;To load the full metadata of the initialized corpora, run .get_metadata(). &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;Please note that it might take a while...&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Corpora.get_collection"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_collection">[docs]</a>    <span class="k">def</span> <span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the documents (recordings) in a collection.&quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;document/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">)[</span><span class="s2">&quot;documents&quot;</span><span class="p">]</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;external_identifier&quot;</span><span class="p">)</span>
+            <span class="n">collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">collection</span></div>
+
+<div class="viewcode-block" id="Corpora.get_recording"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_recording">[docs]</a>    <span class="k">def</span> <span class="nf">get_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmbid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about a recording.</span>
+
+<span class="sd">        :param rmbid: A recording MBID.</span>
+<span class="sd">        :returns: mbid, title, artists, raga, tala, work.</span>
+<span class="sd">            ``artists`` includes performance relationships attached to the recording, the release, and the release artists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/recording/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rmbid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Corpora.get_metadata"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the full metadata of the initialized corpora. It might take a while...&quot;&quot;&quot;</span>
+
+        <span class="c1"># Initializing database</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">recording_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;recording_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;artist_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">concert_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;concert_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;work_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raga_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;raga_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tala_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;tala_list&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instrument_list</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;instrument_list&quot;</span><span class="p">]</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Error accessing metadata. Have you entered the right token? If you are confident about that, </span>
+<span class="sd">                consider loading the Corpora instance again.&quot;&quot;&quot;</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query a list of unique identifiers per each relevant tag in the Dunya database. This</span>
+<span class="sd">        method is automatically run when the corpora is initialized.</span>
+
+<span class="sd">        :returns: A dictionary of lists of unique identifiers per each tag: artists, concerts, works,</span>
+<span class="sd">        raagas, taalas, and instruments. It also includes a complete list of recording ids for the collection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">recording_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">artist_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">concert_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">work_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">raga_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tala_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">instrument_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing metadata from database&quot;</span>
+        <span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Getting artist list</span>
+                <span class="k">for</span> <span class="n">artist</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])[</span><span class="s2">&quot;artists&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">artist</span><span class="p">[</span><span class="s2">&quot;lead&quot;</span><span class="p">]:</span>
+                        <span class="n">artist_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">artist</span><span class="p">[</span><span class="s2">&quot;artist&quot;</span><span class="p">])</span>
+                    <span class="n">instrument_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">artist</span><span class="p">[</span><span class="s2">&quot;instrument&quot;</span><span class="p">])</span>
+                <span class="c1"># Getting concert list</span>
+                <span class="k">for</span> <span class="n">concert</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])[</span><span class="s2">&quot;concert&quot;</span><span class="p">]:</span>
+                    <span class="n">concert_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">concert</span><span class="p">)</span>
+                <span class="c1"># Getting work list</span>
+                <span class="k">for</span> <span class="n">work</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])[</span><span class="s2">&quot;work&quot;</span><span class="p">]:</span>
+                    <span class="n">work_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">work</span><span class="p">)</span>
+                <span class="c1"># Getting raaga list</span>
+                <span class="k">for</span> <span class="n">raga</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])[</span><span class="s2">&quot;raaga&quot;</span><span class="p">]:</span>
+                    <span class="n">raga_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">raga</span><span class="p">)</span>
+                <span class="c1"># Getting taala list</span>
+                <span class="k">for</span> <span class="n">tala</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])[</span><span class="s2">&quot;taala&quot;</span><span class="p">]:</span>
+                    <span class="n">tala_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tala</span><span class="p">)</span>
+                <span class="n">recording_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">])</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;recording_list&quot;</span><span class="p">:</span> <span class="n">recording_list</span><span class="p">,</span>
+            <span class="s2">&quot;artist_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">artist_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s2">&quot;concert_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">concert_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s2">&quot;work_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]:</span> <span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">work_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s2">&quot;raga_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">]:</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">raga_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s2">&quot;tala_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">]:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tala_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="s2">&quot;instrument_list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">({</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">instrument_list</span><span class="p">}</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="Corpora.get_artist"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_artist">[docs]</a>    <span class="k">def</span> <span class="nf">get_artist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ambid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about an artist.</span>
+
+<span class="sd">        :param ambid: An artist MBID.</span>
+<span class="sd">        :returns: mbid, name, concerts, instruments, recordings.</span>
+<span class="sd">            ``concerts``, ``instruments`` and ``recordings`` include</span>
+<span class="sd">            information from recording- and release-level</span>
+<span class="sd">            relationships, as well as release artists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/artist/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ambid</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Corpora.list_concerts"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_concerts">[docs]</a>    <span class="k">def</span> <span class="nf">list_concerts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List the concerts in the database. This function will automatically page through API results.</span>
+
+<span class="sd">        :returns: A list of dictionaries containing concert information:</span>
+<span class="sd">            ``{&quot;mbid&quot;: MusicBrainz Release ID, &quot;title&quot;: title of the concert}``</span>
+<span class="sd">            For additional information about each concert use :func:`get_concert`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">concert_list</span></div>
+
+<div class="viewcode-block" id="Corpora.get_concert"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_concert">[docs]</a>    <span class="k">def</span> <span class="nf">get_concert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmbid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about a concert.</span>
+
+<span class="sd">        :param cmbid: A concert mbid.</span>
+<span class="sd">        :returns: mbid, title, artists, tracks.</span>
+<span class="sd">            ``artists`` includes performance relationships attached</span>
+<span class="sd">            to the recordings, the release, and the release artists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/concert/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cmbid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Corpora.list_works"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_works">[docs]</a>    <span class="k">def</span> <span class="nf">list_works</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List the works in the database. This function will automatically page through API results.</span>
+
+<span class="sd">        :returns: A list of dictionaries containing work information:</span>
+<span class="sd">            ``{&quot;mbid&quot;: MusicBrainz work ID, &quot;name&quot;: work name}``</span>
+<span class="sd">            For additional information about each work use :func:`get_work`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_list</span></div>
+
+<div class="viewcode-block" id="Corpora.get_work"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_work">[docs]</a>    <span class="k">def</span> <span class="nf">get_work</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wmbid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about a work.</span>
+
+<span class="sd">        :param wmbid: A work mbid.</span>
+<span class="sd">        :returns: mbid, title, composers, ragas, talas, recordings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/work/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">wmbid</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Corpora.list_ragas"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_ragas">[docs]</a>    <span class="k">def</span> <span class="nf">list_ragas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List the ragas in the database. This function will automatically page through API results.</span>
+
+<span class="sd">        :returns: A list of dictionaries containing raga information:</span>
+<span class="sd">            ``{&quot;uuid&quot;: raga UUID, &quot;name&quot;: name of the raga}``</span>
+<span class="sd">            For additional information about each raga use :func:`get_raga`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raga_list</span></div>
+
+<div class="viewcode-block" id="Corpora.get_raga"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_raga">[docs]</a>    <span class="k">def</span> <span class="nf">get_raga</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raga_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about a raga.</span>
+
+<span class="sd">        :param raga_id: A raga id or uuid.</span>
+<span class="sd">        :returns: uuid, name, artists, works, composers.</span>
+<span class="sd">            ``artists`` includes artists with recording- and release-</span>
+<span class="sd">            level relationships to a recording with this raga.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/raaga/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">raga_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Corpora.list_talas"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_talas">[docs]</a>    <span class="k">def</span> <span class="nf">list_talas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List the talas in the database. This function will automatically page through API results.</span>
+
+<span class="sd">        :returns: A list of dictionaries containing tala information:</span>
+<span class="sd">            ``{&quot;uuid&quot;: tala UUID, &quot;name&quot;: name of the tala}``</span>
+<span class="sd">            For additional information about each tala use :func:`get_tala`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tala_list</span></div>
+
+<div class="viewcode-block" id="Corpora.get_tala"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_tala">[docs]</a>    <span class="k">def</span> <span class="nf">get_tala</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tala_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about a tala.</span>
+
+<span class="sd">        :param tala_id: A tala id or uuid.</span>
+<span class="sd">        :returns: uuid, name, artists, works, composers.</span>
+<span class="sd">            ``artists`` includes artists with recording- and release-</span>
+<span class="sd">            level relationships to a recording with this raga.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/taala/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">tala_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Corpora.list_instruments"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_instruments">[docs]</a>    <span class="k">def</span> <span class="nf">list_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List the instruments in the database. This function will automatically page through API results.</span>
+
+<span class="sd">        :returns: A list of dictionaries containing instrument information:</span>
+<span class="sd">            ``{&quot;id&quot;: instrument id, &quot;name&quot;: Name of the instrument}``</span>
+<span class="sd">            For additional information about each instrument use :func:`get_instrument`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_list</span></div>
+
+<div class="viewcode-block" id="Corpora.get_instrument"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_instrument">[docs]</a>    <span class="k">def</span> <span class="nf">get_instrument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instrument_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get specific information about an instrument.</span>
+
+<span class="sd">        :param instrument_id: An instrument id</span>
+<span class="sd">        :returns: id, name, artists.</span>
+<span class="sd">            ``artists`` includes artists with recording- and release-</span>
+<span class="sd">            level performance relationships of this instrument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_dunya_query_json</span><span class="p">(</span>
+            <span class="s2">&quot;api/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tradition</span> <span class="o">+</span> <span class="s2">&quot;/instrument/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">instrument_id</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Corpora.list_available_types"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.list_available_types">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">list_available_types</span><span class="p">(</span><span class="n">recording_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the available source filetypes for a Musicbrainz recording.</span>
+
+<span class="sd">        :param recording_id: Musicbrainz recording ID.</span>
+<span class="sd">        :returns: a list of filetypes in the database for this recording.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">document</span> <span class="o">=</span> <span class="n">_dunya_query_json</span><span class="p">(</span><span class="s2">&quot;document/by-id/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">recording_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">document</span><span class="p">[</span><span class="s2">&quot;derivedfiles&quot;</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">document</span><span class="p">[</span><span class="s2">&quot;derivedfiles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Corpora.get_annotation"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.get_annotation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_annotation</span><span class="p">(</span><span class="n">recording_id</span><span class="p">,</span> <span class="n">thetype</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alias function of _file_for_document in the Corpora class.</span>
+
+<span class="sd">        :param recording_id: Musicbrainz recording ID.</span>
+<span class="sd">        :param thetype: the computed filetype.</span>
+<span class="sd">        :param subtype: a subtype if the module has one.</span>
+<span class="sd">        :param part: the file part if the module has one.</span>
+<span class="sd">        :param version: a specific version, otherwise the most recent one will be used.</span>
+<span class="sd">        :returns: The contents of the most recent version of the derived file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_file_for_document</span><span class="p">(</span>
+            <span class="n">recording_id</span><span class="p">,</span> <span class="n">thetype</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="n">part</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Corpora.save_annotation"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.save_annotation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save_annotation</span><span class="p">(</span>
+        <span class="n">recording_id</span><span class="p">,</span> <span class="n">thetype</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A version of get_annotation that writes the parsed data into a file.</span>
+
+<span class="sd">        :param recording_id: Musicbrainz recording ID.</span>
+<span class="sd">        :param thetype: the computed filetype.</span>
+<span class="sd">        :param subtype: a subtype if the module has one.</span>
+<span class="sd">        :param part: the file part if the module has one.</span>
+<span class="sd">        :param version: a specific version, otherwise the most recent one will be used.</span>
+<span class="sd">        :returns: None (a file containing the parsed data is written).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_file_for_document</span><span class="p">(</span>
+            <span class="n">recording_id</span><span class="p">,</span> <span class="n">thetype</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="n">part</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;tonic&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;aksharaPeriod&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">):</span>
+            <span class="n">write_scalar_txt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">&quot;section&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">:</span>
+            <span class="n">write_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">&quot;APcurve&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">:</span>
+            <span class="n">write_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;pitch&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;aksharaTicks&quot;</span> <span class="ow">in</span> <span class="n">subtype</span><span class="p">):</span>
+            <span class="n">write_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No writing method available for data type: </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">thetype</span><span class="p">,</span> <span class="n">subtype</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Corpora.download_mp3"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.download_mp3">[docs]</a>    <span class="k">def</span> <span class="nf">download_mp3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recording_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download the mp3 of a document and save it to the specified directory.</span>
+
+<span class="sd">        :param recording_id: The MBID of the recording.</span>
+<span class="sd">        :param output_dir: Where to save the mp3 to.</span>
+<span class="sd">        :returns: name of the saved file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Output directory </span><span class="si">%s</span><span class="s2"> doesn&#39;t exist; can&#39;t save&quot;</span> <span class="o">%</span> <span class="n">output_dir</span>
+            <span class="p">)</span>
+
+        <span class="n">recording</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_recording</span><span class="p">(</span><span class="n">recording_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;concert&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">concert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_concert</span><span class="p">(</span><span class="n">recording</span><span class="p">[</span><span class="s2">&quot;concert&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;mbid&quot;</span><span class="p">])</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">recording</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+            <span class="n">artists</span> <span class="o">=</span> <span class="s2">&quot; and &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">concert</span><span class="p">[</span><span class="s2">&quot;concert_artists&quot;</span><span class="p">]])</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2">.mp3&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">artists</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">recording_id</span> <span class="o">+</span> <span class="s2">&quot;.mp3&quot;</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">get_mp3</span><span class="p">(</span><span class="n">recording_id</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span></div>
+
+<div class="viewcode-block" id="Corpora.download_concert"><a class="viewcode-back" href="../../source/datasets.html#compiam.dunya.Corpora.download_concert">[docs]</a>    <span class="k">def</span> <span class="nf">download_concert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concert_id</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download the mp3s of all recordings in a concert and save them to the specified directory.</span>
+
+<span class="sd">        :param concert_id: The MBID of the concert.</span>
+<span class="sd">        :param location: Where to save the mp3s to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Output directory </span><span class="si">%s</span><span class="s2"> doesn&#39;t exist; can&#39;t save&quot;</span> <span class="o">%</span> <span class="n">output_dir</span>
+            <span class="p">)</span>
+
+        <span class="n">concert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_concert</span><span class="p">(</span><span class="n">concert_id</span><span class="p">)</span>
+        <span class="n">artists</span> <span class="o">=</span> <span class="s2">&quot; and &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">concert</span><span class="p">[</span><span class="s2">&quot;concert_artists&quot;</span><span class="p">]])</span>
+        <span class="n">concertname</span> <span class="o">=</span> <span class="n">concert</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+        <span class="n">concertdir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">artists</span><span class="p">,</span> <span class="n">concertname</span><span class="p">)</span>
+        <span class="n">concertdir</span> <span class="o">=</span> <span class="n">concertdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="n">concertdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">concertdir</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">concertdir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">concertdir</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">concert</span><span class="p">[</span><span class="s2">&quot;recordings&quot;</span><span class="p">]:</span>
+            <span class="n">raga_id</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;mbid&quot;</span><span class="p">]</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+            <span class="n">disc</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;disc&quot;</span><span class="p">]</span>
+            <span class="n">disctrack</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;disctrack&quot;</span><span class="p">]</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">get_mp3</span><span class="p">(</span><span class="n">raga_id</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2">.mp3&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">disc</span><span class="p">,</span> <span class="n">disctrack</span><span class="p">,</span> <span class="n">artists</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">concertdir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
