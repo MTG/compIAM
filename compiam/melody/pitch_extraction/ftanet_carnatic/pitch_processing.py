@@ -114,9 +114,9 @@ def get_est_arr(model, x_list, y_list, batch_size):
     return est_arr
 
 
-def std_normalize(data): 
+def std_normalize(data):
     """Standardize the input data.
-    
+
     :param data: input data.
     :returns: standardized data.
     """
@@ -124,6 +124,6 @@ def std_normalize(data):
     mean = np.mean(data)
     std = np.std(data)
     data = data.copy() - mean
-    if std != 0.:
+    if std != 0.0:
         data = data / std
     return data.astype(np.float32)

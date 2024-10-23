@@ -8,8 +8,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from compiam.exceptions import ModelNotTrainedError
 
-from compiam.utils import get_logger
 from compiam.data import WORKDIR
+from compiam.utils import get_logger
+from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
 
@@ -27,6 +28,8 @@ class DhrupadBandishSegmentation:
         features_path=None,
         original_audios_path=None,
         processed_audios_path=None,
+        download_link=None,
+        download_checksum=None,
         device=None,
     ):
         """Dhrupad Bandish Segmentation init method.
@@ -34,14 +37,16 @@ class DhrupadBandishSegmentation:
         :param mode: net, voc, or pakh. That indicates the source for s.t.m. estimation. Use the net
             mode if audio is a mixture signal, else use voc or pakh for clean/source-separated vocals or
             pakhawaj tracks.
-        :param fold: 0, 1 or 2, it is the validation fold to use during training
+        :param fold: 0, 1 or 2, it is the validation fold to use during training.
         :param model_path: path to file to the model weights.
         :param splits_path: path to file to audio splits.
         :param annotations_path: path to file to the annotations.
         :param features_path: path to file to the computed features.
         :param original_audios_path: path to file to the original audios from the dataset (see README.md in
             compIAM/models/structure/dhrupad_bandish_segmentation/audio_original)
-        :param processed_audios_path: path to file to the processed audio files
+        :param processed_audios_path: path to file to the processed audio files.
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param device: indicate whether the model will run on the GPU.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -93,6 +98,8 @@ class DhrupadBandishSegmentation:
             self.device = "cpu"
             self.model = self._build_model()
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
         self.loaded_model_path = None
         self.trained = False
 
@@ -171,33 +178,32 @@ class DhrupadBandishSegmentation:
             self.download_model(model_path)
 
         self.model = self._build_model()
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.model.load_state_dict(
+            torch.load(model_path, weights_only=True, map_location=self.device)
+        )
         self.model.eval()
         self.loaded_model_path = model_path
         self.trained = True
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1SVkvHFjL5yh5M7cjnM98JK-b1QnHYw7a&export=download"
-        unzip_path = (
+        print("modelpathhh", model_path)
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-4])
             if model_path is not None
             else os.path.join(
                 WORKDIR, "models", "structure", "dhrupad_bandish_segmentation"
             )
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "baseline.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )
 
     def update_mode(self, mode):
         """Update mode for the training and sampling. Mode is one of net, voc,

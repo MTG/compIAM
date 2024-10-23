@@ -1,6 +1,4 @@
 import os
-import gdown
-import zipfile
 import librosa
 import numpy as np
 from tqdm import tqdm
@@ -9,29 +7,42 @@ from compiam.exceptions import ModelNotTrainedError
 
 # Shared functions with FTANetCarnatic for vocals
 from compiam.utils.pitch import normalisation, resampling
-from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import est, std_normalize
-from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process  
+from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
+    est,
+    std_normalize,
+)
+from compiam.melody.pitch_extraction.ftanet_carnatic.cfp import cfp_process
 
 from compiam.io import write_csv
 from compiam.utils import get_logger, WORKDIR
+from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
 
 
 class FTAResNetCarnatic(object):
-    """FTA-Net melody extraction tuned to Carnatic Music."""
+    """FTA-ResNet melody extraction tuned to Carnatic Music."""
 
-    def __init__(self, model_path=None, sample_rate=44100, gpu="-1"):
+    def __init__(
+        self,
+        model_path=None,
+        download_link=None,
+        download_checksum=None,
+        sample_rate=44100,
+        gpu="-1",
+    ):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param sample_rate: Sample rate to which the audio is sampled for extraction.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
         try:
             global torch
             import torch
-            
+
             global FTAnet
             from compiam.melody.pitch_extraction.ftaresnet_carnatic.model import FTAnet
 
@@ -52,6 +63,8 @@ class FTAResNetCarnatic(object):
         self.trained = False
 
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
         if self.model_path is not None:
             self.load_model(self.model_path)
 
@@ -61,36 +74,32 @@ class FTAResNetCarnatic(object):
         """Build the FTA-Net model."""
         ftanet = FTAnet().to(self.device)
         ftanet.eval()
-        return ftanet        
+        return ftanet
 
     def load_model(self, model_path):
         """Load pre-trained model weights."""
         if not os.path.exists(model_path):
             self.download_model(model_path)  # Downloading model weights
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, weights_only=True))
         self.model_path = model_path
         self.trained = True
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1XloLWjnWlTuxOHUF_9fFBRRwNBv-nko-&export=download"
-        unzip_path = (
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
-            else os.path.join(WORKDIR, "models", "melody", "ftanet_violin")
+            else os.path.join(WORKDIR, "models", "melody", "ftaresnet_carnatic")
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "fta_carnatic_violin.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )
 
     def predict(
         self,
@@ -140,7 +149,7 @@ class FTAResNetCarnatic(object):
             )
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
-        
+
         audio_shape = audio.shape
         if len(audio_shape) > 1:
             audio_channels = min(audio_shape)
@@ -150,32 +159,42 @@ class FTAResNetCarnatic(object):
                 audio = np.mean(audio, axis=np.argmin(audio_shape))
 
         # Extracting pitch
-        audio_len = len(audio)//hop_size
+        audio_len = len(audio) // hop_size
         with torch.no_grad():
             prediction_pitch = torch.zeros(321, audio_len).to(self.device)
             for i in tqdm(range(0, audio_len, time_frame)):
-                W, Cen_freq, _ = cfp_process(y=audio[i*hop_size:(i+time_frame)*hop_size+1], sr=self.sample_rate, hop=hop_size)
+                W, Cen_freq, _ = cfp_process(
+                    y=audio[i * hop_size : (i + time_frame) * hop_size + 1],
+                    sr=self.sample_rate,
+                    hop=hop_size,
+                )
                 value = W.shape[-1]
-                W = np.concatenate((W, np.zeros((3, 320, 128 - W.shape[-1]))), axis=-1) # Padding
+                W = np.concatenate(
+                    (W, np.zeros((3, 320, 128 - W.shape[-1]))), axis=-1
+                )  # Padding
                 W_norm = std_normalize(W)
                 w = np.stack((W_norm, W_norm))
-                prediction_pitch[:, i:i+value] = self.model(torch.Tensor(w).to(self.device))[0][0][0][:, :value]
+                prediction_pitch[:, i : i + value] = self.model(
+                    torch.Tensor(w).to(self.device)
+                )[0][0][0][:, :value]
 
         # Convert to Hz
-        frame_time = hop_size/self.sample_rate
+        frame_time = hop_size / self.sample_rate
         y_hat = est(
-            prediction_pitch.to('cpu'), 
-            Cen_freq, 
+            prediction_pitch.to("cpu"),
+            Cen_freq,
             torch.linspace(
-                0, 
-                frame_time*((audio_len//time_frame)*time_frame), 
-                ((audio_len//time_frame)*time_frame)))
+                0,
+                frame_time * ((audio_len // time_frame) * time_frame),
+                ((audio_len // time_frame) * time_frame),
+            ),
+        )
 
         # Filter low frequency values
         freqs = y_hat[:, 1]
         freqs[freqs < 50] = 0
 
-        # Format output 
+        # Format output
         TStamps = y_hat[:, 0]
         output = np.array([TStamps, freqs]).transpose()
 
@@ -211,7 +230,7 @@ class FTAResNetCarnatic(object):
         :returns: None
         """
         return write_csv(data, output_path)
-    
+
     def select_gpu(self, gpu="-1"):
         """Select the GPU to use for inference.
 
@@ -219,13 +238,13 @@ class FTAResNetCarnatic(object):
         :returns: None
         """
         if int(gpu) == -1:
-            self.device = torch.device('cpu')
+            self.device = torch.device("cpu")
         else:
             if torch.cuda.is_available():
-                self.device = torch.device('cuda:'+str(gpu))
+                self.device = torch.device("cuda:" + str(gpu))
             elif torch.backends.mps.is_available():
-                self.device = torch.device('mps:'+str(gpu))
+                self.device = torch.device("mps:" + str(gpu))
             else:
-                self.device = torch.device('cpu')
+                self.device = torch.device("cpu")
                 logger.warning("No GPU available. Running on CPU.")
         self.gpu = gpu

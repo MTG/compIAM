@@ -9,11 +9,15 @@ from compiam.data import models_dict, datasets_list, corpora_list, WORKDIR
 from compiam.exceptions import ModelNotDefinedError
 
 
-def load_model(model_name, data_home=None, models_dict=models_dict, **kwargs):
+def load_model(
+    model_name, data_home=None, models_dict=models_dict, version=None, **kwargs
+):
     """Wrapper for loading pre-trained models.
 
     :param model_name: name of the model, extractors, or algorithm to load.
+    :param data_home: path where the data lives. If None uses the default.
     :param models_dict: dict object including the available models.
+    :param version: which version of the model to load.
     :returns: specific Class of the selected model.
     """
     if not model_name in models_dict:
@@ -24,25 +28,34 @@ def load_model(model_name, data_home=None, models_dict=models_dict, **kwargs):
             )
         )
     m_dict = models_dict[model_name]
-    kwarg_paths = [x for x in list(m_dict["kwargs"].keys()) if "_path" in x]
+    version_ = m_dict["default_version"] if not version else version
+    if version_ not in m_dict["kwargs"]:
+        raise ValueError(
+            f"""
+            Model {model_name} does not have a version {version_}.
+            Available versions are: {list(m_dict['kwargs'].keys())}.
+        """
+        )
+    model_kwargs = m_dict["kwargs"][version_]
+    kwarg_paths = [x for x in list(model_kwargs.keys()) if "_path" in x]
     for kp in kwarg_paths:
-        if isinstance(m_dict["kwargs"][kp], dict):
-            for k in list(m_dict["kwargs"][kp].keys()):
-                m_dict["kwargs"][kp][k] = (
-                    os.path.join(data_home, m_dict["kwargs"][kp][k])
+        if isinstance(model_kwargs[kp], dict):
+            for k in list(model_kwargs[kp].keys()):
+                model_kwargs[kp][k] = (
+                    os.path.join(data_home, model_kwargs[kp][k])
                     if data_home is not None
-                    else os.path.join(WORKDIR, m_dict["kwargs"][kp][k])
+                    else os.path.join(WORKDIR, model_kwargs[kp][k])
                 )
         else:
-            m_dict["kwargs"][kp] = (
-                os.path.join(data_home, m_dict["kwargs"][kp])
+            model_kwargs[kp] = (
+                os.path.join(data_home, model_kwargs[kp])
                 if data_home is not None
-                else os.path.join(WORKDIR, m_dict["kwargs"][kp])
+                else os.path.join(WORKDIR, model_kwargs[kp])
             )
 
     module = getattr(import_module(m_dict["module_name"]), m_dict["class_name"])
-    m_dict["kwargs"].update(kwargs)
-    return module(**m_dict["kwargs"])
+    model_kwargs.update(kwargs)
+    return module(**model_kwargs)
 
 
 def load_dataset(dataset_name, data_home=None, version="default"):

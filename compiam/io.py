@@ -40,7 +40,7 @@ def read_csv(file_path):
 
 def save_object(obj, file_path):
     """Saves object to pickle file
-    
+
     :param obj: an object to save to pickle file
     :param file_path: path to save the object
     """

@@ -23,7 +23,12 @@ def compute_stft(signal, unet_config):
                 frame_length=unet_config.win,
                 frame_step=unet_config.hop,
                 fft_length=unet_config.win,
-                window_fn=tf.signal.hann_window), 1), 2)
+                window_fn=tf.signal.hann_window,
+            ),
+            1,
+        ),
+        2,
+    )
     mag = tf.abs(signal_stft)
     phase = tf.math.angle(signal_stft)
     return mag, phase
