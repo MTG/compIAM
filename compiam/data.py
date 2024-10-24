@@ -17,7 +17,19 @@ TESTDIR = os.path.join(
 # 	    {
 #           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
-#           "model_path": "<path_to_model>"
+#           "default_version": "<version code of default version>",
+#           "kwargs": {
+#               "<version code>": {
+#                   "model_path": "<path_to_model>",
+#                   "download_link": "<link_to_download_model>",
+#                   "download_checksum": "<checksum_of_downloaded_model>",
+#                   other arguments...
+#               },
+#               "<version code 2 (if applicable)>": {
+#                   arguments...
+#               },
+#               more versions...
+#           },
 #       }
 
 models_dict = {
