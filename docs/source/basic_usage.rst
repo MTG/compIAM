@@ -58,3 +58,10 @@ corresponding default folder ``./compiam/model/``. If the model is already downl
 .. note::
     From v0.3.0 on, ``compiam.load_model()`` wrapper has an argument ``data_home``, in where you can specify to which folder you
     want the models to be downloaded and read from.
+
+.. note::
+    From v0.4.0 on, ``compiam.load_model()`` wrapper has an argument ``version``, in where you can specify which version of the 
+    pre-trained model you want to use. You may want to use ``compiam.get_model_info(<model_key>)`` to print out the entire model
+    information in compiam/data.py and visualisse the available versions. By default, the model contributor selects a default version
+    to be loaded without the user having to specify it, so this argument is option. If you try to load a non-existing version, an 
+    error will be thrown.

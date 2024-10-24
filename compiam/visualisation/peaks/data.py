@@ -4,6 +4,7 @@ Code taken with permission from https://github.com/gopalkoduri/pypeaks
 Author: Gopal Koduri
 Date: Oct 2022
 """
+
 from __future__ import division
 import pickle
 from warnings import warn

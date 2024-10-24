@@ -83,7 +83,9 @@ class Melodia:
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio = estd.EqloudLoader(filename=input_data, sampleRate=self.sample_rate)()
+            audio = estd.EqloudLoader(
+                filename=input_data, sampleRate=self.sample_rate
+            )()
         elif isinstance(input_data, np.ndarray):
             logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
@@ -119,7 +121,9 @@ class Melodia:
             voicingTolerance=self.voicing_tolerance,
         )
         pitch, _ = extractor(audio)
-        TStamps = np.array(range(0, len(pitch))) * float(self.hop_size) / self.sample_rate
+        TStamps = (
+            np.array(range(0, len(pitch))) * float(self.hop_size) / self.sample_rate
+        )
         output = np.array([TStamps, pitch]).transpose()
 
         if out_step is not None:

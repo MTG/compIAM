@@ -3,15 +3,17 @@ from joblib import Parallel, delayed
 
 from compiam.utils import create_if_not_exists
 from compiam.utils.augment.augment_data_ar import augment_data_attack_remix
-#from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
+
+# from compiam.utils.augment.augment_data_ps import augment_data_pitch_shift
 from compiam.utils.augment.augment_data_sf import augment_data_spectral_shape
 from compiam.utils.augment.augment_data_sr import augment_data_stroke_remix
-#from compiam.utils.augment.augment_data_ts import augment_data_time_scale
+
+# from compiam.utils.augment.augment_data_ts import augment_data_time_scale
 
 file_dir = os.path.dirname(__file__)
 
 
-#def pitch_shift(in_path, out_dir, shifts=-1.0, sr=16000, n_jobs=4):
+# def pitch_shift(in_path, out_dir, shifts=-1.0, sr=16000, n_jobs=4):
 #    """Pitch shift audio at <in_path>, by shifts in <shifts>. Output to <out_dir>
 #
 #    :param in_path: Path to input audio
@@ -118,7 +120,7 @@ def stroke_remix(
     )
 
 
-#def time_scale(in_path, out_dir, time_shifts=0.8, sr=16000, n_jobs=4):
+# def time_scale(in_path, out_dir, time_shifts=0.8, sr=16000, n_jobs=4):
 #    """Time scaling of input audio, pitch maintained.
 #
 #    :param in_path: Path to input audio

@@ -4,6 +4,7 @@ Code taken with permission from https://github.com/gopalkoduri/pypeaks
 Author: Gopal Koduri
 Date: Oct 2022
 """
+
 import numpy as np
 from compiam.visualisation.peaks.slope import find_nearest_index
 

@@ -99,9 +99,9 @@ def to_aeneas(annotations, label_row="text"):
             "end": row.s2,
             "id": row[label_row],
             "language": "eng",
-            "lines": row.tier
-            if label_row == "text"
-            else row.tier.replace("underlying_", ""),
+            "lines": (
+                row.tier if label_row == "text" else row.tier.replace("underlying_", "")
+            ),
         }
         aeneas.append(d)
     return aeneas

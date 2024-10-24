@@ -1,7 +1,5 @@
 import os
 import tqdm
-import gdown
-import zipfile
 import librosa
 import math
 
@@ -12,6 +10,7 @@ from compiam.separation.singing_voice_extraction.cold_diff_sep.model.vad import 
 
 from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger, WORKDIR
+from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
 
@@ -19,10 +18,14 @@ logger = get_logger(__name__)
 class ColdDiffSep(object):
     """Leakage-aware singing voice separation model for Carnatic Music."""
 
-    def __init__(self, model_path=None, gpu="-1"):
+    def __init__(
+        self, model_path=None, download_link=None, download_checksum=None, gpu="-1"
+    ):
         """Leakage-aware singing voice separation init method.
 
         :param model_path: path to file to the model weights.
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -71,6 +74,8 @@ class ColdDiffSep(object):
         self.trained = False
 
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
         if self.model_path is not None:
             self.load_model(self.model_path)
 
@@ -200,19 +205,20 @@ class ColdDiffSep(object):
                 boundary = "end" if trim == runs - 2 else None
 
                 placehold_voc = np.zeros(output_voc.shape)
-                placehold_voc[
-                    trim_low : trim_low + pred_audio.shape[0]
-                ] = pred_audio * get_overlap_window(pred_audio, boundary=boundary)
+                placehold_voc[trim_low : trim_low + pred_audio.shape[0]] = (
+                    pred_audio * get_overlap_window(pred_audio, boundary=boundary)
+                )
                 output_voc += placehold_voc
                 trim_low += pred_audio.shape[0] // 2
 
             except:
-                output_voc =  output_voc * (
-                    np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
+                output_voc = output_voc * (
+                    np.max(np.abs(mixture.numpy()))
+                    / (np.max(np.abs(output_voc)) + 1e-6)
                 )
                 output_voc = output_voc[:trim_low]
                 return output_voc
-            
+
         return output_voc * (
             np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
         )
@@ -228,24 +234,19 @@ class ColdDiffSep(object):
         #    output_voc,
         #    22050) # Writing to file
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1yj9iHTY7nCh2qrIM2RIUOXhLXt1K8WcE&export=download"
-        unzip_path = (
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
             else os.path.join(WORKDIR, "models", "separation", "cold_diff_sep")
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "saraga-8.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
-
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )

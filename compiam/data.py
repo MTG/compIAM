@@ -17,114 +17,203 @@ TESTDIR = os.path.join(
 # 	    {
 #           "module_name": "<compiam.melody|rhythm|timbre|structure.task.file|folder name of model>",
 #           "class_name": "<name of the model class>",
-#           "model_path": "<path_to_model>"
+#           "default_version": "<version code of default version>",
+#           "kwargs": {
+#               "<version code>": {
+#                   "model_path": "<path_to_model>",
+#                   "download_link": "<link_to_download_model>",
+#                   "download_checksum": "<checksum_of_downloaded_model>",
+#                   other arguments...
+#               },
+#               "<version code 2 (if applicable)>": {
+#                   arguments...
+#               },
+#               more versions...
+#           },
 #       }
 
 models_dict = {
     "melody:deepsrgm": {
         "module_name": "compiam.melody.raga_recognition.deepsrgm",
         "class_name": "DEEPSRGM",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": {
-                "lstm": os.path.join(
-                    "models", "melody", "deepsrgm", "baseline", "lstm_25_checkpoint.pth"
+            "v1": {
+                "model_path": {
+                    "lstm": os.path.join(
+                        "models",
+                        "melody",
+                        "deepsrgm",
+                        "baseline",
+                        "lstm_25_checkpoint.pth",
+                    ),
+                    "gru": os.path.join(
+                        "models",
+                        "melody",
+                        "deepsrgm",
+                        "baseline",
+                        "gru_30_checkpoint.pth",
+                    ),
+                },
+                "mapping_path": os.path.join(
+                    "models",
+                    "melody",
+                    "deepsrgm",
+                    "baseline",
+                    "raga_mapping.json",
                 ),
-                "gru": os.path.join(
-                    "models", "melody", "deepsrgm", "baseline", "gru_30_checkpoint.pth"
-                ),
+                "download_link": "https://zenodo.org/records/13984096/files/deepsrgm.zip?download=1",
+                "download_checksum": "dc7560af17e546f161786a8cbd47727e",
             },
-            "mapping_path": os.path.join(
-                "models",
-                "melody",
-                "deepsrgm",
-                "baseline",
-                "raga_mapping.json",
-            ),
         },
     },
     "melody:ftanet-carnatic": {
         "module_name": "compiam.melody.pitch_extraction.ftanet_carnatic",
         "class_name": "FTANetCarnatic",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": os.path.join(
-                "models", "melody", "ftanet", "carnatic", "carnatic"
-            ),
-            "sample_rate": 8000,
+            "v1": {
+                "model_path": os.path.join(
+                    "models", "melody", "ftanet-carnatic", "carnatic", "carnatic"
+                ),
+                "download_link": "https://zenodo.org/records/13981708/files/FTANetCarnatic-vocals.zip?download=1",
+                "download_checksum": "e8bb3a86eef6beae11bf1eb49a57cbbf",
+                "sample_rate": 8000,
+            }
         },
     },
     "melody:ftaresnet-carnatic-violin": {
         "module_name": "compiam.melody.pitch_extraction.ftaresnet_carnatic",
         "class_name": "FTAResNetCarnatic",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": os.path.join(
-                "models", "melody", "ftanet", "fta_carnatic_violin", "FTA-ResNet_best_version.pth"
-            ),
-            "sample_rate": 44100,
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "melody",
+                    "ftaresnet-carnatic",
+                    "carnatic_violin",
+                    "FTA-ResNet_best_version.pth",
+                ),
+                "sample_rate": 44100,
+                "download_link": "https://zenodo.org/records/13983762/files/FTAResNetCarnatic-violin.zip?download=1",
+                "download_checksum": "bda6e841b0e8ec7418bf9e0e9eb57a19",
+            }
         },
     },
     "melody:cae-carnatic": {
         "module_name": "compiam.melody.pattern.sancara_search",
         "class_name": "CAEWrapper",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": os.path.join(
-                "models",
-                "melody",
-                "caecarnatic",
-                "carnatic",
-                "model_complex_auto_cqt.save",
-            ),
-            "conf_path": os.path.join(
-                "models", "melody", "caecarnatic", "carnatic", "config_cqt.ini"
-            ),
-            "spec_path": os.path.join(
-                "models", "melody", "caecarnatic", "carnatic", "config_spec.cfg"
-            ),
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "melody",
+                    "caecarnatic",
+                    "carnatic",
+                    "model_complex_auto_cqt.save",
+                ),
+                "conf_path": os.path.join(
+                    "models", "melody", "caecarnatic", "carnatic", "config_cqt.ini"
+                ),
+                "spec_path": os.path.join(
+                    "models", "melody", "caecarnatic", "carnatic", "config_spec.cfg"
+                ),
+                "download_link": "https://zenodo.org/records/13984138/files/caecarnatic.zip?download=1",
+                "download_checksum": "81962c8866bb6e76023d6e1dc5d1904d",
+            },
         },
     },
     "structure:dhrupad-bandish-segmentation": {
         "module_name": "compiam.structure.segmentation.dhrupad_bandish_segmentation",
         "class_name": "DhrupadBandishSegmentation",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": {
-                "net": os.path.join(
+            "v1": {
+                "model_path": {
+                    "net": os.path.join(
+                        "models",
+                        "structure",
+                        "dhrupad_bandish_segmentation",
+                        "baseline",
+                        "pretrained_models",
+                        "net",
+                    ),
+                    "pakh": os.path.join(
+                        "models",
+                        "structure",
+                        "dhrupad_bandish_segmentation",
+                        "baseline",
+                        "pretrained_models",
+                        "pakh",
+                    ),
+                    "voc": os.path.join(
+                        "models",
+                        "structure",
+                        "dhrupad_bandish_segmentation",
+                        "baseline",
+                        "pretrained_models",
+                        "voc",
+                    ),
+                },
+                "splits_path": os.path.join(
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
                     "baseline",
-                    "pretrained_models",
-                    "net",
+                    "splits",
                 ),
-                "pakh": os.path.join(
+                "annotations_path": os.path.join(
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
                     "baseline",
-                    "pretrained_models",
-                    "pakh",
+                    "annotations",
                 ),
-                "voc": os.path.join(
+                "features_path": os.path.join(
                     "models",
                     "structure",
                     "dhrupad_bandish_segmentation",
                     "baseline",
-                    "pretrained_models",
-                    "voc",
+                    "features",
                 ),
+                "original_audios_path": os.path.join(
+                    "models",
+                    "structure",
+                    "dhrupad_bandish_segmentation",
+                    "baseline",
+                    "audio_original",
+                ),
+                "processed_audios_path": os.path.join(
+                    "models",
+                    "structure",
+                    "dhrupad_bandish_segmentation",
+                    "baseline",
+                    "audio_sections",
+                ),
+                "download_link": "https://zenodo.org/records/13984151/files/dhrupad_bandish_segmentation.zip?download=1",
+                "download_checksum": "37967af81b0020a516b2470f659b481c",
             },
         },
     },
     "separation:cold-diff-sep": {
         "module_name": "compiam.separation.singing_voice_extraction.cold_diff_sep",
         "class_name": "ColdDiffSep",
+        "default_version": "v1",
         "kwargs": {
-            "model_path": os.path.join(
-                "models",
-                "separation",
-                "cold_diff_sep",
-                "saraga-8",
-                "saraga-8.ckpt-1",
-            ),
-            #"sample_rate": 22050,  # Already contained in the model config
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "separation",
+                    "cold_diff_sep",
+                    "saraga-8",
+                    "saraga-8.ckpt-1",
+                ),
+                "download_link": "https://zenodo.org/records/13984075/files/cold-diff-sep.zip?download=1",
+                "download_checksum": "cdd98fa8725ec1efd4017c34e2ff8ce6",
+            },
+            # "sample_rate": 22050,  # Already contained in the model config
         },
     },
 }

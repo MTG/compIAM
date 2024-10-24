@@ -1,13 +1,12 @@
 import os
 import math
-import gdown
-import zipfile
 import librosa
 
 import numpy as np
 from compiam.exceptions import ModelNotTrainedError
 
 from compiam.utils.pitch import normalisation, resampling
+from compiam.utils.download import download_remote_model
 from compiam.melody.pitch_extraction.ftanet_carnatic.pitch_processing import (
     batchize_test,
     get_est_arr,
@@ -22,10 +21,19 @@ logger = get_logger(__name__)
 class FTANetCarnatic(object):
     """FTA-Net melody extraction tuned to Carnatic Music."""
 
-    def __init__(self, model_path=None, sample_rate=8000, gpu="-1"):
+    def __init__(
+        self,
+        model_path=None,
+        download_link=None,
+        download_checksum=None,
+        sample_rate=8000,
+        gpu="-1",
+    ):
         """FTA-Net melody extraction init method.
 
         :param model_path: path to file to the model weights.
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param sample_rate: Sample rate to which the audio is sampled for extraction.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         """
@@ -50,6 +58,8 @@ class FTANetCarnatic(object):
         self.trained = False
 
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
         if self.model_path is not None:
             self.load_model(self.model_path)
 
@@ -236,26 +246,22 @@ class FTANetCarnatic(object):
         self.model_path = model_path
         self.trained = True
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1YxJKyaNg7_4T_P-BmK6AJMZ8FgRQsgie&export=download"
-        unzip_path = (
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
-            else os.path.join(WORKDIR, "models", "melody", "ftanet")
+            else os.path.join(WORKDIR, "models", "melody", "ftanet-carnatic")
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "carnatic.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )
 
     def predict(
         self,
