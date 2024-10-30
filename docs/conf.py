@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath("../"))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "compiam"
-copyright = "2022, Music Technology Group, Universitat Pompeu Fabra \
+copyright = "2024, Music Technology Group, Universitat Pompeu Fabra \
     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra)"
 author = "Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra"
 release = "0.3.0"

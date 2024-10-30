@@ -129,7 +129,7 @@ Development step 2: write your feature
 Development step 3: test your feature
 -------------------------------------
 
-**When finished, if appropriate, add unit tests to the testing framework in ``tests/`` (using the Python testing package `pytest <https://docs.pytest.org/en/7.1.x/>_`).**
+When finished, if appropriate, add unit tests to the testing framework in ``tests/`` (using the Python testing package `pytest <https://docs.pytest.org/en/7.1.x/>`_).
 
 * Typical tests that you should write include checking that the tool is loaded with no unexpected bugs and that if running the tool on top of an example track, the output is as expected.
 

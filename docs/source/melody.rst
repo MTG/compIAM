@@ -38,7 +38,7 @@ FTANet-Carnatic
    :members:
 
 FTAResNet-Carnatic
----------------
+------------------
 
 .. note::
     REQUIRES: torch
