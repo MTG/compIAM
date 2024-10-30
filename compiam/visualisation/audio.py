@@ -10,7 +10,14 @@ logger = get_logger(__name__)
 
 
 def plot_waveform(
-    input_data, t1, t2, labels=None, input_sr=44100, sr=44100, output_path=None, verbose=False
+    input_data,
+    t1,
+    t2,
+    labels=None,
+    input_sr=44100,
+    sr=44100,
+    output_path=None,
+    verbose=False,
 ):
     """Plotting waveform between two given points with optional labels
 

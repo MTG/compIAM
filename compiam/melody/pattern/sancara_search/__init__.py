@@ -1,12 +1,11 @@
 import os
-import gdown
-import zipfile
 
 import numpy as np
 
 from configobj import ConfigObj
 
 from compiam.utils import get_logger, WORKDIR
+from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
 
@@ -19,12 +18,22 @@ class CAEWrapper:
     compiam.load_model()
     """
 
-    def __init__(self, model_path, conf_path, spec_path, device="cpu"):
+    def __init__(
+        self,
+        model_path,
+        conf_path,
+        spec_path,
+        download_link,
+        download_checksum,
+        device="cpu",
+    ):
         """Initialise wrapper with trained model from original CAE implementation
 
         :param model_path: Path to .save model trained using original CAE implementation.
         :param conf_path: Path to .ini conf used to train model at <model_path>.
         :param spec_path: Path to .cfg configuration spec.
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param map_location: cpu or gpu [optional, defaults to cpu].
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
@@ -60,6 +69,8 @@ class CAEWrapper:
 
         self.conf_path = conf_path
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
 
         self.trained = False
         # To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU
@@ -169,29 +180,27 @@ class CAEWrapper:
             setattr(self, tp, v)
 
         self.model = self._build_model()
-        self.model.load_state_dict(torch.load(model_path), strict=False)
+        self.model.load_state_dict(
+            torch.load(model_path, weights_only=True), strict=False
+        )
         self.trained = True
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1WQVgqC4Bu4QQJyfKiP89HqJ2RxHAUmJM&export=download"
-        unzip_path = (
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
             else os.path.join(WORKDIR, "models", "melody", "caecarnatic")
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "caecarnatic.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )
 
     def extract_features(self, file_path, sr=None):
         """

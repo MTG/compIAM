@@ -1,6 +1,4 @@
 import os
-import gdown
-import zipfile
 import warnings
 
 import numpy as np
@@ -12,6 +10,7 @@ from compiam.exceptions import (
     DatasetNotLoadedError,
 )
 from compiam.utils import get_logger, WORKDIR
+from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
 
@@ -24,6 +23,8 @@ class DEEPSRGM(object):
     def __init__(
         self,
         model_path=None,
+        download_link=None,
+        download_checksum=None,
         rnn="lstm",
         mapping_path=None,
         sample_rate=44100,
@@ -32,6 +33,8 @@ class DEEPSRGM(object):
         """DEEPSRGM init method.
 
         :param model_path: path to file to the model weights
+        :param download_link: link to the remote pre-trained model.
+        :param download_checksum: checksum of the model file.
         :param rnn: type of rnn used "lstm" or "gru"
         :param mapping_path: path to raga to id JSON mapping
         :param sample_rate: sampling rate which the model is trained
@@ -63,6 +66,8 @@ class DEEPSRGM(object):
             self.model = self._build_model(rnn=self.rnn)
 
         self.model_path = model_path
+        self.download_link = download_link
+        self.download_checksum = download_checksum
         self.sample_rate = sample_rate
         self.trained = False
 
@@ -89,7 +94,7 @@ class DEEPSRGM(object):
         self.dataset = None
 
     def _build_model(self, rnn="lstm"):
-        """Bulding DEEPSRM
+        """Building DEEPSRM
 
         :param rnn: lstm (default) or gru.
         """
@@ -118,7 +123,7 @@ class DEEPSRGM(object):
             self.model = self._build_model(rnn="gru")
 
         self.model_path = model_path
-        weights = torch.load(model_path, map_location=self.device)
+        weights = torch.load(model_path, weights_only=True, map_location=self.device)
         new_weights = weights.copy()
         keys_to_fix = [
             ".weight_ih_l0",
@@ -133,26 +138,22 @@ class DEEPSRGM(object):
         self.model.load_state_dict(new_weights)
         self.trained = True
 
-    def download_model(self, model_path=None):
+    def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        url = "https://drive.google.com/uc?id=1H2FU7q5Nl1e6LAP7c1jml3etFtTv3_lM&export=download"
-        unzip_path = (
+        download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
             else os.path.join(WORKDIR, "models", "melody", "deepsrgm")
         )
-        if not os.path.exists(unzip_path):
-            os.makedirs(unzip_path)
-        output = os.path.join(unzip_path, "baseline.zip")
-        gdown.download(url, output, quiet=False)
-
-        # Unzip file
-        with zipfile.ZipFile(output, "r") as zip_ref:
-            zip_ref.extractall(unzip_path)
-
-        # Delete zip file after extraction
-        os.remove(output)
-        logger.warning("Files downloaded and extracted successfully.")
+        # Creating model folder to store the weights
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+        download_remote_model(
+            self.download_link,
+            self.download_checksum,
+            download_path,
+            force_overwrite=force_overwrite,
+        )
 
     def load_raga_dataset(self, data_home=None, download=False):
         """Load an instance of the Compmusic raga dataset to assist the tool

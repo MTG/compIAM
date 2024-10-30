@@ -16,7 +16,7 @@ How can I contribute?
 
 There are several ways to contribute to compiam. We will now try to list them all:
 
-* Integrating a **new tool/model**
+* Integrating a **new tool/model** (or an upgraded version of an existing model)
 * Integrating **access to a new dataset** (or to a dataset that has already been around for some time but the access to it is not canonical and standardized)
 * **Fixing a bug**
 * Improving the library itself with **new core features** and **structure improvements**
@@ -90,10 +90,27 @@ Development step 2: write your feature
 
         * Please add the proper citation of the work you are integrating, in order for users to properly cite such work in case they use it for their own research.
 
+    * **If you are adding new models:**
+
+        * If you add a model that has pre-trained weights available, you may want to include these in compIAM as well. Then, your model will be loaded using the ``.load_model()`` wrapper. Here are some TODOs to add a pre-trained model to compIAM:
+
+            * Write a model wrapper that has all util functions to download and load the weights, build the model, and run prediction/extraction. You may want to use one of the existing model classes as en example (e.g., FTANetCarnatic). **We will publish a template soon :)**
+
+            .. note::
+                Do not hesitate to get in touch if you have any doubt/question on integrating the model to compIAM. We will be happy to 
+                assist you as soon as possible :)
+
+
+            * Add your model to ``models_dict`` in compiam/data.py, adding all details about your model. There are instructions on the file itself.
+
+            * Upload your weights to Zenodo. You will need to download link and checksum for the model information in ``models_dict``. You should upload a compressed folder containing the weights and additional files related to the pre-trained model (not code!).
+
+            * Make sure your model is properly initialized, built, and that the weights are properly downloaded and loaded. Using the example functions from another model in compIAM, all these actions can be executed.
+
         .. note::
-            Since we also support Machine and Deep Learning models, we are open to including dependencies such as torch, tensorflow,
+            Since we support Machine and Deep Learning models, we are open to including dependencies such as torch, tensorflow,
             and others. These, however, are included as “optional dependencies”, so  you only install those if necessary. Check out
-            examples such as Melodia or FTANetCarnatic to learn how that works! 
+            examples such as ``Melodia`` or ``FTANetCarnatic`` to learn how that works! 
 
     * **If you are adding new datasets:**
 
