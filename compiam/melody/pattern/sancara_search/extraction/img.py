@@ -133,6 +133,6 @@ def edges_to_contours(X, kernel_size=10):
 def apply_bin_op(X, binop_dim):
     binop_struct = np.zeros((binop_dim, binop_dim))
     np.fill_diagonal(binop_struct, 1)
-    X_binop = binary_opening(X, structure=binop_struct).astype(np.int)
+    X_binop = binary_opening(X, structure=binop_struct).astype(int)
 
     return X_binop

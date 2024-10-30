@@ -59,6 +59,8 @@ from compiam.melody.pattern.sancara_search.extraction.segments import (
     group_overlapping,
     group_by_distance,
     trim_silence,
+    segments_from_matrix,
+    remove_group_duplicates
 )
 from compiam.utils import get_logger
 
@@ -273,7 +275,7 @@ def normalise_self_sim(matrix):
     matrix = convolve2d(matrix, ey, mode="same")
 
     diag_mask = np.ones(matrix.shape)
-    diag_mask = (diag_mask - np.diag(np.ones(matrix.shape[0]))).astype(np.bool)
+    diag_mask = (diag_mask - np.diag(np.ones(matrix.shape[0]))).astype(bool)
 
     mat_min = np.min(matrix[diag_mask])
     mat_max = np.max(matrix[diag_mask])
