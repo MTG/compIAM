@@ -22,7 +22,7 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
-**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.8``, ``3.9``, ``3.10``. Support to ``py3.7`` has been dropped.
+**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.8``, ``3.9``, ``3.10``, and ``3.11``. Support to ``py3.7`` has been dropped, and support to ``py3.8`` will be dropped soon, as the version has recently reached end-of-life.
 
 
 ## Basic usage
@@ -61,7 +61,7 @@ compIAM is structured by the fundamental aspects of music in which we classify t
 - **[Music source separation](./compiam/separation/README.md)**
 
 ### Accessing the Dunya corpora
-We do provide access to the Carnatic and Hindustani corpora in Dunya. For both corpora, there is access to the CC and the non-CC parts. More details on accessing the Dunya corpora are [given here](./compiam/dunya/README.md)
+We do provide access to the Carnatic and Hindustani corpora in Dunya. For both corpora, there is access to the CC and the non-CC parts. More details on accessing the Dunya corpora are [given here](./compiam/dunya/README.md). 
 
 ### Dataset loaders
 Direct and MIR-standardized access to the datasets for the computational analysis of Indian Art Music is given through [mirdata](https://github.com/mir-dataset-loaders/mirdata) loaders. The current available datasets in compIAM are:
