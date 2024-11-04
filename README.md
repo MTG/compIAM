@@ -22,7 +22,7 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
-**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.8``, ``3.9``, ``3.10``, and ``3.11``. Support to ``py3.7`` has been dropped, and support to ``py3.8`` will be dropped soon, as the version has recently reached end-of-life.
+**Python version:** At this moment, we have successfully tested ``compiam`` in ``python`` versions: ``3.9 - 3.13``. Support to ``py3.8`` has been dropped, since it reached end-of-life.
 
 
 ## Basic usage
