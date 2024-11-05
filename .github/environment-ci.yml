@@ -36,8 +36,11 @@ dependencies:
   - pytest>=7.4.3
 
   - pip:
-    - attrs>=23.1.0
-    - black>=23.3.0
-    - decorator>=5.1.1
-    - future>=0.18.3
-    - testcontainers>=3.7.1
+    - "soundfile>=0.12.1"
+    - "opencv-python~=4.6.0"
+    - "mirdata==0.3.8"
+    - "attrs>=23.1.0"
+    - "black>=23.3.0"
+    - "decorator>=5.1.1"
+    - "future>=0.18.3"
+    - "testcontainers>=3.7.1"
