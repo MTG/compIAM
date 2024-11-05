@@ -21,9 +21,7 @@ jobs:
         sudo sed -i 's/azure\.//' /etc/apt/sources.list
         sudo apt-get update
         python -m pip install --upgrade pip
-        sudo apt-get install python3.11-distutils 
-        sudo apt-get install python3.12-distutils 
-        sudo apt-get install python3.13-distutils 
+        sudo apt-get install python3-distutils
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
