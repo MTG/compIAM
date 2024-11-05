@@ -21,6 +21,7 @@ jobs:
         sudo sed -i 's/azure\.//' /etc/apt/sources.list
         sudo apt-get update
         python -m pip install --upgrade pip
+        python -m pip install --upgrade setuptools
         pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
