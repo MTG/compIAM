@@ -19,15 +19,12 @@ dependencies:
   - "zope"
   # Audio
   - "librosa>=0.10.1"
-  - "soundfile>=0.12.1"
   # Audio processing
   - "scikit-learn==1.5.2"
   - "scikit-image~=0.24.0"
-  - "opencv-python~=4.6.0"
   - "hmmlearn==0.3.3"
   - "fastdtw~=0.3.4"
   # Data
-  - "mirdata==0.3.8"
   - "smart_open"
   - "mir_eval"
   #######
