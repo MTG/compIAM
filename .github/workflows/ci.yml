@@ -117,7 +117,7 @@ jobs:
 
         - name: Run full ML tests
           shell: bash -l {0}
-          run: pytest tests/ --full-ml
+          run: pytest tests/ --full_ml
 
         - name: Run all tests
           shell: bash -l {0}
