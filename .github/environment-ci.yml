@@ -1,0 +1,43 @@
+name: mirdata-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # required
+  - pip
+  - "attrs>=23.1.0"
+  - "matplotlib>=3.0.0"
+  - "numpy>=1.20.3,<=1.26.4"
+  - "joblib>=1.2.0"
+  - "pathlib~=1.0.1"
+  - "tqdm>=4.66.1"
+  - "IPython>=7.34.0"
+  - "ipywidgets>=7.0.0,<8"
+  - "Jinja2~=3.1.2"
+  - "configobj~=5.0.6"
+  - "seaborn"
+  - "zope"
+  # Audio
+  - "librosa>=0.10.1"
+  - "soundfile>=0.12.1"
+  # Audio processing
+  - "scikit-learn==1.5.2"
+  - "scikit-image~=0.24.0"
+  - "opencv-python~=4.6.0"
+  - "hmmlearn==0.3.3"
+  - "fastdtw~=0.3.4"
+  # Data
+  - "mirdata==0.3.8"
+  - "smart_open"
+  - "mir_eval"
+  #######
+  - libvorbis
+  # optional, but required for testing
+  - pytest>=7.4.3
+
+  - pip:
+    - attrs>=23.1.0
+    - black>=23.3.0
+    - decorator>=5.1.1
+    - future>=0.18.3
+    - testcontainers>=3.7.1

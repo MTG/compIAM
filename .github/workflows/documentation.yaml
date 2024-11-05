@@ -32,7 +32,6 @@ jobs:
           pip install scikit-image
           pip install seaborn
           pip install opencv-python
-          pip install gdown
           pip install smart_open
       - name: Sphinx build
         run: |
