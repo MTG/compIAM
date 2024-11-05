@@ -15,7 +15,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libsndfile1-dev
-          pip install --upgrade setuptools
           pip install sphinx sphinx_rtd_theme numpydoc recommonmark
           pip install mirdata
           pip install scikit-learn 
