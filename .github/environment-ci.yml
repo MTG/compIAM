@@ -1,4 +1,4 @@
-name: mirdata-dev
+name: compiam-dev
 channels:
   - conda-forge
   - defaults
@@ -31,8 +31,12 @@ dependencies:
   - libvorbis
   # optional, but required for testing
   - pytest>=7.4.3
-
   - pip:
+    # Optional deps
+    - "tensorflow>=2.12.0"
+    - "tensorflow_addons"
+    - "torch==1.13.0"
+    - "essentia"
     - "soundfile>=0.12.1"
     - "opencv-python~=4.6.0"
     - "mirdata==0.3.8"
