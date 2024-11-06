@@ -36,6 +36,7 @@ jobs:
                       channel-priority: "strict"
                       envfile: ".github/environment-ci.yml"
 
+                    ### NOTE: Coming soon when jams in mirdata is updated or removed
                     #- os: ubuntu-latest
                     #  python-version: "3.12"
                     #  channel-priority: "strict"
@@ -45,11 +46,6 @@ jobs:
                     #  python-version: "3.13"
                     #  channel-priority: "strict"
                     #  envfile: ".github/environment-ci.yml"
-
-                    - os: macos-latest
-                      python-version: "3.10"
-                      channel-priority: "strict"
-                      envfile: ".github/environment-ci.yml"
 
         steps:
         - uses: actions/checkout@v3

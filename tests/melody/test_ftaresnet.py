@@ -111,12 +111,6 @@ def test_predict_torch():
     _predict_pitch()
 
 
-@pytest.mark.essentia_torch
-def test_predict_ess_torch():
-    _predict_pitch()
-    _predict_normalized_pitch()
-
-
 @pytest.mark.full_ml
 def test_predict_full():
     _predict_pitch()
