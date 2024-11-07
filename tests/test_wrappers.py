@@ -18,7 +18,7 @@ def test_load_dataset():
 
 def test_load_corpora():
     with pytest.raises(ValueError):
-        load_corpora("hola")
+        load_corpora(tradition="hola", token="test")
     with pytest.raises(ImportError):
         load_corpora("carnatic", token=None)
 
