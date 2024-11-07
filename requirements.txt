@@ -26,6 +26,6 @@ hmmlearn==0.3.0
 fastdtw~=0.3.4
 
 # Data
-pycompmusic==0.3.5
+compmusic==0.4
 mirdata==0.3.8
 smart_open
