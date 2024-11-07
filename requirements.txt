@@ -9,7 +9,7 @@ IPython>=7.34.0
 ipywidgets>=7.0.0,<8
 Jinja2~=3.1.2
 configobj~=5.0.6
-scipy==1.13.0
+scipy~=1.13.0
 seaborn
 gdown
 zope
