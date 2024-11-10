@@ -48,8 +48,8 @@ class FTAResNetCarnatic(object):
 
         except:
             raise ImportError(
-                "In order to use this tool you need to have tensorflow installed. "
-                "Please install tensorflow using: pip install tensorflow==2.7.2"
+                "In order to use this tool you need to have torch installed. "
+                "Please install torch using: pip install torch==1.13.0"
             )
         ###
 

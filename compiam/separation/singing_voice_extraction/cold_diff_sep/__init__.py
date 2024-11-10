@@ -60,7 +60,7 @@ class ColdDiffSep(object):
             raise ImportError(
                 "In order to use this tool you need to have tensorflow installed. "
                 "Please install tensorflow using: "
-                "pip install tensorflow==2.12.0 tensorflow-addons keras<3.0.0. "
+                "pip install tensorflow>=2.12.0,<2.16 tensorflow-addons keras<3.0.0. "
             )
         ###
 

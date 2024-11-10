@@ -60,7 +60,7 @@ class CAEWrapper:
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please install torch using: pip install torch"
+                "Please install torch using: pip install torch==1.13.0"
             )
         ###
 
