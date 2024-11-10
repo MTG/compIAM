@@ -216,6 +216,24 @@ models_dict = {
             # "sample_rate": 22050,  # Already contained in the model config
         },
     },
+    "separation:mixer-model": {
+        "module_name": "compiam.separation.music_source_separation.mixer_model",
+        "class_name": "MixerModel",
+        "default_version": "v1",
+        "kwargs": {
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "separation",
+                    "mixer_model",
+                    "vocal_violin",
+                    "mdx_model_vocal_violin_600k.pt",
+                ),
+                "download_link": "https://zenodo.org/records/14058535/files/mixer_model.zip?download=1",
+                "download_checksum": "dda4251e4168f859eb25adc980b9ea14",
+            },
+        },
+    },
 }
 
 

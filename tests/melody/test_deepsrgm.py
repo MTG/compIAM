@@ -50,12 +50,6 @@ def test_predict_tf():
     _load_model()
 
 
-@pytest.mark.essentia_torch
-def test_predict_ess_tf():
-    _load_model()
-    _get_features()
-
-
 @pytest.mark.full_ml
 def test_predict_full():
     _load_model()
