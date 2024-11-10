@@ -21,7 +21,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-    # Basics
     "attrs>=23.1.0",
     "matplotlib>=3.0.0",
     "numpy>=1.20.3,<=1.26.4",
@@ -34,16 +33,14 @@ dependencies = [
     "configobj~=5.0.6",
     "seaborn",
     "zope",
-    # Audio
     "librosa>=0.10.1",
     "soundfile>=0.12.1",
-    # Audio procesing
     "scikit-learn~=1.5.2",
     "scikit-image~=0.24.0",
     "opencv-python~=4.6.0",
     "hmmlearn==0.3.3",
     "fastdtw~=0.3.4",
-    # Data
+    "compmusic==0.4",
     "mirdata==0.3.8",
     "smart_open",
     "mir_eval",

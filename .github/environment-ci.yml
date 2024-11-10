@@ -3,7 +3,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  # required
   - pip
   - "attrs>=23.1.0"
   - "matplotlib>=3.0.0"
@@ -17,22 +16,16 @@ dependencies:
   - "configobj~=5.0.6"
   - "seaborn"
   - "zope"
-  # Audio
   - "librosa>=0.10.1"
-  # Audio processing
   - "scikit-learn==1.5.2"
   - "scikit-image~=0.24.0"
   - "hmmlearn==0.3.3"
   - "fastdtw~=0.3.4"
-  # Data
-  - "smart_open"
-  - "mir_eval"
   #######
   - libvorbis
-  # optional, but required for testing
   - pytest>=7.4.3
+  #######
   - pip:
-    # Optional deps
     - "keras<3.0.0"
     - "tensorflow>=2.12.0,<2.16"
     - "tensorflow_addons"
@@ -40,7 +33,8 @@ dependencies:
     - "essentia"
     - "soundfile>=0.12.1"
     - "opencv-python~=4.6.0"
-    - "mirdata==0.3.8"
+    - "mirdata==0.3.9"
+    - "compmusic==0.4"
     - "attrs>=23.1.0"
     - "black>=23.3.0"
     - "decorator>=5.1.1"
