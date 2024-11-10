@@ -71,7 +71,7 @@ docs = [
 ]
 extras = [
     "keras<3.0.0",
-    "tensorflow==2.12.0",
+    "tensorflow>=2.12.0,<2.16",
     "tensorflow_addons",
     "torch==1.13.0",
     "essentia"

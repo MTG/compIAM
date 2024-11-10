@@ -1,0 +1,2 @@
+# compIAM pre-trained models default storing
+This folder is meant to be the default storing folder of the pre-trained models in compIAM. Unless indicated otherwise, when initializing a pre-trained model in compIAN, the weights are going to be downloaded and stored in this folder.
