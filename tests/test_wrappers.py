@@ -1,6 +1,6 @@
 import pytest
 import mirdata
-from compiam import list_models, load_dataset, load_corpora, list_datasets, list_corpora
+from compiam import list_models, load_dataset, load_corpora, list_datasets
 
 
 ######################
@@ -18,9 +18,7 @@ def test_load_dataset():
 
 def test_load_corpora():
     with pytest.raises(ValueError):
-        load_corpora("hola")
-    with pytest.raises(ValueError):
-        load_corpora("hola", cc="hola")
+        load_corpora(tradition="hola", token="test")
     with pytest.raises(ImportError):
         load_corpora("carnatic", token=None)
 
@@ -28,10 +26,8 @@ def test_load_corpora():
 def test_lists():
     assert type(list_models()) is list
     assert type(list_datasets()) is list
-    assert type(list_corpora()) is list
     assert "melody:ftanet-carnatic" in list_models()
     assert "saraga_carnatic" in list_datasets()
-    assert "hindustani" in list_corpora()
 
 
 ########################

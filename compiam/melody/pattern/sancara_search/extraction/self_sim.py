@@ -60,7 +60,7 @@ from compiam.melody.pattern.sancara_search.extraction.segments import (
     group_by_distance,
     trim_silence,
     segments_from_matrix,
-    remove_group_duplicates
+    remove_group_duplicates,
 )
 from compiam.utils import get_logger
 
