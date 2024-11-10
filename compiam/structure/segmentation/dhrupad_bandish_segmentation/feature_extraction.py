@@ -14,7 +14,7 @@ try:
 except:
     raise ImportError(
         "In order to use this tool you need to have torch installed. "
-        "Please install torch using: pip install torch==1.13.0"
+        "Install compIAM with torch support: pip install 'compiam[torch]'"
     )
 
 

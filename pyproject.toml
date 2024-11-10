@@ -46,7 +46,7 @@ dependencies = [
     # Data
     "mirdata==0.3.8",
     "smart_open",
-    "mir_eval"
+    "mir_eval",
 ]
 
 [tool.pytest.ini_options]
@@ -67,14 +67,19 @@ docs = [
     "sphinx>=3.4.0",
     "sphinxcontrib-napoleon",
     "sphinx_rtd_theme",
-    "sphinx-togglebutton"
+    "sphinx-togglebutton",
 ]
-extras = [
+tensorflow = [
     "keras<3.0.0",
     "tensorflow>=2.12.0,<2.16",
     "tensorflow_addons",
+]
+torch = [
     "torch==1.13.0",
-    "essentia"
+    "torchaudio",
+]
+essentia = [
+    "essentia",
 ]
 
 [project.urls]

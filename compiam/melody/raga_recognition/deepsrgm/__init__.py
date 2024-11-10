@@ -50,7 +50,7 @@ class DEEPSRGM(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please install torch using: pip install torch==1.13.0"
+                "Install compIAM with torch support: pip install 'compiam[torch]'"
             )
         ###
 
@@ -228,7 +228,7 @@ class DEEPSRGM(object):
             except:
                 raise ImportError(
                     "In order to use these tools to extract the features you need to have essentia installed."
-                    "Please install essentia using: pip install essentia"
+                    "Install compIAM with essentia support: pip install 'compiam[essentia]'"
                 )
 
             if isinstance(input_data, str):

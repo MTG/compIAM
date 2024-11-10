@@ -41,10 +41,22 @@ In the following sections, we provide a walkthrough of how one can contribute to
 Development step 1: setting up the environment
 ----------------------------------------------
 
-It is recommended that you set up a virtual environment and install compiam to this environment before beginning any development.
+It is recommended that you set up a virtual environment and install compiam to this environment before beginning any development. Let's see how this is done:
 
-.. tip::
-    Find the requirements in the requirements.txt file and install them by running: ``pip install -r requirements.txt``
+* You can create a virtual environment using ``conda`` or ``pyenv``
+
+* Clone the repository to your machine: ``git clone https://github.com/MTG/compIAM.git``
+
+* Install the compiam package in the virtual environment from source code: ``pip install -e .``
+
+* During the development, you will need additional dependencies for testing and documenting. Install them as follows:
+    
+        * ``pip install -e ."[tests]"`` to install the testing dependencies.
+    
+        * ``pip install -e ."[docs]"`` to install the dependencies for the online documentation.
+
+
+You are now ready to go!
 
 
 Development step 2: write your feature
@@ -52,9 +64,7 @@ Development step 2: write your feature
 
 #. Clone the repository to your machine: 
 
-    * This is done by ``git clone https://github.com/MTG/compIAM.git``
-
-    * Then, you can cd into it (``cd compIAM``)
+    * Open a terminal and ``cd`` into the ``compIAM`` main folder
 
     * Create a branch from master named ``yn-featname`` where ``yn`` is replaced with your initials and ``featname`` with a short name of the feature you will implement
 
