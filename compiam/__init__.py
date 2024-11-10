@@ -5,7 +5,7 @@ from importlib import import_module
 
 from compiam import melody, rhythm, structure, timbre
 from compiam.dunya import Corpora
-from compiam.data import models_dict, datasets_list, corpora_list, WORKDIR
+from compiam.data import models_dict, datasets_list, WORKDIR
 from compiam.exceptions import ModelNotDefinedError
 
 
@@ -76,24 +76,13 @@ def load_dataset(dataset_name, data_home=None, version="default"):
     )
 
 
-def load_corpora(tradition, cc=True, token=None):
+def load_corpora(tradition, token=None):
     """Wrapper to load access to the Dunya corpora.
 
     :param tradition: carnatic or hindustani.
-    :param cc: boolean indicating if the CC version of the corpora is loaded.
     :param token: Dunya personal access token.
     :returns: a compiam.Corpora object.
     """
-    if tradition not in list(corpora_list.keys()):
-        raise ValueError(
-            "Please enter a valid tradition in {}".format(list(corpora_list.keys()))
-        )
-    if not isinstance(cc, bool):
-        raise ValueError(
-            """Parameter cc must be a boolean to indicate whether to load the open or 
-            the restricted portion of the corpora.
-        """
-        )
     if token is None:
         raise ImportError(
             """Please initialize the Corpora introducing your Dunya API token as parameter. 
@@ -102,7 +91,7 @@ def load_corpora(tradition, cc=True, token=None):
             in the "API Access" section. Request restricted access if needed. Thanks.
         """
         )
-    return Corpora(tradition=tradition, cc=cc, token=token)
+    return Corpora(tradition=tradition, token=token)
 
 
 def list_models():
@@ -132,14 +121,3 @@ def list_datasets():
     :returns: a list of available datasets.
     """
     return datasets_list
-
-
-def list_corpora():
-    """Just listing the available corpora. For each corpora we do have
-            a restricted and a CC version. To indicate which of the two
-            is loaded with ``load_corpora`` function, use the input
-            parameter cc as True or False.
-
-    :returns: a list of available corpora.
-    """
-    return list(corpora_list.keys())
