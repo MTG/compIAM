@@ -1,5 +1,4 @@
 import csv
-import os
 import pickle
 
 import hmmlearn.hmm as hmm

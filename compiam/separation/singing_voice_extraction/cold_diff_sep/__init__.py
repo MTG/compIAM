@@ -4,7 +4,6 @@ import librosa
 import math
 
 import numpy as np
-import soundfile as sf
 
 from compiam.separation.singing_voice_extraction.cold_diff_sep.model.vad import VAD
 
