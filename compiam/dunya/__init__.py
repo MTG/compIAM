@@ -41,19 +41,19 @@ class Corpora:
             To access the full collection please request permission at https://dunya.compmusic.upf.edu/user/profile/
         """)
 
-    def get_collection(self, verbose=False):
+    def get_collection(self, recording_detail=False):
         """Get the documents (recordings) in a collection.
 
-        :param verbose: Include additional information about each recording.
+        :param recording_detail: Include additional information about each recording.
         :returns: dictionary with the recordings in the collection.
         """
-        if verbose is False:
-            logger.warning(
+        if recording_detail is False:
+            logger.info(
                 "To parse the entire collection with all recording details, "
-                + "please use the .get_collection(verbose=True) method. "
+                + "please use the .get_collection(recording_detail=True) method. "
                 + "Please note that it might take a few moments..."
             )
-        return self.tradition.get_recordings(verbose)
+        return self.tradition.get_recordings(recording_detail)
     
     @staticmethod
     def list_available_types(recording_id):
