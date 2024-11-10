@@ -1,8 +1,10 @@
 import math
-import mir_eval
+import scipy
+import warnings
 
 import numpy as np
 import pandas as pd
+
 
 ###############
 # Melody utils
@@ -44,7 +46,7 @@ def resampling(pitch, new_len):
 
     times_new = np.linspace(times[0], times[-1], num=new_len)
 
-    frequencies_resampled, _ = mir_eval.melody.resample_melody_series(
+    frequencies_resampled, _ = resample_melody_series(
         times=times,
         frequencies=frequencies,
         voicing=np.array(voicing),
@@ -53,6 +55,93 @@ def resampling(pitch, new_len):
     )
 
     return np.array([times_new, frequencies_resampled]).transpose()
+
+
+def resample_melody_series(times, frequencies, voicing, times_new, kind="linear"):
+    """
+    NOTE: This function is DIRECTLY PORTED FROM mir_eval.melody
+
+    Resamples frequency and voicing time series to a new timescale. Maintains
+    any zero ("unvoiced") values in frequencies.
+
+    If ``times`` and ``times_new`` are equivalent, no resampling will be
+    performed.
+
+    :param times: Times of each frequency value
+    :param frequencies: Array of frequency values, >= 0
+    :param voicing: Array which indicates voiced or unvoiced. This array may be binary
+        or have continuous values between 0 and 1.
+    :param times_new: Times to resample frequency and voicing sequences to
+    :param kind:kind parameter to pass to scipy.interpolate.interp1d.
+        (Default value = 'linear')
+
+    :returns frequencies_resampled: Frequency array resampled to new timebase
+    :returns voicing_resampled: Voicing array resampled to new timebase
+    """
+    # If the timebases are already the same, no need to interpolate
+    if times.shape == times_new.shape and np.allclose(times, times_new):
+        return frequencies, voicing
+
+    # Warn when the delta between the original times is not constant,
+    # unless times[0] == 0. and frequencies[0] == frequencies[1] (see logic at
+    # the beginning of to_cent_voicing)
+    if not (
+        np.allclose(np.diff(times), np.diff(times).mean())
+        or (
+            np.allclose(np.diff(times[1:]), np.diff(times[1:]).mean())
+            and frequencies[0] == frequencies[1]
+        )
+    ):
+        warnings.warn(
+            "Non-uniform timescale passed to resample_melody_series.  Pitch "
+            "will be linearly interpolated, which will result in undesirable "
+            "behavior if silences are indicated by missing values.  Silences "
+            "should be indicated by nonpositive frequency values."
+        )
+    # Round to avoid floating point problems
+    times = np.round(times, 10)
+    times_new = np.round(times_new, 10)
+    # Add in an additional sample if we'll be asking for a time too large
+    if times_new.max() > times.max():
+        times = np.append(times, times_new.max())
+        frequencies = np.append(frequencies, 0)
+        voicing = np.append(voicing, 0)
+    # We need to fix zero transitions if interpolation is not zero or nearest
+    if kind != "zero" and kind != "nearest":
+        # Fill in zero values with the last reported frequency
+        # to avoid erroneous values when resampling
+        frequencies_held = np.array(frequencies)
+        for n, frequency in enumerate(frequencies[1:]):
+            if frequency == 0:
+                frequencies_held[n + 1] = frequencies_held[n]
+        # Linearly interpolate frequencies
+        frequencies_resampled = scipy.interpolate.interp1d(
+            times, frequencies_held, kind
+        )(times_new)
+        # Retain zeros
+        frequency_mask = scipy.interpolate.interp1d(times, frequencies, "zero")(
+            times_new
+        )
+        frequencies_resampled *= frequency_mask != 0
+    else:
+        frequencies_resampled = scipy.interpolate.interp1d(times, frequencies, kind)(
+            times_new
+        )
+
+    # Use nearest-neighbor for voicing if it was used for frequencies
+    # if voicing is not binary, use linear interpolation
+    is_binary_voicing = np.all(
+        np.logical_or(np.equal(voicing, 0), np.equal(voicing, 1))
+    )
+    if kind == "nearest" or (kind == "linear" and not is_binary_voicing):
+        voicing_resampled = scipy.interpolate.interp1d(times, voicing, kind)(times_new)
+    # otherwise, always use zeroth order
+    else:
+        voicing_resampled = scipy.interpolate.interp1d(times, voicing, "zero")(
+            times_new
+        )
+
+    return frequencies_resampled, voicing_resampled
 
 
 #####################
