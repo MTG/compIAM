@@ -20,7 +20,6 @@ jobs:
           pip install scikit-learn 
           pip install configobj
           pip install hmmlearn
-          pip install zope
           pip install fastdtw
           pip install matplotlib
           pip install scipy

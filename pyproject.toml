@@ -32,7 +32,6 @@ dependencies = [
     "Jinja2~=3.1.2",
     "configobj~=5.0.6",
     "seaborn",
-    "zope",
     "librosa>=0.10.1",
     "soundfile>=0.12.1",
     "scikit-learn~=1.5.2",

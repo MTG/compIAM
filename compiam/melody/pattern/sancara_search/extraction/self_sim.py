@@ -36,7 +36,6 @@ from compiam.melody.pattern.sancara_search.extraction.visualisation import (
 from compiam.melody.pattern.sancara_search.extraction.io import (
     load_sim_matrix,
     write_all_sequence_audio,
-    load_yaml,
     load_pkl,
     write_pkl,
 )
