@@ -29,7 +29,7 @@ def _separate():
 
 
 @pytest.mark.torch
-def test_predict_tf():
+def test_predict_torch():
     _separate()
 
 
