@@ -154,8 +154,6 @@ When finished, if appropriate, add unit tests to the testing framework in ``test
 
     * ``pytest ./tests/ --tensorflow``
 
-    * ``pytest ./tests/ --tensorflow-essentia``
-
     * ``pytest ./tests/ --full-ml``
 
 If you miss a particular test don't worry. We automatically run the tests when you create the PR.
