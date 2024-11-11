@@ -48,11 +48,6 @@ def test_predict_tf():
     _test_model()
 
 
-@pytest.mark.essentia_torch
-def test_predict_ess_tf():
-    _test_model()
-
-
 @pytest.mark.full_ml
 def test_predict_full():
     _test_model()

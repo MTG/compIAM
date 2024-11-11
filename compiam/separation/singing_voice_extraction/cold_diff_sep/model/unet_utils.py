@@ -1,9 +1,6 @@
 # nn.py
 # Source: https://github.com/hojonathanho/diffusion/blob/master/
 # diffusion_tf/nn.py
-# Tensorflow 2.4.0
-# Windows/MacOS/Linux
-# Python 3.7
 
 
 import math

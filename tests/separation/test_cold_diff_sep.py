@@ -30,11 +30,6 @@ def test_predict_tf():
     _separate()
 
 
-@pytest.mark.essentia_tensorflow
-def test_predict_ess_tf():
-    _separate()
-
-
 @pytest.mark.full_ml
 def test_predict_full():
     _separate()

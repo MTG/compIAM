@@ -3,6 +3,7 @@ import csv
 import json
 import yaml
 import pickle
+import importlib
 
 import numpy as np
 
@@ -63,9 +64,6 @@ def write_json(j, path):
         json.dump(j, f)
 
 
-#####################
-# Dunya writing utils
-#####################
 def write_json(sections, output_path):
     """Writing json-based data into a file (.json)
 
@@ -94,16 +92,28 @@ def write_scalar_txt(data, output_path):
     f.close()
 
 
+def resolve_dottedname(dotted_name):
+    """Resolve a dotted name to an actual object, similar to zope.dottedname.resolve
+    
+    :param dotted_name: a dotted name
+    :returns: the object the dotted name refers to
+    """
+    module_name, _, attribute_name = dotted_name.rpartition('.')
+    if not module_name:
+        raise ImportError(f"Invalid dotted name: '{dotted_name}'")
+    module = importlib.import_module(module_name)
+    return getattr(module, attribute_name)
+
+
 def load_yaml(path):
     """Load yaml at <path> to dictionary, d
 
     :param path: input file
+    :returns: loaded yaml information
     """
-    import zope.dottedname.resolve
-
     def constructor_dottedname(loader, node):
         value = loader.construct_scalar(node)
-        return zope.dottedname.resolve.resolve(value)
+        return resolve_dottedname(value)
 
     yaml.add_constructor("!dottedname", constructor_dottedname)
 

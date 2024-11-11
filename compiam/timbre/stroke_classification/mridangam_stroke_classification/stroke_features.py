@@ -9,7 +9,7 @@ try:
 except:
     raise ImportError(
         "In order to use this tool you need to have essentia installed. "
-        "Please install essentia using: pip install essentia"
+        "Install compIAM with essentia support: pip install 'compiam[essentia]'"
     )
 
 

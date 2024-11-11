@@ -1,5 +1,4 @@
 import os
-import warnings
 
 import numpy as np
 
@@ -50,7 +49,7 @@ class DEEPSRGM(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please install torch using: pip install torch==1.8.0"
+                "Install compIAM with torch support: pip install 'compiam[torch]'"
             )
         ###
 
@@ -161,14 +160,16 @@ class DEEPSRGM(object):
         :param data_home: path where to store the dataset data
         :param download:
         """
-        self.dataset = compiam.load_dataset("compmusic_raga", data_home=data_home)
+        self.dataset = compiam.load_dataset(
+            "compmusic_raga", data_home=data_home, version="default"
+        )
         if download:
-            self.dataset.download()
-            warnings.warn(
-                """
-                The audio of this dataset is private. Please request it in the
-                Zenodo link provided in the DOWNLOAD_INFO of the dataloader,
-                and download and unzip it following the instructions.
+            self.dataset.download()  # Downloads index and features
+            logger.warning(
+                f"""
+                The features are downloaded, but the audio of this dataset is private. 
+                Please request it in this link: https://zenodo.org/records/7278511, 
+                download it, and unzip it in {data_home} following the instructions.
             """
             )
 
@@ -228,7 +229,7 @@ class DEEPSRGM(object):
             except:
                 raise ImportError(
                     "In order to use these tools to extract the features you need to have essentia installed."
-                    "Please install essentia using: pip install essentia"
+                    "Install compIAM with essentia support: pip install 'compiam[essentia]'"
                 )
 
             if isinstance(input_data, str):

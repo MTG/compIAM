@@ -124,35 +124,6 @@ def write_json(j, path):
         json.dump(j, f)
 
 
-def load_yaml(path):
-    """
-    Load yaml at <path> to dictionary, d
-
-    Returns
-    =======
-    Wrapper dictionary, D where
-    D = {filename: d}
-    """
-    import zope.dottedname.resolve
-
-    def constructor_dottedname(loader, node):
-        value = loader.construct_scalar(node)
-        return zope.dottedname.resolve.resolve(value)
-
-    def constructor_paramlist(loader, node):
-        value = loader.construct_sequence(node)
-        return ParamList(value)
-
-    yaml.add_constructor("!paramlist", constructor_paramlist)
-    yaml.add_constructor("!dottedname", constructor_dottedname)
-
-    if not os.path.isfile(path):
-        return None
-    with open(path) as f:
-        d = yaml.load(f, Loader=yaml.FullLoader)
-    return d
-
-
 def write_array(a, path):
     """
     Write array to <path>

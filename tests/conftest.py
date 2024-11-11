@@ -4,8 +4,6 @@ OPTIONS = [
     "tensorflow",
     "torch",
     "essentia",
-    "essentia_tensorflow",
-    "essentia_torch",
     "full_ml",
     "all",
 ]
@@ -34,16 +32,6 @@ def skip_torch(request):
 @pytest.fixture(scope="session")
 def skip_essentia(request):
     return request.config.getoption("--essentia")
-
-
-@pytest.fixture(scope="session")
-def skip_essentia_tensorflow(request):
-    return request.config.getoption("--essentia_tensorflow")
-
-
-@pytest.fixture(scope="session")
-def skip_essentia_torch(request):
-    return request.config.getoption("--essentia_torch")
 
 
 @pytest.fixture(scope="session")

@@ -87,16 +87,6 @@ def test_ess_extractors_ess():
     _predict_normalized_pitch()
 
 
-@pytest.mark.essentia_tensorflow
-def test_ess_extractors_ess_tf():
-    _predict_normalized_pitch()
-
-
-@pytest.mark.essentia_torch
-def test_ess_extractors_ess_torch():
-    _predict_normalized_pitch()
-
-
 @pytest.mark.all
 def test_ess_extractors_ess_all():
     _predict_normalized_pitch()

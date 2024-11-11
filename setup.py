@@ -1,37 +1,12 @@
-from setuptools import find_packages, setup
+""" Setup script for compiam. """
+from importlib.machinery import SourceFileLoader
+from setuptools import setup, find_packages
 
-with open("./requirements.txt") as f:
-    REQUIREMENTS = f.readlines()
+version_sfl = SourceFileLoader("compiam.version", "compiam/version.py")
+version_module = version_sfl.load_module()
 
-setup(
-    name="compiam",
-    version="0.3.0",
-    author_email=["genis.plaja@upf.edu", "thomas.nuttall@upf.edu"],
-    zip_safe=False,
-    include_package_data=True,
-    packages=find_packages(exclude=["test", "*.test", "*.test.*"]),
-    package_data={
-        "compiam": [
-            "models/*",
-            "conf/*",
-            "visualisation/waveform_player/waveform-playlist/*",
-            "utils/augment/*",
-            "utils/NMFtoolbox/*"
-        ]
-    },
-    long_description=open("./README.md").read(),
-    install_requires=REQUIREMENTS,
-    extras_require={
-        "tests": [
-            "pytest>=4.4.0",
-            "pytest-cov>=2.6.1",
-        ],
-        "docs": [
-            "numpydoc",
-            "recommonmark",
-            "sphinx>=3.4.0",
-            "sphinxcontrib-napoleon",
-            "sphinx_rtd_theme",
-        ],
-    },
-)
+if __name__ == "__main__":
+    setup(
+        version=version_module.version,
+                packages=find_packages(exclude=["test", "*.test", "*.test.*","tests", "tests.*", "*.tests.*", "tests/__pycache__", "tests/__pycache__/*", "notebooks/*", "notebooks/__pycache__/*"]),
+    )

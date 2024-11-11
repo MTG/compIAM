@@ -1,8 +1,6 @@
 import os
 import glob
-import gdown
 import librosa
-import zipfile
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -78,7 +76,7 @@ class DhrupadBandishSegmentation:
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch installed. "
-                "Please install torch using: pip install torch"
+                "Install compIAM with torch support: pip install 'compiam[torch]'"
             )
         ###
 
