@@ -125,12 +125,6 @@ def test_predict_tf():
     _predict_pitch()
 
 
-@pytest.mark.essentia_tensorflow
-def test_predict_ess_tf():
-    _predict_pitch()
-    _predict_normalized_pitch()
-
-
 @pytest.mark.full_ml
 def test_predict_full():
     _predict_pitch()

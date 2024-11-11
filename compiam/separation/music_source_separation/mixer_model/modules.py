@@ -4,6 +4,7 @@ import torch.nn as nn
 
 # Time-Frequency Modulation (directly ported from original code by KUIELab/TFC-TDF)
 
+
 class TFC(nn.Module):
     def __init__(self, c, l, k):
         super(TFC, self).__init__()
@@ -12,7 +13,13 @@ class TFC(nn.Module):
         for i in range(l):
             self.H.append(
                 nn.Sequential(
-                    nn.Conv2d(in_channels=c, out_channels=c, kernel_size=k, stride=1, padding=k // 2),
+                    nn.Conv2d(
+                        in_channels=c,
+                        out_channels=c,
+                        kernel_size=k,
+                        stride=1,
+                        padding=k // 2,
+                    ),
                     nn.BatchNorm2d(c),
                     nn.ReLU(),
                 )
@@ -26,16 +33,23 @@ class TFC(nn.Module):
 
 # Dense TFC Block (directly ported from original code by KUIELab/TFC-TDF)
 
+
 class DenseTFC(nn.Module):
     def __init__(self, c, l, k):
         super(DenseTFC, self).__init__()
 
         self.conv = nn.ModuleList()
         for i in range(l):
-            
+
             self.conv.append(
                 nn.Sequential(
-                    nn.Conv2d(in_channels=c, out_channels=c, kernel_size=k, stride=1, padding=k // 2),
+                    nn.Conv2d(
+                        in_channels=c,
+                        out_channels=c,
+                        kernel_size=k,
+                        stride=1,
+                        padding=k // 2,
+                    ),
                     nn.BatchNorm2d(c),
                     nn.ReLU(),
                 )
@@ -50,6 +64,7 @@ class DenseTFC(nn.Module):
 
 # TFC TDF module (directly ported from original code by KUIELab/TFC-TDF)
 
+
 class TFC_TDF(nn.Module):
     def __init__(self, c, l, f, k, bn, dense=False, bias=True):
         super(TFC_TDF, self).__init__()
@@ -61,9 +76,7 @@ class TFC_TDF(nn.Module):
         if self.use_tdf:
             if bn == 0:
                 self.tdf = nn.Sequential(
-                    nn.Linear(f, f, bias=bias),
-                    nn.BatchNorm2d(c),
-                    nn.ReLU()
+                    nn.Linear(f, f, bias=bias), nn.BatchNorm2d(c), nn.ReLU()
                 )
             else:
                 self.tdf = nn.Sequential(
@@ -72,7 +85,7 @@ class TFC_TDF(nn.Module):
                     nn.ReLU(),
                     nn.Linear(f // bn, f, bias=bias),
                     nn.BatchNorm2d(c),
-                    nn.ReLU()
+                    nn.ReLU(),
                 )
 
     def forward(self, x):

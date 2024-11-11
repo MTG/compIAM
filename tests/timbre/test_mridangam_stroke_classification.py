@@ -64,16 +64,6 @@ def test_strokes_ess():
     _predict_strokes()
 
 
-@pytest.mark.essentia_tensorflow
-def test_strokes_ess_tf():
-    _predict_strokes()
-
-
-@pytest.mark.essentia_torch
-def test_strokes_ess_torch():
-    _predict_strokes()
-
-
 @pytest.mark.all
 def test_strokes_ess_all():
     _predict_strokes()

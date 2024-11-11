@@ -14,7 +14,12 @@ class MixerModel(object):
     """Leakage-aware multi-source separation model for Carnatic Music."""
 
     def __init__(
-        self, model_path=None, download_link=None, download_checksum=None, sample_rate=24000, gpu="-1"
+        self,
+        model_path=None,
+        download_link=None,
+        download_checksum=None,
+        sample_rate=24000,
+        gpu="-1",
     ):
         """Leakage-aware singing voice separation init method.
 
@@ -37,7 +42,8 @@ class MixerModel(object):
 
             global MDXModel, ConvTDFNet
             from compiam.separation.music_source_separation.mixer_model.models import (
-                MDXModel, ConvTDFNet
+                MDXModel,
+                ConvTDFNet,
             )
 
         except:
@@ -117,14 +123,18 @@ class MixerModel(object):
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
             )
-            audio = torchaudio.transforms.Resample(orig_freq=input_sr, new_freq=self.sample_rate)(input_data)
+            audio = torchaudio.transforms.Resample(
+                orig_freq=input_sr, new_freq=self.sample_rate
+            )(input_data)
         elif isinstance(input_data, torch.Tensor):
             input_data = input_data.to(torch.float32).to(self.device)
             logger.warning(
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
             )
-            audio = torchaudio.transforms.Resample(orig_freq=input_sr, new_freq=self.sample_rate)(input_data)
+            audio = torchaudio.transforms.Resample(
+                orig_freq=input_sr, new_freq=self.sample_rate
+            )(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
@@ -132,13 +142,15 @@ class MixerModel(object):
         audio = audio.reshape(-1)
         predictions = []
         pad_length = self.chunk_size - (audio.shape[-1] % self.chunk_size)
-        audio = torch.nn.functional.pad(audio, (0,pad_length))
+        audio = torch.nn.functional.pad(audio, (0, pad_length))
 
         for i in range(0, audio.shape[-1], self.chunk_size):
-            audio_chunk = audio[i: i+self.chunk_size].reshape(1,1,-1) #TODO Batching
+            audio_chunk = audio[i : i + self.chunk_size].reshape(
+                1, 1, -1
+            )  # TODO Batching
             predictions.append(self.forward(audio_chunk))
 
-        result = torch.cat(predictions, dim = -1)
+        result = torch.cat(predictions, dim=-1)
         result = result[:, :, :-pad_length]
 
         vocal_separation = result[:, 0, :].detach().cpu().numpy().reshape(-1)
@@ -179,4 +191,3 @@ class MixerModel(object):
                 self.device = torch.device("cpu")
                 logger.warning("No GPU available. Running on CPU.")
         self.gpu = gpu
-
