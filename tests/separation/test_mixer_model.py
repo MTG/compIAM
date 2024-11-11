@@ -12,26 +12,24 @@ from compiam.exceptions import ModelNotTrainedError
 def _separate():
     from compiam.separation.music_source_separation import MixerModel
 
-    cold_diff_sep = MixerModel()
+    mixer_model = MixerModel()
     with pytest.raises(ModelNotTrainedError):
-        cold_diff_sep.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
-    cold_diff_sep.trained = True
+        mixer_model.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
+    mixer_model.trained = True
     with pytest.raises(FileNotFoundError):
-        cold_diff_sep.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
+        mixer_model.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
 
-    cold_diff_sep = compiam.load_model("separation:mixer-model", data_home=TESTDIR)
+    mixer_model = compiam.load_model("separation:mixer-model", data_home=TESTDIR)
     audio_in, sr = np.array(np.ones([2, 44150 * 10]), dtype=np.float32), 44100
-    separation = cold_diff_sep.separate(audio_in, input_sr=sr)
+    separation = mixer_model.separate(audio_in, input_sr=sr)
+    assert isinstance(separation, tuple)
+    assert isinstance(separation[0], np.array)
+    assert isinstance(separation[1], np.array)
     shutil.rmtree(os.path.join(TESTDIR, "models"))
 
 
-@pytest.mark.tensorflow
+@pytest.mark.torch
 def test_predict_tf():
-    _separate()
-
-
-@pytest.mark.essentia_tensorflow
-def test_predict_ess_tf():
     _separate()
 
 
