@@ -9,7 +9,6 @@ from compiam.utils import get_logger
 
 logger = get_logger(__name__)
 
-import warnings
 
 
 def split_audios(save_dir=None, annotations_path=None, audios_path=None):
@@ -20,7 +19,7 @@ def split_audios(save_dir=None, annotations_path=None, audios_path=None):
     :param audios_path: path where to find the original audios
     """
     if not os.path.exists(save_dir):
-        warnings.warn(
+        logger.warning(
             """Save directory not found. Creating it...
         """
         )

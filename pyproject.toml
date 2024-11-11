@@ -40,7 +40,7 @@ dependencies = [
     "hmmlearn==0.3.3",
     "fastdtw~=0.3.4",
     "compmusic==0.4",
-    "mirdata==0.3.8",
+    "mirdata==0.3.9",
     "smart_open",
     "mir_eval",
 ]
