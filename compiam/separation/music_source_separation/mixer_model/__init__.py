@@ -21,6 +21,7 @@ class MixerModel(object):
         :param model_path: path to file to the model weights.
         :param download_link: link to the remote pre-trained model.
         :param download_checksum: checksum of the model file.
+        :param sample_rate: sample rate to which the audio is sampled for extraction.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         """
         ### IMPORTING OPTIONAL DEPENDENCIES
