@@ -41,8 +41,6 @@ dependencies = [
     "fastdtw~=0.3.4",
     "compmusic==0.4",
     "mirdata==0.3.9",
-    "smart_open",
-    "mir_eval",
 ]
 
 [tool.pytest.ini_options]
