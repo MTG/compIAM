@@ -1,10 +1,6 @@
 # unet.py
 # Source: https://github.com/hojonathanho/diffusion/blob/master/
 # diffusion_tf/models/unet.py
-# Tensorflow 2.4.0
-# Windows/MacOS/Linux
-# Python 3.7
-
 
 from compiam.separation.singing_voice_extraction.cold_diff_sep.model.unet_utils import (
     get_timestep_embedding,
@@ -12,7 +8,6 @@ from compiam.separation.singing_voice_extraction.cold_diff_sep.model.unet_utils 
 
 import tensorflow as tf
 import keras.backend as K
-import tensorflow_addons as tfa
 from tensorflow.keras import layers, models
 
 

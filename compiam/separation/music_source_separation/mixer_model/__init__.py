@@ -14,7 +14,7 @@ class MixerModel(object):
     """Leakage-aware multi-source separation model for Carnatic Music."""
 
     def __init__(
-        self, model_path=None, download_link=None, download_checksum=None, gpu="-1"
+        self, model_path=None, download_link=None, download_checksum=None, sample_rate=24000, gpu="-1"
     ):
         """Leakage-aware singing voice separation init method.
 
@@ -51,8 +51,8 @@ class MixerModel(object):
         self.device = None
         self.select_gpu(gpu)
 
-        self.model = MDXModel()
-        self.sample_rate = 24000
+        self.model = self._build_model()
+        self.sample_rate = sample_rate
         self.trained = False
 
         self.model_path = model_path
@@ -61,10 +61,22 @@ class MixerModel(object):
         if self.model_path is not None:
             self.load_model(self.model_path)
 
+        self.chunk_size = self.model.chunk_size
+
+    def forward(self, x):
+        """Forward pass of the mixer model"""
+        return self.model(x)
+
+    def _build_model(self):
+        """Build the MDXNet mixer model."""
+        mdxnet = MDXModel().to(self.device)
+        mdxnet.eval()
+        return mdxnet
+
     def load_model(self, model_path):
         if not os.path.exists(model_path):
             self.download_model(model_path)  # Downloading model weights
-        self.model = torch.load(model_path).to(self.device)
+        self.model.load_state_dict(torch.load(model_path, weights_only=True))
         self.model_path = model_path
         self.trained = True
 
@@ -99,13 +111,19 @@ class MixerModel(object):
                 raise FileNotFoundError("Target audio not found.")
             audio, _ = torchaudio.load(input_data, sr=self.sample_rate)
         elif isinstance(input_data, np.ndarray):
+            input_data = torch.from_numpy(input_data).to(torch.float32).to(self.device)
             logger.warning(
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
             )
-            audio = torchaudio.transforms.resample(
-                input_data, orig_sr=input_sr, target_sr=self.sample_rate
+            audio = torchaudio.transforms.Resample(orig_freq=input_sr, new_freq=self.sample_rate)(input_data)
+        elif isinstance(input_data, torch.Tensor):
+            input_data = input_data.to(torch.float32).to(self.device)
+            logger.warning(
+                f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
+                    make sure this is correct and change input_sr otherwise)"
             )
+            audio = torchaudio.transforms.Resample(orig_freq=input_sr, new_freq=self.sample_rate)(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
@@ -117,11 +135,10 @@ class MixerModel(object):
 
         for i in range(0, audio.shape[-1], self.chunk_size):
             audio_chunk = audio[i: i+self.chunk_size].reshape(1,1,-1) #TODO Batching
-
             predictions.append(self.forward(audio_chunk))
 
         result = torch.cat(predictions, dim = -1)
-        result = result[:,:,:-pad_length]
+        result = result[:, :, :-pad_length]
 
         vocal_separation = result[:, 0, :].detach().cpu().numpy().reshape(-1)
         violin_separation = result[:, 1, :].detach().cpu().numpy().reshape(-1)
@@ -140,7 +157,6 @@ class MixerModel(object):
         download_remote_model(
             self.download_link,
             self.download_checksum,
-
             download_path,
             force_overwrite=force_overwrite,
         )

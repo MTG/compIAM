@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from typing import Optional
 
 from compiam.separation.music_source_separation.mixer_model.modules import (
     TFC_TDF
@@ -9,16 +8,15 @@ from compiam.separation.music_source_separation.mixer_model.modules import (
 
 class ConvTDFNet(nn.Module):
     def __init__(self, hop_length, num_blocks, dim_t, n_fft, dim_c, dim_f, g, k, l, bn, bias, scale):
-
         super(ConvTDFNet, self).__init__()
-        self.hop_length: int = hop_length
-        self.dim_t: int = dim_t
-        self.n_fft: int = n_fft 
-        self.dim_c: int = dim_c
-        self.dim_f: int = dim_f
-        self.chunk_size: int = self.hop_length * (dim_t - 1)
-        self.n_bins: int = self.n_fft // 2 + 1
-        self.n: int = num_blocks // 2
+        self.hop_length = hop_length
+        self.dim_t = dim_t
+        self.n_fft = n_fft 
+        self.dim_c = dim_c
+        self.dim_f = dim_f
+        self.chunk_size = self.hop_length * (dim_t - 1)
+        self.n_bins = self.n_fft // 2 + 1
+        self.n = num_blocks // 2
 
         self.first_conv = nn.Sequential(
             nn.Conv2d(in_channels=dim_c, out_channels=g, kernel_size=(1, 1)),
@@ -65,7 +63,7 @@ class ConvTDFNet(nn.Module):
     # calculates (non-mel) complex-valued-spectrograms
     # Output has the shape: torch.Size([b, c, dim_f, dim_t]) (here: c = 2, for mono, 4 for stereo audio, 2048 frequency dimension, 256 time dimension)
     @torch.jit.export
-    def stft(self, audio_norm: torch.Tensor) -> torch.Tensor:
+    def stft(self, audio_norm):
         audio_norm=audio_norm
         B, C, L = audio_norm.shape
         factor = int(L / self.chunk_size)
@@ -83,7 +81,7 @@ class ConvTDFNet(nn.Module):
         return spec[:, :, :self.dim_f]
 
     @torch.jit.export
-    def istft(self, spec: torch.Tensor) -> torch.Tensor:
+    def istft(self, spec):
         B,_ ,_, t = spec.shape   
         factor = int(t / self.dim_t)
         audio_chunks = []
@@ -102,7 +100,7 @@ class ConvTDFNet(nn.Module):
         return audio
 
     @torch.jit.export
-    def forward(self, audio: torch.Tensor,  iteration: Optional[int] = 0) -> torch.Tensor:
+    def forward(self, audio,  iteration=0):
         spec = self.stft(audio)
         x = self.first_conv(spec)
         x = x.transpose(-1, -2)
@@ -125,32 +123,46 @@ class ConvTDFNet(nn.Module):
 
 
 class MDXModel(nn.Module):
-    def __init__(self):
+    def __init__(
+            self,
+            sources=['vocal', 'violin'],
+            hop_length=558,
+            dim_t=256,
+            n_fft=6144,
+            dim_c=2,
+            dim_f=2048,
+            num_blocks=11,
+            g=32,
+            k=3,
+            l=3,
+            bn=4,
+            bias=False,
+            scale=2):
         super(MDXModel, self).__init__()
-        self.sources = ['vocal', 'violin']
-        hop_length: int = 558
-        dim_t: int = 256
-        n_fft: int = 6144 
-        dim_c: int = 2
-        dim_f: int = 2048
-        num_blocks: int = 11
-        g = 32
-        k = 3
-        l = 3
-        bn = 4
-        bias = False
-        scale = 2
-        dim_t = 256
-        self.chunk_size: int = hop_length * (dim_t - 1)
+        self.sources = sources
+        self.hop_length = hop_length
+        self.dim_t = dim_t
+        self.n_fft = n_fft
+        self.dim_c = dim_c
+        self.dim_f = dim_f
+        self.num_blocks = num_blocks
+        self.g = g
+        self.k = k
+        self.l = l
+        self.bn = bn
+        self.bias = bias
+        self.scale = scale
+        self.chunk_size = self.hop_length * (self.dim_t - 1)
 
+        # Separators
         self.model_dict = nn.ModuleList()
-        for src in self.sources:
+        for _ in self.sources:
             self.model_dict.append(ConvTDFNet(hop_length=hop_length, num_blocks=num_blocks, dim_t=dim_t, n_fft=n_fft, dim_c=dim_c, dim_f=dim_f, g=g, k=k, l=l, bn=bn, bias=bias, scale=scale))
 
+        # Mixer module
         self.mixer = MixerMDX(num_sources=len(self.sources), chunk_size=self.chunk_size)
-        
 
-    def infer(self, audio: torch.Tensor):
+    def infer(self, audio):
         # audio has shape B, 1, N
         audio = audio.reshape(-1)
         predictions = []
@@ -158,27 +170,24 @@ class MDXModel(nn.Module):
         audio = torch.nn.functional.pad(audio, (0,pad_length))
 
         for i in range(0, audio.shape[-1], self.chunk_size):
-            audio_chunk = audio[i: i+self.chunk_size].reshape(1,1,-1)  #TODO Batching
-
+            audio_chunk = audio[i: i+self.chunk_size].reshape(1, 1, -1)  #TODO Batching
             predictions.append(self.forward(audio_chunk))
 
         result = torch.cat(predictions, dim = -1)
         result = result[:,:,:-pad_length]
 
-        vocal_separation = result[:,0,:]
-        violin_separation = result[:,1,:]
+        vocal_separation = result[:, 0, :]
+        violin_separation = result[:, 1, :]
         return vocal_separation, violin_separation
 
 
-    def forward(self, audio: torch.Tensor) -> torch.Tensor:
-        
-
+    def forward(self, audio):
+        """Forward pass of the model separation"""
         predictions = []
         for model in self.model_dict:
             predictions.append(model(audio).squeeze(1)) 
-
-        predictions.append(audio.squeeze(1)) # the mixer module also receives the mix-audio, shape B, N
-        prediction = torch.stack(predictions, dim = 1) # shape (B, (num_sources + 1), N)
+        predictions.append(audio.squeeze(1))  # the mixer module also receives the mix-audio, shape B, N
+        prediction = torch.stack(predictions, dim = 1)  # shape (B, (num_sources + 1), N)
         prediction = self.mixer(prediction)
         return prediction
 
@@ -186,13 +195,11 @@ class MDXModel(nn.Module):
 class MixerMDX(nn.Module):
     def __init__(self, num_sources, chunk_size):
         super(MixerMDX, self).__init__()
-
         self.num_sources = num_sources
         self.chunk_size = chunk_size
         self.mixing_layer = nn.Linear(self.num_sources+1, self.num_sources, bias=False)
 
     def forward(self, x):
-
         x = x.reshape(-1, self.num_sources + 1, self.chunk_size).transpose(-1, -2)
         x = self.mixing_layer(x)
         return x.transpose(-1, -2).reshape(-1, self.num_sources, self.chunk_size)

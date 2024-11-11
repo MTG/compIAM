@@ -1,0 +1,40 @@
+name: compiam-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - "attrs>=23.1.0"
+  - "matplotlib>=3.0.0"
+  - "numpy>=1.20.3,<=1.26.4"
+  - "joblib>=1.2.0"
+  - "pathlib~=1.0.1"
+  - "tqdm>=4.66.1"
+  - "IPython>=7.34.0"
+  - "ipywidgets>=7.0.0,<8"
+  - "Jinja2~=3.1.2"
+  - "configobj~=5.0.6"
+  - "seaborn"
+  - "librosa>=0.10.1"
+  - "scikit-learn==1.5.2"
+  - "scikit-image~=0.24.0"
+  - "hmmlearn==0.3.3"
+  - "fastdtw~=0.3.4"
+  #######
+  - libvorbis
+  - pytest>=7.4.3
+  #######
+  - pip:
+    - "keras<3.0.0"
+    - "tensorflow>=2.12.0,<2.16"
+    - "torch==1.13.0"
+    - "essentia"
+    - "soundfile>=0.12.1"
+    - "opencv-python~=4.6.0"
+    - "mirdata==0.3.9"
+    - "compmusic==0.4"
+    - "attrs>=23.1.0"
+    - "black>=23.3.0"
+    - "decorator>=5.1.1"
+    - "future>=0.18.3"
+    - "testcontainers>=3.7.1"

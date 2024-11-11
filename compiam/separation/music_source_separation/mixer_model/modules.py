@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-# Time-Frequency Modulation (copied)
+# Time-Frequency Modulation (directly ported from original code by KUIELab/TFC-TDF)
 
 class TFC(nn.Module):
     def __init__(self, c, l, k):
@@ -24,7 +24,7 @@ class TFC(nn.Module):
         return x
 
 
-# Dense TFC Block (copied)
+# Dense TFC Block (directly ported from original code by KUIELab/TFC-TDF)
 
 class DenseTFC(nn.Module):
     def __init__(self, c, l, k):
@@ -48,7 +48,7 @@ class DenseTFC(nn.Module):
         return self.conv[-1](x)
 
 
-# TFC TDF module (copied)
+# TFC TDF module (directly ported from original code by KUIELab/TFC-TDF)
 
 class TFC_TDF(nn.Module):
     def __init__(self, c, l, f, k, bn, dense=False, bias=True):
@@ -58,8 +58,6 @@ class TFC_TDF(nn.Module):
         self.tfc = DenseTFC(c, l, k) if dense else TFC(c, l, k)
         self.bn = bn
 
-
-        
         if self.use_tdf:
             if bn == 0:
                 self.tdf = nn.Sequential(
