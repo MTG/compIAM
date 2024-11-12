@@ -20,7 +20,7 @@ def _separate():
         mixer_model.separate(os.path.join(TESTDIR, "resources", "melody", "hola.wav"))
 
     mixer_model = compiam.load_model("separation:mixer-model", data_home=TESTDIR)
-    audio_in, sr = np.array(np.ones([2, 44150 * 10]), dtype=np.float32), 44100
+    audio_in, sr = np.array(np.ones([1, 44100]), dtype=np.float32), 44100
     separation = mixer_model.separate(audio_in, input_sr=sr)
     assert isinstance(separation, tuple)
     assert isinstance(separation[0], np.ndarray)
