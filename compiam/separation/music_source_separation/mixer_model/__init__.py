@@ -116,18 +116,24 @@ class MixerModel(object):
         if isinstance(input_data, str):
             if not os.path.exists(input_data):
                 raise FileNotFoundError("Target audio not found.")
-            audio, _ = torchaudio.load(input_data, sr=self.sample_rate)
+            audio, input_sr = torchaudio.load(input_data)
         elif isinstance(input_data, np.ndarray):
             input_data = torch.from_numpy(input_data).to(torch.float32).to(self.device)
-            logger.warning(
-                f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
-                    make sure this is correct and change input_sr otherwise)"
-            )
-            audio = torchaudio.transforms.Resample(
-                orig_freq=input_sr, new_freq=self.sample_rate
-            )(input_data)
         elif isinstance(input_data, torch.Tensor):
             input_data = input_data.to(torch.float32).to(self.device)
+        else:
+            raise ValueError("Input must be path to audio signal or an audio array")
+        
+        if len(input_data.shape) == 1:
+            input_data = input_data.unsqueeze(0)
+
+        if len(input_data.shape) == 3:
+            if input_data.shape[0] != 1:
+                raise ValueError("Batching is not supported. Please provide a single audio signal.")
+            input_data = input_data.squeeze(0)
+        
+        # resample audio
+        if input_sr != self.sample_rate:
             logger.warning(
                 f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
                     make sure this is correct and change input_sr otherwise)"
@@ -135,8 +141,14 @@ class MixerModel(object):
             audio = torchaudio.transforms.Resample(
                 orig_freq=input_sr, new_freq=self.sample_rate
             )(input_data)
-        else:
-            raise ValueError("Input must be path to audio signal or an audio array")
+
+        # downsampling to mono
+        if audio.shape[0] == 2:
+            audio = audio.mean(dim=0, keepdim=True)
+            logger.info(
+                f"Downsampling to mono... your audio is stereo, \
+                    and the model is trained on mono audio."
+            )
 
         # audio has shape B, 1, N
         audio = audio.reshape(-1)
@@ -153,8 +165,15 @@ class MixerModel(object):
         result = torch.cat(predictions, dim=-1)
         result = result[:, :, :-pad_length]
 
-        vocal_separation = result[:, 0, :].detach().cpu().numpy().reshape(-1)
-        violin_separation = result[:, 1, :].detach().cpu().numpy().reshape(-1)
+        vocal_separation = torchaudio.transforms.Resample(
+            orig_freq=self.sample_rate, new_freq=input_sr
+        )(result[:, 0, :])
+        violin_separation = torchaudio.transforms.Resample(
+            orig_freq=self.sample_rate, new_freq=input_sr
+        )(result[:, 1, :])
+        
+        vocal_separation = vocal_separation.detach().cpu().numpy().reshape(-1)
+        violin_separation = violin_separation.detach().cpu().numpy().reshape(-1)
         return (vocal_separation, violin_separation)
 
     def download_model(self, model_path=None, force_overwrite=False):
