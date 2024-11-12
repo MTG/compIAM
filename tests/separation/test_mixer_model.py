@@ -23,8 +23,8 @@ def _separate():
     audio_in, sr = np.array(np.ones([2, 44150 * 10]), dtype=np.float32), 44100
     separation = mixer_model.separate(audio_in, input_sr=sr)
     assert isinstance(separation, tuple)
-    assert isinstance(separation[0], np.array)
-    assert isinstance(separation[1], np.array)
+    assert isinstance(separation[0], np.ndarray)
+    assert isinstance(separation[1], np.ndarray)
     shutil.rmtree(os.path.join(TESTDIR, "models"))
 
 
