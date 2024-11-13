@@ -1,4 +1,4 @@
-# compIAM v0.3.0
+# compIAM v0.4.0
 compIAM (**comp**utational analysis of **I**ndian **A**rt **M**usic) is a collaborative initiative involving many researchers that aims at putting together a common repository of datasets, tools, and models for the computational analysis of Carnatic and Hindustani music. 
 
 You can get started on the Computational Analysis of Indian Art Music through our ISMIR 2022 Tutorial: [Computational Methods For Supporting Corpus-Based Research On Indian Art Music](https://mtg.github.io/IAM-tutorial-ismir22/landing.html).
