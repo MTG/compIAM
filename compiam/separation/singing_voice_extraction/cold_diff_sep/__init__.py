@@ -133,11 +133,29 @@ class ColdDiffSep(object):
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
         mixture = tf.convert_to_tensor(audio, dtype=tf.float32)
-        if mixture.shape[0] == 2:
-            mixture = tf.reduce_mean(mixture, axis=0)
 
+        if len(mixture.shape) == 3:
+            if mixture.shape[0] != 1:
+                raise ValueError("Batching is not supported. Please provide a single audio signal.")
+            else:
+                mixture = mixture.squeeze(0)
+                mixture = tf.reduce_mean(mixture, axis=0, keepdims=False)  # Removing dimension
+                logger.info(
+                    f"Downsampling to mono... your audio is stereo, \
+                        and the model is trained on mono audio."
+                )
+        if len(mixture.shape) > 3:
+            raise ValueError("Input must be a single, unbatched audio")
+
+        if mixture.shape[0] <= 2:
+            mixture = tf.reduce_mean(mixture, axis=0, keepdims=False)
+            logger.info(
+                f"Downsampling to mono... your audio is stereo, \
+                    and the model is trained on mono audio."
+            )
+            
         output_voc = np.zeros(mixture.shape)
-        hopsized_chunk = int((chunk_size * 22050) / 2)
+        hopsized_chunk = int((chunk_size * self.sample_rate) / 2)
         runs = math.floor(mixture.shape[0] / hopsized_chunk)
         trim_low = 0
         for trim in tqdm.tqdm(np.arange((runs * 2) - 1)):
@@ -189,7 +207,7 @@ class ColdDiffSep(object):
                 pred_audio = tf.squeeze(output_signal, axis=0).numpy()
                 vad = VAD(
                     pred_audio,
-                    sr=22050,
+                    sr=self.sample_rate,
                     nFFT=512,
                     win_length=0.025,
                     hop_length=0.01,
@@ -221,17 +239,6 @@ class ColdDiffSep(object):
         return output_voc * (
             np.max(np.abs(mixture.numpy())) / (np.max(np.abs(output_voc)) + 1e-6)
         )
-
-        # TODO: write a function to store audio
-        # Building intuitive filename with model config
-        # filefolder = os.path.join(args.input_signal.split("/")[:-1])
-        # filename = args.input_signal.split("/")[-1].split(".")[:-1]
-        # filename = filename[0] if len(filename) == 1 else ".".join(filename)
-        # filename = filename + "_" + str(clusters) + "_" + str(scheduler) + "pred_voc"
-        # sf.write(
-        #    os.path.join(filefolder, filename + ".wav"),
-        #    output_voc,
-        #    22050) # Writing to file
 
     def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""

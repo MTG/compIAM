@@ -37,7 +37,7 @@ def download_remote_model(
 ):
     """Elegantly download model from Zenodo.
 
-    IMPORTANT DISCLAIMER: Part of the code is taken from mirdata :)
+    IMPORTANT DISCLAIMER: Part of the code is taken from mir-dataset-loders/mirdata :)
 
     :param download_link: link to remote model to download
     :param download_checksum: checksum of the downloaded model
@@ -55,7 +55,7 @@ def download_remote_model(
         )
         return
     else:
-        local_filename = download_zip(download_link)
+        local_filename = download_zip(download_link, download_path)
         # Check the checksum
         checksum = md5(local_filename)
         if download_checksum != checksum:
@@ -72,10 +72,13 @@ def download_remote_model(
         return
 
 
-def download_zip(url):
+def download_zip(url, root_path):
     """Download a ZIP file from a URL."""
     # Get the file name from the URL
-    local_filename = url.split("/")[-1].split("?")[0]
+    local_filename = os.path.join(
+        root_path,
+        url.split("/")[-1].split("?")[0]
+    )
 
     # Stream the download and save the file
     with requests.get(url, stream=True) as r:
