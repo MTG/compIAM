@@ -49,7 +49,7 @@ class MixerModel(object):
         except:
             raise ImportError(
                 "In order to use this tool you need to have torch and torchaudio installed. "
-                "Please install them using: pip install torch==1.13.0 torchaudio"
+                "Install compIAM with torch support: pip install 'compiam[torch]'"
             )
         ###
 
