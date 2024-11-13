@@ -139,7 +139,7 @@ class ColdDiffSep(object):
                 raise ValueError("Batching is not supported. Please provide a single audio signal.")
             else:
                 mixture = mixture.squeeze(0)
-                mixture = mixture.mean(dim=0, keepdim=False)  # Removing dimension
+                mixture = tf.reduce_mean(mixture, axis=0, keepdims=False)  # Removing dimension
                 logger.info(
                     f"Downsampling to mono... your audio is stereo, \
                         and the model is trained on mono audio."
@@ -148,7 +148,7 @@ class ColdDiffSep(object):
             raise ValueError("Input must be a single, unbatched audio")
 
         if mixture.shape[0] <= 2:
-            mixture = mixture.mean(dim=0, keepdim=False)
+            mixture = tf.reduce_mean(mixture, axis=0, keepdims=False)
             logger.info(
                 f"Downsampling to mono... your audio is stereo, \
                     and the model is trained on mono audio."
