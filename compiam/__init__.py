@@ -71,9 +71,11 @@ def load_dataset(dataset_name, data_home=None, version="default"):
     """
     if dataset_name not in datasets_list:
         raise ValueError("Invalid dataset {}".format(dataset_name))
-    return mirdata.initialize(
+    dataloader =  mirdata.initialize(
         dataset_name=dataset_name, data_home=data_home, version=version
     )
+    dataloader.download(["index"])  # Download index file
+    return dataloader
 
 
 def load_corpora(tradition, token=None):
