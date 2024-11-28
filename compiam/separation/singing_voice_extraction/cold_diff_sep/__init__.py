@@ -94,6 +94,7 @@ class ColdDiffSep(object):
         clusters=5,
         scheduler=4,
         chunk_size=3,
+        normalize_input=True,
         gpu="-1",
     ):
         """Separate singing voice from mixture.
@@ -103,6 +104,8 @@ class ColdDiffSep(object):
             relevant if the input is an array of data instead of a filepath.
         :param clusters: Number of clusters to use to build the separation masks.
         :param scheduler: Scheduler factor to weight the clusters to be more or less restirctive with the interferences.
+        :param chunk_size: Size of the chunks to process the audio signal.
+        :param normalize_input: Normalize the input audio signal.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :return: Singing voice signal.
         """
@@ -153,6 +156,12 @@ class ColdDiffSep(object):
                 f"Downsampling to mono... your audio is stereo, \
                     and the model is trained on mono audio."
             )
+
+        if normalize_input:
+            # Normalizing audio for better performance overall
+            mean = tf.reduce_mean(mixture, keepdims=True)
+            std = tf.math.reduce_std(mixture, keepdims=True)
+            mixture = (mixture - mean) / (1e-6 + std)
             
         output_voc = np.zeros(mixture.shape)
         hopsized_chunk = int((chunk_size * self.sample_rate) / 2)

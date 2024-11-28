@@ -43,8 +43,11 @@ def _get_features():
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
-    feat_1 = deepsrgm.get_features(np.zeros(44100))
-    feat_2 = deepsrgm.get_features(
+    feat_1 = deepsrgm.get_features(np.zeros([44100]))
+    feat_2 = deepsrgm.get_features(np.zeros([1, 44100]))
+    feat_3 = deepsrgm.get_features(np.zeros([2, 44100]))
+    feat_3 = deepsrgm.get_features(np.zeros([44100, 2]))
+    feat_4 = deepsrgm.get_features(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
 
