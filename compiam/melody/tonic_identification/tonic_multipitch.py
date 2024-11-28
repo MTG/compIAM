@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from compiam.utils import get_logger
+from compiam.utils import get_logger, stereo_to_mono
 
 logger = get_logger(__name__)
 
@@ -65,12 +65,16 @@ class TonicIndianMultiPitch:
                 raise FileNotFoundError("Target audio not found.")
             audio = estd.MonoLoader(filename=input_data, sampleRate=self.sample_rate)()
         elif isinstance(input_data, np.ndarray):
+            if len(input_data.shape) == 2:
+                input_data = stereo_to_mono(input_data)
+            if len(input_data.shape) > 2:
+                raise ValueError("Input must be an unbatched audio signal")
             logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             resampling = estd.Resample(
                 inputSampleRate=input_sr, outputSampleRate=self.sample_rate
-            )()
+            )
             audio = resampling(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")

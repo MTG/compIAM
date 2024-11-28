@@ -43,6 +43,10 @@ def _get_features():
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
+    feat_1 = deepsrgm.get_features(np.zeros(44100))
+    feat_2 = deepsrgm.get_features(
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
+    )
 
 
 @pytest.mark.torch

@@ -180,9 +180,16 @@ class CAEWrapper:
             setattr(self, tp, v)
 
         self.model = self._build_model()
-        self.model.load_state_dict(
-            torch.load(model_path, weights_only=True), strict=False
-        )
+        try:
+            self.model.load_state_dict(
+                torch.load(model_path, weights_only=True, map_location=self.device),
+                strict=False
+            )
+        except:
+            self.model.load_state_dict(
+                torch.load(model_path, map_location=self.device),
+                strict=False,
+            )
         self.trained = True
 
     def download_model(self, model_path=None, force_overwrite=False):

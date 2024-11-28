@@ -15,6 +15,9 @@ def _predict_normalized_pitch():
     pitch = melodia.extract(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
+    pitch_2 = melodia.extract(np.zeros(44100))
+    pitch_3 = melodia.extract(np.zeros(2, 44100))  # Testing input array
+    pitch_4 = melodia.extract(np.zeros(44100, 2))  # Testing input array
 
     assert isinstance(pitch, np.ndarray)
     assert np.shape(pitch) == (699, 2)
@@ -67,6 +70,11 @@ def _predict_normalized_pitch():
     tonic = tonic_multipitch.extract(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
+    tonic_2 = tonic_multipitch.extract(np.zeros(44100))  # Testing input array
+    tonic_3 = tonic_multipitch.extract(np.zeros(2, 44100))  # Testing input array
+    tonic_4 = tonic_multipitch.extract(np.zeros(44100, 2))  # Testing input array
+
+
 
     assert isinstance(tonic, float)
     assert tonic == 157.64892578125

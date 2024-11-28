@@ -4,7 +4,6 @@ import inspect
 import pathlib
 import pickle
 import difflib
-import librosa
 
 import IPython.display as ipd
 import numpy as np
@@ -172,3 +171,21 @@ def add_center_to_mask(mask):
                 num_one = 0
                 indices = []
     return mask
+
+
+def stereo_to_mono(audio):
+    """Assuming numpy array as input"""
+    if len(audio.shape) == 2:
+        # Put channels first
+        if audio.shape[0] > audio.shape[1]:
+            audio = audio.T
+        # If stereo, average the channels
+        if audio.shape[0] == 2:
+            audio = np.mean(audio, axis=0)
+        if audio.shape[0] == 1:
+            audio = np.squeeze(audio, axis=0)
+        if audio.shape[0] > 2:
+            raise ValueError("Expected mono or stereo audio, got multi-channel audio")
+    if len(audio.shape) > 2:
+        raise ValueError("Input must be an unbatched audio signal")
+    return audio

@@ -176,16 +176,20 @@ class DhrupadBandishSegmentation:
             self.download_model(model_path)
 
         self.model = self._build_model()
-        self.model.load_state_dict(
-            torch.load(model_path, weights_only=True, map_location=self.device)
-        )
+        try:
+            self.model.load_state_dict(
+                torch.load(model_path, weights_only=True, map_location=self.device)
+            )
+        except:
+            self.model.load_state_dict(
+                torch.load(model_path, map_location=self.device)
+            )
         self.model.eval()
         self.loaded_model_path = model_path
         self.trained = True
 
     def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
-        print("modelpathhh", model_path)
         download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-4])
             if model_path is not None
