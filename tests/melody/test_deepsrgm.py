@@ -1,5 +1,6 @@
 import os
 import pytest
+import librosa
 
 import numpy as np
 
@@ -43,10 +44,10 @@ def _get_features():
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
-    feat_1 = deepsrgm.get_features(np.zeros([44100]))
-    feat_2 = deepsrgm.get_features(np.zeros([1, 44100]))
-    feat_3 = deepsrgm.get_features(np.zeros([2, 44100]))
-    feat_3 = deepsrgm.get_features(np.zeros([44100, 2]))
+    audio = librosa.load(os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"), sr=44100)[0]
+    feat_1 = deepsrgm.get_features(audio)
+    feat_2 = deepsrgm.get_features(np.stack([audio, audio]))
+    feat_3 = deepsrgm.get_features(np.stack([audio, audio]).T)
     feat_4 = deepsrgm.get_features(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )

@@ -71,6 +71,10 @@ def _predict_normalized_pitch():
     tonic = tonic_multipitch.extract(
         os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
     )
+    audio = librosa.load(os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"), sr=44100)[0]
+    tonic_2 = tonic_multipitch.extract(audio)  # Testing input array
+    tonic_3 = tonic_multipitch.extract(np.stack([audio, audio]))  # Testing input array
+    tonic_4 = tonic_multipitch.extract(np.stack([audio, audio]).T)  # Testing input array
 
     assert isinstance(tonic, float)
     assert tonic == 157.64892578125
