@@ -83,6 +83,8 @@ class MixerModel(object):
     def load_model(self, model_path):
         if not os.path.exists(model_path):
             self.download_model(model_path)  # Downloading model weights
+        ## Ensuring we can load the model for different torch versions
+        ## -- (weights only might be deprecated)
         try:
             weights = torch.load(model_path, weights_only=True, map_location=self.device)
         except:

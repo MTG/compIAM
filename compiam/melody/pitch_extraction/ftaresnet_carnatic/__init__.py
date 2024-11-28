@@ -80,7 +80,9 @@ class FTAResNetCarnatic(object):
         """Load pre-trained model weights."""
         if not os.path.exists(model_path):
             self.download_model(model_path)  # Downloading model weights
-        try: # Loading model weights
+        ## Ensuring we can load the model for different torch versions
+        ## -- (weights only might be deprecated)
+        try:
             self.model.load_state_dict(torch.load(model_path, weights_only=True, map_location=self.device))
         except:
             self.model.load_state_dict(torch.load(model_path, map_location=self.device))

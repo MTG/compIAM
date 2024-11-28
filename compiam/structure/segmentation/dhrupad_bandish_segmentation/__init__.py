@@ -176,6 +176,8 @@ class DhrupadBandishSegmentation:
             self.download_model(model_path)
 
         self.model = self._build_model()
+        ## Ensuring we can load the model for different torch versions
+        ## -- (weights only might be deprecated)
         try:
             self.model.load_state_dict(
                 torch.load(model_path, weights_only=True, map_location=self.device)
