@@ -96,7 +96,7 @@ class Melodia:
                 inputSampleRate=input_sr, outputSampleRate=self.sample_rate
             )
             input_data = resample_audio(input_data)
-            audio = estd.EqualLoudness(sampleRate=self.sample_rate)(audio)
+            audio = estd.EqualLoudness(sampleRate=self.sample_rate)(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 
