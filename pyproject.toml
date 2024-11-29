@@ -65,11 +65,11 @@ docs = [
 ]
 tensorflow = [
     "keras<3.0.0",
-    "tensorflow>=2.12.0,<2.16",
-]
+    "tensorflow==2.15.0",
+]  # Fixing tf versions to avoid issues
 torch = [
-    "torch==1.13.0",
-    "torchaudio",
+    "torch==2.0.0",
+    "torchaudio==2.0.1",
 ]
 essentia = [
     "essentia",

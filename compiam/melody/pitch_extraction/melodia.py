@@ -4,7 +4,7 @@ import numpy as np
 
 from compiam.utils.pitch import normalisation, resampling
 from compiam.io import write_csv
-from compiam.utils import get_logger
+from compiam.utils import get_logger, stereo_to_mono
 
 logger = get_logger(__name__)
 
@@ -87,14 +87,16 @@ class Melodia:
                 filename=input_data, sampleRate=self.sample_rate
             )()
         elif isinstance(input_data, np.ndarray):
+            input_data = stereo_to_mono(input_data)
+            # Apply Eqloudness filter
             logger.warning(
                 f"Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
             )
             resample_audio = estd.Resample(
                 inputSampleRate=input_sr, outputSampleRate=self.sample_rate
-            )()
+            )
             input_data = resample_audio(input_data)
-            audio = estd.EqualLoudness(signal=input_data)()
+            audio = estd.EqualLoudness(sampleRate=self.sample_rate)(input_data)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
 

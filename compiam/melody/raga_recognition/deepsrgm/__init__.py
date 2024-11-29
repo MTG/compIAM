@@ -1,4 +1,5 @@
 import os
+import librosa
 
 import numpy as np
 
@@ -8,7 +9,7 @@ from compiam.exceptions import (
     ModelNotTrainedError,
     DatasetNotLoadedError,
 )
-from compiam.utils import get_logger, WORKDIR
+from compiam.utils import get_logger, stereo_to_mono, WORKDIR
 from compiam.utils.download import download_remote_model
 
 logger = get_logger(__name__)
@@ -122,7 +123,10 @@ class DEEPSRGM(object):
             self.model = self._build_model(rnn="gru")
 
         self.model_path = model_path
-        weights = torch.load(model_path, weights_only=True, map_location=self.device)
+        try:
+            weights = torch.load(model_path, weights_only=True, map_location=self.device)
+        except:
+            weights = torch.load(model_path, map_location=self.device)
         new_weights = weights.copy()
         keys_to_fix = [
             ".weight_ih_l0",
@@ -232,20 +236,20 @@ class DEEPSRGM(object):
                     "Install compIAM with essentia support: pip install 'compiam[essentia]'"
                 )
 
+            # Loading and resampling audio
             if isinstance(input_data, str):
                 if not os.path.exists(input_data):
                     raise FileNotFoundError("Target audio not found.")
-                audio = estd.MonoLoader(
-                    filename=input_data, sampleRate=self.sample_rate
-                )()
+                audio, _ = librosa.load(input_data, sr=self.sample_rate)
             elif isinstance(input_data, np.ndarray):
+                input_data = stereo_to_mono(input_data)
                 logger.warning(
-                    "Resampling... (input sampling rate is {input_sr}Hz, make sure this is correct)"
+                    f"Resampling... (input sampling rate is assumed {input_sr}Hz, \
+                        make sure this is correct and change input_sr otherwise)"
                 )
-                resampling = estd.Resample(
-                    inputSampleRate=input_sr, outputSampleRate=self.sample_rate
+                audio = librosa.resample(
+                    input_data, orig_sr=input_sr, target_sr=self.sample_rate
                 )
-                audio = resampling(input_data)
             else:
                 raise ValueError("Input must be path to audio signal or an audio array")
 
