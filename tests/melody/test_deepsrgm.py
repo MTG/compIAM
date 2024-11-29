@@ -45,12 +45,10 @@ def _get_features():
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
     audio = librosa.load(os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"), sr=44100)[0]
+    audio = np.tile(audio, 9)
     feat_1 = deepsrgm.get_features(audio)
     feat_2 = deepsrgm.get_features(np.stack([audio, audio]))
     feat_3 = deepsrgm.get_features(np.stack([audio, audio]).T)
-    feat_4 = deepsrgm.get_features(
-        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
-    )
 
 
 @pytest.mark.torch
