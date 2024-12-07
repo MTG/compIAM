@@ -1,0 +1,1034 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Melodic analysis &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Rhythm analysis" href="rhythm.html" />
+    <link rel="prev" title="Basic usage" href="basic_usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Melodic analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tonic-identification">Tonic Identification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tonic-indian-art-music-multipitch-approach">Tonic Indian Art Music (Multipitch approach)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.tonic_identification.tonic_multipitch.TonicIndianMultiPitch"><code class="docutils literal notranslate"><span class="pre">TonicIndianMultiPitch</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pitch-extraction">Pitch Extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#melodia">Melodia</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pitch_extraction.melodia.Melodia"><code class="docutils literal notranslate"><span class="pre">Melodia</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ftanet-carnatic">FTANet-Carnatic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pitch_extraction.FTANetCarnatic"><code class="docutils literal notranslate"><span class="pre">FTANetCarnatic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ftaresnet-carnatic">FTAResNet-Carnatic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic"><code class="docutils literal notranslate"><span class="pre">FTAResNetCarnatic</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#melodic-pattern-discovery">Melodic Pattern Discovery</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cae-carnatic-wrapper">CAE-Carnatic (Wrapper)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.CAEWrapper"><code class="docutils literal notranslate"><span class="pre">CAEWrapper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#self-similarity-matrix">Self-similarity matrix</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.convert_mask"><code class="docutils literal notranslate"><span class="pre">convert_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.create_ss_matrix"><code class="docutils literal notranslate"><span class="pre">create_ss_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_conversion_mappings"><code class="docutils literal notranslate"><span class="pre">get_conversion_mappings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_param_hash_filepath"><code class="docutils literal notranslate"><span class="pre">get_param_hash_filepath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_report_paths"><code class="docutils literal notranslate"><span class="pre">get_report_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.normalise_self_sim"><code class="docutils literal notranslate"><span class="pre">normalise_self_sim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.save_matrix"><code class="docutils literal notranslate"><span class="pre">save_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor"><code class="docutils literal notranslate"><span class="pre">segmentExtractor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.self_similarity"><code class="docutils literal notranslate"><span class="pre">self_similarity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.sparse_to_original"><code class="docutils literal notranslate"><span class="pre">sparse_to_original()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#raga-recognition">Raga Recognition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deepsrgm">DEEPSRGM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM"><code class="docutils literal notranslate"><span class="pre">DEEPSRGM</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Melodic analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/melody.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="melodic-analysis">
+<span id="melody"></span><h1>Melodic analysis<a class="headerlink" href="#melodic-analysis" title="Link to this heading"></a></h1>
+<section id="tonic-identification">
+<h2>Tonic Identification<a class="headerlink" href="#tonic-identification" title="Link to this heading"></a></h2>
+<section id="tonic-indian-art-music-multipitch-approach">
+<h3>Tonic Indian Art Music (Multipitch approach)<a class="headerlink" href="#tonic-indian-art-music-multipitch-approach" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: essentia</p>
+</div>
+<dl class="py class" id="module-compiam.melody.tonic_identification.tonic_multipitch">
+<dt class="sig sig-object py" id="compiam.melody.tonic_identification.tonic_multipitch.TonicIndianMultiPitch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.tonic_identification.tonic_multipitch.</span></span><span class="sig-name descname"><span class="pre">TonicIndianMultiPitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonic_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude_compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tonic_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">375</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_tonic_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_harmonics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">55</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/tonic_identification/tonic_multipitch.html#TonicIndianMultiPitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.tonic_identification.tonic_multipitch.TonicIndianMultiPitch" title="Link to this definition"></a></dt>
+<dd><p>MultiPitch approach to extract the tonic from IAM music signals.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.tonic_identification.tonic_multipitch.TonicIndianMultiPitch.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/tonic_identification/tonic_multipitch.html#TonicIndianMultiPitch.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.tonic_identification.tonic_multipitch.TonicIndianMultiPitch.extract" title="Link to this definition"></a></dt>
+<dd><p>Extract the tonic from a given file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a floating point number representing the tonic of the input recording.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="pitch-extraction">
+<h2>Pitch Extraction<a class="headerlink" href="#pitch-extraction" title="Link to this heading"></a></h2>
+<section id="melodia">
+<h3>Melodia<a class="headerlink" href="#melodia" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: essentia</p>
+</div>
+<dl class="py class" id="module-compiam.melody.pitch_extraction.melodia">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.melodia.Melodia">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.pitch_extraction.melodia.</span></span><span class="sig-name descname"><span class="pre">Melodia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_unvoiced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonic_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude_compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_harmonics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_distribution_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_frame_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_continuity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">27.5625</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">55</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_continuity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice_vibrato</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voicing_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/melodia.html#Melodia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.melodia.Melodia" title="Link to this definition"></a></dt>
+<dd><p>Melodia predominant melody extraction</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.melodia.Melodia.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/melodia.html#Melodia.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.melodia.Melodia.extract" title="Link to this definition"></a></dt>
+<dd><p>Extract the melody from a given file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+<li><p><strong>out_step</strong> – particular time-step duration if needed at output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.melodia.Melodia.normalise_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalise_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins_per_octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/melodia.html#Melodia.normalise_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.melodia.Melodia.normalise_pitch" title="Link to this definition"></a></dt>
+<dd><p>Normalize pitch given a tonic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – a 2-D list with time-stamps and pitch values per timestamp.</p></li>
+<li><p><strong>tonic</strong> – recording tonic to normalize the pitch to.</p></li>
+<li><p><strong>bins_per_octave</strong> – number of frequency bins per octave.</p></li>
+<li><p><strong>max_value</strong> – maximum value to clip the normalized pitch to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and normalized to a given tonic
+pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.melodia.Melodia.save_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/melodia.html#Melodia.save_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.melodia.Melodia.save_pitch" title="Link to this definition"></a></dt>
+<dd><p>Calling the write_csv function in compiam.io to write the output pitch curve in a fle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the data to write</p></li>
+<li><p><strong>output_path</strong> – the path where the data is going to be stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="ftanet-carnatic">
+<h3>FTANet-Carnatic<a class="headerlink" href="#ftanet-carnatic" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: tensorflow</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.pitch_extraction.</span></span><span class="sig-name descname"><span class="pre">FTANetCarnatic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_checksum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic" title="Link to this definition"></a></dt>
+<dd><p>FTA-Net melody extraction tuned to Carnatic Music.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.FTA_Module">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FTA_Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.FTA_Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.FTA_Module" title="Link to this definition"></a></dt>
+<dd><p>Selection and fusion module.
+Implementation taken from <a class="reference external" href="https://github.com/yushuai/FTANet-melodic">https://github.com/yushuai/FTANet-melodic</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – input tensor.</p></li>
+<li><p><strong>shape</strong> – the shape of the input tensor.</p></li>
+<li><p><strong>kt</strong> – kernel size for time attention.</p></li>
+<li><p><strong>kf</strong> – kernel size for frequency attention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the resized input, the time-attention map,
+and the frequency-attention map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.SF_Module">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SF_Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.SF_Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.SF_Module" title="Link to this definition"></a></dt>
+<dd><p>Selection and fusion module.
+Implementation taken from <a class="reference external" href="https://github.com/yushuai/FTANet-melodic">https://github.com/yushuai/FTANet-melodic</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_list</strong> – list of tensor inputs.</p></li>
+<li><p><strong>n_channel</strong> – number of feature channels.</p></li>
+<li><p><strong>reduction</strong> – the rate to which the data is compressed.</p></li>
+<li><p><strong>limitation</strong> – setting a compressing limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a tensor with the fused and selected feature map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.download_model">
+<span class="sig-name descname"><span class="pre">download_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.download_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.download_model" title="Link to this definition"></a></dt>
+<dd><p>Download pre-trained model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.normalise_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalise_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins_per_octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.normalise_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.normalise_pitch" title="Link to this definition"></a></dt>
+<dd><p>Normalise pitch given a tonic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – a 2-D list with time-stamps and pitch values per timestamp.</p></li>
+<li><p><strong>tonic</strong> – recording tonic to normalize the pitch to.</p></li>
+<li><p><strong>bins_per_octave</strong> – number of frequency bins per octave.</p></li>
+<li><p><strong>max_value</strong> – maximum value to clip the normalized pitch to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and normalised to a given tonic
+pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.predict" title="Link to this definition"></a></dt>
+<dd><p>Extract melody from input_data.
+Implementation taken (and slightly adapted) from <a class="reference external" href="https://github.com/yushuai/FTANet-melodic">https://github.com/yushuai/FTANet-melodic</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal.</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+<li><p><strong>hop_size</strong> – hop size between frequency estimations.</p></li>
+<li><p><strong>batch_size</strong> – batches of seconds that are passed through the model
+(defaulted to 5, increase if enough computational power, reduce if
+needed).</p></li>
+<li><p><strong>out_step</strong> – particular time-step duration if needed at output</p></li>
+<li><p><strong>gpu</strong> – Id of the available GPU to use (-1 by default, to run on CPU), use string: ‘0’, ‘1’, etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTANetCarnatic.save_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftanet_carnatic.html#FTANetCarnatic.save_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTANetCarnatic.save_pitch" title="Link to this definition"></a></dt>
+<dd><p>Calling the write_csv function in compiam.io to write the output pitch curve in a fle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the data to write</p></li>
+<li><p><strong>output_path</strong> – the path where the data is going to be stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="ftaresnet-carnatic">
+<h3>FTAResNet-Carnatic<a class="headerlink" href="#ftaresnet-carnatic" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: torch</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.pitch_extraction.</span></span><span class="sig-name descname"><span class="pre">FTAResNetCarnatic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_checksum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic" title="Link to this definition"></a></dt>
+<dd><p>FTA-ResNet melody extraction tuned to Carnatic Music.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.download_model">
+<span class="sig-name descname"><span class="pre">download_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.download_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.download_model" title="Link to this definition"></a></dt>
+<dd><p>Download pre-trained model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load pre-trained model weights.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.normalise_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalise_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins_per_octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.normalise_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.normalise_pitch" title="Link to this definition"></a></dt>
+<dd><p>Normalise pitch given a tonic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – a 2-D list with time-stamps and pitch values per timestamp.</p></li>
+<li><p><strong>tonic</strong> – recording tonic to normalize the pitch to.</p></li>
+<li><p><strong>bins_per_octave</strong> – number of frequency bins per octave.</p></li>
+<li><p><strong>max_value</strong> – maximum value to clip the normalized pitch to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and normalised to a given tonic
+pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">441</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.predict" title="Link to this definition"></a></dt>
+<dd><p>Extract melody from input_data.
+Implementation taken (and slightly adapted) from <a class="reference external" href="https://github.com/yushuai/FTANet-melodic">https://github.com/yushuai/FTANet-melodic</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal.</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+<li><p><strong>hop_size</strong> – hop size between frequency estimations.</p></li>
+<li><p><strong>batch_size</strong> – batches of seconds that are passed through the model
+(defaulted to 5, increase if enough computational power, reduce if
+needed).</p></li>
+<li><p><strong>out_step</strong> – particular time-step duration if needed at output</p></li>
+<li><p><strong>gpu</strong> – Id of the available GPU to use (-1 by default, to run on CPU), use string: ‘0’, ‘1’, etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.save_pitch">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.save_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.save_pitch" title="Link to this definition"></a></dt>
+<dd><p>Calling the write_csv function in compiam.io to write the output pitch curve in a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the data to write</p></li>
+<li><p><strong>output_path</strong> – the path where the data is going to be stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pitch_extraction.FTAResNetCarnatic.select_gpu">
+<span class="sig-name descname"><span class="pre">select_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pitch_extraction/ftaresnet_carnatic.html#FTAResNetCarnatic.select_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pitch_extraction.FTAResNetCarnatic.select_gpu" title="Link to this definition"></a></dt>
+<dd><p>Select the GPU to use for inference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gpu</strong> – Id of the available GPU to use (-1 by default, to run on CPU), use string: ‘0’, ‘1’, etc.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="melodic-pattern-discovery">
+<h2>Melodic Pattern Discovery<a class="headerlink" href="#melodic-pattern-discovery" title="Link to this heading"></a></h2>
+<section id="cae-carnatic-wrapper">
+<h3>CAE-Carnatic (Wrapper)<a class="headerlink" href="#cae-carnatic-wrapper" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: torch</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.</span></span><span class="sig-name descname"><span class="pre">CAEWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_link</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_checksum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper" title="Link to this definition"></a></dt>
+<dd><p>Wrapper for the Complex Autoencoder found at <a class="reference external" href="https://github.com/SonyCSLParis/cae-invar#quick-start">https://github.com/SonyCSLParis/cae-invar#quick-start</a>
+specifically for the task of embedding audio to learnt CAE features.
+This wrapper is used for inference and it is not trainable. Please initialize it using
+compiam.load_model()</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.download_model">
+<span class="sig-name descname"><span class="pre">download_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.download_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.download_model" title="Link to this definition"></a></dt>
+<dd><p>Download pre-trained model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.extract_features">
+<span class="sig-name descname"><span class="pre">extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.extract_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.extract_features" title="Link to this definition"></a></dt>
+<dd><p>Extract CAE features using self.model on audio at &lt;file_path&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – path to audio</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate of audio at &lt;file_path&gt;, if None, use self.sr</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>amplitude vector, phases vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray, np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.get_cqt">
+<span class="sig-name descname"><span class="pre">get_cqt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.get_cqt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.get_cqt" title="Link to this definition"></a></dt>
+<dd><p>Extract CQT representation from audio at &lt;file_path&gt; according
+to parameters specified in conf at self.conf_path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – path to audio</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate of audio at &lt;file_path&gt;, if None, use self.sr</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>cqt representation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.load_conf">
+<span class="sig-name descname"><span class="pre">load_conf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.load_conf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.load_conf" title="Link to this definition"></a></dt>
+<dd><p>Load .ini conf at &lt;path&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – path to .ini configuration file</p></li>
+<li><p><strong>spec</strong> (<em>str</em>) – path to .cfg configuration spec file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load model at &lt;model_path&gt;. Expects model parameters to correspond
+to those found in self.params (loaded from self.conf_path).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_path</strong> (<em>str</em>) – path to model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.to_amp_phase">
+<span class="sig-name descname"><span class="pre">to_amp_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cqt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.to_amp_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.to_amp_phase" title="Link to this definition"></a></dt>
+<dd><p>Extract amplitude and phase vector from model
+on &lt;cqt&gt; representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cqt</strong> (<em>np.ndarray</em>) – CQT representation of audio</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>amplitude vector, phases vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray, np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.CAEWrapper.validate_conf">
+<span class="sig-name descname"><span class="pre">validate_conf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search.html#CAEWrapper.validate_conf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.CAEWrapper.validate_conf" title="Link to this definition"></a></dt>
+<dd><p>Ensure all relevant parameters for feature extraction
+are present in &lt;conf&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>dict</em>) – dict of parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True/False, are relevant parameters present</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="self-similarity-matrix">
+<h3>Self-similarity matrix<a class="headerlink" href="#self-similarity-matrix" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: torch</p>
+</div>
+<dl class="py function" id="module-compiam.melody.pattern.sancara_search.extraction.self_sim">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.convert_mask">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">convert_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#convert_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.convert_mask" title="Link to this definition"></a></dt>
+<dd><p>Get mask of excluded regions in the same dimension as array, &lt;arr&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>np.ndarray</em>) – array corresponding to features extracted from audio</p></li>
+<li><p><strong>mask</strong> (<em>np.ndarray</em>) – Mask indicating whether element should be excluded (different dimensions to &lt;arr&gt;)</p></li>
+<li><p><strong>timestep</strong> (<em>float</em>) – time in seconds between each element in &lt;mask&gt;</p></li>
+<li><p><strong>hop_length</strong> (<em>int</em>) – how many frames of audio correspond to each element in &lt;arr&gt;</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate of audio from which &lt;arr&gt; was computed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>array of mask values equal in length to one dimension of &lt;arr&gt; - 0/1 is masked?</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.create_ss_matrix">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">create_ss_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#create_ss_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.create_ss_matrix" title="Link to this definition"></a></dt>
+<dd><p>Compute self similarity matrix between features in &lt;feats&gt;
+using distance measure, &lt;mode&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feats</strong> (<em>np.ndarray</em>) – array of features</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – name of distance measure (recognised by scipy.spatial.distance)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>self similarity matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.get_conversion_mappings">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">get_conversion_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#get_conversion_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_conversion_mappings" title="Link to this definition"></a></dt>
+<dd><p>Before reducing an array to only include elements that do not correspond
+to &lt;mask&gt;. We want to record the relationship between the new (sparse) array
+index and the old (orig) array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> – mask of 0/1 - is element to be excluded</p></li>
+<li><p><strong>type</strong> – np.ndarray</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}
+sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}
+boundaries_orig - list of boundaries between wanted and unwanted regions in orig array
+boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict, dict, list, list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.get_param_hash_filepath">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">get_param_hash_filepath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#get_param_hash_filepath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_param_hash_filepath" title="Link to this definition"></a></dt>
+<dd><p>Build filepath by creating string of input &lt;params&gt;
+in &lt;out_dir&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params out_dir<span class="colon">:</span></dt>
+<dd class="field-odd"><p>directory path</p>
+</dd>
+<dt class="field-even">Params params<span class="colon">:</span></dt>
+<dd class="field-even"><p>arguments, any type</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>filepath unique to input params in &lt;out_dir&gt;</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.get_report_paths">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">get_report_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#get_report_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.get_report_paths" title="Link to this definition"></a></dt>
+<dd><p>Get dictionary of fielpaths relevant to progress plots
+in extract_segments()</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params out_dir<span class="colon">:</span></dt>
+<dd class="field-odd"><p>directory path to save plots in</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of filepaths</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.normalise_self_sim">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">normalise_self_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#normalise_self_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.normalise_self_sim" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Normalise self similarity matrix:</dt><dd><p>invert and convolve</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em>) – self similarity matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix normalized, same dimensions</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.save_matrix">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">save_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#save_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.save_matrix" title="Link to this definition"></a></dt>
+<dd><p>if &lt;filepath&gt;, save &lt;X&gt; at &lt;filepath&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – matrix to save</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em> or </em><em>None</em>) – filepath</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">segmentExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#segmentExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor" title="Link to this definition"></a></dt>
+<dd><p>Manipulate and extract segments from self similarity matrix</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.emphasize_diagonals">
+<span class="sig-name descname"><span class="pre">emphasize_diagonals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gauss_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cont_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etc_kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binop_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_report</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#segmentExtractor.emphasize_diagonals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.emphasize_diagonals" title="Link to this definition"></a></dt>
+<dd><p>From self similarity matrix, self.X. Emphasize diagonals using a series
+of image processing steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bin_thresh</strong> (<em>float</em>) – Threshold for binarization of self similarity array.
+Values below this threshold are set to 0 (not significant), those
+above or equal too are set to 1. Very important parameter</p></li>
+<li><p><strong>gauss_sigma</strong> (<em>float</em><em> or </em><em>None</em>) – If not None, sigma for diagonal gaussian blur to
+apply to matrix</p></li>
+<li><p><strong>cont_thresh</strong> (<em>float</em><em> or </em><em>None</em>) – Only applicable if &lt;gauss_sigma&gt;. This binary
+threshold isreapplied after gaussian blur to ensure matrix of
+0 and 1. if None, equal to &lt;bin_thresh&gt;</p></li>
+<li><p><strong>etc_kernel_size</strong> (<em>int</em>) – Kernel size for morphological closing</p></li>
+<li><p><strong>binop_dim</strong> (<em>int</em>) – square dimension of binary opening structure
+(square matrix of zeros with 1 across the diagonal)</p></li>
+<li><p><strong>image_report</strong> (<em>None</em>) – str corresponding to folder to save progress images in.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Display progress</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of segments in the form [((x0,y0),(x1,y1)),..]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.extract_segments">
+<span class="sig-name descname"><span class="pre">extract_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">etc_kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binop_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_tail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_thresh_segment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_diff_trav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pattern_length_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">break_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#segmentExtractor.extract_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.extract_segments" title="Link to this definition"></a></dt>
+<dd><p>From self similarity matrix, &lt;self.X_proc&gt;. Return list of segments,
+each corresponding to two regions of the input axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>etc_kernel_size</strong> (<em>int</em>) – Kernel size for morphological closing</p></li>
+<li><p><strong>binop_dim</strong> (<em>int</em>) – square dimension of binary opening structure
+(square matrix of zeros with 1 across the diagonal)</p></li>
+<li><p><strong>perc_tail</strong> (<em>int</em>) – Percentage either size of a segment along its
+trajectory considered for lower threshold for significance</p></li>
+<li><p><strong>bin_thresh_segment</strong> (<em>float</em>) – Reduced &lt;bin_thresh&gt; threshold for
+areas neighbouring identified segments. If None, use 0.5*&lt;bin_thresh&gt;</p></li>
+<li><p><strong>min_diff_trav</strong> (<em>float</em>) – Min time difference in seconds between
+two segments for them to be joined to one.</p></li>
+<li><p><strong>min_pattern_length_seconds</strong> (<em>float</em>) – Minimum length of any
+returned pattern in seconds</p></li>
+<li><p><strong>boundaries</strong> (<em>list</em><em> or </em><em>None</em>) – list of boundaries in &lt;X&gt; corresponding
+to breaks due to sparsity</p></li>
+<li><p><strong>lookup</strong> (<em>dict</em>) – Lookup of sparse index (in X): non-sparse index</p></li>
+<li><p><strong>break_mask</strong> (<em>array</em>) – any segment that traverses a non-zero element
+in &lt;break_mask&gt; is broken into two according to this non-zero value</p></li>
+<li><p><strong>timestep</strong> (<em>float</em><em> or </em><em>None</em>) – Time in seconds between each element in &lt;break_mask&gt;</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Display progress</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of segments in the form [((x0,y0),(x1,y1)),..]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.self_similarity">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">self_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclusion_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#self_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.self_similarity" title="Link to this definition"></a></dt>
+<dd><p>Compute self similarity matrix between features in &lt;features&gt;. If an &lt;exclusion_mask&gt;
+is passed. Regions corresponding to that mask will be excluded from the computation and
+the returned matrix will correspond only to those regions marked as 0 in the mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>np.ndarray</em>) – array of features extracted from audio</p></li>
+<li><p><strong>exclusion_mask</strong> (<em>np.ndarray</em><em> or </em><em>None</em>) – array of 0 and 1, should be masked or not? [Optional]</p></li>
+<li><p><strong>timestep</strong> (<em>float</em><em> or </em><em>None</em>) – time in seconds between elements of &lt;exclusion_mask&gt;
+Only required if &lt;exclusion_mask&gt; is passed</p></li>
+<li><p><strong>hop_length</strong> (<em>int</em><em> or </em><em>None</em>) – number of audio frames corresponding to one element in &lt;features&gt;
+Only required if &lt;exclusion_mask&gt; is passed</p></li>
+<li><p><strong>sr</strong> (<em>int</em><em> or </em><em>None</em>) – sampling rate of audio corresponding to &lt;features&gt;
+Only required if &lt;exclusion_mask&gt; is passed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>if exclusion mask is passed return…</dt><dd><p>matrix - self similarity matrix
+orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}
+sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}
+boundaries_orig - list of boundaries between wanted and unwanted regions in orig array
+boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array</p>
+</dd>
+<dt>else return</dt><dd><p>matrix - self similarity matrix</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(np.ndarray, dict, dict, list, list) or np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.melody.pattern.sancara_search.extraction.self_sim.sparse_to_original">
+<span class="sig-prename descclassname"><span class="pre">compiam.melody.pattern.sancara_search.extraction.self_sim.</span></span><span class="sig-name descname"><span class="pre">sparse_to_original</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundaries_sparse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/pattern/sancara_search/extraction/self_sim.html#sparse_to_original"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.pattern.sancara_search.extraction.self_sim.sparse_to_original" title="Link to this definition"></a></dt>
+<dd><p>Convert indices corresponding to segments in &lt;all_segments&gt;
+to their non-sparse form using mapping in &lt;lookup&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_segments</strong> (<em>list</em>) – list of segments, [(x0,y0),(x1,y1),…]</p></li>
+<li><p><strong>boundaries_sparse</strong> (<em>list</em>) – list indices in sparse array corresponding to splits in original array</p></li>
+<li><p><strong>lookup</strong> (<em>dict</em>) – dict of sparse_index:non-sparse index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>&lt;all_segments&gt; with indices replaced according to lookup</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="raga-recognition">
+<h2>Raga Recognition<a class="headerlink" href="#raga-recognition" title="Link to this heading"></a></h2>
+<section id="deepsrgm">
+<h3>DEEPSRGM<a class="headerlink" href="#deepsrgm" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: torch</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.melody.raga_recognition.deepsrgm.</span></span><span class="sig-name descname"><span class="pre">DEEPSRGM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_checksum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lstm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM" title="Link to this definition"></a></dt>
+<dd><p>DEEPSRGM model for raga classification. This DEEPSGRM implementation has been
+kindly provided by Shubham Lohiya and Swarada Bharadwaj.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.download_model">
+<span class="sig-name descname"><span class="pre">download_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.download_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.download_model" title="Link to this definition"></a></dt>
+<dd><p>Download pre-trained model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.get_features">
+<span class="sig-name descname"><span class="pre">get_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_mirdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.get_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.get_features" title="Link to this definition"></a></dt>
+<dd><p>Computing features for prediction of DEEPSRM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal.</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath.</p></li>
+<li><p><strong>pitch_path</strong> – path to pre-computed pitch file (if available).</p></li>
+<li><p><strong>tonic_path</strong> – path to pre-computed tonic file (if available).</p></li>
+<li><p><strong>from_mirdata</strong> – boolean to indicate if the features are parsed from the mirdata loader of
+Indian Art Music Raga Recognition Dataset (must be specifically this one).</p></li>
+<li><p><strong>track_id</strong> – track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is
+set to True.</p></li>
+<li><p><strong>k</strong> – k indicating the precision of the pitch feature.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_mapping">
+<span class="sig-name descname"><span class="pre">load_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.load_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_mapping" title="Link to this definition"></a></dt>
+<dd><p>Loading raga mapping for DEEPSRGM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> – Selection of ragas for the DEEPSRGM model. A default selection
+is initialized by default in compiam v1.0. Flexible selection and training of this
+model is under development at this moment and will be available in the next release.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lstm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_model" title="Link to this definition"></a></dt>
+<dd><p>Loading weights for DEEPSRGM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_path</strong> – path to model.</p></li>
+<li><p><strong>rnn</strong> – lstm (default) or gru.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_raga_dataset">
+<span class="sig-name descname"><span class="pre">load_raga_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.load_raga_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_raga_dataset" title="Link to this definition"></a></dt>
+<dd><p>Load an instance of the Compmusic raga dataset to assist the tool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_home</strong> – path where to store the dataset data</p></li>
+<li><p><strong>download</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/melody/raga_recognition/deepsrgm.html#DEEPSRGM.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.predict" title="Link to this definition"></a></dt>
+<dd><p>Predict raga for recording</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> – all subsequences for a certain music recording</p></li>
+<li><p><strong>threshold</strong> – majority voting threshold</p></li>
+<li><p><strong>gpu</strong> – Id of the available GPU to use (-1 by default, to run on CPU)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>recognition result</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basic_usage.html" class="btn btn-neutral float-left" title="Basic usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rhythm.html" class="btn btn-neutral float-right" title="Rhythm analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

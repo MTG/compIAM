@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.rhythm.transcription.mnemonic_transcription &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.rhythm.transcription.mnemonic_transcription</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.rhythm.transcription.mnemonic_transcription</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">import</span> <span class="nn">hmmlearn.hmm</span> <span class="k">as</span> <span class="nn">hmm</span>
+<span class="kn">import</span> <span class="nn">librosa</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">compiam.exceptions</span> <span class="kn">import</span> <span class="n">ModelNotTrainedError</span>
+<span class="kn">from</span> <span class="nn">compiam.rhythm.meter.akshara_pulse_tracker</span> <span class="kn">import</span> <span class="n">AksharaPulseTracker</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MnemonicTranscription">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription">[docs]</a>
+<span class="k">class</span> <span class="nc">MnemonicTranscription</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    bōl or solkattu transcription from audio. Based on model presented in [1]</span>
+
+<span class="sd">    [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., &amp; Serra, X.</span>
+<span class="sd">    (2015, October). Discovery of Syllabic Percussion Patterns in Tabla</span>
+<span class="sd">    Solo Recordings. In Proceedings of the 16th International Society</span>
+<span class="sd">    for Music Information Retrieval Conference (ISMIR 2015) (pp. 385--391).</span>
+<span class="sd">    Malaga, Spain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">syllables</span><span class="p">,</span>
+        <span class="n">feature_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_mfcc&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">&quot;win_length&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">&quot;hop_length&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">},</span>
+        <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s2">&quot;n_mix&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;n_iter&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;viterbi&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="s2">&quot;mcw&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param syllables: List of strings representing expected bōl/solkattu syllables OR dict of string:string mappings.</span>
+<span class="sd">            If a dict is passed, any subsequent syllable labels passed at training time will be converted as per this mapping. The values of</span>
+<span class="sd">            this dict will act as the bōl/solkattu &quot;vocabulary&quot; for this model.</span>
+<span class="sd">        :type syllables: list or dict</span>
+<span class="sd">        :param feature_kwargs: Dict of parameters to pass to librosa.feature.mfcc or librosa.feature.delta. Defaults are selected as per [1]</span>
+<span class="sd">        :type feature_kwargs: dict</span>
+<span class="sd">        :param model_kwargs: Dict of parameters to pass to hmmlearn.hmm.GMMHMM. Defaults are selected as per [1]</span>
+<span class="sd">        :type model_kwargs: dict</span>
+<span class="sd">        :param sr: sampling rate of audio to train on (default 44.1Hz)</span>
+<span class="sd">        :type sr: int</span>
+
+<span class="sd">        [1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., &amp; Serra, X.</span>
+<span class="sd">        (2015, October). Discovery of Syllabic Percussion Patterns in Tabla</span>
+<span class="sd">        Solo Recordings. In Proceedings of the 16th International Society</span>
+<span class="sd">        for Music Information Retrieval Conference (ISMIR 2015) (pp. 385-391).</span>
+<span class="sd">        Malaga, Spain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="o">=</span> <span class="n">sr</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">syllables</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">syllables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">syllables</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">syllables</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">syllables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">syllables</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">syllables</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">syllables</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">hmm</span><span class="o">.</span><span class="n">GMMHMM</span><span class="p">(</span><span class="o">**</span><span class="n">model_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_kwargs</span> <span class="o">=</span> <span class="n">feature_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="MnemonicTranscription.train">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_paths_audio</span><span class="p">,</span> <span class="n">file_paths_annotation</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train one gaussian mixture model hidden markov model for each syllables passed at initialisation</span>
+<span class="sd">        on input audios and annotations passed via &lt;file_paths_audio&gt; and &lt;file_paths_annotation&gt;.</span>
+<span class="sd">        Training hyperparameters are configured upon intialisation and can be accessed/changed</span>
+<span class="sd">        via self.model_kwargs.</span>
+
+<span class="sd">        :param file_paths_audio: List of file_paths to audios to train on</span>
+<span class="sd">        :type file_paths_audio: list</span>
+<span class="sd">        :param file_paths_annotation: List of file_paths to annotations to train on.</span>
+<span class="sd">            annotations should be in csv format, with no header of (timestamp in seconds, &lt;syllable&gt;).</span>
+<span class="sd">            Annotated syllables that do not correspond to syllables passed at initialisation will be ignored</span>
+<span class="sd">            One annotations path should be passed for each audio path</span>
+<span class="sd">        :type file_paths_annotation: list</span>
+<span class="sd">        :param sr: sampling rate of audio to train on (default &lt;self.sr&gt;)</span>
+<span class="sd">        :param sr: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_paths_audio</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_paths_annotation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;file_paths_audio and file_paths_annotation must be the same length&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">sr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sr</span> <span class="k">else</span> <span class="n">sr</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">syllables</span><span class="p">}</span>
+        <span class="c1"># load and extract features</span>
+        <span class="k">for</span> <span class="n">fau</span><span class="p">,</span> <span class="n">fan</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">file_paths_audio</span><span class="p">,</span> <span class="n">file_paths_annotation</span><span class="p">):</span>
+            <span class="n">audio</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fau</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_annotations</span><span class="p">(</span><span class="n">fan</span><span class="p">)</span>
+
+            <span class="n">annotations</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">round</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">sr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">]</span>
+            <span class="n">ann_syls</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">])</span>
+
+            <span class="c1"># Extract melodic features</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">syl</span> <span class="ow">in</span> <span class="n">ann_syls</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">syl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">syllables</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># get params</span>
+                <span class="n">hop_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_kwargs</span><span class="p">[</span><span class="s2">&quot;hop_length&quot;</span><span class="p">]</span>
+
+                <span class="c1"># get training samples relevant to syl</span>
+                <span class="n">samples_ix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_ix</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">syl</span><span class="p">)</span>
+                <span class="n">samples_ix</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">hop_length</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">j</span> <span class="o">/</span> <span class="n">hop_length</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">samples_ix</span>
+                <span class="p">]</span>
+
+                <span class="n">samples</span><span class="p">[</span><span class="n">syl</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">syl</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">features</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">samples_ix</span><span class="p">]</span>
+
+        <span class="c1"># Train models</span>
+        <span class="k">for</span> <span class="n">syl</span><span class="p">,</span> <span class="n">samps</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">samps</span><span class="p">:</span>
+                <span class="n">samps_concat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">samps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samps</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">syl</span><span class="p">]</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">samps_concat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lengths</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.predict">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">,</span> <span class="n">onsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict bōl/solkattu transcription for list of input audios at &lt;file_paths&gt;.</span>
+
+<span class="sd">        :param file_paths: Either one file_path or list of file_paths to audios to predict on</span>
+<span class="sd">        :type file_paths: list or string</span>
+<span class="sd">        :param onsets: list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used</span>
+<span class="sd">            to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being</span>
+<span class="sd">            a list of bōl/solkattu onsets in seconds. &lt;onsets&gt; should contain one set of onset annotations for each file_path</span>
+<span class="sd">            in &lt;file_paths&gt;</span>
+<span class="sd">        :type onsets: list or None</span>
+<span class="sd">        :param sr: sampling rate of audio to train on (default &lt;self.sr&gt;)</span>
+<span class="sd">        :param sr: int</span>
+
+<span class="sd">        :returns: if &lt;file_paths&gt; is a list, then return a list of transcriptions, each</span>
+<span class="sd">            transcription of the form [(timestamp in seconds, bōl/solkattu),...]. Or if &lt;file_paths&gt;</span>
+<span class="sd">            is a single fiel path string, return a single transcription.</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotTrainedError</span><span class="p">(</span>
+                <span class="s2">&quot;Please train model before predicting using .train() method&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">onsets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">onsets</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_paths</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;One onset annotation required for each file path&quot;</span><span class="p">)</span>
+
+        <span class="n">sr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sr</span> <span class="k">else</span> <span class="n">sr</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">file_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fau</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_paths</span><span class="p">):</span>
+            <span class="n">ot</span> <span class="o">=</span> <span class="n">onsets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">onsets</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_single</span><span class="p">(</span><span class="n">fau</span><span class="p">,</span> <span class="n">onsets</span><span class="o">=</span><span class="n">ot</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.predict_single">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_single">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">onsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict bōl/solkattu transcription directly from audio time series</span>
+<span class="sd">        (such as for example that loaded by librosa.load)</span>
+
+<span class="sd">        :param file_path: File path to audio to analyze</span>
+<span class="sd">        :type file_path: str</span>
+<span class="sd">        :param onsets: If None, compiam.rhythm.akshara_pulse_tracker is used to automatically</span>
+<span class="sd">            identify bōl/solkattu onsets. If passed &lt;onsets&gt; should be a list of bōl/solkattu</span>
+<span class="sd">            onsets in seconds</span>
+<span class="sd">        :type onsets: list or None</span>
+<span class="sd">        :param sr: sampling rate of audio to train on (default &lt;self.sr&gt;)</span>
+<span class="sd">        :param sr: int</span>
+
+<span class="sd">        :returns: bōl/solkattu transcription of form [(time in seconds, syllable),... ]</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sr</span> <span class="k">else</span> <span class="n">sr</span>
+        <span class="n">hop_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_kwargs</span><span class="p">[</span><span class="s2">&quot;hop_length&quot;</span><span class="p">]</span>
+
+        <span class="n">audio</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">onsets</span><span class="p">:</span>
+            <span class="c1"># if not onsets are passed, extract using</span>
+            <span class="n">pulse</span> <span class="o">=</span> <span class="n">AksharaPulseTracker</span><span class="p">()</span>
+            <span class="n">onsets</span> <span class="o">=</span> <span class="n">pulse</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">file_path</span><span class="p">)[</span><span class="s2">&quot;aksharaPulses&quot;</span><span class="p">]</span>
+            <span class="n">onsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">onsets</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span> <span class="o">/</span> <span class="n">sr</span><span class="p">)</span>
+
+        <span class="n">n_ons</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">onsets</span><span class="p">)</span>
+        <span class="n">samples_ix</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">onsets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sr</span> <span class="o">/</span> <span class="n">hop_length</span><span class="p">),</span>
+                <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">onsets</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">sr</span> <span class="o">/</span> <span class="n">hop_length</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ons</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">samples_ix</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">samples_ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">samples_ix</span><span class="p">:</span>
+            <span class="n">samp</span> <span class="o">=</span> <span class="n">features</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_kwargs</span><span class="p">[</span><span class="s2">&quot;hop_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">sr</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_sample</span><span class="p">(</span><span class="n">samp</span><span class="p">)</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">label</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">labels</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.predict_sample">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_sample">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict one sample using internal models. One sample should correspond to one</span>
+<span class="sd">        bōl/solkattu</span>
+
+<span class="sd">        :param sample: Numpy array features corresponding to &lt;sample&gt; (extracted using self.extract_features)</span>
+<span class="sd">        :type sample: np.array</span>
+
+<span class="sd">        :returns: bōl/solkattu label</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">syl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">syl</span><span class="p">]</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">syl</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">NotFittedError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">syl</span><span class="si">}</span><span class="s2"> not fitted (no instance of </span><span class="si">{</span><span class="n">syl</span><span class="si">}</span><span class="s2"> in training) data. Will not be used for prediction.&quot;</span>
+                <span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">names</span><span class="p">[</span><span class="n">label</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.map">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.map">[docs]</a>
+    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Map input bōl/solkattu, &lt;a&gt; to reduced bōl/solkattu vocabulary</span>
+
+<span class="sd">        :param a: bōl/solkattu string (that must exist in self.mapping)</span>
+<span class="sd">        :type a: np.array</span>
+
+<span class="sd">        :returns: mapped bōl/solkattu label</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Skipping unknown syllable, </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> for training instance. Model syllables: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;!UKNOWN&quot;</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.get_sample_ix">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.get_sample_ix">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sample_ix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">syl</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert input onset annotations to list of in/out points for a</span>
+<span class="sd">        specific bōl/solkattu syllable, &lt;syl&gt;</span>
+
+<span class="sd">        :param annotations: onset annotations of the form [(timestamp in seconds, bōl/solkattu),... ]</span>
+<span class="sd">        :type annotations: list/iterable</span>
+<span class="sd">        :param audio: time series representation of audio</span>
+<span class="sd">        :type audio: np.array</span>
+<span class="sd">        :param syl: bōl/solkattu syllable to extract</span>
+<span class="sd">        :type syl: str</span>
+
+<span class="sd">        :returns: list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single</span>
+<span class="sd">            bōls/solkattus</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">annotations_two</span> <span class="o">=</span> <span class="n">annotations</span> <span class="o">+</span> <span class="p">[(</span><span class="nb">len</span><span class="p">(</span><span class="n">audio</span><span class="p">),</span> <span class="s2">&quot;!END&quot;</span><span class="p">)]</span>
+        <span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">annotations_two</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="p">((</span><span class="n">t1</span><span class="p">,</span> <span class="n">a1</span><span class="p">),</span> <span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span> <span class="ow">in</span> <span class="n">zipped</span> <span class="k">if</span> <span class="n">a1</span> <span class="o">==</span> <span class="n">syl</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">samples</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.extract_features">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.extract_features">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert input audio to features MFCC features</span>
+
+<span class="sd">        :param audio: time series representation of audio</span>
+<span class="sd">        :type audio: np.array</span>
+<span class="sd">        :param sr: sampling rate of audio to train on (default &lt;self.sr&gt;)</span>
+<span class="sd">        :param sr: int</span>
+
+<span class="sd">        :returns: array of features</span>
+<span class="sd">        :rtype: np.array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sr</span> <span class="k">else</span> <span class="n">sr</span>
+        <span class="n">MFCC</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">mfcc</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">audio</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_kwargs</span><span class="p">)</span>
+        <span class="n">MFCC_delta</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">MFCC</span><span class="p">)</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">MFCC</span><span class="p">,</span> <span class="n">MFCC_delta</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">features</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.load_annotations">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.load_annotations">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load onset annotations from &lt;annotation_path&gt;</span>
+
+<span class="sd">        :param annotation_path: path to onset annotations for one recording</span>
+<span class="sd">            of the form (timestamp in seconds, bōl/solkattu syllable)</span>
+<span class="sd">        :type annotation_path: str</span>
+
+<span class="sd">        :returns: list of onset annotations (timestamp seconds, bōl/solkattu syllable)</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="n">annotations</span></div>
+
+
+<div class="viewcode-block" id="MnemonicTranscription.save">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save model at path as .pkl</span>
+
+<span class="sd">        :param model_path: Path to save model to</span>
+<span class="sd">        :type model_path: strs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.melody.pitch_extraction.melodia &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.melody.pitch_extraction.melodia</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.melody.pitch_extraction.melodia</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">compiam.utils.pitch</span> <span class="kn">import</span> <span class="n">normalisation</span><span class="p">,</span> <span class="n">resampling</span>
+<span class="kn">from</span> <span class="nn">compiam.io</span> <span class="kn">import</span> <span class="n">write_csv</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">stereo_to_mono</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Melodia">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pitch_extraction.melodia.Melodia">[docs]</a>
+<span class="k">class</span> <span class="nc">Melodia</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Melodia predominant melody extraction&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bin_resolution</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">filter_iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">frame_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+        <span class="n">guess_unvoiced</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">harmonic_weight</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">hop_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">magnitude_compression</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">magnitude_threshold</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+        <span class="n">max_frequency</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
+        <span class="n">min_duration</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">min_frequency</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+        <span class="n">num_harmonics</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">peak_distribution_threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">peak_frame_threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">pitch_continuity</span><span class="o">=</span><span class="mf">27.5625</span><span class="p">,</span>
+        <span class="n">reference_frequency</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span>
+        <span class="n">sample_rate</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span>
+        <span class="n">time_continuity</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">voice_vibrato</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">voicing_tolerance</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Melodia predominant melody extraction init method</span>
+<span class="sd">        For a complete and detailed list of the parameters see the documentation on the</span>
+<span class="sd">        following link: https://essentia.upf.edu/reference/std_PredominantPitchMelodia.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">### IMPORTING OPTIONAL DEPENDENCIES</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">estd</span>
+            <span class="kn">import</span> <span class="nn">essentia.standard</span> <span class="k">as</span> <span class="nn">estd</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;In order to use this tool you need to have essentia installed. &quot;</span>
+                <span class="s2">&quot;Install compIAM with essentia support: pip install &#39;compiam[essentia]&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="c1">###</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_resolution</span> <span class="o">=</span> <span class="n">bin_resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_iterations</span> <span class="o">=</span> <span class="n">filter_iterations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_size</span> <span class="o">=</span> <span class="n">frame_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guess_unvoiced</span> <span class="o">=</span> <span class="n">guess_unvoiced</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">harmonic_weight</span> <span class="o">=</span> <span class="n">harmonic_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span> <span class="o">=</span> <span class="n">hop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">magnitude_compression</span> <span class="o">=</span> <span class="n">magnitude_compression</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">magnitude_threshold</span> <span class="o">=</span> <span class="n">magnitude_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_frequency</span> <span class="o">=</span> <span class="n">max_frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_duration</span> <span class="o">=</span> <span class="n">min_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_frequency</span> <span class="o">=</span> <span class="n">min_frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_harmonics</span> <span class="o">=</span> <span class="n">num_harmonics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_distribution_threshold</span> <span class="o">=</span> <span class="n">peak_distribution_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_frame_threshold</span> <span class="o">=</span> <span class="n">peak_frame_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pitch_continuity</span> <span class="o">=</span> <span class="n">pitch_continuity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference_frequency</span> <span class="o">=</span> <span class="n">reference_frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">=</span> <span class="n">sample_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_continuity</span> <span class="o">=</span> <span class="n">time_continuity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voice_vibrato</span> <span class="o">=</span> <span class="n">voice_vibrato</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voicing_tolerance</span> <span class="o">=</span> <span class="n">voicing_tolerance</span>
+
+<div class="viewcode-block" id="Melodia.extract">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pitch_extraction.melodia.Melodia.extract">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">input_sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">out_step</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the melody from a given file.</span>
+
+<span class="sd">        :param input_data: path to audio file or numpy array like audio signal</span>
+<span class="sd">        :param input_sr: sampling rate of the input array of data (if any). This variable is only</span>
+<span class="sd">            relevant if the input is an array of data instead of a filepath.</span>
+<span class="sd">        :param out_step: particular time-step duration if needed at output</span>
+<span class="sd">        :returns: a 2-D list with time-stamps and pitch values per timestamp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Target audio not found.&quot;</span><span class="p">)</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="n">estd</span><span class="o">.</span><span class="n">EqloudLoader</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">input_data</span><span class="p">,</span> <span class="n">sampleRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span>
+            <span class="p">)()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">stereo_to_mono</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+            <span class="c1"># Apply Eqloudness filter</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Resampling... (input sampling rate is </span><span class="si">{</span><span class="n">input_sr</span><span class="si">}</span><span class="s2">Hz, make sure this is correct)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">resample_audio</span> <span class="o">=</span> <span class="n">estd</span><span class="o">.</span><span class="n">Resample</span><span class="p">(</span>
+                <span class="n">inputSampleRate</span><span class="o">=</span><span class="n">input_sr</span><span class="p">,</span> <span class="n">outputSampleRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span>
+            <span class="p">)</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">resample_audio</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="n">estd</span><span class="o">.</span><span class="n">EqualLoudness</span><span class="p">(</span><span class="n">sampleRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be path to audio signal or an audio array&quot;</span><span class="p">)</span>
+
+        <span class="n">extractor</span> <span class="o">=</span> <span class="n">estd</span><span class="o">.</span><span class="n">PredominantPitchMelodia</span><span class="p">(</span>
+            <span class="n">binResolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_resolution</span><span class="p">,</span>
+            <span class="n">filterIterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_iterations</span><span class="p">,</span>
+            <span class="n">frameSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_size</span><span class="p">,</span>
+            <span class="n">guessUnvoiced</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guess_unvoiced</span><span class="p">,</span>
+            <span class="n">harmonicWeight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">harmonic_weight</span><span class="p">,</span>
+            <span class="n">hopSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">,</span>
+            <span class="n">magnitudeCompression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">magnitude_compression</span><span class="p">,</span>
+            <span class="n">magnitudeThreshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">magnitude_threshold</span><span class="p">,</span>
+            <span class="n">maxFrequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_frequency</span><span class="p">,</span>
+            <span class="n">minDuration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_duration</span><span class="p">,</span>
+            <span class="n">minFrequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_frequency</span><span class="p">,</span>
+            <span class="n">numberHarmonics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_harmonics</span><span class="p">,</span>
+            <span class="n">peakDistributionThreshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_distribution_threshold</span><span class="p">,</span>
+            <span class="n">peakFrameThreshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_frame_threshold</span><span class="p">,</span>
+            <span class="n">pitchContinuity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pitch_continuity</span><span class="p">,</span>
+            <span class="n">referenceFrequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_frequency</span><span class="p">,</span>
+            <span class="n">sampleRate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">,</span>
+            <span class="n">timeContinuity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_continuity</span><span class="p">,</span>
+            <span class="n">voiceVibrato</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voice_vibrato</span><span class="p">,</span>
+            <span class="n">voicingTolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voicing_tolerance</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pitch</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+        <span class="n">TStamps</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pitch</span><span class="p">)))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span>
+        <span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">TStamps</span><span class="p">,</span> <span class="n">pitch</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">out_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span> <span class="o">//</span> <span class="n">out_step</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">resampling</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">new_len</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="Melodia.normalise_pitch">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pitch_extraction.melodia.Melodia.normalise_pitch">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">normalise_pitch</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">tonic</span><span class="p">,</span> <span class="n">bins_per_octave</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize pitch given a tonic.</span>
+
+<span class="sd">        :param pitch: a 2-D list with time-stamps and pitch values per timestamp.</span>
+<span class="sd">        :param tonic: recording tonic to normalize the pitch to.</span>
+<span class="sd">        :param bins_per_octave: number of frequency bins per octave.</span>
+<span class="sd">        :param max_value: maximum value to clip the normalized pitch to.</span>
+<span class="sd">        :returns: a 2-D list with time-stamps and normalized to a given tonic</span>
+<span class="sd">            pitch values per timestamp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">normalisation</span><span class="p">(</span>
+            <span class="n">pitch</span><span class="p">,</span> <span class="n">tonic</span><span class="p">,</span> <span class="n">bins_per_octave</span><span class="o">=</span><span class="n">bins_per_octave</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="n">max_value</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Melodia.save_pitch">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pitch_extraction.melodia.Melodia.save_pitch">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save_pitch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calling the write_csv function in compiam.io to write the output pitch curve in a fle</span>
+
+<span class="sd">        :param data: the data to write</span>
+<span class="sd">        :param output_path: the path where the data is going to be stored</span>
+
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">write_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

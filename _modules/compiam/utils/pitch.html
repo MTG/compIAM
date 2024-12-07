@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.utils.pitch &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.utils.pitch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.utils.pitch</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="c1">###############</span>
+<span class="c1"># Melody utils</span>
+<span class="c1">###############</span>
+
+
+<div class="viewcode-block" id="normalisation">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.normalisation">[docs]</a>
+<span class="k">def</span> <span class="nf">normalisation</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">tonic</span><span class="p">,</span> <span class="n">bins_per_octave</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize pitch given a tonic.</span>
+
+<span class="sd">    :param pitch: a 2-D list with time-stamps and pitch values per timestamp.</span>
+<span class="sd">    :param tonic: recording tonic to normalize the pitch to.</span>
+<span class="sd">    :param bins_per_octave: number of frequency bins per octave.</span>
+<span class="sd">    :param max_value: maximum value to clip the normalized pitch to.</span>
+<span class="sd">    :returns: a 2-D list with time-stamps and normalized to a given tonic</span>
+<span class="sd">        pitch values per timestamp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pitch_values</span> <span class="o">=</span> <span class="n">pitch</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">normalised_pitch</span> <span class="o">=</span> <span class="n">bins_per_octave</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">pitch_values</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">/</span> <span class="n">tonic</span><span class="p">)</span>
+    <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">normalised_pitch</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">normalised_pitch</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">normalised_pitch</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">)</span>
+    <span class="n">normalised_pitch</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_value</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pitch</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">normalised_pitch</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="resampling">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.resampling">[docs]</a>
+<span class="k">def</span> <span class="nf">resampling</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">new_len</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resample pitch to a given new length in samples</span>
+
+<span class="sd">    :param pitch: a 2-D list with time-stamps and pitch values per timestamp.</span>
+<span class="sd">    :param new_len: new length of the output pitch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">pitch</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">frequencies</span> <span class="o">=</span> <span class="n">pitch</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">voicing</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">frequencies</span><span class="p">:</span>
+        <span class="n">voicing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">voicing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">times_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">new_len</span><span class="p">)</span>
+
+    <span class="n">frequencies_resampled</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">resample_melody_series</span><span class="p">(</span>
+        <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+        <span class="n">frequencies</span><span class="o">=</span><span class="n">frequencies</span><span class="p">,</span>
+        <span class="n">voicing</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">voicing</span><span class="p">),</span>
+        <span class="n">times_new</span><span class="o">=</span><span class="n">times_new</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">times_new</span><span class="p">,</span> <span class="n">frequencies_resampled</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="resample_melody_series">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.resample_melody_series">[docs]</a>
+<span class="k">def</span> <span class="nf">resample_melody_series</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">,</span> <span class="n">voicing</span><span class="p">,</span> <span class="n">times_new</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NOTE: This function is DIRECTLY PORTED FROM mir_eval.melody</span>
+
+<span class="sd">    Resamples frequency and voicing time series to a new timescale. Maintains</span>
+<span class="sd">    any zero (&quot;unvoiced&quot;) values in frequencies.</span>
+
+<span class="sd">    If ``times`` and ``times_new`` are equivalent, no resampling will be</span>
+<span class="sd">    performed.</span>
+
+<span class="sd">    :param times: Times of each frequency value</span>
+<span class="sd">    :param frequencies: Array of frequency values, &gt;= 0</span>
+<span class="sd">    :param voicing: Array which indicates voiced or unvoiced. This array may be binary</span>
+<span class="sd">        or have continuous values between 0 and 1.</span>
+<span class="sd">    :param times_new: Times to resample frequency and voicing sequences to</span>
+<span class="sd">    :param kind:kind parameter to pass to scipy.interpolate.interp1d.</span>
+<span class="sd">        (Default value = &#39;linear&#39;)</span>
+
+<span class="sd">    :returns frequencies_resampled: Frequency array resampled to new timebase</span>
+<span class="sd">    :returns voicing_resampled: Voicing array resampled to new timebase</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If the timebases are already the same, no need to interpolate</span>
+    <span class="k">if</span> <span class="n">times</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">times_new</span><span class="o">.</span><span class="n">shape</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">times_new</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">frequencies</span><span class="p">,</span> <span class="n">voicing</span>
+
+    <span class="c1"># Warn when the delta between the original times is not constant,</span>
+    <span class="c1"># unless times[0] == 0. and frequencies[0] == frequencies[1] (see logic at</span>
+    <span class="c1"># the beginning of to_cent_voicing)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+            <span class="ow">and</span> <span class="n">frequencies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">frequencies</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Non-uniform timescale passed to resample_melody_series.  Pitch &quot;</span>
+            <span class="s2">&quot;will be linearly interpolated, which will result in undesirable &quot;</span>
+            <span class="s2">&quot;behavior if silences are indicated by missing values.  Silences &quot;</span>
+            <span class="s2">&quot;should be indicated by nonpositive frequency values.&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># Round to avoid floating point problems</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">times_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">times_new</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># Add in an additional sample if we&#39;ll be asking for a time too large</span>
+    <span class="k">if</span> <span class="n">times_new</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">times</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">times_new</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">voicing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voicing</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># We need to fix zero transitions if interpolation is not zero or nearest</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;zero&quot;</span> <span class="ow">and</span> <span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;nearest&quot;</span><span class="p">:</span>
+        <span class="c1"># Fill in zero values with the last reported frequency</span>
+        <span class="c1"># to avoid erroneous values when resampling</span>
+        <span class="n">frequencies_held</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">frequency</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frequencies</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="k">if</span> <span class="n">frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">frequencies_held</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">frequencies_held</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="c1"># Linearly interpolate frequencies</span>
+        <span class="n">frequencies_resampled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+            <span class="n">times</span><span class="p">,</span> <span class="n">frequencies_held</span><span class="p">,</span> <span class="n">kind</span>
+        <span class="p">)(</span><span class="n">times_new</span><span class="p">)</span>
+        <span class="c1"># Retain zeros</span>
+        <span class="n">frequency_mask</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">,</span> <span class="s2">&quot;zero&quot;</span><span class="p">)(</span>
+            <span class="n">times_new</span>
+        <span class="p">)</span>
+        <span class="n">frequencies_resampled</span> <span class="o">*=</span> <span class="n">frequency_mask</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">frequencies_resampled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">,</span> <span class="n">kind</span><span class="p">)(</span>
+            <span class="n">times_new</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Use nearest-neighbor for voicing if it was used for frequencies</span>
+    <span class="c1"># if voicing is not binary, use linear interpolation</span>
+    <span class="n">is_binary_voicing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">voicing</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">voicing</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;nearest&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_binary_voicing</span><span class="p">):</span>
+        <span class="n">voicing_resampled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">voicing</span><span class="p">,</span> <span class="n">kind</span><span class="p">)(</span><span class="n">times_new</span><span class="p">)</span>
+    <span class="c1"># otherwise, always use zeroth order</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">voicing_resampled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">voicing</span><span class="p">,</span> <span class="s2">&quot;zero&quot;</span><span class="p">)(</span>
+            <span class="n">times_new</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">frequencies_resampled</span><span class="p">,</span> <span class="n">voicing_resampled</span></div>
+
+
+
+<span class="c1">#####################</span>
+<span class="c1">## Pitch Stability ##</span>
+<span class="c1">#####################</span>
+
+
+<div class="viewcode-block" id="extract_stability_mask">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.extract_stability_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_stability_mask</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">min_stab_sec</span><span class="p">,</span> <span class="n">hop_sec</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">timestep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract boolean array corresponding to &lt;pitch&gt; - yes/no does point correspond</span>
+<span class="sd">    to a region of &quot;stable&quot; pitch.</span>
+
+<span class="sd">    A window is passed along the pitch track, &lt;pitch&gt; and the minimum and maximum values</span>
+<span class="sd">    compared to the average for that window. Regions corresponding to windows</span>
+<span class="sd">    whose extremes deviate significantly from their means are marked as stable.</span>
+<span class="sd">    Consecutive stable regions summing to more than &lt;min_stab_sec&gt; seconds in</span>
+<span class="sd">    length are annotated with 1 indicating stable. Regions which are not stable</span>
+<span class="sd">    or that are stable but do not make up at least &lt;min_stab_sec&gt; in length are</span>
+<span class="sd">    annotated with 0 - not stable.</span>
+
+<span class="sd">    :param pitch: Pitch values in Hz or cents</span>
+<span class="sd">    :type pitch: np.ndarray</span>
+<span class="sd">    :param min_stab_sec: Stable regions of at least &lt;min_stab_sec&gt; seconds</span>
+<span class="sd">        in length are annotated as stable. Shorter regions are not annotated.</span>
+<span class="sd">    :type min_stab_sec: float</span>
+<span class="sd">    :param hop_sec: Hop length in seconds of window</span>
+<span class="sd">    :type hop_sec: float</span>
+<span class="sd">    :param var: If the maximum/minimum pitch in a window deviates from its mean</span>
+<span class="sd">        by more than this value, the window is considered unstable. Important</span>
+<span class="sd">        to consider if the input is in cents or hertz!</span>
+<span class="sd">    :type var: float</span>
+<span class="sd">    :param timestep: Time difference, in seconds, between each element in pitch</span>
+<span class="sd">    :type timestep: float</span>
+
+<span class="sd">    :return: Boolean array equal in length to &lt;pitch&gt;: is stable region or not?</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stab_hop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hop_sec</span> <span class="o">/</span> <span class="n">timestep</span><span class="p">)</span>
+    <span class="n">reverse_pitch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+
+    <span class="c1"># apply in both directions to array to account for hop_size errors</span>
+    <span class="n">stable_mask_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">is_stable</span><span class="p">(</span><span class="n">pitch</span><span class="p">[</span><span class="n">s</span> <span class="p">:</span> <span class="n">s</span> <span class="o">+</span> <span class="n">stab_hop</span><span class="p">],</span> <span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pitch</span><span class="p">))]</span>
+    <span class="n">stable_mask_2</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">is_stable</span><span class="p">(</span><span class="n">reverse_pitch</span><span class="p">[</span><span class="n">s</span> <span class="p">:</span> <span class="n">s</span> <span class="o">+</span> <span class="n">stab_hop</span><span class="p">],</span> <span class="n">var</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reverse_pitch</span><span class="p">))</span>
+    <span class="p">]</span>
+
+    <span class="n">silence_mask</span> <span class="o">=</span> <span class="n">pitch</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stable_mask_1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">stable_mask_2</span><span class="p">),</span> <span class="n">silence_mask</span><span class="p">)</span>
+
+    <span class="n">stable_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">((</span><span class="nb">any</span><span class="p">([</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sil</span><span class="p">))</span> <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">sil</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">])</span>
+
+    <span class="n">stable_mask</span> <span class="o">=</span> <span class="n">reduce_stability_mask</span><span class="p">(</span><span class="n">stable_mask</span><span class="p">,</span> <span class="n">min_stab_sec</span><span class="p">,</span> <span class="n">timestep</span><span class="p">)</span>
+
+    <span class="c1"># stable_mask = add_center_to_mask(stable_mask)</span>
+
+    <span class="k">return</span> <span class="n">stable_mask</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">reduce_stability_mask</span><span class="p">(</span><span class="n">stable_mask</span><span class="p">,</span> <span class="n">min_stab_sec</span><span class="p">,</span> <span class="n">timestep</span><span class="p">):</span>
+    <span class="n">min_stability_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_stab_sec</span> <span class="o">/</span> <span class="n">timestep</span><span class="p">)</span>
+    <span class="n">num_one</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stable_mask</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">num_one</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_one</span> <span class="o">&lt;</span> <span class="n">min_stability_length</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                    <span class="n">stable_mask</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">num_one</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">stable_mask</span>
+
+
+<div class="viewcode-block" id="is_stable">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.is_stable">[docs]</a>
+<span class="k">def</span> <span class="nf">is_stable</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">max_var</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute is sequence of value has stability given an input tolerance</span>
+
+<span class="sd">    :param seq: sequence of values to study</span>
+<span class="sd">    :param max_var: Maximum tolerance to consider stable/not stable</span>
+
+<span class="sd">    :returns: 1 (stable) or 0 (not stable)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+
+    <span class="n">maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">maximum</span> <span class="o">&lt;</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">max_var</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">minimum</span> <span class="o">&gt;</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">max_var</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">add_center_to_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+    <span class="n">num_one</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">num_one</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">li</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">li</span><span class="p">:</span>
+                <span class="n">middle</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">li</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>
+                <span class="n">mask</span><span class="p">[</span><span class="n">middle</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">num_one</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+<div class="viewcode-block" id="pitch_to_cents">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.pitch_to_cents">[docs]</a>
+<span class="k">def</span> <span class="nf">pitch_to_cents</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">tonic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert pitch value, &lt;p&gt; to cents above &lt;tonic&gt;.</span>
+
+<span class="sd">    :param p: Pitch value in Hz</span>
+<span class="sd">    :type p: float</span>
+<span class="sd">    :param tonic: Tonic value in Hz</span>
+<span class="sd">    :type tonic: float</span>
+
+<span class="sd">    :return: Pitch value, &lt;p&gt; in cents above &lt;tonic&gt;</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1200</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">tonic</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="cents_to_pitch">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.cents_to_pitch">[docs]</a>
+<span class="k">def</span> <span class="nf">cents_to_pitch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">tonic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert cents value, &lt;c&gt; to pitch in Hz</span>
+
+<span class="sd">    :param c: Pitch value in cents above &lt;tonic&gt;</span>
+<span class="sd">    :type c: float/int</span>
+<span class="sd">    :param tonic: Tonic value in Hz</span>
+<span class="sd">    :type tonic: float</span>
+
+<span class="sd">    :return: Pitch value, &lt;c&gt; in Hz</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="mi">1200</span><span class="p">))</span> <span class="o">*</span> <span class="n">tonic</span></div>
+
+
+
+<div class="viewcode-block" id="pitch_seq_to_cents">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.pitch_seq_to_cents">[docs]</a>
+<span class="k">def</span> <span class="nf">pitch_seq_to_cents</span><span class="p">(</span><span class="n">pseq</span><span class="p">,</span> <span class="n">tonic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sequence of pitch values to sequence of</span>
+<span class="sd">    cents above &lt;tonic&gt; values</span>
+
+<span class="sd">    :param pseq: Array of pitch values in Hz</span>
+<span class="sd">    :type pseq: np.array</span>
+<span class="sd">    :param tonic: Tonic value in Hz</span>
+<span class="sd">    :type tonic: float</span>
+
+<span class="sd">    :return: Sequence of original pitch value in cents above &lt;tonic&gt;</span>
+<span class="sd">    :rtype: np.array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">pitch_to_cents</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">tonic</span><span class="p">))(</span><span class="n">pseq</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="interpolate_below_length">
+<a class="viewcode-back" href="../../../source/utils.html#compiam.utils.pitch.interpolate_below_length">[docs]</a>
+<span class="k">def</span> <span class="nf">interpolate_below_length</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">gap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interpolate gaps of value, &lt;val&gt; of</span>
+<span class="sd">    length equal to or shorter than &lt;gap&gt; in &lt;arr&gt;</span>
+
+<span class="sd">    :param arr: Array to interpolate</span>
+<span class="sd">    :type arr: np.array</span>
+<span class="sd">    :param val: Value expected in gaps to interpolate</span>
+<span class="sd">    :type val: number</span>
+<span class="sd">    :param gap: Maximum gap length to interpolate, gaps of &lt;val&gt; longer than &lt;g&gt; will not be interpolated</span>
+<span class="sd">    :type gap: number</span>
+
+<span class="sd">    :return: interpolated array</span>
+<span class="sd">    :rtype: np.array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="n">is_zero</span> <span class="o">=</span> <span class="n">s</span> <span class="o">==</span> <span class="n">val</span>
+    <span class="n">cumsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">is_zero</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">diff</span><span class="p">[</span><span class="o">~</span><span class="n">is_zero</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cumsum</span><span class="p">[</span><span class="o">~</span><span class="n">is_zero</span><span class="p">],</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">diff</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">gap</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="p">:</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">interp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">bfill</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">interp</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

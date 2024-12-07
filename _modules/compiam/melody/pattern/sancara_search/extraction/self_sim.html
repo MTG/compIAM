@@ -1,0 +1,1292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.melody.pattern.sancara_search.extraction.self_sim &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../sancara_search.html">compiam.melody.pattern.sancara_search</a></li>
+      <li class="breadcrumb-item active">compiam.melody.pattern.sancara_search.extraction.self_sim</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.melody.pattern.sancara_search.extraction.self_sim</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">skimage</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">convolve2d</span>
+
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.img</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">remove_diagonal</span><span class="p">,</span>
+    <span class="n">convolve_array</span><span class="p">,</span>
+    <span class="n">binarize</span><span class="p">,</span>
+    <span class="n">diagonal_gaussian</span><span class="p">,</span>
+    <span class="n">apply_bin_op</span><span class="p">,</span>
+    <span class="n">make_symmetric</span><span class="p">,</span>
+    <span class="n">edges_to_contours</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">create_if_not_exists</span><span class="p">,</span> <span class="n">run_or_cache</span>
+
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.sequence</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">convert_seqs_to_timestep</span><span class="p">,</span>
+    <span class="n">remove_below_length</span><span class="p">,</span>
+    <span class="n">add_center_to_mask</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.evaluation</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">evaluate</span><span class="p">,</span>
+    <span class="n">get_coverage</span><span class="p">,</span>
+    <span class="n">get_grouping_accuracy</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.visualisation</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">plot_all_sequences</span><span class="p">,</span>
+    <span class="n">plot_pitch</span><span class="p">,</span>
+    <span class="n">flush_matplotlib</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.io</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_sim_matrix</span><span class="p">,</span>
+    <span class="n">write_all_sequence_audio</span><span class="p">,</span>
+    <span class="n">load_pkl</span><span class="p">,</span>
+    <span class="n">write_pkl</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.pitch</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">cents_to_pitch</span><span class="p">,</span>
+    <span class="n">pitch_seq_to_cents</span><span class="p">,</span>
+    <span class="n">pitch_to_cents</span><span class="p">,</span>
+    <span class="n">get_timeseries</span><span class="p">,</span>
+    <span class="n">interpolate_below_length</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.extraction.segments</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">line_through_points</span><span class="p">,</span>
+    <span class="n">trim_silence</span><span class="p">,</span>
+    <span class="n">break_all_segments</span><span class="p">,</span>
+    <span class="n">remove_short</span><span class="p">,</span>
+    <span class="n">extend_segments</span><span class="p">,</span>
+    <span class="n">join_all_segments</span><span class="p">,</span>
+    <span class="n">extend_groups_to_mask</span><span class="p">,</span>
+    <span class="n">group_segments</span><span class="p">,</span>
+    <span class="n">group_overlapping</span><span class="p">,</span>
+    <span class="n">group_by_distance</span><span class="p">,</span>
+    <span class="n">trim_silence</span><span class="p">,</span>
+    <span class="n">segments_from_matrix</span><span class="p">,</span>
+    <span class="n">remove_group_duplicates</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="self_similarity">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.self_similarity">[docs]</a>
+<span class="k">def</span> <span class="nf">self_similarity</span><span class="p">(</span>
+    <span class="n">features</span><span class="p">,</span> <span class="n">exclusion_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timestep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute self similarity matrix between features in &lt;features&gt;. If an &lt;exclusion_mask&gt;</span>
+<span class="sd">    is passed. Regions corresponding to that mask will be excluded from the computation and</span>
+<span class="sd">    the returned matrix will correspond only to those regions marked as 0 in the mask.</span>
+
+<span class="sd">    :param features: array of features extracted from audio</span>
+<span class="sd">    :type features: np.ndarray</span>
+<span class="sd">    :param exclusion_mask: array of 0 and 1, should be masked or not? [Optional]</span>
+<span class="sd">    :type exclusion_mask: np.ndarray or None</span>
+<span class="sd">    :param timestep: time in seconds between elements of &lt;exclusion_mask&gt;</span>
+<span class="sd">        Only required if &lt;exclusion_mask&gt; is passed</span>
+<span class="sd">    :type timestep: float or None</span>
+<span class="sd">    :param hop_length: number of audio frames corresponding to one element in &lt;features&gt;</span>
+<span class="sd">        Only required if &lt;exclusion_mask&gt; is passed</span>
+<span class="sd">    :type hop_length: int or None</span>
+<span class="sd">    :param sr: sampling rate of audio corresponding to &lt;features&gt;</span>
+<span class="sd">        Only required if &lt;exclusion_mask&gt; is passed</span>
+<span class="sd">    :type sr: int or None</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        if exclusion mask is passed return...</span>
+<span class="sd">            matrix - self similarity matrix</span>
+<span class="sd">            orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}</span>
+<span class="sd">            sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}</span>
+<span class="sd">            boundaries_orig - list of boundaries between wanted and unwanted regions in orig array</span>
+<span class="sd">            boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array</span>
+<span class="sd">        else return</span>
+<span class="sd">            matrix - self similarity matrix</span>
+<span class="sd">    :rtype: (np.ndarray, dict, dict, list, list) or np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">em</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">exclusion_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">em</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span><span class="ow">not</span> <span class="n">timestep</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="ow">not</span> <span class="n">hop_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="ow">not</span> <span class="n">sr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;To use exclusion mask, &lt;timestep&gt;, &lt;hop_length&gt; and &lt;sr&gt; must also be passed&quot;</span>
+
+    <span class="c1"># Deal with masking if any</span>
+    <span class="k">if</span> <span class="n">em</span><span class="p">:</span>
+        <span class="n">features_mask</span> <span class="o">=</span> <span class="n">convert_mask</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">exclusion_mask</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">hop_length</span><span class="p">,</span> <span class="n">sr</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">orig_sparse_lookup</span><span class="p">,</span>
+            <span class="n">sparse_orig_lookup</span><span class="p">,</span>
+            <span class="n">boundaries_orig</span><span class="p">,</span>
+            <span class="n">boundaries_sparse</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">get_conversion_mappings</span><span class="p">(</span><span class="n">features_mask</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">orig_sparse_lookup</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sparse_orig_lookup</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">boundaries_orig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">boundaries_sparse</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Indices we want to keep</span>
+    <span class="n">good_ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">features_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Compute self similarity</span>
+    <span class="n">sparse_features</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">good_ix</span><span class="p">]</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">create_ss_matrix</span><span class="p">(</span><span class="n">sparse_features</span><span class="p">)</span>
+
+    <span class="c1"># Normalise self similarity matrix</span>
+    <span class="n">matrix_norm</span> <span class="o">=</span> <span class="n">normalise_self_sim</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">em</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">matrix_norm</span><span class="p">,</span>
+            <span class="n">orig_sparse_lookup</span><span class="p">,</span>
+            <span class="n">sparse_orig_lookup</span><span class="p">,</span>
+            <span class="n">boundaries_orig</span><span class="p">,</span>
+            <span class="n">boundaries_sparse</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">matrix_norm</span></div>
+
+
+
+<div class="viewcode-block" id="convert_mask">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.convert_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_mask</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">hop_length</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get mask of excluded regions in the same dimension as array, &lt;arr&gt;</span>
+
+<span class="sd">    :param arr: array corresponding to features extracted from audio</span>
+<span class="sd">    :type arr: np.ndarray</span>
+<span class="sd">    :param mask: Mask indicating whether element should be excluded (different dimensions to &lt;arr&gt;)</span>
+<span class="sd">    :type mask: np.ndarray</span>
+<span class="sd">    :param timestep: time in seconds between each element in &lt;mask&gt;</span>
+<span class="sd">    :type timestep: float</span>
+<span class="sd">    :param hop_length: how many frames of audio correspond to each element in &lt;arr&gt;</span>
+<span class="sd">    :type hop_length: int</span>
+<span class="sd">    :param sr: sampling rate of audio from which &lt;arr&gt; was computed</span>
+<span class="sd">    :type sr: int</span>
+
+<span class="sd">    :returns: array of mask values equal in length to one dimension of &lt;arr&gt; - 0/1 is masked?</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get mask of silent and stable regions</span>
+    <span class="n">new_mask</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># what is the time at this element of arr?</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">hop_length</span> <span class="o">/</span> <span class="n">sr</span>
+        <span class="c1"># find index in mask</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="n">timestep</span><span class="p">)</span>
+        <span class="c1"># append mask value for this point</span>
+        <span class="n">new_mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">ix</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_mask</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_conversion_mappings">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.get_conversion_mappings">[docs]</a>
+<span class="k">def</span> <span class="nf">get_conversion_mappings</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Before reducing an array to only include elements that do not correspond</span>
+<span class="sd">    to &lt;mask&gt;. We want to record the relationship between the new (sparse) array</span>
+<span class="sd">    index and the old (orig) array.</span>
+
+<span class="sd">    :param mask: mask of 0/1 - is element to be excluded</span>
+<span class="sd">    :param type: np.ndarray</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        orig_sparse_lookup - dict of {index in orig array: index of same element in sparse array}</span>
+<span class="sd">        sparse_orig_lookup - dict of {index in sparse array: index of same element in orig array}</span>
+<span class="sd">        boundaries_orig - list of boundaries between wanted and unwanted regions in orig array</span>
+<span class="sd">        boundaries_sparse -  list of boundaries between formally separated wanted regions in sparse array</span>
+<span class="sd">    :rtype: (dict, dict, list, list)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Indices we want to keep</span>
+    <span class="n">good_ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Mapping between old and new indices</span>
+    <span class="n">orig_sparse_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">good_ix</span><span class="p">)}</span>
+    <span class="n">sparse_orig_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">g</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">orig_sparse_lookup</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="c1"># Indices corresponding to boundaries</span>
+    <span class="c1"># between wanted and unwanted regions</span>
+    <span class="c1"># in original array</span>
+    <span class="n">boundaries_orig</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)):</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">curr</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prev</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">boundaries_orig</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">curr</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">prev</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">boundaries_orig</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Boundaries corresponding to newly joined</span>
+    <span class="c1"># regions in sparse array</span>
+    <span class="n">boundaries_sparse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orig_sparse_lookup</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">boundaries_orig</span><span class="p">])</span>
+
+    <span class="c1"># Boundaries contain two consecutive boundaries for each gap</span>
+    <span class="c1"># but not if the excluded region leads to the end of the track</span>
+    <span class="n">red_boundaries_sparse</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">boundaries_mask</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundaries_sparse</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boundaries_sparse</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">red_boundaries_sparse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundaries_sparse</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">boundaries_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">boundaries_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="n">boundaries_sparse</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">boundaries_sparse</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">curr</span> <span class="o">-</span> <span class="n">prev</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">red_boundaries_sparse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+            <span class="n">boundaries_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">boundaries_mask</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">red_boundaries_sparse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr</span><span class="p">)</span>
+            <span class="n">boundaries_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">boundaries_sparse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">red_boundaries_sparse</span><span class="p">))))</span>
+
+    <span class="k">return</span> <span class="n">orig_sparse_lookup</span><span class="p">,</span> <span class="n">sparse_orig_lookup</span><span class="p">,</span> <span class="n">boundaries_orig</span><span class="p">,</span> <span class="n">boundaries_sparse</span></div>
+
+
+
+<div class="viewcode-block" id="create_ss_matrix">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.create_ss_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">create_ss_matrix</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute self similarity matrix between features in &lt;feats&gt;</span>
+<span class="sd">    using distance measure, &lt;mode&gt;</span>
+
+<span class="sd">    :param feats: array of features</span>
+<span class="sd">    :type feats: np.ndarray</span>
+<span class="sd">    :param mode: name of distance measure (recognised by scipy.spatial.distance)</span>
+<span class="sd">    :type mode: str</span>
+
+<span class="sd">    :returns: self similarity matrix</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">feats</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()),</span> <span class="n">metric</span><span class="o">=</span><span class="n">mode</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">matrix</span></div>
+
+
+
+<div class="viewcode-block" id="normalise_self_sim">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.normalise_self_sim">[docs]</a>
+<span class="k">def</span> <span class="nf">normalise_self_sim</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalise self similarity matrix:</span>
+<span class="sd">        invert and convolve</span>
+
+<span class="sd">    :param matrix: self similarity matrix</span>
+<span class="sd">    :type matrix: np.ndarray</span>
+
+<span class="sd">    :returns: matrix normalized, same dimensions</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">matrix</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+        <span class="n">eye</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span> <span class="o">*</span> <span class="n">eye</span>
+
+    <span class="n">flength</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">ey</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">flength</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">flength</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">flength</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">convolve2d</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">ey</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+
+    <span class="n">diag_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">diag_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">diag_mask</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">mat_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">diag_mask</span><span class="p">])</span>
+    <span class="n">mat_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">diag_mask</span><span class="p">])</span>
+
+    <span class="n">matrix</span><span class="p">[</span><span class="o">~</span><span class="n">diag_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">zero_normalise</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matrix</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">zero_normalise</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span> <span class="o">-</span> <span class="n">matrix</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span> <span class="o">/</span> <span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">matrix</span>
+
+
+<div class="viewcode-block" id="get_report_paths">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.get_report_paths">[docs]</a>
+<span class="k">def</span> <span class="nf">get_report_paths</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get dictionary of fielpaths relevant to progress plots</span>
+<span class="sd">    in extract_segments()</span>
+
+<span class="sd">    :params out_dir: directory path to save plots in</span>
+<span class="sd">    :type out_dir: str</span>
+
+<span class="sd">    :returns: dict of filepaths</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;1_simsave.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">conv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;2_conv.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">binar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;3_binary.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">diag</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;4_diag.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">gauss</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;5_gauss.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">cont</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;6_cont.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">close</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;6_close.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">binop</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;7_binop.png&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">out_dir</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;sim&quot;</span><span class="p">:</span> <span class="n">sim</span><span class="p">,</span>
+        <span class="s2">&quot;conv&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="p">,</span>
+        <span class="s2">&quot;binar&quot;</span><span class="p">:</span> <span class="n">binar</span><span class="p">,</span>
+        <span class="s2">&quot;diag&quot;</span><span class="p">:</span> <span class="n">diag</span><span class="p">,</span>
+        <span class="s2">&quot;gauss&quot;</span><span class="p">:</span> <span class="n">gauss</span><span class="p">,</span>
+        <span class="s2">&quot;cont&quot;</span><span class="p">:</span> <span class="n">cont</span><span class="p">,</span>
+        <span class="s2">&quot;close&quot;</span><span class="p">:</span> <span class="n">close</span><span class="p">,</span>
+        <span class="s2">&quot;binop&quot;</span><span class="p">:</span> <span class="n">binop</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="save_matrix">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.save_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">save_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    if &lt;filepath&gt;, save &lt;X&gt; at &lt;filepath&gt;</span>
+
+<span class="sd">    :param X:  matrix to save</span>
+<span class="sd">    :type X: np.ndarray</span>
+<span class="sd">    :param filepath: filepath</span>
+<span class="sd">    :type filepath: str or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">filepath</span><span class="p">:</span>
+        <span class="n">create_if_not_exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">skimage</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_param_hash_filepath">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.get_param_hash_filepath">[docs]</a>
+<span class="k">def</span> <span class="nf">get_param_hash_filepath</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build filepath by creating string of input &lt;params&gt;</span>
+<span class="sd">    in &lt;out_dir&gt;</span>
+
+<span class="sd">    :params out_dir: directory path</span>
+<span class="sd">    :type out_dir: str</span>
+<span class="sd">    :params params: arguments, any type</span>
+<span class="sd">    :type params: arguments, any type</span>
+
+<span class="sd">    :returns: filepath unique to input params in &lt;out_dir&gt;</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">param_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_hash</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sparse_to_original">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.sparse_to_original">[docs]</a>
+<span class="k">def</span> <span class="nf">sparse_to_original</span><span class="p">(</span><span class="n">all_segments</span><span class="p">,</span> <span class="n">boundaries_sparse</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert indices corresponding to segments in &lt;all_segments&gt;</span>
+<span class="sd">    to their non-sparse form using mapping in &lt;lookup&gt;</span>
+
+<span class="sd">    :param all_segments:  list of segments, [(x0,y0),(x1,y1),...]</span>
+<span class="sd">    :type all_segments: list</span>
+<span class="sd">    :param boundaries_sparse: list indices in sparse array corresponding to splits in original array</span>
+<span class="sd">    :type boundaries_sparse: list</span>
+<span class="sd">    :param lookup: dict of sparse_index:non-sparse index</span>
+<span class="sd">    :type lookup: dict</span>
+
+<span class="sd">    :returns: &lt;all_segments&gt; with indices replaced according to lookup</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">boundaries_sparse</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">all_segments_scaled_x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">all_segments</span><span class="p">:</span>
+        <span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">))</span> <span class="o">=</span> <span class="n">seg</span>
+        <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+
+        <span class="n">boundaries_in_x</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">x0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">x1</span><span class="p">])</span>
+        <span class="n">current_x0</span> <span class="o">=</span> <span class="n">x0</span>
+        <span class="k">if</span> <span class="n">boundaries_in_x</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">boundaries_in_x</span><span class="p">:</span>
+                <span class="n">x0_</span> <span class="o">=</span> <span class="n">current_x0</span>
+                <span class="n">x1_</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">y0_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x0_</span><span class="p">))</span>
+                <span class="n">y1_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x1_</span><span class="p">))</span>
+                <span class="n">all_segments_scaled_x</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0_</span><span class="p">,</span> <span class="n">y0_</span><span class="p">),</span> <span class="p">(</span><span class="n">x1_</span><span class="p">,</span> <span class="n">y1_</span><span class="p">)))</span>
+                <span class="n">current_x0</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">current_x0</span> <span class="o">&gt;</span> <span class="n">x1</span><span class="p">:</span>
+                <span class="n">x0_</span> <span class="o">=</span> <span class="n">current_x0</span>
+                <span class="n">x1_</span> <span class="o">=</span> <span class="n">x1</span>
+                <span class="n">y0_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x0_</span><span class="p">))</span>
+                <span class="n">y1_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x1_</span><span class="p">))</span>
+                <span class="n">all_segments_scaled_x</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0_</span><span class="p">,</span> <span class="n">y0_</span><span class="p">),</span> <span class="p">(</span><span class="n">x1_</span><span class="p">,</span> <span class="n">y1_</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_segments_scaled_x</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)))</span>
+
+    <span class="n">all_segments_scaled_x_reduced</span> <span class="o">=</span> <span class="n">remove_short</span><span class="p">(</span><span class="n">all_segments_scaled_x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">all_segments_scaled</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">all_segments_scaled_x_reduced</span><span class="p">:</span>
+        <span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">))</span> <span class="o">=</span> <span class="n">seg</span>
+        <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+
+        <span class="n">boundaries_in_y</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">y0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">y1</span><span class="p">])</span>
+        <span class="n">current_y0</span> <span class="o">=</span> <span class="n">y0</span>
+        <span class="k">if</span> <span class="n">boundaries_in_y</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">boundaries_in_y</span><span class="p">:</span>
+                <span class="n">y0_</span> <span class="o">=</span> <span class="n">current_y0</span>
+                <span class="n">y1_</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">x0_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y0_</span><span class="p">))</span>
+                <span class="n">x1_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y1_</span><span class="p">))</span>
+                <span class="n">all_segments_scaled</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0_</span><span class="p">,</span> <span class="n">y0_</span><span class="p">),</span> <span class="p">(</span><span class="n">x1_</span><span class="p">,</span> <span class="n">y1_</span><span class="p">)))</span>
+                <span class="n">current_y0</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">current_y0</span> <span class="o">&lt;</span> <span class="n">y1</span><span class="p">:</span>
+                <span class="n">y0_</span> <span class="o">=</span> <span class="n">current_y0</span>
+                <span class="n">y1_</span> <span class="o">=</span> <span class="n">y1</span>
+                <span class="n">x0_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y0_</span><span class="p">))</span>
+                <span class="n">x1_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y1_</span><span class="p">))</span>
+                <span class="n">all_segments_scaled</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0_</span><span class="p">,</span> <span class="n">y0_</span><span class="p">),</span> <span class="p">(</span><span class="n">x1_</span><span class="p">,</span> <span class="n">y1_</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_segments_scaled</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)))</span>
+
+    <span class="n">all_segments_scaled_reduced</span> <span class="o">=</span> <span class="n">remove_short</span><span class="p">(</span><span class="n">all_segments_scaled</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">all_segments_converted</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">de</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_segments_scaled_reduced</span><span class="p">):</span>
+        <span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">))</span> <span class="o">=</span> <span class="n">seg</span>
+        <span class="k">while</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">x0</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">x1</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">y0</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">y1</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">x0</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">:</span>
+                <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">:</span>
+                <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span>
+                <span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_y</span><span class="p">(</span><span class="n">x1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">y0</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">:</span>
+                <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y0</span><span class="p">))</span>
+                <span class="n">x1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">y1</span> <span class="ow">in</span> <span class="n">boundaries_sparse</span><span class="p">:</span>
+                <span class="n">get_x</span><span class="p">,</span> <span class="n">get_y</span> <span class="o">=</span> <span class="n">line_through_points</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y0</span><span class="p">))</span>
+                <span class="n">x1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">get_x</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>
+
+        <span class="n">x0_</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">[</span><span class="n">x0</span> <span class="o">+</span> <span class="n">de</span><span class="p">]</span>
+        <span class="n">y0_</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">[</span><span class="n">y0</span> <span class="o">+</span> <span class="n">de</span><span class="p">]</span>
+        <span class="n">x1_</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">[</span><span class="n">x1</span> <span class="o">+</span> <span class="n">de</span><span class="p">]</span>
+        <span class="n">y1_</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">[</span><span class="n">y1</span> <span class="o">+</span> <span class="n">de</span><span class="p">]</span>
+        <span class="n">all_segments_converted</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">x0_</span><span class="p">,</span> <span class="n">y0_</span><span class="p">),</span> <span class="p">(</span><span class="n">x1_</span><span class="p">,</span> <span class="n">y1_</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">all_segments_converted</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">zero_norm_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">/=</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-8</span>
+    <span class="k">return</span> <span class="n">X</span>
+
+
+<div class="viewcode-block" id="segmentExtractor">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor">[docs]</a>
+<span class="k">class</span> <span class="nc">segmentExtractor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manipulate and extract segments from self similarity matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="o">=</span> <span class="n">sr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="n">cache_dir</span>
+
+        <span class="c1"># initialise arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_bin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_sym</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_fill</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_binop</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_proc</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Initialize status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emphasized</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extracted</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># cache paths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_convolve_cache</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;convolve&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;segments&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_ext_cache</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;segments_extended&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_join_cache</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;segments_joined&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_group_cache</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;segments_groups&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segment_group_overlap_cache</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;segment_overlap&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="segmentExtractor.emphasize_diagonals">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.emphasize_diagonals">[docs]</a>
+    <span class="k">def</span> <span class="nf">emphasize_diagonals</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bin_thresh</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span>
+        <span class="n">gauss_sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cont_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">etc_kernel_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">binop_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">image_report</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From self similarity matrix, self.X. Emphasize diagonals using a series</span>
+<span class="sd">        of image processing steps.</span>
+
+<span class="sd">        :param bin_thresh: Threshold for binarization of self similarity array.</span>
+<span class="sd">            Values below this threshold are set to 0 (not significant), those</span>
+<span class="sd">            above or equal too are set to 1. Very important parameter</span>
+<span class="sd">        :type bin_thresh: float</span>
+<span class="sd">        :param gauss_sigma: If not None, sigma for diagonal gaussian blur to</span>
+<span class="sd">            apply to matrix</span>
+<span class="sd">        :type gauss_sigma: float or None</span>
+<span class="sd">        :param cont_thresh: Only applicable if &lt;gauss_sigma&gt;. This binary</span>
+<span class="sd">            threshold isreapplied after gaussian blur to ensure matrix of</span>
+<span class="sd">            0 and 1. if None, equal to &lt;bin_thresh&gt;</span>
+<span class="sd">        :type cont_thresh: float or None</span>
+<span class="sd">        :param etc_kernel_size: Kernel size for morphological closing</span>
+<span class="sd">        :type etc_kernel_size: int</span>
+<span class="sd">        :param binop_dim: square dimension of binary opening structure</span>
+<span class="sd">            (square matrix of zeros with 1 across the diagonal)</span>
+<span class="sd">        :type binop_dim: int</span>
+<span class="sd">        :param image_report: str corresponding to folder to save progress images in.</span>
+<span class="sd">        :type image_report: None</span>
+<span class="sd">        :param verbose: Display progress</span>
+<span class="sd">        :type verbose: bool</span>
+
+<span class="sd">        :returns: list of segments in the form [((x0,y0),(x1,y1)),..]</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span> <span class="o">=</span> <span class="n">bin_thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span> <span class="o">=</span> <span class="n">gauss_sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span> <span class="o">=</span> <span class="n">etc_kernel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span> <span class="o">=</span> <span class="n">binop_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_report</span> <span class="o">=</span> <span class="n">image_report</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span> <span class="o">=</span> <span class="n">get_report_paths</span><span class="p">(</span><span class="n">image_report</span><span class="p">)</span>
+
+        <span class="c1"># Save original self similarity matrix</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;sim&quot;</span><span class="p">])</span>
+
+        <span class="c1">####################</span>
+        <span class="c1">## Convert params ##</span>
+        <span class="c1">####################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">cont_thresh</span> <span class="k">else</span> <span class="n">cont_thresh</span>
+
+        <span class="c1">#########################</span>
+        <span class="c1">## Emphasize Diagonals ##</span>
+        <span class="c1">#########################</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Convolving similarity matrix&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_convolve_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span><span class="n">convolve_array</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span> <span class="o">=</span> <span class="n">zero_norm_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span><span class="p">)</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;conv&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Binarizing convolved array&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_bin</span> <span class="o">=</span> <span class="n">binarize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">)</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_bin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;binar&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing diagonal&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span> <span class="o">=</span> <span class="n">remove_diagonal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_bin</span><span class="p">)</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;diag&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Applying diagonal gaussian filter&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span> <span class="o">=</span> <span class="n">diagonal_gaussian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">)</span>
+            <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;gauss&quot;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Binarize gaussian blurred similarity matrix&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span> <span class="o">=</span> <span class="n">binarize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">)</span>
+            <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;cont&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ensuring symmetry between upper and lower triangle in array&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_sym</span> <span class="o">=</span> <span class="n">make_symmetric</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Identifying and isolating regions between edges&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_fill</span> <span class="o">=</span> <span class="n">edges_to_contours</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_sym</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">)</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_fill</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;close&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Cleaning isolated non-directional regions using morphological opening&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_binop</span> <span class="o">=</span> <span class="n">apply_bin_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_fill</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ensuring symmetry between upper and lower triangle in array&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_proc</span> <span class="o">=</span> <span class="n">make_symmetric</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_binop</span><span class="p">)</span>
+        <span class="n">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_proc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_fns</span><span class="p">[</span><span class="s2">&quot;binop&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emphasized</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_proc</span></div>
+
+
+<div class="viewcode-block" id="segmentExtractor.extract_segments">
+<a class="viewcode-back" href="../../../../../../source/melody.html#compiam.melody.pattern.sancara_search.extraction.self_sim.segmentExtractor.extract_segments">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_segments</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">etc_kernel_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">binop_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">perc_tail</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">bin_thresh_segment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_diff_trav</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">min_pattern_length_seconds</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">boundaries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lookup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">break_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From self similarity matrix, &lt;self.X_proc&gt;. Return list of segments,</span>
+<span class="sd">        each corresponding to two regions of the input axis.</span>
+
+<span class="sd">        :param etc_kernel_size: Kernel size for morphological closing</span>
+<span class="sd">        :type etc_kernel_size: int</span>
+<span class="sd">        :param binop_dim: square dimension of binary opening structure</span>
+<span class="sd">            (square matrix of zeros with 1 across the diagonal)</span>
+<span class="sd">        :type binop_dim: int</span>
+<span class="sd">        :param perc_tail: Percentage either size of a segment along its</span>
+<span class="sd">            trajectory considered for lower threshold for significance</span>
+<span class="sd">        :type perc_tail: int</span>
+<span class="sd">        :param bin_thresh_segment: Reduced &lt;bin_thresh&gt; threshold for</span>
+<span class="sd">            areas neighbouring identified segments. If None, use 0.5*&lt;bin_thresh&gt;</span>
+<span class="sd">        :type bin_thresh_segment: float</span>
+<span class="sd">        :param min_diff_trav: Min time difference in seconds between</span>
+<span class="sd">            two segments for them to be joined to one.</span>
+<span class="sd">        :type min_diff_trav: float</span>
+<span class="sd">        :param min_pattern_length_seconds: Minimum length of any</span>
+<span class="sd">            returned pattern in seconds</span>
+<span class="sd">        :type min_pattern_length_seconds: float</span>
+<span class="sd">        :param boundaries: list of boundaries in &lt;X&gt; corresponding</span>
+<span class="sd">            to breaks due to sparsity</span>
+<span class="sd">        :type boundaries: list or None</span>
+<span class="sd">        :param lookup: Lookup of sparse index (in X): non-sparse index</span>
+<span class="sd">        :type lookup: dict</span>
+<span class="sd">        :param break_mask: any segment that traverses a non-zero element</span>
+<span class="sd">            in &lt;break_mask&gt; is broken into two according to this non-zero value</span>
+<span class="sd">        :type break_mask: array</span>
+<span class="sd">        :param timestep: Time in seconds between each element in &lt;break_mask&gt;</span>
+<span class="sd">        :type timestep: float or None</span>
+<span class="sd">        :param verbose: Display progress</span>
+<span class="sd">        :type verbose: bool</span>
+
+<span class="sd">        :returns: list of segments in the form [((x0,y0),(x1,y1)),..]</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">############</span>
+        <span class="c1">## Checks ##</span>
+        <span class="c1">############</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">emphasized</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Please run self.emphasize_diagonals before attempting to extract segments.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">break_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">timestep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;If &lt;break_mask&gt; is passed, timestep too must be specified&quot;</span>
+
+        <span class="k">if</span> <span class="n">boundaries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">lookup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;If &lt;boundaries&gt; is passed, lookup too must be specified&quot;</span>
+
+        <span class="c1">############</span>
+        <span class="c1">## Params ##</span>
+        <span class="c1">############</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav</span> <span class="o">=</span> <span class="n">min_diff_trav</span>
+        <span class="c1"># in terms of elements matrix elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_length_cqt</span> <span class="o">=</span> <span class="n">min_pattern_length_seconds</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span>
+        <span class="c1"># translate min_diff_trav to corresponding diagonal distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_hyp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">min_diff_trav</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_hyp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">bin_thresh_segment</span> <span class="k">else</span> <span class="n">bin_thresh_segment</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span> <span class="o">=</span> <span class="n">perc_tail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_pattern_length_seconds</span> <span class="o">=</span> <span class="n">min_pattern_length_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span> <span class="o">=</span> <span class="n">boundaries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="n">lookup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">break_mask</span> <span class="o">=</span> <span class="n">break_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="o">=</span> <span class="n">timestep</span>
+
+        <span class="c1">######################</span>
+        <span class="c1">## Extract segments ##</span>
+        <span class="c1">######################</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting segments&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seg_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_cache</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_segments</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span>
+            <span class="n">segments_from_matrix</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_bin</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_path</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extending Segments&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seg_ext_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_ext_cache</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_segments</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_sym</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span>
+            <span class="n">extend_segments</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_ext_path</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended</span><span class="p">)</span><span class="si">}</span><span class="s2"> extended segments...&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended_reduced</span> <span class="o">=</span> <span class="n">remove_short</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Converting sparse segment indices to original&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_converted</span> <span class="o">=</span> <span class="n">sparse_to_original</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended_reduced</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_extended_reduced</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Joining segments that are sufficiently close&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seg_join_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_join_cache</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_converted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_joined</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span>
+            <span class="n">join_all_segments</span><span class="p">,</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_converted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seg_join_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_joined</span><span class="p">)</span><span class="si">}</span><span class="s2"> joined segments...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Breaking segments with silent/stable regions&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">break_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_broken_segments</span> <span class="o">=</span> <span class="n">break_all_segments</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_joined</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">break_mask</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_broken_segments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_joined</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_broken_segments</span><span class="p">)</span><span class="si">}</span><span class="s2"> broken segments...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reducing Segments&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_reduced</span> <span class="o">=</span> <span class="n">remove_short</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_broken_segments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length_cqt</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_segments_reduced</span><span class="p">)</span><span class="si">}</span><span class="s2"> segments above minimum length of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_pattern_length_seconds</span><span class="si">}</span><span class="s2">s...&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">extracted</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_segments_reduced</span></div>
+
+
+    <span class="k">def</span> <span class="nf">group_segments</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">all_segments</span><span class="p">,</span>
+        <span class="n">break_mask</span><span class="p">,</span>
+        <span class="n">pitch</span><span class="p">,</span>
+        <span class="n">ext_mask_tol</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">match_tol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">dupl_perc_overlap_inter</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">dupl_perc_overlap_intra</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+        <span class="n">group_len_var</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">n_dtw</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">thresh_dtw</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">thresh_cos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_pattern_length_seconds</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">min_in_group</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1">############</span>
+        <span class="c1">## Params ##</span>
+        <span class="c1">############</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span> <span class="o">=</span> <span class="n">pitch</span>
+        <span class="n">break_mask</span> <span class="o">=</span> <span class="n">break_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ext_mask_tol</span> <span class="o">=</span> <span class="n">ext_mask_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_tol</span> <span class="o">=</span> <span class="n">match_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_inter</span> <span class="o">=</span> <span class="n">dupl_perc_overlap_inter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_intra</span> <span class="o">=</span> <span class="n">dupl_perc_overlap_intra</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_len_var</span> <span class="o">=</span> <span class="n">group_len_var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dtw</span> <span class="o">=</span> <span class="n">n_dtw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thresh_dtw</span> <span class="o">=</span> <span class="n">thresh_dtw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thresh_cos</span> <span class="o">=</span> <span class="n">thresh_cos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_pattern_length_seconds</span> <span class="o">=</span> <span class="n">min_pattern_length_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_in_group</span> <span class="o">=</span> <span class="n">min_in_group</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Identifying Segment Groups&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_group_cache</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_length_cqt</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">match_tol</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">all_segments</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_length_cqt</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">match_tol</span><span class="p">,</span>
+            <span class="n">break_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">all_groups</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span><span class="n">group_segments</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extending segments to silence/stability&quot;</span><span class="p">)</span>
+        <span class="n">all_groups_ext</span> <span class="o">=</span> <span class="n">extend_groups_to_mask</span><span class="p">(</span>
+            <span class="n">all_groups</span><span class="p">,</span>
+            <span class="n">break_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span>
+            <span class="n">toler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ext_mask_tol</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Trimming Silence&quot;</span><span class="p">)</span>
+
+        <span class="n">all_groups_sil</span> <span class="o">=</span> <span class="n">trim_silence</span><span class="p">(</span>
+            <span class="n">all_groups_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span>
+        <span class="p">)</span>
+
+        <span class="n">all_groups_sil</span> <span class="o">=</span> <span class="p">[[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_groups_sil</span><span class="p">]</span>
+
+        <span class="n">all_groups_sil</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">remove_group_duplicates</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_intra</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_groups_sil</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Identifying Segment Groups&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_overlap_path</span> <span class="o">=</span> <span class="n">get_param_hash_filepath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segment_group_overlap_cache</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cont_thresh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perc_tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_diff_trav_seq</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_length_cqt</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">match_tol</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_inter</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_len_var</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">all_groups</span> <span class="o">=</span> <span class="n">run_or_cache</span><span class="p">(</span>
+            <span class="n">group_overlapping</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">all_groups_sil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_inter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_len_var</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">segment_overlap_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh_dtw</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Joining geometrically close groups using pitch tracks&quot;</span><span class="p">)</span>
+            <span class="n">all_groups_dtw</span> <span class="o">=</span> <span class="n">group_by_distance</span><span class="p">(</span>
+                <span class="n">all_groups</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_dtw</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">thresh_dtw</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">thresh_cos</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">group_len_var</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_groups_dtw</span><span class="p">)</span><span class="si">}</span><span class="s2"> groups after join...&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_groups_dtw</span> <span class="o">=</span> <span class="n">all_groups</span>
+
+        <span class="c1"># all_groups_over = group_overlapping(all_groups_dtw, 0.1, group_len_var)</span>
+        <span class="n">all_groups_rgd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">remove_group_duplicates</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_intra</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_groups_dtw</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Grouping overlapping&quot;</span><span class="p">)</span>
+        <span class="n">all_groups_dov</span> <span class="o">=</span> <span class="n">group_overlapping</span><span class="p">(</span>
+            <span class="n">all_groups_rgd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_inter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_len_var</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_groups_dov</span><span class="p">)</span><span class="si">}</span><span class="s2"> groups after join...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extending to mask&quot;</span><span class="p">)</span>
+        <span class="n">all_groups_extdov</span> <span class="o">=</span> <span class="n">extend_groups_to_mask</span><span class="p">(</span>
+            <span class="n">all_groups_dov</span><span class="p">,</span>
+            <span class="n">break_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span>
+            <span class="n">toler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ext_mask_tol</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Trimming Silence&quot;</span><span class="p">)</span>
+        <span class="n">all_groups_ts</span> <span class="o">=</span> <span class="n">trim_silence</span><span class="p">(</span>
+            <span class="n">all_groups_extdov</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span>
+        <span class="p">)</span>
+
+        <span class="n">all_groups_final</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">remove_group_duplicates</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dupl_perc_overlap_intra</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_groups_ts</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Convert sequences to pitch track timesteps&quot;</span><span class="p">)</span>
+        <span class="n">starts_seq</span><span class="p">,</span> <span class="n">lengths_seq</span> <span class="o">=</span> <span class="n">convert_seqs_to_timestep</span><span class="p">(</span>
+            <span class="n">all_groups_final</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Applying exclusion functions&quot;</span><span class="p">)</span>
+        <span class="n">starts_seq_exc</span><span class="p">,</span> <span class="n">lengths_seq_exc</span> <span class="o">=</span> <span class="n">remove_below_length</span><span class="p">(</span>
+            <span class="n">starts_seq</span><span class="p">,</span> <span class="n">lengths_seq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_pattern_length_seconds</span>
+        <span class="p">)</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">starts_seq_exc</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_in_group</span><span class="p">]</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">lengths_seq_exc</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_in_group</span><span class="p">]</span>
+
+        <span class="n">starts_sec</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">starts</span><span class="p">]</span>
+        <span class="n">lengths_sec</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lengths</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">starts</span><span class="p">,</span> <span class="n">lengths</span>
+
+    <span class="k">def</span> <span class="nf">display_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title_size</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;X must be a 2d numpy array&quot;</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">title_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">display_all_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title_size</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">emphasized</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Please run self.emphasize_diagonals before attempting to extract segments.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;Self Similarity&quot;</span><span class="p">,</span> <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_conv</span><span class="p">,</span> <span class="s2">&quot;Convolved&quot;</span><span class="p">,</span> <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_diag</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Binarized (threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X_gauss</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Diagonal gaussian blur (sigma=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Gaussian binarized (threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh_segment</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_fill</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Morphological opening (kernel size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_binop</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Morphological closing (square dimension=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_proc</span><span class="p">,</span> <span class="s2">&quot;Final Matrix&quot;</span><span class="p">,</span> <span class="n">title_size</span><span class="o">=</span><span class="n">title_size</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">print_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Current Status&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;--------------&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input matrix of shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Windows size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sampling rate of original audio: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Segment extraction&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">emphasized</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Convolved matrix available at self.X_conv&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Binarized matrix available at self.X_bin (threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_thresh</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Gaussian smoothed matrix available at self.X_gauss (sigma=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No gaussian smoothing was applied&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Morphologically closed matrix available at self.X_fill (kernel size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">etc_kernel_size</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Morphologically opened matrix available at self.X_binop (square dimension of binary opening structure=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">binop_dim</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Final matrix after all steps applied, available at self.X_proc&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;No processes have been applied to the input matrix (see self.emphasize_diagonals)&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracted</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No segments have been extracted (see self.extract_segments)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cache_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;convolved&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_path</span><span class="p">,</span>
+            <span class="s2">&quot;extracted_segments&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_path</span><span class="p">,</span>
+            <span class="s2">&quot;extended_segments&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_ext_path</span><span class="p">,</span>
+            <span class="s2">&quot;joined_segments&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">seg_join_path</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;segmentExtractor(X=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, window_size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="si">}</span><span class="s2">, sr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="si">}</span><span class="s2">, cache_dir=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

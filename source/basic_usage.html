@@ -1,0 +1,195 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic usage &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Melodic analysis" href="melody.html" />
+    <link rel="prev" title="Welcome to compiam’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#loading-the-tools">Loading the tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wrappers">Wrappers</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Basic usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/basic_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basic-usage">
+<h1>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h1>
+<section id="loading-the-tools">
+<h2>Loading the tools<a class="headerlink" href="#loading-the-tools" title="Link to this heading"></a></h2>
+<p>compIAM does not have terminal functionalities but it is to be used within Python based-projects. First, import the library to
+your Python project with: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">compiam</span></code>.</p>
+<p>The integrated tools and models are organized by:</p>
+<ol class="arabic simple">
+<li><p>First, the following fundamental musical aspects: melody, rhythm, structure, timbre, and from v0.3.0 we have included separation as well.</p></li>
+<li><p>Then, the tools are grouped by tasks.</p></li>
+</ol>
+<p>You can access the several included tools by importing them from their corresponding modules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">compiam.melody.pitch_extraction</span> <span class="kn">import</span> <span class="n">FTANetCarnatic</span>
+<span class="kn">from</span> <span class="nn">compiam.rhythm.transcription</span> <span class="kn">import</span> <span class="n">FourWayTabla</span>
+</pre></div>
+</div>
+<p>We provide nice functionalities to explore where do the tools live:</p>
+<ol class="arabic simple">
+<li><p>Print out the available tasks for each category: <code class="docutils literal notranslate"><span class="pre">compiam.melody.list_tasks()</span></code></p></li>
+<li><p>Print out the available tools for each module using: <code class="docutils literal notranslate"><span class="pre">compiam.melody.list_tools()</span></code></p></li>
+<li><p>Print out only the tools for a particular task: <code class="docutils literal notranslate"><span class="pre">compiam.melody.pitch_extraction.list_tools()</span></code></p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Some tools (especially the ML/DL models) require specific dependencies that are not installed by default,
+because of their size or compatibility issues. If a tool is loaded and a particular dependency is missing,
+an alert will be displayed, to inform the user which dependency is missing and how to proceed to install
+it in the right version. See <code class="docutils literal notranslate"><span class="pre">optional_requirements.txt</span></code> where the optional dependencies and
+the specific versions we use in <code class="docutils literal notranslate"><span class="pre">compiam</span></code> are listed.</p>
+</div>
+</section>
+<section id="wrappers">
+<h2>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading"></a></h2>
+<p>compIAM also includes wrappers to easily initialize relevant datasets, corpora, and also pre-trained models for particular problems.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When listing available tools using the <code class="docutils literal notranslate"><span class="pre">list_tools()</span></code> functions, some will appear with a “*” at the end. That is meant to
+indicate that such tools have pre-trained models available, which may be loaded using the wrapper <code class="docutils literal notranslate"><span class="pre">compiam.load_model()</span></code>.</p>
+</div>
+<p>Model weights are large in size and therefore, not included in the library from v0.2.1 on. We have included a <code class="docutils literal notranslate"><span class="pre">.download_model()</span></code>
+function to all ML/DL models that require pre-trained weights, so that the user can download them on demand. This function is
+automatically run when invoking the model through the <code class="docutils literal notranslate"><span class="pre">compiam.load_model()</span></code> wrapper. The model weights are then stored in the
+corresponding default folder <code class="docutils literal notranslate"><span class="pre">./compiam/model/</span></code>. If the model is already downloaded, the function will not download it again.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>From v0.3.0 on, <code class="docutils literal notranslate"><span class="pre">compiam.load_model()</span></code> wrapper has an argument <code class="docutils literal notranslate"><span class="pre">data_home</span></code>, in where you can specify to which folder you
+want the models to be downloaded and read from.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>From v0.4.0 on, <code class="docutils literal notranslate"><span class="pre">compiam.load_model()</span></code> wrapper has an argument <code class="docutils literal notranslate"><span class="pre">version</span></code>, in where you can specify which version of the
+pre-trained model you want to use. You may want to use <code class="docutils literal notranslate"><span class="pre">compiam.get_model_info(&lt;model_key&gt;)</span></code> to print out the entire model
+information in compiam/data.py and visualisse the available versions. By default, the model contributor selects a default version
+to be loaded without the user having to specify it, so this argument is option. If you try to load a non-existing version, an
+error will be thrown.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to compiam’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="melody.html" class="btn btn-neutral float-right" title="Melodic analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

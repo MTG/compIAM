@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.melody.raga_recognition.deepsrgm &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.melody.raga_recognition.deepsrgm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.melody.raga_recognition.deepsrgm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">librosa</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">compiam</span>
+<span class="kn">from</span> <span class="nn">compiam.melody.raga_recognition.deepsrgm.raga_mapping</span> <span class="kn">import</span> <span class="n">create_mapping</span>
+<span class="kn">from</span> <span class="nn">compiam.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ModelNotTrainedError</span><span class="p">,</span>
+    <span class="n">DatasetNotLoadedError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">stereo_to_mono</span><span class="p">,</span> <span class="n">WORKDIR</span>
+<span class="kn">from</span> <span class="nn">compiam.utils.download</span> <span class="kn">import</span> <span class="n">download_remote_model</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DEEPSRGM">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM">[docs]</a>
+<span class="k">class</span> <span class="nc">DEEPSRGM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DEEPSRGM model for raga classification. This DEEPSGRM implementation has been</span>
+<span class="sd">    kindly provided by Shubham Lohiya and Swarada Bharadwaj.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_link</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_checksum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rnn</span><span class="o">=</span><span class="s2">&quot;lstm&quot;</span><span class="p">,</span>
+        <span class="n">mapping_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sample_rate</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;DEEPSRGM init method.</span>
+
+<span class="sd">        :param model_path: path to file to the model weights</span>
+<span class="sd">        :param download_link: link to the remote pre-trained model.</span>
+<span class="sd">        :param download_checksum: checksum of the model file.</span>
+<span class="sd">        :param rnn: type of rnn used &quot;lstm&quot; or &quot;gru&quot;</span>
+<span class="sd">        :param mapping_path: path to raga to id JSON mapping</span>
+<span class="sd">        :param sample_rate: sampling rate which the model is trained</span>
+<span class="sd">        :param device: torch CUDA config to route model to GPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">### IMPORTING OPTIONAL DEPENDENCIES</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">torch</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="k">global</span> <span class="n">deepsrgmModel</span>
+            <span class="kn">from</span> <span class="nn">compiam.melody.raga_recognition.deepsrgm.model</span> <span class="kn">import</span> <span class="n">deepsrgmModel</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;In order to use this tool you need to have torch installed. &quot;</span>
+                <span class="s2">&quot;Install compIAM with torch support: pip install &#39;compiam[torch]&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="c1">###</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">rnn</span>
+        <span class="c1"># To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">(</span><span class="n">rnn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">(</span><span class="n">rnn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">model_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span> <span class="o">=</span> <span class="n">download_link</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span> <span class="o">=</span> <span class="n">download_checksum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">=</span> <span class="n">sample_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1">## Loading LSTM model by default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">],</span> <span class="n">rnn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping_path</span> <span class="o">=</span> <span class="n">mapping_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_ragas</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">5</span><span class="p">,</span>
+            <span class="mi">8</span><span class="p">,</span>
+            <span class="mi">10</span><span class="p">,</span>
+            <span class="mi">13</span><span class="p">,</span>
+            <span class="mi">17</span><span class="p">,</span>
+            <span class="mi">20</span><span class="p">,</span>
+            <span class="mi">22</span><span class="p">,</span>
+            <span class="mi">23</span><span class="p">,</span>
+            <span class="mi">24</span><span class="p">,</span>
+            <span class="mi">28</span><span class="p">,</span>
+        <span class="p">]</span>  <span class="c1"># pre-defined for release 0.1.0</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">mapping_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_ragas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_mapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_ragas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rnn</span><span class="o">=</span><span class="s2">&quot;lstm&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Building DEEPSRM</span>
+
+<span class="sd">        :param rnn: lstm (default) or gru.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deepsrgmModel</span><span class="p">(</span><span class="n">rnn</span><span class="o">=</span><span class="n">rnn</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DEEPSRGM.load_mapping">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_mapping">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loading raga mapping for DEEPSRGM</span>
+
+<span class="sd">        :param selection: Selection of ragas for the DEEPSRGM model. A default selection</span>
+<span class="sd">            is initialized by default in compiam v1.0. Flexible selection and training of this</span>
+<span class="sd">            model is under development at this moment and will be available in the next release.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_ragas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_ragas</span> <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">create_mapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping_path</span><span class="p">,</span> <span class="n">selected_ragas</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DEEPSRGM.load_model">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">rnn</span><span class="o">=</span><span class="s2">&quot;lstm&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loading weights for DEEPSRGM</span>
+
+<span class="sd">        :param model_path: path to model.</span>
+<span class="sd">        :param rnn: lstm (default) or gru.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rnn</span> <span class="o">==</span> <span class="s2">&quot;gru&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">(</span><span class="n">rnn</span><span class="o">=</span><span class="s2">&quot;gru&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">model_path</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">new_weights</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">keys_to_fix</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;.weight_ih_l0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;.weight_hh_l0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;.bias_ih_l0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;.bias_hh_l0&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">keys_to_fix</span> <span class="o">=</span> <span class="p">[</span><span class="n">rnn</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">keys_to_fix</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">keys_to_fix</span><span class="p">:</span>
+            <span class="n">new_weights</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">rnn</span><span class="p">,</span> <span class="s2">&quot;rnn&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">new_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">new_weights</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DEEPSRGM.download_model">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.download_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download pre-trained model.&quot;&quot;&quot;</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">model_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">WORKDIR</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;melody&quot;</span><span class="p">,</span> <span class="s2">&quot;deepsrgm&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Creating model folder to store the weights</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">download_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+        <span class="n">download_remote_model</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span><span class="p">,</span>
+            <span class="n">download_path</span><span class="p">,</span>
+            <span class="n">force_overwrite</span><span class="o">=</span><span class="n">force_overwrite</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DEEPSRGM.load_raga_dataset">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.load_raga_dataset">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_raga_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load an instance of the Compmusic raga dataset to assist the tool</span>
+
+<span class="sd">        :param data_home: path where to store the dataset data</span>
+<span class="sd">        :param download:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">compiam</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span>
+            <span class="s2">&quot;compmusic_raga&quot;</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="n">data_home</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;default&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">download</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>  <span class="c1"># Downloads index and features</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                The features are downloaded, but the audio of this dataset is private. </span>
+<span class="s2">                Please request it in this link: https://zenodo.org/records/7278511, </span>
+<span class="s2">                download it, and unzip it in </span><span class="si">{</span><span class="n">data_home</span><span class="si">}</span><span class="s2"> following the instructions.</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DEEPSRGM.get_features">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.get_features">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span>
+        <span class="n">pitch_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tonic_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">from_mirdata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">track_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computing features for prediction of DEEPSRM</span>
+
+<span class="sd">        :param input_data: path to audio file or numpy array like audio signal.</span>
+<span class="sd">        :param input_sr: sampling rate of the input array of data (if any). This variable is only</span>
+<span class="sd">            relevant if the input is an array of data instead of a filepath.</span>
+<span class="sd">        :param pitch_path: path to pre-computed pitch file (if available).</span>
+<span class="sd">        :param tonic_path: path to pre-computed tonic file (if available).</span>
+<span class="sd">        :param from_mirdata: boolean to indicate if the features are parsed from the mirdata loader of</span>
+<span class="sd">            Indian Art Music Raga Recognition Dataset (must be specifically this one).</span>
+<span class="sd">        :param track_id: track id for the Indian Art Music Raga Recognition Dataset if from_mirdata is</span>
+<span class="sd">            set to True.</span>
+<span class="sd">        :param k: k indicating the precision of the pitch feature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">pitch_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">tonic_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">freqs</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pitch_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">tonic</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">tonic_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">elif</span> <span class="n">from_mirdata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DatasetNotLoadedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataloader is not initialized. Have you run .load_raga_dataset()?&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">track_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;To load a track we need a track id. See mirdata instructions </span><span class="se">\</span>
+<span class="s2">                    to know how to list the available ids.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">track_id</span><span class="p">)</span>
+            <span class="n">pitch_path</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">pitch_post_processed_path</span>
+            <span class="n">tonic_path</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">tonic_fine_tuned_path</span>
+            <span class="n">freqs</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pitch_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">tonic</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">tonic_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">essentia.standard</span> <span class="k">as</span> <span class="nn">estd</span>
+
+                <span class="n">melodia</span> <span class="o">=</span> <span class="n">compiam</span><span class="o">.</span><span class="n">melody</span><span class="o">.</span><span class="n">pitch_extraction</span><span class="o">.</span><span class="n">Melodia</span>
+                <span class="n">melodia</span> <span class="o">=</span> <span class="n">melodia</span><span class="p">(</span><span class="n">sample_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+                <span class="n">tonic_extraction</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">compiam</span><span class="o">.</span><span class="n">melody</span><span class="o">.</span><span class="n">tonic_identification</span><span class="o">.</span><span class="n">TonicIndianMultiPitch</span>
+                <span class="p">)</span>
+                <span class="n">tonic_extraction</span> <span class="o">=</span> <span class="n">tonic_extraction</span><span class="p">(</span><span class="n">sample_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                    <span class="s2">&quot;In order to use these tools to extract the features you need to have essentia installed.&quot;</span>
+                    <span class="s2">&quot;Install compIAM with essentia support: pip install &#39;compiam[essentia]&#39;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Loading and resampling audio</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Target audio not found.&quot;</span><span class="p">)</span>
+                <span class="n">audio</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">input_data</span> <span class="o">=</span> <span class="n">stereo_to_mono</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Resampling... (input sampling rate is assumed </span><span class="si">{</span><span class="n">input_sr</span><span class="si">}</span><span class="s2">Hz, </span><span class="se">\</span>
+<span class="s2">                        make sure this is correct and change input_sr otherwise)&quot;</span>
+                <span class="p">)</span>
+                <span class="n">audio</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span>
+                    <span class="n">input_data</span><span class="p">,</span> <span class="n">orig_sr</span><span class="o">=</span><span class="n">input_sr</span><span class="p">,</span> <span class="n">target_sr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be path to audio signal or an audio array&quot;</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting pitch track using melodia...&quot;</span><span class="p">)</span>
+            <span class="n">freqs</span> <span class="o">=</span> <span class="n">melodia</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">audio</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting tonic using multi-pitch approach...&quot;</span><span class="p">)</span>
+            <span class="n">tonic</span> <span class="o">=</span> <span class="n">tonic_extraction</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+
+        <span class="c1"># Normalise pitch</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1200</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">freqs</span> <span class="o">/</span> <span class="n">tonic</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Audio signal is not longer enough for a proper estimation. Please provide a larger audio.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">)</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">c</span> <span class="p">:</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">5000</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DEEPSRGM.predict">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.raga_recognition.deepsrgm.DEEPSRGM.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="s2">&quot;-1&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict raga for recording</span>
+
+<span class="sd">        :param features: all subsequences for a certain music recording</span>
+<span class="sd">        :param threshold: majority voting threshold</span>
+<span class="sd">        :param gpu: Id of the available GPU to use (-1 by default, to run on CPU)</span>
+<span class="sd">        :return: recognition result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## Setting up GPU if any</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">gpu</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Please first extract features using .get_features() and use </span><span class="se">\</span>
+<span class="s2">                these as input for this predict function.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Make sure model is loaded</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotTrainedError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Model is not trained. Please load model before running inference!</span>
+<span class="sd">                You can load the pre-trained instance with the load_model wrapper.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Make sure mapping is loaded</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_mapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_ragas</span><span class="p">)</span>
+        <span class="n">list_of_ragas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># Predict</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Performing prediction for the following </span><span class="si">{}</span><span class="s2"> ragas: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">list_of_ragas</span><span class="p">),</span> <span class="n">list_of_ragas</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">())</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">majority</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+        <span class="n">majority</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">majority</span><span class="p">)</span>
+        <span class="n">votes</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">majority</span><span class="p">))</span> <span class="o">/</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">votes</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Input music sample belongs to the </span><span class="si">{}</span><span class="s2"> raga&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">majority</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;CONFUSED - Closest raga predicted is </span><span class="si">{}</span><span class="s2"> with </span><span class="si">{}</span><span class="s2"> votes&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">majority</span><span class="p">],</span> <span class="p">(</span><span class="n">votes</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">majority</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

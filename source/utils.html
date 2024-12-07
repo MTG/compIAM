@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Util functions &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contribution guidelines for compIAM" href="contributing.html" />
+    <link rel="prev" title="Visualisation tools" href="visualisation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Util functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-compiam.utils.augment">Data augmentation utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.augment.attack_remix"><code class="docutils literal notranslate"><span class="pre">attack_remix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.augment.spectral_shape"><code class="docutils literal notranslate"><span class="pre">spectral_shape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.augment.stroke_remix"><code class="docutils literal notranslate"><span class="pre">stroke_remix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-compiam.utils.pitch">Pitch-related utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.cents_to_pitch"><code class="docutils literal notranslate"><span class="pre">cents_to_pitch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.extract_stability_mask"><code class="docutils literal notranslate"><span class="pre">extract_stability_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.interpolate_below_length"><code class="docutils literal notranslate"><span class="pre">interpolate_below_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.is_stable"><code class="docutils literal notranslate"><span class="pre">is_stable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.normalisation"><code class="docutils literal notranslate"><span class="pre">normalisation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.pitch_seq_to_cents"><code class="docutils literal notranslate"><span class="pre">pitch_seq_to_cents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.pitch_to_cents"><code class="docutils literal notranslate"><span class="pre">pitch_to_cents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.resample_melody_series"><code class="docutils literal notranslate"><span class="pre">resample_melody_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiam.utils.pitch.resampling"><code class="docutils literal notranslate"><span class="pre">resampling()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Util functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="util-functions">
+<h1>Util functions<a class="headerlink" href="#util-functions" title="Link to this heading"></a></h1>
+<section id="module-compiam.utils.augment">
+<span id="data-augmentation-utils"></span><h2>Data augmentation utils<a class="headerlink" href="#module-compiam.utils.augment" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.augment.attack_remix">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.augment.</span></span><span class="sig-name descname"><span class="pre">attack_remix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">winDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/augment.html#attack_remix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.augment.attack_remix" title="Link to this definition"></a></dt>
+<dd><p>Modifying the relative levels of attack and decay regions of an audio</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_path</strong> (<em>str</em>) – Path to input audio</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory to output pitch shifted audios</p></li>
+<li><p><strong>gain_factors</strong> (<em>float</em><em> or </em><em>list</em>) – gain factor (or list of) to scale attack portion with</p></li>
+<li><p><strong>winDur</strong> (<em>float</em>) – Window size in milliseconds</p></li>
+<li><p><strong>hopDur</strong> (<em>float</em>) – Hop size in milliseconds</p></li>
+<li><p><strong>sr</strong> (<em>float</em>) – Sampling rate of input audio</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – n jobs for parrelelization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.augment.spectral_shape">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.augment.</span></span><span class="sig-name descname"><span class="pre">spectral_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.6,</span> <span class="pre">2,</span> <span class="pre">0.2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">winDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/augment.html#spectral_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.augment.spectral_shape" title="Link to this definition"></a></dt>
+<dd><p>Augmenting data by perturbin ‘nuisance attributes’ that
+are unimportant in the specific discrimination task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_path</strong> (<em>str</em>) – Path to input audio</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory to output pitch shifted audios</p></li>
+<li><p><strong>gain_factors</strong> (<em>float</em><em> or </em><em>list</em>) – 3-tuple (or list of) with gain factors for remixing. Tuple entries correspond to each of bass, treble, &amp; damped components.</p></li>
+<li><p><strong>winDur</strong> (<em>float</em>) – Window size in milliseconds</p></li>
+<li><p><strong>hopDur</strong> (<em>float</em>) – Hop size in milliseconds</p></li>
+<li><p><strong>sr</strong> (<em>float</em>) – Sampling rate of input audio</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – n jobs for parrelelization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.augment.stroke_remix">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.augment.</span></span><span class="sig-name descname"><span class="pre">stroke_remix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.6,</span> <span class="pre">2,</span> <span class="pre">0.2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/work/compIAM/compIAM/compiam/utils/augment/augmentation/templates.npy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">winDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopDur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/augment.html#stroke_remix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.augment.stroke_remix" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Simulate the expected variations of relative strengths of drums in a mix</dt><dd><p>using non-negative matrix factorization (NMF).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_path</strong> (<em>str</em>) – Path to input audio</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – Directory to output pitch shifted audios</p></li>
+<li><p><strong>gain_factors</strong> (<em>float</em><em> or </em><em>list</em>) – 3-tuple (or list of) with gain factors for remixing. Tuple entries correspond to each of bass, treble, &amp; damped components.</p></li>
+<li><p><strong>templates</strong> (<em>str</em>) – path to saved nmf templates</p></li>
+<li><p><strong>winDur</strong> (<em>float</em>) – Window size in milliseconds</p></li>
+<li><p><strong>hopDur</strong> (<em>float</em>) – Hop size in milliseconds</p></li>
+<li><p><strong>sr</strong> (<em>float</em>) – Sampling rate of input audio</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – n jobs for parrelelization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-compiam.utils.pitch">
+<span id="pitch-related-utils"></span><h2>Pitch-related utils<a class="headerlink" href="#module-compiam.utils.pitch" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.cents_to_pitch">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">cents_to_pitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#cents_to_pitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.cents_to_pitch" title="Link to this definition"></a></dt>
+<dd><p>Convert cents value, &lt;c&gt; to pitch in Hz</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<em>float/int</em>) – Pitch value in cents above &lt;tonic&gt;</p></li>
+<li><p><strong>tonic</strong> (<em>float</em>) – Tonic value in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pitch value, &lt;c&gt; in Hz</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.extract_stability_mask">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">extract_stability_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_stab_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#extract_stability_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.extract_stability_mask" title="Link to this definition"></a></dt>
+<dd><p>Extract boolean array corresponding to &lt;pitch&gt; - yes/no does point correspond
+to a region of “stable” pitch.</p>
+<p>A window is passed along the pitch track, &lt;pitch&gt; and the minimum and maximum values
+compared to the average for that window. Regions corresponding to windows
+whose extremes deviate significantly from their means are marked as stable.
+Consecutive stable regions summing to more than &lt;min_stab_sec&gt; seconds in
+length are annotated with 1 indicating stable. Regions which are not stable
+or that are stable but do not make up at least &lt;min_stab_sec&gt; in length are
+annotated with 0 - not stable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> (<em>np.ndarray</em>) – Pitch values in Hz or cents</p></li>
+<li><p><strong>min_stab_sec</strong> (<em>float</em>) – Stable regions of at least &lt;min_stab_sec&gt; seconds
+in length are annotated as stable. Shorter regions are not annotated.</p></li>
+<li><p><strong>hop_sec</strong> (<em>float</em>) – Hop length in seconds of window</p></li>
+<li><p><strong>var</strong> (<em>float</em>) – If the maximum/minimum pitch in a window deviates from its mean
+by more than this value, the window is considered unstable. Important
+to consider if the input is in cents or hertz!</p></li>
+<li><p><strong>timestep</strong> (<em>float</em>) – Time difference, in seconds, between each element in pitch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean array equal in length to &lt;pitch&gt;: is stable region or not?</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.interpolate_below_length">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">interpolate_below_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#interpolate_below_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.interpolate_below_length" title="Link to this definition"></a></dt>
+<dd><p>Interpolate gaps of value, &lt;val&gt; of
+length equal to or shorter than &lt;gap&gt; in &lt;arr&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>np.array</em>) – Array to interpolate</p></li>
+<li><p><strong>val</strong> (<em>number</em>) – Value expected in gaps to interpolate</p></li>
+<li><p><strong>gap</strong> (<em>number</em>) – Maximum gap length to interpolate, gaps of &lt;val&gt; longer than &lt;g&gt; will not be interpolated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>interpolated array</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.is_stable">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">is_stable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#is_stable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.is_stable" title="Link to this definition"></a></dt>
+<dd><p>Compute is sequence of value has stability given an input tolerance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> – sequence of values to study</p></li>
+<li><p><strong>max_var</strong> – Maximum tolerance to consider stable/not stable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>1 (stable) or 0 (not stable)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.normalisation">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">normalisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins_per_octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#normalisation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.normalisation" title="Link to this definition"></a></dt>
+<dd><p>Normalize pitch given a tonic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – a 2-D list with time-stamps and pitch values per timestamp.</p></li>
+<li><p><strong>tonic</strong> – recording tonic to normalize the pitch to.</p></li>
+<li><p><strong>bins_per_octave</strong> – number of frequency bins per octave.</p></li>
+<li><p><strong>max_value</strong> – maximum value to clip the normalized pitch to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a 2-D list with time-stamps and normalized to a given tonic
+pitch values per timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.pitch_seq_to_cents">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">pitch_seq_to_cents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pseq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#pitch_seq_to_cents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.pitch_seq_to_cents" title="Link to this definition"></a></dt>
+<dd><p>Convert sequence of pitch values to sequence of
+cents above &lt;tonic&gt; values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pseq</strong> (<em>np.array</em>) – Array of pitch values in Hz</p></li>
+<li><p><strong>tonic</strong> (<em>float</em>) – Tonic value in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sequence of original pitch value in cents above &lt;tonic&gt;</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.pitch_to_cents">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">pitch_to_cents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tonic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#pitch_to_cents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.pitch_to_cents" title="Link to this definition"></a></dt>
+<dd><p>Convert pitch value, &lt;p&gt; to cents above &lt;tonic&gt;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>float</em>) – Pitch value in Hz</p></li>
+<li><p><strong>tonic</strong> (<em>float</em>) – Tonic value in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pitch value, &lt;p&gt; in cents above &lt;tonic&gt;</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.resample_melody_series">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">resample_melody_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequencies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voicing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#resample_melody_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.resample_melody_series" title="Link to this definition"></a></dt>
+<dd><p>NOTE: This function is DIRECTLY PORTED FROM mir_eval.melody</p>
+<p>Resamples frequency and voicing time series to a new timescale. Maintains
+any zero (“unvoiced”) values in frequencies.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">times</span></code> and <code class="docutils literal notranslate"><span class="pre">times_new</span></code> are equivalent, no resampling will be
+performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>times</strong> – Times of each frequency value</p></li>
+<li><p><strong>frequencies</strong> – Array of frequency values, &gt;= 0</p></li>
+<li><p><strong>voicing</strong> – Array which indicates voiced or unvoiced. This array may be binary
+or have continuous values between 0 and 1.</p></li>
+<li><p><strong>times_new</strong> – Times to resample frequency and voicing sequences to</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param kind:kind parameter to pass to scipy.interpolate.interp1d.</dt><dd><p>(Default value = ‘linear’)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns frequencies_resampled<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Frequency array resampled to new timebase</p>
+</dd>
+<dt class="field-even">Returns voicing_resampled<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voicing array resampled to new timebase</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="compiam.utils.pitch.resampling">
+<span class="sig-prename descclassname"><span class="pre">compiam.utils.pitch.</span></span><span class="sig-name descname"><span class="pre">resampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_len</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/utils/pitch.html#resampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.utils.pitch.resampling" title="Link to this definition"></a></dt>
+<dd><p>Resample pitch to a given new length in samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – a 2-D list with time-stamps and pitch values per timestamp.</p></li>
+<li><p><strong>new_len</strong> – new length of the output pitch</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="visualisation.html" class="btn btn-neutral float-left" title="Visualisation tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contribution guidelines for compIAM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

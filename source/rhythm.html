@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhythm analysis &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Structure analysis" href="structure.html" />
+    <link rel="prev" title="Melodic analysis" href="melody.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rhythm analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#percussion-transcription">Percussion Transcription</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mnemonic-transcription">Mnemonic Transcription</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription"><code class="docutils literal notranslate"><span class="pre">MnemonicTranscription</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#meter-tracking">Meter tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#akshara-pulse-tracker">Akshara Pulse Tracker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker"><code class="docutils literal notranslate"><span class="pre">AksharaPulseTracker</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Rhythm analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/rhythm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rhythm-analysis">
+<span id="rhythm"></span><h1>Rhythm analysis<a class="headerlink" href="#rhythm-analysis" title="Link to this heading"></a></h1>
+<section id="percussion-transcription">
+<h2>Percussion Transcription<a class="headerlink" href="#percussion-transcription" title="Link to this heading"></a></h2>
+<section id="mnemonic-transcription">
+<h3>Mnemonic Transcription<a class="headerlink" href="#mnemonic-transcription" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REQUIRES: torch</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.rhythm.transcription.mnemonic_transcription.</span></span><span class="sig-name descname"><span class="pre">MnemonicTranscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">syllables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'hop_length':</span> <span class="pre">256,</span> <span class="pre">'n_mfcc':</span> <span class="pre">13,</span> <span class="pre">'win_length':</span> <span class="pre">1024}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'algorithm':</span> <span class="pre">'viterbi',</span> <span class="pre">'n_components':</span> <span class="pre">7,</span> <span class="pre">'n_iter':</span> <span class="pre">100,</span> <span class="pre">'n_mix':</span> <span class="pre">3,</span> <span class="pre">'params':</span> <span class="pre">'mcw'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription" title="Link to this definition"></a></dt>
+<dd><p>bōl or solkattu transcription from audio. Based on model presented in [1]</p>
+<p>[1] Gupta, S., Srinivasamurthy, A., Kumar, M., Murthy, H., &amp; Serra, X.
+(2015, October). Discovery of Syllabic Percussion Patterns in Tabla
+Solo Recordings. In Proceedings of the 16th International Society
+for Music Information Retrieval Conference (ISMIR 2015) (pp. 385–391).
+Malaga, Spain.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.extract_features">
+<span class="sig-name descname"><span class="pre">extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.extract_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.extract_features" title="Link to this definition"></a></dt>
+<dd><p>Convert input audio to features MFCC features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio</strong> (<em>np.array</em>) – time series representation of audio</p></li>
+<li><p><strong>sr</strong> – sampling rate of audio to train on (default &lt;self.sr&gt;)</p></li>
+<li><p><strong>sr</strong> – int</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>array of features</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.get_sample_ix">
+<span class="sig-name descname"><span class="pre">get_sample_ix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">syl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.get_sample_ix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.get_sample_ix" title="Link to this definition"></a></dt>
+<dd><p>Convert input onset annotations to list of in/out points for a
+specific bōl/solkattu syllable, &lt;syl&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>annotations</strong> (<em>list/iterable</em>) – onset annotations of the form [(timestamp in seconds, bōl/solkattu),… ]</p></li>
+<li><p><strong>audio</strong> (<em>np.array</em>) – time series representation of audio</p></li>
+<li><p><strong>syl</strong> (<em>str</em>) – bōl/solkattu syllable to extract</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list or [(t1,t2),..] where t1 and t2 correspdong to in and out points of single
+bōls/solkattus</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.load_annotations">
+<span class="sig-name descname"><span class="pre">load_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.load_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.load_annotations" title="Link to this definition"></a></dt>
+<dd><p>Load onset annotations from &lt;annotation_path&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation_path</strong> (<em>str</em>) – path to onset annotations for one recording
+of the form (timestamp in seconds, bōl/solkattu syllable)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of onset annotations (timestamp seconds, bōl/solkattu syllable)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.map">
+<span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.map" title="Link to this definition"></a></dt>
+<dd><p>Map input bōl/solkattu, &lt;a&gt; to reduced bōl/solkattu vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> (<em>np.array</em>) – bōl/solkattu string (that must exist in self.mapping)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapped bōl/solkattu label</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict" title="Link to this definition"></a></dt>
+<dd><p>Predict bōl/solkattu transcription for list of input audios at &lt;file_paths&gt;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> (<em>list</em><em> or </em><em>string</em>) – Either one file_path or list of file_paths to audios to predict on</p></li>
+<li><p><strong>onsets</strong> (<em>list</em><em> or </em><em>None</em>) – list representing onsets in audios. If None, compiam.rhythm.akshara_pulse_tracker is used
+to automatically identify bōl/solkattu onsets. If passed should be a list of onset annotations, each being
+a list of bōl/solkattu onsets in seconds. &lt;onsets&gt; should contain one set of onset annotations for each file_path
+in &lt;file_paths&gt;</p></li>
+<li><p><strong>sr</strong> – sampling rate of audio to train on (default &lt;self.sr&gt;)</p></li>
+<li><p><strong>sr</strong> – int</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>if &lt;file_paths&gt; is a list, then return a list of transcriptions, each
+transcription of the form [(timestamp in seconds, bōl/solkattu),…]. Or if &lt;file_paths&gt;
+is a single fiel path string, return a single transcription.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_sample">
+<span class="sig-name descname"><span class="pre">predict_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.predict_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_sample" title="Link to this definition"></a></dt>
+<dd><p>Predict one sample using internal models. One sample should correspond to one
+bōl/solkattu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> (<em>np.array</em>) – Numpy array features corresponding to &lt;sample&gt; (extracted using self.extract_features)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bōl/solkattu label</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_single">
+<span class="sig-name descname"><span class="pre">predict_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.predict_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.predict_single" title="Link to this definition"></a></dt>
+<dd><p>Predict bōl/solkattu transcription directly from audio time series
+(such as for example that loaded by librosa.load)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – File path to audio to analyze</p></li>
+<li><p><strong>onsets</strong> (<em>list</em><em> or </em><em>None</em>) – If None, compiam.rhythm.akshara_pulse_tracker is used to automatically
+identify bōl/solkattu onsets. If passed &lt;onsets&gt; should be a list of bōl/solkattu
+onsets in seconds</p></li>
+<li><p><strong>sr</strong> – sampling rate of audio to train on (default &lt;self.sr&gt;)</p></li>
+<li><p><strong>sr</strong> – int</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bōl/solkattu transcription of form [(time in seconds, syllable),… ]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.save" title="Link to this definition"></a></dt>
+<dd><p>Save model at path as .pkl</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_path</strong> (<em>strs</em>) – Path to save model to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths_audio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_paths_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/transcription/mnemonic_transcription.html#MnemonicTranscription.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.transcription.mnemonic_transcription.MnemonicTranscription.train" title="Link to this definition"></a></dt>
+<dd><p>Train one gaussian mixture model hidden markov model for each syllables passed at initialisation
+on input audios and annotations passed via &lt;file_paths_audio&gt; and &lt;file_paths_annotation&gt;.
+Training hyperparameters are configured upon intialisation and can be accessed/changed
+via self.model_kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths_audio</strong> (<em>list</em>) – List of file_paths to audios to train on</p></li>
+<li><p><strong>file_paths_annotation</strong> (<em>list</em>) – List of file_paths to annotations to train on.
+annotations should be in csv format, with no header of (timestamp in seconds, &lt;syllable&gt;).
+Annotated syllables that do not correspond to syllables passed at initialisation will be ignored
+One annotations path should be passed for each audio path</p></li>
+<li><p><strong>sr</strong> – sampling rate of audio to train on (default &lt;self.sr&gt;)</p></li>
+<li><p><strong>sr</strong> – int</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="meter-tracking">
+<h2>Meter tracking<a class="headerlink" href="#meter-tracking" title="Link to this heading"></a></h2>
+<section id="akshara-pulse-tracker">
+<h3>Akshara Pulse Tracker<a class="headerlink" href="#akshara-pulse-tracker" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compiam.rhythm.meter.akshara_pulse_tracker.</span></span><span class="sig-name descname"><span class="pre">AksharaPulseTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nfft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frmSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fBands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[10,</span> <span class="pre">110],</span> <span class="pre">[110,</span> <span class="pre">500],</span> <span class="pre">[500,</span> <span class="pre">3000],</span> <span class="pre">[3000,</span> <span class="pre">5000],</span> <span class="pre">[5000,</span> <span class="pre">10000],</span> <span class="pre">[0,</span> <span class="pre">22000]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">songLenMin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octCorrectParam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempoWindow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepSizeTempogram</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BPM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([40.,</span> <span class="pre">40.5,</span> <span class="pre">41.,</span> <span class="pre">...,</span> <span class="pre">599.,</span> <span class="pre">599.5,</span> <span class="pre">600.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minBPM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octTol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxLen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignoreTooClose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decayCoeff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backSearch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5.0,</span> <span class="pre">0.5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphaDP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothTime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2560</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/meter/akshara_pulse_tracker.html#AksharaPulseTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker" title="Link to this definition"></a></dt>
+<dd><p>Akshara onset detection. CompMusic Rhythm Extractor.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compiam/rhythm/meter/akshara_pulse_tracker.html#AksharaPulseTracker.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker.extract" title="Link to this definition"></a></dt>
+<dd><p>Run extraction of akshara pulses from input audio file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> – path to audio file or numpy array like audio signal</p></li>
+<li><p><strong>input_sr</strong> – sampling rate of the input array of data (if any). This variable is only
+relevant if the input is an array of data instead of a filepath</p></li>
+<li><p><strong>verbose</strong> – verbose level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict containing estimation for sections, matra period, akshara pulses, and tempo curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="melody.html" class="btn btn-neutral float-left" title="Melodic analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="structure.html" class="btn btn-neutral float-right" title="Structure analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

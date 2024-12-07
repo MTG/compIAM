@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.melody.pattern.sancara_search &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.melody.pattern.sancara_search</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.melody.pattern.sancara_search</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">configobj</span> <span class="kn">import</span> <span class="n">ConfigObj</span>
+
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">WORKDIR</span>
+<span class="kn">from</span> <span class="nn">compiam.utils.download</span> <span class="kn">import</span> <span class="n">download_remote_model</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CAEWrapper">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">CAEWrapper</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for the Complex Autoencoder found at https://github.com/SonyCSLParis/cae-invar#quick-start</span>
+<span class="sd">    specifically for the task of embedding audio to learnt CAE features.</span>
+<span class="sd">    This wrapper is used for inference and it is not trainable. Please initialize it using</span>
+<span class="sd">    compiam.load_model()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_path</span><span class="p">,</span>
+        <span class="n">conf_path</span><span class="p">,</span>
+        <span class="n">spec_path</span><span class="p">,</span>
+        <span class="n">download_link</span><span class="p">,</span>
+        <span class="n">download_checksum</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise wrapper with trained model from original CAE implementation</span>
+
+<span class="sd">        :param model_path: Path to .save model trained using original CAE implementation.</span>
+<span class="sd">        :param conf_path: Path to .ini conf used to train model at &lt;model_path&gt;.</span>
+<span class="sd">        :param spec_path: Path to .cfg configuration spec.</span>
+<span class="sd">        :param download_link: link to the remote pre-trained model.</span>
+<span class="sd">        :param download_checksum: checksum of the model file.</span>
+<span class="sd">        :param map_location: cpu or gpu [optional, defaults to cpu].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">### IMPORTING OPTIONAL DEPENDENCIES</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">torch</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="k">global</span> <span class="n">to_cqt_repr</span><span class="p">,</span> <span class="n">standardize</span>
+            <span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.complex_auto.cqt</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">to_cqt_repr</span><span class="p">,</span>
+                <span class="n">standardize</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">Complex</span>
+            <span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.complex_auto.complex</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">Complex</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">cuda_variable</span>
+            <span class="kn">from</span> <span class="nn">compiam.melody.pattern.sancara_search.complex_auto.util</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">cuda_variable</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;In order to use this tool you need to have torch installed. &quot;</span>
+                <span class="s2">&quot;Install compIAM with torch support: pip install &#39;compiam[torch]&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="c1">###</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf_path</span> <span class="o">=</span> <span class="n">conf_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">model_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span> <span class="o">=</span> <span class="n">download_link</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span> <span class="o">=</span> <span class="n">download_checksum</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">conf_path</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">conf_path</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CAEWrapper.load_conf">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.load_conf">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_conf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load .ini conf at &lt;path&gt;</span>
+
+<span class="sd">        :param path: path to .ini configuration file</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :param spec: path to .cfg configuration spec file</span>
+<span class="sd">        :type spec: str</span>
+
+
+<span class="sd">        :returns: dict of parameters</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">configspec</span> <span class="o">=</span> <span class="n">ConfigObj</span><span class="p">(</span>
+            <span class="n">spec</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">list_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_inspec</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfigObj</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">unrepr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">configspec</span><span class="o">=</span><span class="n">configspec</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CAEWrapper.validate_conf">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.validate_conf">[docs]</a>
+    <span class="k">def</span> <span class="nf">validate_conf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure all relevant parameters for feature extraction</span>
+<span class="sd">        are present in &lt;conf&gt;</span>
+
+<span class="sd">        :param path: dict of parameters</span>
+<span class="sd">        :type path: dict</span>
+
+<span class="sd">        :returns: True/False, are relevant parameters present</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;n_bins&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;length_ngram&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_bases&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dropout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bins_per_oct&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fmin&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hop_length&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> not present in conf at &lt;self.conf_path&gt;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;n_bins&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_bins in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;length_ngram&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;length_ngram in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;n_bases&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_bases in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;dropout&quot;</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dropout in conf at &lt;conf_path&gt; should be a float&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;sr&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sr in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;bins_per_oct&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bins_per_oct in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;fmin&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fmin in conf at &lt;conf_path&gt; should be an float/integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;hop_length&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;hop_length in conf at &lt;conf_path&gt; should be an integer&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build de CAE model.</span>
+
+<span class="sd">        :returns: loaded model</span>
+<span class="sd">        :rtype: torch.nn.Module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">in_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_ngram</span>
+        <span class="k">return</span> <span class="n">Complex</span><span class="p">(</span><span class="n">in_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bases</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CAEWrapper.load_model">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.load_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">conf_path</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load model at &lt;model_path&gt;. Expects model parameters to correspond</span>
+<span class="sd">        to those found in self.params (loaded from self.conf_path).</span>
+
+<span class="sd">        :param model_path: path to model</span>
+<span class="sd">        :type model_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">conf_path</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_conf</span><span class="p">(</span><span class="n">conf_path</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_conf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tp</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># unpack parameters to class attributes</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">()</span>
+        <span class="c1">## Ensuring we can load the model for different torch versions</span>
+        <span class="c1">## -- (weights only might be deprecated)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="CAEWrapper.download_model">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.download_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download pre-trained model.&quot;&quot;&quot;</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">model_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">WORKDIR</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;melody&quot;</span><span class="p">,</span> <span class="s2">&quot;caecarnatic&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Creating model folder to store the weights</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">download_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+        <span class="n">download_remote_model</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span><span class="p">,</span>
+            <span class="n">download_path</span><span class="p">,</span>
+            <span class="n">force_overwrite</span><span class="o">=</span><span class="n">force_overwrite</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CAEWrapper.extract_features">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.extract_features">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract CAE features using self.model on audio at &lt;file_path&gt;</span>
+
+<span class="sd">        :param file_path: path to audio</span>
+<span class="sd">        :type file_path: str</span>
+<span class="sd">        :param sr: sampling rate of audio at &lt;file_path&gt;, if None, use self.sr</span>
+<span class="sd">        :type sr: int</span>
+
+<span class="sd">        :returns: amplitude vector, phases vector</span>
+<span class="sd">        :rtype: np.ndarray, np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="n">sr</span> <span class="k">if</span> <span class="n">sr</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span>
+
+        <span class="n">cqt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cqt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ampls</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_amp_phase</span><span class="p">(</span><span class="n">cqt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ampls</span><span class="p">,</span> <span class="n">phases</span></div>
+
+
+<div class="viewcode-block" id="CAEWrapper.get_cqt">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.get_cqt">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cqt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract CQT representation from audio at &lt;file_path&gt; according</span>
+<span class="sd">        to parameters specified in conf at self.conf_path</span>
+
+<span class="sd">        :param file_path: path to audio</span>
+<span class="sd">        :type file_path: str</span>
+<span class="sd">        :param sr: sampling rate of audio at &lt;file_path&gt;, if None, use self.sr</span>
+<span class="sd">        :type sr: int</span>
+
+<span class="sd">        :returns: cqt representation</span>
+<span class="sd">        :rtype: np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="n">sr</span> <span class="k">if</span> <span class="n">sr</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span>
+
+        <span class="n">repres</span> <span class="o">=</span> <span class="n">to_cqt_repr</span><span class="p">(</span>
+            <span class="n">file_path</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bins_per_oct</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmin</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">,</span>
+            <span class="n">use_nr_samples</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">sr</span><span class="o">=</span><span class="n">sr</span><span class="p">,</span>
+            <span class="n">standard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">mult</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">repres</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CAEWrapper.to_amp_phase">
+<a class="viewcode-back" href="../../../../source/melody.html#compiam.melody.pattern.sancara_search.CAEWrapper.to_amp_phase">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_amp_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cqt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract amplitude and phase vector from model</span>
+<span class="sd">        on &lt;cqt&gt; representation</span>
+
+<span class="sd">        :param cqt: CQT representation of audio</span>
+<span class="sd">        :type cqt: np.ndarray</span>
+
+<span class="sd">        :returns: amplitude vector, phases vector</span>
+<span class="sd">        :rtype: np.ndarray, np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="n">ngrams</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cqt</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_ngram</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">curr_ngram</span> <span class="o">=</span> <span class="n">cqt</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_ngram</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+            <span class="n">curr_ngram</span> <span class="o">=</span> <span class="n">standardize</span><span class="p">(</span><span class="n">curr_ngram</span><span class="p">)</span>
+            <span class="n">ngrams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_ngram</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">cuda_variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">ngrams</span><span class="p">)))</span>
+
+        <span class="n">ampl</span><span class="p">,</span> <span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ampl</span><span class="p">,</span> <span class="n">phase</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

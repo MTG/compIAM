@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.rhythm.meter.akshara_pulse_tracker &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.rhythm.meter.akshara_pulse_tracker</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.rhythm.meter.akshara_pulse_tracker</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2023 Music Technology Group - Universitat Pompeu Fabra</span>
+<span class="c1">#</span>
+<span class="c1"># This file is was adapted from Dunya</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Originally created on Sep 12, 2013</span>
+<span class="sd">@author: Ajay Srinivasamurthy</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">librosa</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">scistats</span>
+
+<span class="kn">from</span> <span class="nn">scipy.fft</span> <span class="kn">import</span> <span class="n">fft</span>
+
+<span class="kn">from</span> <span class="nn">compiam.rhythm.meter.akshara_pulse_tracker.models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">cust_pool</span><span class="p">,</span>
+    <span class="n">smoothNovelty</span><span class="p">,</span>
+    <span class="n">normMax</span><span class="p">,</span>
+    <span class="n">normalizeFeature</span><span class="p">,</span>
+    <span class="n">tempogram_viaDFT</span><span class="p">,</span>
+    <span class="n">findpeaks</span><span class="p">,</span>
+    <span class="n">getNearestIndex</span><span class="p">,</span>
+    <span class="n">getNearestIndices</span><span class="p">,</span>
+    <span class="n">getTempoCurve</span><span class="p">,</span>
+    <span class="n">correctOctaveErrors</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">compiam.rhythm.meter.akshara_pulse_tracker</span> <span class="kn">import</span> <span class="n">parameters</span> <span class="k">as</span> <span class="n">params</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AksharaPulseTracker">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker">[docs]</a>
+<span class="k">class</span> <span class="nc">AksharaPulseTracker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Akshara onset detection. CompMusic Rhythm Extractor.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">Nfft</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+        <span class="n">frmSize</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+        <span class="n">Fs</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span>
+        <span class="n">hop</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+        <span class="n">fBands</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">110</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">3000</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">22000</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">songLenMin</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+        <span class="n">octCorrectParam</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">tempoWindow</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">stepSizeTempogram</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">BPM</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mf">600.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+        <span class="n">minBPM</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+        <span class="n">octTol</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">theta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="nb">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="n">maxLen</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">binWidth</span><span class="o">=</span><span class="mf">10e-3</span><span class="p">,</span>
+        <span class="n">thres</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">ignoreTooClose</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">decayCoeff</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">backSearch</span><span class="o">=</span><span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+        <span class="n">alphaDP</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">smoothTime</span><span class="o">=</span><span class="mi">2560</span><span class="p">,</span>
+        <span class="n">pwtol</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Akshara onset detection init method&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nfft</span> <span class="o">=</span> <span class="n">Nfft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frmSize</span> <span class="o">=</span> <span class="n">frmSize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fs</span> <span class="o">=</span> <span class="n">Fs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hop</span> <span class="o">=</span> <span class="n">hop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fBands</span> <span class="o">=</span> <span class="n">fBands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">songLenMin</span> <span class="o">=</span> <span class="n">songLenMin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">octCorrectParam</span> <span class="o">=</span> <span class="n">octCorrectParam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tempoWindow</span> <span class="o">=</span> <span class="n">tempoWindow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stepSizeTempogram</span> <span class="o">=</span> <span class="n">stepSizeTempogram</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BPM</span> <span class="o">=</span> <span class="n">BPM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minBPM</span> <span class="o">=</span> <span class="n">minBPM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">octTol</span> <span class="o">=</span> <span class="n">octTol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxLen</span> <span class="o">=</span> <span class="n">maxLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binWidth</span> <span class="o">=</span> <span class="n">binWidth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thres</span> <span class="o">=</span> <span class="n">thres</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignoreTooClose</span> <span class="o">=</span> <span class="n">ignoreTooClose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decayCoeff</span> <span class="o">=</span> <span class="n">decayCoeff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backSearch</span> <span class="o">=</span> <span class="n">backSearch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaDP</span> <span class="o">=</span> <span class="n">alphaDP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothTime</span> <span class="o">=</span> <span class="n">smoothTime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwtol</span> <span class="o">=</span> <span class="n">pwtol</span>
+
+        <span class="c1"># Deduce other parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fTicks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Nfft</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Fs</span> <span class="o">/</span> <span class="n">Nfft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numBands</span> <span class="o">=</span> <span class="n">fBands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frmHop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hop</span><span class="p">)</span> <span class="o">/</span> <span class="n">Fs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdSmooth</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frmHop</span> <span class="o">*</span> <span class="n">smoothTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">featureRate</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">frmHop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stepSize</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">stepSizeTempogram</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">frmHop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nbins</span> <span class="o">=</span> <span class="n">maxLen</span> <span class="o">/</span> <span class="n">binWidth</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wtolHistAv</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mf">20e-3</span> <span class="o">/</span> <span class="n">binWidth</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AksharaPulseTracker.extract">
+<a class="viewcode-back" href="../../../../source/rhythm.html#compiam.rhythm.meter.akshara_pulse_tracker.AksharaPulseTracker.extract">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">input_sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run extraction of akshara pulses from input audio file</span>
+
+<span class="sd">        :param input_data: path to audio file or numpy array like audio signal</span>
+<span class="sd">        :param input_sr: sampling rate of the input array of data (if any). This variable is only</span>
+<span class="sd">            relevant if the input is an array of data instead of a filepath</span>
+<span class="sd">        :param verbose: verbose level</span>
+
+<span class="sd">        :returns: dict containing estimation for sections, matra period, akshara pulses, and tempo curve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Target audio not found.&quot;</span><span class="p">)</span>
+            <span class="n">audio</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Fs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Resampling... (input sampling rate is </span><span class="si">{</span><span class="n">input_sr</span><span class="si">}</span><span class="s2">Hz, make sure this is correct)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">orig_sr</span><span class="o">=</span><span class="n">input_sr</span><span class="p">,</span> <span class="n">target_sr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Fs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be path to audio signal or an audio array&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get onset functions</span>
+        <span class="n">onsFns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getOnsetFunctions</span><span class="p">(</span>
+            <span class="n">audio</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Nfft</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frmSize</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Fs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fTicks</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hop</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numBands</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fBands</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">onsFn</span> <span class="o">=</span> <span class="n">onsFns</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">onsTs</span> <span class="o">=</span> <span class="n">onsFns</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">onsFnLow</span> <span class="o">=</span> <span class="n">onsFns</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">onsFn</span> <span class="o">=</span> <span class="n">normMax</span><span class="p">(</span><span class="n">smoothNovelty</span><span class="p">(</span><span class="n">onsFn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdSmooth</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
+        <span class="n">onsFnLow</span> <span class="o">=</span> <span class="n">normMax</span><span class="p">(</span><span class="n">smoothNovelty</span><span class="p">(</span><span class="n">onsFnLow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdSmooth</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
+        <span class="n">sectStart</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">sectEnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+        <span class="c1"># Find if segmentation is needed</span>
+        <span class="k">if</span> <span class="n">onsTs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">params</span><span class="o">.</span><span class="n">songLenMin</span><span class="p">:</span>
+            <span class="n">offsetIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getKritiStartBoundary</span><span class="p">(</span><span class="n">onsFnLow</span><span class="p">,</span> <span class="n">onsTs</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+            <span class="n">offsetTime</span> <span class="o">=</span> <span class="n">onsTs</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="n">onsTs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sectStart</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sectStart</span><span class="p">,</span> <span class="p">[</span><span class="n">offsetTime</span><span class="p">])</span>
+            <span class="n">sectEnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sectEnd</span><span class="p">,</span> <span class="n">onsTs</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="n">onsTs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">offsetIndex</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">offsetTime</span> <span class="o">=</span> <span class="n">onsTs</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="n">onsTs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">onsFn</span> <span class="o">=</span> <span class="n">onsFn</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">:]</span>
+        <span class="n">onsTs</span> <span class="o">=</span> <span class="n">onsTs</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">:]</span>
+        <span class="n">sectEnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sectEnd</span><span class="p">,</span> <span class="n">onsTs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Get sections</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;startTime&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;endTime&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+        <span class="n">sections</span><span class="p">[</span><span class="s2">&quot;startTime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sectStart</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">roundOffLen</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">sections</span><span class="p">[</span><span class="s2">&quot;endTime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sectEnd</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">roundOffLen</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">labelStr</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Alapana&quot;</span><span class="p">,</span> <span class="s2">&quot;Kriti&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sectEnd</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">sections</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labelStr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sections</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labelStr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Construct tempogram</span>
+        <span class="n">TG</span><span class="p">,</span> <span class="n">TCts</span><span class="p">,</span> <span class="n">BPM</span> <span class="o">=</span> <span class="n">tempogram_viaDFT</span><span class="p">(</span>
+            <span class="n">onsFn</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tempoWindow</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">featureRate</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stepSize</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BPM</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">TG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">normalizeFeature</span><span class="p">(</span><span class="n">TG</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># Estimate the tempo curve - IAI curve</span>
+        <span class="n">TCRaw</span> <span class="o">=</span> <span class="n">getTempoCurve</span><span class="p">(</span>
+            <span class="n">TG</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">BPM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minBPM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">octTol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="p">)</span>
+        <span class="n">TCperRaw</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">/</span> <span class="n">TCRaw</span>
+
+        <span class="c1"># Estimate akshara/matra period</span>
+        <span class="n">mmpFromTC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMatraPeriodEstimateFromTC</span><span class="p">(</span>
+            <span class="n">TCperRaw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nbins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minBPM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wtolHistAv</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="p">)</span>
+        <span class="n">TCper</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">correctOctaveErrors</span><span class="p">(</span>
+            <span class="n">TCperRaw</span><span class="p">,</span> <span class="n">mmpFromTC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">octCorrectParam</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="p">)</span>
+        <span class="n">TC</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">/</span> <span class="n">TCper</span>
+
+        <span class="c1"># Candidate estimation</span>
+        <span class="p">(</span>
+            <span class="n">akCandLocs</span><span class="p">,</span>
+            <span class="n">akCandTs</span><span class="p">,</span>
+            <span class="n">akCandWts</span><span class="p">,</span>
+            <span class="n">akCandTransMat</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimateAksharaCandidates</span><span class="p">(</span>
+            <span class="n">onsTs</span><span class="p">,</span>
+            <span class="n">onsFn</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">TCper</span><span class="p">,</span>
+            <span class="n">TCts</span><span class="p">,</span>
+            <span class="n">mmpFromTC</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pwtol</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thres</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignoreTooClose</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">decayCoeff</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">Locs</span> <span class="o">=</span> <span class="n">akCandLocs</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">akCandTs</span>
+        <span class="n">Wts</span> <span class="o">=</span> <span class="n">akCandWts</span>
+        <span class="c1"># TransMat = akCandTransMat</span>
+        <span class="n">TransMatCausal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">akCandTransMat</span> <span class="o">+</span> <span class="n">akCandTransMat</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+        <span class="n">pers</span> <span class="o">=</span> <span class="n">TCper</span><span class="p">[</span><span class="n">getNearestIndices</span><span class="p">(</span><span class="n">akCandTs</span><span class="p">,</span> <span class="n">TCts</span><span class="p">)]</span>
+
+        <span class="c1"># Candidate selection</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">aksharaPulses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DPSearch</span><span class="p">(</span>
+            <span class="n">TransMatCausal</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">pers</span><span class="p">,</span> <span class="n">Locs</span><span class="p">,</span> <span class="n">Wts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backSearch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaDP</span><span class="p">,</span> <span class="n">verbose</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Correct for all the offsets now</span>
+        <span class="n">aksharaPulses</span> <span class="o">=</span> <span class="n">aksharaPulses</span> <span class="o">+</span> <span class="n">offsetTime</span>
+        <span class="n">TCts</span> <span class="o">=</span> <span class="n">TCts</span> <span class="o">+</span> <span class="n">offsetTime</span>
+
+        <span class="n">APcurve</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TCts</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">TCper</span><span class="p">[</span><span class="n">t</span><span class="p">]]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">TCts</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;sections&quot;</span><span class="p">:</span> <span class="n">sections</span><span class="p">,</span>
+            <span class="s2">&quot;aksharaPeriod&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">mmpFromTC</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">roundOffLen</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="s2">&quot;aksharaPulses&quot;</span><span class="p">:</span> <span class="n">aksharaPulses</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;APcurve&quot;</span><span class="p">:</span> <span class="n">APcurve</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+    <span class="k">def</span> <span class="nf">getOnsetFunctions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">Nfft</span><span class="p">,</span> <span class="n">frmSize</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="n">fTicks</span><span class="p">,</span> <span class="n">hop</span><span class="p">,</span> <span class="n">numBands</span><span class="p">,</span> <span class="n">fBands</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="n">zeropadLen</span> <span class="o">=</span> <span class="n">Nfft</span> <span class="o">-</span> <span class="n">frmSize</span>
+        <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">zeropadLen</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+        <span class="n">frameCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">bufferFrame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">Nfft</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading audio file...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># fft = ess.FFT(size=Nfft)  # this gives us a complex FFT</span>
+        <span class="c1"># c2p = ess.CartesianToPolar()  # and this turns it into a pair (magnitude, phase)</span>
+
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">cust_pool</span><span class="p">()</span>
+        <span class="n">fTicks</span> <span class="o">=</span> <span class="n">fTicks</span>
+        <span class="n">poolName</span> <span class="o">=</span> <span class="s2">&quot;features.flux&quot;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting Onset functions...&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">audio</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">audio</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">hop</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">hop</span> <span class="o">+</span> <span class="n">frmSize</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">frmSize</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">frmTime</span> <span class="o">=</span> <span class="n">hop</span> <span class="o">/</span> <span class="n">Fs</span> <span class="o">*</span> <span class="n">frameCounter</span> <span class="o">+</span> <span class="n">frmSize</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">Fs</span><span class="p">)</span>
+            <span class="n">zpFrame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">frame</span><span class="p">,</span> <span class="n">zz</span><span class="p">))</span>
+            <span class="n">hammFrame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hamming</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zpFrame</span><span class="p">))</span> <span class="o">*</span> <span class="n">zpFrame</span>
+            <span class="n">spectrum</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">hammFrame</span><span class="p">)</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)[:</span><span class="n">l</span><span class="p">]</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)[:</span><span class="n">l</span><span class="p">]</span>
+
+            <span class="n">magFlux</span> <span class="o">=</span> <span class="n">mag</span> <span class="o">-</span> <span class="n">bufferFrame</span>
+            <span class="n">bufferFrame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">mag</span><span class="p">)</span>  <span class="c1"># Copying for the next iteration to compute flux</span>
+            <span class="k">for</span> <span class="n">bands</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numBands</span><span class="p">):</span>
+                <span class="n">chosenInd</span> <span class="o">=</span> <span class="p">(</span><span class="n">fTicks</span> <span class="o">&gt;=</span> <span class="n">fBands</span><span class="p">[</span><span class="n">bands</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">fTicks</span> <span class="o">&lt;=</span> <span class="n">fBands</span><span class="p">[</span><span class="n">bands</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">magFluxBand</span> <span class="o">=</span> <span class="n">magFlux</span><span class="p">[</span><span class="n">chosenInd</span><span class="p">]</span>
+                <span class="n">magFluxBand</span> <span class="o">=</span> <span class="p">(</span><span class="n">magFluxBand</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">magFluxBand</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">oFn</span> <span class="o">=</span> <span class="n">magFluxBand</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">oFn</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;NaN found here&quot;</span><span class="p">)</span>
+                <span class="k">pass</span>
+                <span class="n">pool</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">poolName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="n">oFn</span><span class="p">)</span>
+            <span class="k">pass</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;features.time&quot;</span><span class="p">,</span> <span class="n">frmTime</span><span class="p">)</span>
+            <span class="n">frameCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">frameCounter</span><span class="p">,</span> <span class="mi">10000</span><span class="p">):</span>
+                <span class="k">pass</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frameCounter</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">audio</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="n">hop</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Total frames processed = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frameCounter</span><span class="p">))</span>
+        <span class="n">timeStamps</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;features.time&quot;</span><span class="p">]</span>
+        <span class="n">all_feat</span> <span class="o">=</span> <span class="n">timeStamps</span>
+        <span class="k">for</span> <span class="n">bands</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numBands</span><span class="p">):</span>
+            <span class="n">feat_flux</span> <span class="o">=</span> <span class="p">[</span><span class="n">pool</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">poolName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bands</span><span class="p">)]]</span>
+            <span class="n">all_feat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">all_feat</span><span class="p">,</span> <span class="n">feat_flux</span><span class="p">))</span>
+        <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">all_feat</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getKritiStartBoundary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">onsFn</span><span class="p">,</span> <span class="n">onsTs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Obtaining Start of piece boundary...&quot;</span><span class="p">)</span>
+        <span class="n">peakLocs</span><span class="p">,</span> <span class="n">peakVals</span> <span class="o">=</span> <span class="n">findpeaks</span><span class="p">(</span>
+            <span class="n">onsFn</span><span class="p">,</span> <span class="n">imode</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">pmode</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">wdTol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ampTol</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">prominence</span><span class="o">=</span><span class="mf">10.0</span>
+        <span class="p">)</span>
+        <span class="n">offsetIndex</span> <span class="o">=</span> <span class="n">peakLocs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">offsetIndex</span> <span class="o">=</span> <span class="n">getNearestIndex</span><span class="p">(</span>
+            <span class="n">onsTs</span><span class="p">[</span><span class="n">offsetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">onsTs</span>
+        <span class="p">)</span>  <span class="c1"># Start three seconds</span>
+        <span class="k">return</span> <span class="n">offsetIndex</span>
+
+    <span class="k">def</span> <span class="nf">getMatraPeriodEstimateFromTC</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">TCper</span><span class="p">,</span> <span class="n">Nbins</span><span class="p">,</span> <span class="n">minBPM</span><span class="p">,</span> <span class="n">wtolHistAv</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing akshara pulse period...&quot;</span><span class="p">)</span>
+        <span class="n">histFn</span><span class="p">,</span> <span class="n">binEdges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">TCper</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">Nbins</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span> <span class="o">/</span> <span class="n">minBPM</span><span class="p">))</span>
+        <span class="n">binCentres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">histFn</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">histFn</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">binCentres</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">binEdges</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">binEdges</span><span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">wtol</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wtolHistAv</span><span class="p">)</span>
+        <span class="n">peaks</span><span class="p">,</span> <span class="n">peakVals</span> <span class="o">=</span> <span class="n">findpeaks</span><span class="p">(</span>
+            <span class="n">histFn</span><span class="p">,</span> <span class="n">imode</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">pmode</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">wdTol</span><span class="o">=</span><span class="n">wtol</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">ampTol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">prominence</span><span class="o">=</span><span class="mf">1e-6</span>
+        <span class="p">)</span>
+        <span class="n">sortInd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">peakVals</span><span class="p">)</span>
+        <span class="n">topHistBins</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="n">sortInd</span><span class="p">]</span>
+        <span class="p">(</span><span class="n">kk</span><span class="p">,)</span> <span class="o">=</span> <span class="p">(</span><span class="n">topHistBins</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">histFn</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">wtol</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+        <span class="n">topHistBins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">topHistBins</span><span class="p">,</span> <span class="n">kk</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">kk</span><span class="p">,)</span> <span class="o">=</span> <span class="p">(</span><span class="n">topHistBins</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">wtol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+        <span class="n">topHistBins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">topHistBins</span><span class="p">,</span> <span class="n">kk</span><span class="p">)</span>
+        <span class="n">topHistBins</span> <span class="o">=</span> <span class="p">(</span><span class="n">topHistBins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">topHistBins</span> <span class="o">=</span> <span class="n">topHistBins</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">indRange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">topHistBins</span> <span class="o">-</span> <span class="n">wtol</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">topHistBins</span> <span class="o">+</span> <span class="n">wtol</span><span class="p">)</span>
+        <span class="n">wdw</span> <span class="o">=</span> <span class="p">(</span><span class="n">binCentres</span><span class="p">[</span><span class="n">indRange</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">wdwWts</span> <span class="o">=</span> <span class="p">(</span><span class="n">histFn</span><span class="p">[</span><span class="n">indRange</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">wdwWts</span> <span class="o">=</span> <span class="n">wdwWts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">wdwWts</span> <span class="o">=</span> <span class="n">wdwWts</span> <span class="o">/</span> <span class="n">wdwWts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">matraEst</span> <span class="o">=</span> <span class="p">(</span><span class="n">wdw</span> <span class="o">*</span> <span class="n">wdwWts</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">matraEst</span>
+
+    <span class="k">def</span> <span class="nf">estimateAksharaCandidates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tstamps</span><span class="p">,</span>
+        <span class="n">onsFn</span><span class="p">,</span>
+        <span class="n">TCper</span><span class="p">,</span>
+        <span class="n">TCts</span><span class="p">,</span>
+        <span class="n">medIAI</span><span class="p">,</span>
+        <span class="n">pwtol</span><span class="p">,</span>
+        <span class="n">thres</span><span class="p">,</span>
+        <span class="n">ignoreTooClose</span><span class="p">,</span>
+        <span class="n">decayCoeff</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimating akshara candidates...&quot;</span><span class="p">)</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">tstamps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tstamps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">medIAISamp</span> <span class="o">=</span> <span class="n">medIAI</span> <span class="o">/</span> <span class="n">ts</span>
+        <span class="n">wtolPeaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">pwtol</span> <span class="o">*</span> <span class="n">medIAISamp</span><span class="p">)</span>
+        <span class="n">peakLocs</span><span class="p">,</span> <span class="n">peakVals</span> <span class="o">=</span> <span class="n">findpeaks</span><span class="p">(</span>
+            <span class="n">onsFn</span><span class="p">,</span> <span class="n">imode</span><span class="o">=</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="n">pmode</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">wdTol</span><span class="o">=</span><span class="n">wtolPeaks</span><span class="p">,</span> <span class="n">ampTol</span><span class="o">=</span><span class="n">thres</span>
+        <span class="p">)</span>
+        <span class="c1"># We get time ordered peaks</span>
+        <span class="n">Npeaks</span> <span class="o">=</span> <span class="n">peakLocs</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">tPeaks</span> <span class="o">=</span> <span class="n">ts</span> <span class="o">*</span> <span class="n">peakLocs</span>
+        <span class="n">transMat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Npeaks</span><span class="p">,</span> <span class="n">Npeaks</span><span class="p">))</span>
+        <span class="n">akPers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">TCper</span><span class="p">[</span><span class="n">getNearestIndices</span><span class="p">(</span><span class="n">tPeaks</span><span class="p">,</span> <span class="n">TCts</span><span class="p">)]</span> <span class="o">/</span> <span class="n">ts</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">peakLocs</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">distVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">peakLocs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">peakLocs</span><span class="p">)</span> <span class="o">/</span> <span class="n">akPers</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">farAwayParam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">distVals</span><span class="p">)</span>
+            <span class="n">dtVals</span> <span class="o">=</span> <span class="n">distVals</span> <span class="o">-</span> <span class="n">farAwayParam</span>
+            <span class="p">(</span><span class="n">iind</span><span class="p">,)</span> <span class="o">=</span> <span class="p">(</span><span class="n">dtVals</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+            <span class="n">dtVals</span><span class="p">[</span><span class="n">iind</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">dtVals</span><span class="p">[</span><span class="n">iind</span><span class="p">]</span>
+            <span class="p">(</span><span class="n">closeIndices</span><span class="p">,)</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">peakLocs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">peakLocs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ignoreTooClose</span> <span class="o">*</span> <span class="n">medIAISamp</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+            <span class="n">farAwayParam</span><span class="p">[</span><span class="n">closeIndices</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># Arbitrarily large</span>
+            <span class="n">transMat</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="o">-</span><span class="p">(</span><span class="n">farAwayParam</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">decayCoeff</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">scistats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">dtVals</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">transMat</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">transMat</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="p">(</span><span class="n">transMat</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">pass</span>
+        <span class="n">akCandLocs</span> <span class="o">=</span> <span class="n">peakLocs</span>
+        <span class="n">akCandTs</span> <span class="o">=</span> <span class="n">tPeaks</span>
+        <span class="n">akCandWts</span> <span class="o">=</span> <span class="n">peakVals</span>
+        <span class="n">akCandTransMat</span> <span class="o">=</span> <span class="n">transMat</span>
+        <span class="k">return</span> <span class="n">akCandLocs</span><span class="p">,</span> <span class="n">akCandTs</span><span class="p">,</span> <span class="n">akCandWts</span><span class="p">,</span> <span class="n">akCandTransMat</span>
+
+    <span class="k">def</span> <span class="nf">DPSearch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">TransMatCausal</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">pers</span><span class="p">,</span> <span class="n">Locs</span><span class="p">,</span> <span class="n">Wts</span><span class="p">,</span> <span class="n">backSearch</span><span class="p">,</span> <span class="n">alphaDP</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Searching through candidates...&quot;</span><span class="p">)</span>
+        <span class="n">TM</span> <span class="o">=</span> <span class="p">(</span><span class="n">TransMatCausal</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="p">(</span><span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">pers</span> <span class="o">=</span> <span class="p">(</span><span class="n">pers</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Locs</span> <span class="o">=</span> <span class="p">(</span><span class="n">Locs</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">D</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">TM</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">D</span> <span class="o">!=</span> <span class="n">N</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transition Matrix not square!!!!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">backlink</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">Locs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">cumscore</span> <span class="o">=</span> <span class="p">(</span><span class="n">Wts</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">startIndex</span> <span class="o">=</span> <span class="n">getNearestIndex</span><span class="p">(</span><span class="n">backSearch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">pers</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">ts</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">startIndex</span><span class="p">,</span> <span class="n">cumscore</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">startSearch</span> <span class="o">=</span> <span class="n">getNearestIndex</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">pers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">backSearch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ts</span><span class="p">)</span>
+            <span class="n">endSearch</span> <span class="o">=</span> <span class="n">getNearestIndex</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">pers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">backSearch</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ts</span><span class="p">)</span>
+            <span class="n">timerange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">startSearch</span><span class="p">,</span> <span class="n">endSearch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">scorecands</span> <span class="o">=</span> <span class="n">cumscore</span><span class="p">[</span><span class="n">timerange</span><span class="p">]</span> <span class="o">+</span> <span class="n">alphaDP</span> <span class="o">*</span> <span class="n">TM</span><span class="p">[</span><span class="n">timerange</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span>
+            <span class="c1"># CAUTION, See the 100!</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">scorecands</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">Ind</span> <span class="o">=</span> <span class="n">scorecands</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">cumscore</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span> <span class="o">+</span> <span class="n">Wts</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="n">backlink</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">timerange</span><span class="p">[</span><span class="n">Ind</span><span class="p">]</span>
+        <span class="k">pass</span>
+        <span class="c1"># Backtrace</span>
+        <span class="n">aksharaLocs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cumscore</span><span class="o">.</span><span class="n">argmax</span><span class="p">()])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">backlink</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">aksharaLocs</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">aksharaLocs</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">):</span>
+            <span class="n">aksharaLocs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backlink</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">aksharaLocs</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="n">aksharaLocs</span><span class="p">)</span>
+        <span class="n">aksharaLocs</span> <span class="o">=</span> <span class="n">aksharaLocs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">aksharaTimes</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="n">aksharaLocs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">aksharaLocs</span><span class="p">,</span> <span class="n">aksharaTimes</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

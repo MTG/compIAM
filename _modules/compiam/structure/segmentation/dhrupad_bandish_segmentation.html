@@ -1,0 +1,671 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.structure.segmentation.dhrupad_bandish_segmentation &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.structure.segmentation.dhrupad_bandish_segmentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.structure.segmentation.dhrupad_bandish_segmentation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">librosa</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">compiam.exceptions</span> <span class="kn">import</span> <span class="n">ModelNotTrainedError</span>
+
+<span class="kn">from</span> <span class="nn">compiam.data</span> <span class="kn">import</span> <span class="n">WORKDIR</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">compiam.utils.download</span> <span class="kn">import</span> <span class="n">download_remote_model</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation">[docs]</a>
+<span class="k">class</span> <span class="nc">DhrupadBandishSegmentation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dhrupad Bandish Segmentation&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;net&quot;</span><span class="p">,</span>
+        <span class="n">fold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">splits_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">annotations_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">features_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">original_audios_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">processed_audios_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_link</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">download_checksum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dhrupad Bandish Segmentation init method.</span>
+
+<span class="sd">        :param mode: net, voc, or pakh. That indicates the source for s.t.m. estimation. Use the net</span>
+<span class="sd">            mode if audio is a mixture signal, else use voc or pakh for clean/source-separated vocals or</span>
+<span class="sd">            pakhawaj tracks.</span>
+<span class="sd">        :param fold: 0, 1 or 2, it is the validation fold to use during training.</span>
+<span class="sd">        :param model_path: path to file to the model weights.</span>
+<span class="sd">        :param splits_path: path to file to audio splits.</span>
+<span class="sd">        :param annotations_path: path to file to the annotations.</span>
+<span class="sd">        :param features_path: path to file to the computed features.</span>
+<span class="sd">        :param original_audios_path: path to file to the original audios from the dataset (see README.md in</span>
+<span class="sd">            compIAM/models/structure/dhrupad_bandish_segmentation/audio_original)</span>
+<span class="sd">        :param processed_audios_path: path to file to the processed audio files.</span>
+<span class="sd">        :param download_link: link to the remote pre-trained model.</span>
+<span class="sd">        :param download_checksum: checksum of the model file.</span>
+<span class="sd">        :param device: indicate whether the model will run on the GPU.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">### IMPORTING OPTIONAL DEPENDENCIES</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">torch</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+
+            <span class="k">global</span> <span class="n">split_audios</span>
+            <span class="kn">from</span> <span class="nn">compiam.structure.segmentation.dhrupad_bandish_segmentation.audio_processing</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">split_audios</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">extract_features</span><span class="p">,</span> <span class="n">makechunks</span>
+            <span class="kn">from</span> <span class="nn">compiam.structure.segmentation.dhrupad_bandish_segmentation.feature_extraction</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">extract_features</span><span class="p">,</span>
+                <span class="n">makechunks</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">class_to_categorical</span><span class="p">,</span> <span class="n">categorical_to_class</span><span class="p">,</span> <span class="n">build_model</span><span class="p">,</span> <span class="n">smooth_boundaries</span>
+            <span class="kn">from</span> <span class="nn">compiam.structure.segmentation.dhrupad_bandish_segmentation.model_utils</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">class_to_categorical</span><span class="p">,</span>
+                <span class="n">categorical_to_class</span><span class="p">,</span>
+                <span class="n">build_model</span><span class="p">,</span>
+                <span class="n">smooth_boundaries</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">pars</span>
+            <span class="kn">import</span> <span class="nn">compiam.structure.segmentation.dhrupad_bandish_segmentation.params</span> <span class="k">as</span> <span class="nn">pars</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;In order to use this tool you need to have torch installed. &quot;</span>
+                <span class="s2">&quot;Install compIAM with torch support: pip install &#39;compiam[torch]&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="c1">###</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+
+        <span class="c1"># Load mode by default: update with self.update_mode()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="c1"># Load fold by default: update with self.update_fold()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="n">fold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">pars</span><span class="o">.</span><span class="n">classes_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span>
+
+        <span class="c1"># To prevent CUDNN_STATUS_NOT_INITIALIZED error in case of incompatible GPU</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">model_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span> <span class="o">=</span> <span class="n">download_link</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span> <span class="o">=</span> <span class="n">download_checksum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_model_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path_to_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">],</span> <span class="s2">&quot;saved_model_fold_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pt&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">path_to_model</span><span class="p">)</span>  <span class="c1"># Loading pre-trained model for given mode</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">splits_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">splits_path</span>
+            <span class="k">if</span> <span class="n">splits_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span><span class="p">,</span> <span class="s2">&quot;splits&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotations_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">annotations_path</span>
+            <span class="k">if</span> <span class="n">annotations_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span>
+                <span class="s2">&quot;models&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;annotations&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">features_path</span>
+            <span class="k">if</span> <span class="n">features_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span>
+                <span class="s2">&quot;models&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_audios_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">original_audios_path</span>
+            <span class="k">if</span> <span class="n">original_audios_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span>
+                <span class="s2">&quot;models&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;audio_original&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processed_audios_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">processed_audios_path</span>
+            <span class="k">if</span> <span class="n">processed_audios_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span>
+                <span class="s2">&quot;models&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;audio_sections&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Building non-trained model&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">build_model</span><span class="p">(</span><span class="n">pars</span><span class="o">.</span><span class="n">input_height</span><span class="p">,</span> <span class="n">pars</span><span class="o">.</span><span class="n">input_len</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">float</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.load_model">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.load_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loading weights for model, given self.mode and self.fold</span>
+
+<span class="sd">        :param model_path: path to model weights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_model</span><span class="p">()</span>
+        <span class="c1">## Ensuring we can load the model for different torch versions</span>
+        <span class="c1">## -- (weights only might be deprecated)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_model_path</span> <span class="o">=</span> <span class="n">model_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.download_model">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.download_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download pre-trained model.&quot;&quot;&quot;</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">model_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">WORKDIR</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;dhrupad_bandish_segmentation&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Creating model folder to store the weights</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">download_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+        <span class="n">download_remote_model</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_link</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_checksum</span><span class="p">,</span>
+            <span class="n">download_path</span><span class="p">,</span>
+            <span class="n">force_overwrite</span><span class="o">=</span><span class="n">force_overwrite</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.update_mode">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.update_mode">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update mode for the training and sampling. Mode is one of net, voc,</span>
+<span class="sd">        pakh, indicating the source for s.t.m. estimation. Use the net mode if</span>
+<span class="sd">        audio is a mixture signal, else use voc or pakh for clean/source-separated</span>
+<span class="sd">        vocals or pakhawaj tracks.</span>
+
+<span class="sd">        :param mode: new mode to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">pars</span><span class="o">.</span><span class="n">classes_dict</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
+        <span class="n">path_to_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">],</span> <span class="s2">&quot;saved_model_fold_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pt&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">path_to_model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.update_fold">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.update_fold">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_fold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fold</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update data fold for the training and sampling</span>
+
+<span class="sd">        :param fold: new fold to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="n">fold</span>
+        <span class="n">path_to_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">],</span> <span class="s2">&quot;saved_model_fold_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pt&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">path_to_model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.train">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the Dhrupad Bandish Segmentation model</span>
+
+<span class="sd">        :param verbose: showing details of the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Splitting audios...&quot;</span><span class="p">)</span>
+        <span class="n">split_audios</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_audios_path</span><span class="p">,</span>
+            <span class="n">annotations_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotations_path</span><span class="p">,</span>
+            <span class="n">audios_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_audios_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting features...&quot;</span><span class="p">)</span>
+        <span class="n">extract_features</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processed_audios_path</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">annotations_path</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features_path</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># generate cross-validation folds for training</span>
+        <span class="n">songlist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features_path</span><span class="p">)</span>
+        <span class="n">labels_stm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features_path</span><span class="p">,</span> <span class="s2">&quot;labels_stm.npy&quot;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">partition</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;validation&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">n_folds</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">all_folds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i_fold</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_folds</span><span class="p">):</span>
+            <span class="n">all_folds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">splits_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;fold_&quot;</span> <span class="o">+</span> <span class="n">i_fold</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">val_fold</span> <span class="o">=</span> <span class="n">all_folds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">]</span>
+        <span class="n">train_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">i_fold</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_fold</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">train_fold</span> <span class="o">=</span> <span class="n">all_folds</span><span class="p">[</span><span class="n">i_fold</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">train_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_fold</span><span class="p">,</span> <span class="n">all_folds</span><span class="p">[</span><span class="n">i_fold</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">song</span> <span class="ow">in</span> <span class="n">songlist</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features_path</span> <span class="o">+</span> <span class="n">song</span><span class="p">,</span> <span class="s2">&quot;*.pt&quot;</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">section_name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">song</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">section_name</span> <span class="ow">in</span> <span class="n">val_fold</span><span class="p">:</span>
+                <span class="n">partition</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">section_name</span> <span class="ow">in</span> <span class="n">train_fold</span><span class="p">:</span>
+                <span class="n">partition</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+
+        <span class="c1"># generators</span>
+        <span class="n">training_set</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features_path</span><span class="p">,</span> <span class="n">partition</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">labels_stm</span>
+        <span class="p">)</span>
+        <span class="n">training_generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">training_set</span><span class="p">,</span> <span class="o">**</span><span class="n">pars</span><span class="p">)</span>
+
+        <span class="n">validation_set</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features_path</span><span class="p">,</span> <span class="n">partition</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">],</span> <span class="n">labels_stm</span>
+        <span class="p">)</span>
+        <span class="n">validation_generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">validation_set</span><span class="p">,</span> <span class="o">**</span><span class="n">pars</span><span class="p">)</span>
+
+        <span class="c1"># model definition and training</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">n_params</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">n_params</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Num of trainable params: </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n_params</span><span class="p">)</span>
+
+        <span class="c1">##training epochs loop</span>
+        <span class="n">train_loss_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">train_acc_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">val_loss_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">val_acc_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n_idle</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pars</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">n_idle</span> <span class="o">==</span> <span class="mi">50</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">train_loss_epoch</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">train_acc_epoch</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">val_loss_epoch</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">val_acc_epoch</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1">##training</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">local_batch</span><span class="p">,</span> <span class="n">local_labels</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">training_generator</span><span class="p">:</span>
+                <span class="c1"># map labels to class ids</span>
+                <span class="n">local_labels</span> <span class="o">=</span> <span class="n">class_to_categorical</span><span class="p">(</span><span class="n">local_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span>
+
+                <span class="c1"># add channel dimension</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_batch</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">local_batch</span> <span class="o">=</span> <span class="n">local_batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># transfer to GPU</span>
+                <span class="n">local_batch</span><span class="p">,</span> <span class="n">local_labels</span> <span class="o">=</span> <span class="n">local_batch</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+                <span class="p">),</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+                <span class="c1"># update weights</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">outs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">local_batch</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">long</span><span class="p">())</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+                <span class="c1"># append loss and acc to arrays</span>
+                <span class="n">train_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+                            <span class="o">==</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="o">/</span> <span class="n">pars</span><span class="o">.</span><span class="n">batch_size</span>
+                <span class="p">)</span>
+                <span class="n">train_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">acc</span>
+                <span class="n">n_iter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">train_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">n_iter</span>
+            <span class="n">train_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">n_iter</span>
+
+            <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1">##validation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">local_batch</span><span class="p">,</span> <span class="n">local_labels</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">validation_generator</span><span class="p">:</span>
+                    <span class="c1"># map labels to class ids</span>
+                    <span class="n">local_labels</span> <span class="o">=</span> <span class="n">pars</span><span class="o">.</span><span class="n">class_to_categorical</span><span class="p">(</span><span class="n">local_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span>
+
+                    <span class="c1"># add channel dimension</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_batch</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">local_batch</span> <span class="o">=</span> <span class="n">local_batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1"># transfer to GPU</span>
+                    <span class="n">local_batch</span><span class="p">,</span> <span class="n">local_labels</span> <span class="o">=</span> <span class="n">local_batch</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+                    <span class="p">),</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+                    <span class="c1"># evaluate model</span>
+                    <span class="n">outs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">local_batch</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">long</span><span class="p">())</span>
+
+                    <span class="c1"># append loss and acc to arrays</span>
+                    <span class="n">val_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                    <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+                                <span class="o">==</span> <span class="n">local_labels</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="o">/</span> <span class="n">pars</span><span class="o">.</span><span class="n">batch_size</span>
+                    <span class="p">)</span>
+                    <span class="n">val_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">acc</span>
+
+                    <span class="n">n_iter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">val_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">n_iter</span>
+                <span class="n">val_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">n_iter</span>
+
+            <span class="c1"># save if val_loss reduced</span>
+            <span class="k">if</span> <span class="n">val_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="n">val_loss_epoch</span><span class="p">):</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;saved_model_fold_</span><span class="si">%d</span><span class="s2">.pt&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">n_idle</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n_idle</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># log loss in current epoch</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Epoch no: </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="se">\t</span><span class="s2">Train loss: </span><span class="si">%f</span><span class="se">\t</span><span class="s2">Train acc: </span><span class="si">%f</span><span class="se">\t</span><span class="s2">Val loss: </span><span class="si">%f</span><span class="se">\t</span><span class="s2">Val acc: </span><span class="si">%f</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">epoch</span><span class="p">,</span>
+                    <span class="n">pars</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">,</span>
+                    <span class="n">train_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">train_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">val_loss_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">val_acc_epoch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DhrupadBandishSegmentation.predict_stm">
+<a class="viewcode-back" href="../../../../source/structure.html#compiam.structure.segmentation.dhrupad_bandish_segmentation.DhrupadBandishSegmentation.predict_stm">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict_stm</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">input_sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">save_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict Dhrupad Bandish Segmentation</span>
+
+<span class="sd">        :param input_data: path to audio file or numpy array like audio signal.</span>
+<span class="sd">        :param input_sr: sampling rate of the input array of data (if any). This variable is only</span>
+<span class="sd">            relevant if the input is an array of data instead of a filepath.</span>
+<span class="sd">        :param save_output: boolean indicating whether the output figure for the estimation is</span>
+<span class="sd">            stored.</span>
+<span class="sd">        :param output_path: if the input is an array, and the user wants to save the estimation,</span>
+<span class="sd">            the output_path must be provided, path/to/picture.png.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_output</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;save_output must be a boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Target audio not found.&quot;</span><span class="p">)</span>
+            <span class="n">audio</span><span class="p">,</span> <span class="n">sr</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">fs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="n">input_data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;png&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Resampling... (input sampling rate is </span><span class="si">{</span><span class="n">input_sr</span><span class="si">}</span><span class="s2">Hz, make sure this is correct)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">orig_sr</span><span class="o">=</span><span class="n">input_sr</span><span class="p">,</span> <span class="n">target_sr</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">fs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">save_output</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Please provide an output_path in order to save the estimation&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be path to audio signal or an audio array&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save_output</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_path</span><span class="p">)):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotTrainedError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Model is not trained. Please load model before running inference!</span>
+<span class="sd">                You can load the pre-trained instance with the load_model wrapper.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># convert to mel-spectrogram</span>
+        <span class="n">melgram</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">melspectrogram</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">audio</span><span class="p">,</span>
+            <span class="n">sr</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">fs</span><span class="p">,</span>
+            <span class="n">n_fft</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">nfft</span><span class="p">,</span>
+            <span class="n">hop_length</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">hopsize</span><span class="p">,</span>
+            <span class="n">win_length</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">winsize</span><span class="p">,</span>
+            <span class="n">n_mels</span><span class="o">=</span><span class="n">pars</span><span class="o">.</span><span class="n">input_height</span><span class="p">,</span>
+            <span class="n">fmin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">fmax</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">melgram</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1e-10</span> <span class="o">+</span> <span class="n">melgram</span><span class="p">)</span>
+        <span class="n">melgram_chunks</span> <span class="o">=</span> <span class="n">makechunks</span><span class="p">(</span><span class="n">melgram</span><span class="p">,</span> <span class="n">pars</span><span class="o">.</span><span class="n">input_len</span><span class="p">,</span> <span class="n">pars</span><span class="o">.</span><span class="n">input_hop</span><span class="p">)</span>
+
+        <span class="c1"># predict s.t.m. versus time</span>
+        <span class="n">stm_vs_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">melgram_chunks</span><span class="p">:</span>
+            <span class="n">model_in</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">model_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model_in</span><span class="p">)</span>
+            <span class="n">model_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">model_out</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="n">stm_vs_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">model_out</span><span class="p">))</span>
+
+        <span class="c1"># smooth predictions with a minimum section duration of 5s</span>
+        <span class="n">stm_vs_time</span> <span class="o">=</span> <span class="n">smooth_boundaries</span><span class="p">(</span><span class="n">stm_vs_time</span><span class="p">,</span> <span class="n">pars</span><span class="o">.</span><span class="n">min_sec_dur</span><span class="p">)</span>
+
+        <span class="c1"># plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stm_vs_time</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">stm_vs_time</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">,</span> <span class="s2">&quot;16&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Surface tempo multiple&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">save_output</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">stm_vs_time</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

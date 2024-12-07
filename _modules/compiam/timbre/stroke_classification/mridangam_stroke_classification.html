@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compiam.timbre.stroke_classification.mridangam_stroke_classification &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=73862590" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contribution guidelines for compIAM</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compiam.timbre.stroke_classification.mridangam_stroke_classification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compiam.timbre.stroke_classification.mridangam_stroke_classification</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPClassifier</span>
+
+<span class="kn">from</span> <span class="nn">compiam.exceptions</span> <span class="kn">import</span> <span class="n">ModelNotTrainedError</span><span class="p">,</span> <span class="n">DatasetNotLoadedError</span>
+<span class="kn">from</span> <span class="nn">compiam.data</span> <span class="kn">import</span> <span class="n">WORKDIR</span>
+<span class="kn">from</span> <span class="nn">compiam.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MridangamStrokeClassification">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification">[docs]</a>
+<span class="k">class</span> <span class="nc">MridangamStrokeClassification</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mridangam stroke classification.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mridangam stroke classification init method.&quot;&quot;&quot;</span>
+        <span class="c1">### IMPORTING OPTIONAL DEPENDENCIES</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">features_for_pred</span><span class="p">,</span> <span class="n">process_strokes</span><span class="p">,</span> <span class="n">features_for_pred</span><span class="p">,</span> <span class="n">normalise_features</span>
+            <span class="kn">from</span> <span class="nn">compiam.timbre.stroke_classification.mridangam_stroke_classification.stroke_features</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">features_for_pred</span><span class="p">,</span>
+                <span class="n">process_strokes</span><span class="p">,</span>
+                <span class="n">features_for_pred</span><span class="p">,</span>
+                <span class="n">normalise_features</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;In order to use this tool you need to have essentia installed. &quot;</span>
+                <span class="s2">&quot;Install compIAM with essentia support: pip install &#39;compiam[essentia]&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="c1">###</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computed_features_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">WORKDIR</span><span class="p">,</span>
+            <span class="s2">&quot;models&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timbre&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mridangam_stroke_classification&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pre-computed_features.csv&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="MridangamStrokeClassification.load_mridangam_dataset">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification.load_mridangam_dataset">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_mridangam_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load mirdata dataloader for mirdangam stroke.</span>
+
+<span class="sd">        :param data_home: folder where the dataset is found.</span>
+<span class="sd">        :param version: version of the dataset to use.</span>
+<span class="sd">        :param download: if True the dataset is downloaded.</span>
+<span class="sd">        :returns: None, but initializes the dataset of the class and the file dict of strokes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">compiam</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="n">load_dataset</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># Importing load function here to avoid circular imports</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
+            <span class="s2">&quot;mridangam_stroke&quot;</span><span class="p">,</span> <span class="n">data_home</span><span class="o">=</span><span class="n">data_home</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_home</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_home</span>
+        <span class="k">if</span> <span class="n">download</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_home</span><span class="p">,</span> <span class="s2">&quot;mridangam_stroke_1.5&quot;</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataset not found, please re-run load_dataset with download=True&quot;</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">track_ids</span>  <span class="c1"># Load Mridangam IDs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">load_tracks</span><span class="p">()</span>  <span class="c1"># Load Mridangam data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stroke_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_strokes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stroke_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stroke_names</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stroke_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stroke_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">audio_path</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MridangamStrokeClassification.list_strokes">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification.list_strokes">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_strokes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List available mridangam strokes in the dataset.</span>
+
+<span class="sd">        :returns: list of strokes in the datasets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetNotLoadedError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Please load the dataset using the .load_mridangam_dataset() method or the strokes </span>
+<span class="sd">                cannot be listed.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">stroke_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_ids</span><span class="p">:</span>
+            <span class="n">stroke_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stroke_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stroke_names</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MridangamStrokeClassification.dict_strokes">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification.dict_strokes">[docs]</a>
+    <span class="k">def</span> <span class="nf">dict_strokes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List and convert to indexed dict the available mridangam strokes in the dataset.</span>
+
+<span class="sd">        :returns: dict with strokes as values and unique integer as keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetNotLoadedError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Please load the dataset using the .load_mridangam_dataset() method or the strokes </span>
+<span class="sd">                cannot be listed.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">stroke_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_ids</span><span class="p">:</span>
+            <span class="n">stroke_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stroke_name</span><span class="p">)</span>
+        <span class="n">stroke_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stroke_names</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stroke_names</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="MridangamStrokeClassification.train_model">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification.train_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;svm&quot;</span><span class="p">,</span> <span class="n">load_computed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">balance_ref</span><span class="o">=</span><span class="s2">&quot;random&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train a support vector machine for stroke classification.</span>
+
+<span class="sd">        :param model_type: type of model to train.</span>
+<span class="sd">        :param model_type: bool to indicate if the features are computed or loaded from file.</span>
+<span class="sd">        :param balance: balance the number of instances per class to prevent biases.</span>
+<span class="sd">        :param balance_ref: reference class for data balancement.</span>
+<span class="sd">        :returns: accuracy in percentage and rounded to two decimals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">load_computed</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DatasetNotLoadedError</span><span class="p">(</span>
+                <span class="s2">&quot;Dataset not found, please run load_mridangam_dataset&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">load_computed</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computed_features_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Training data not found. Please check you set the path correctly otherwise run .train_model()</span>
+<span class="sd">                function with load_computed=False&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="n">file_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_strokes</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_ids</span><span class="p">:</span>
+            <span class="n">file_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stroke_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mridangam_tracks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">audio_path</span>
+            <span class="p">)</span>
+        <span class="n">training_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_list</span> <span class="o">=</span> <span class="n">process_strokes</span><span class="p">(</span>
+            <span class="n">file_dict</span><span class="p">,</span> <span class="n">load_computed</span><span class="o">=</span><span class="n">load_computed</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Let&quot;s use sklearn&quot;s preprocessing tools for applying normalisation to features</span>
+        <span class="n">data_modif</span> <span class="o">=</span> <span class="n">normalise_features</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">balance</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">strokes</span> <span class="o">=</span> <span class="n">training_data</span><span class="o">.</span><span class="n">stroke</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">count_dict</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">[</span><span class="s2">&quot;stroke&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">min_stroke</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">count_dict</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">count_dict</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+            <span class="n">min_number</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()[</span><span class="n">min_stroke</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">balance_ref</span> <span class="o">==</span> <span class="s2">&quot;lower&quot;</span>
+                <span class="k">else</span> <span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">strokes</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="n">reshaped_stroke_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">strk</span> <span class="ow">in</span> <span class="n">strokes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">count_dict</span><span class="p">[</span><span class="n">strk</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">min_number</span><span class="p">:</span>
+                    <span class="n">reshaped_stroke_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">data_modif</span><span class="p">[</span><span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span> <span class="o">==</span> <span class="n">strk</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">min_number</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reshaped_stroke_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_modif</span><span class="p">[</span><span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span> <span class="o">==</span> <span class="n">strk</span><span class="p">])</span>
+            <span class="c1"># Merging after downsampling</span>
+            <span class="n">data_modif</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">reshaped_stroke_list</span><span class="p">)</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">data_modif</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># Creating output values</span>
+        <span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span>
+            <span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span>
+        <span class="p">)</span>  <span class="c1"># convert to categorical data</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_modif</span><span class="o">.</span><span class="n">stroke</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="p">)</span>  <span class="c1"># create label encoded outputs</span>
+
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;svm&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">X_train</span><span class="o">.</span><span class="n">var</span><span class="p">()))</span>
+        <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;mlp&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">MLPClassifier</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Model not available. Please check the available options in the documentation.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Fit model with training data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> model successfully trained with accuracy </span><span class="si">{}% i</span><span class="s2">n the testing set&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_type</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span>
+                <span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MridangamStrokeClassification.predict">
+<a class="viewcode-back" href="../../../../source/timbre.html#compiam.timbre.stroke_classification.mridangam_stroke_classification.MridangamStrokeClassification.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict stroke type from list of files.</span>
+
+<span class="sd">        :param file_list: list of files for prediction.</span>
+<span class="sd">        :returns: dict containing filenames as keys and estimated strokes as values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotTrainedError</span><span class="p">(</span>
+                <span class="s2">&quot;The model is not trained. Please run train_model().&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="n">file_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_list</span><span class="p">]</span>
+
+        <span class="n">list_of_feats</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+            <span class="n">list_of_feats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">features_for_pred</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">input_file</span><span class="p">))</span>
+
+        <span class="n">list_of_feats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">list_of_feats</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">data_modif</span> <span class="o">=</span> <span class="n">normalise_features</span><span class="p">(</span><span class="n">list_of_feats</span><span class="p">)</span>
+        <span class="n">input_feat</span> <span class="o">=</span> <span class="n">data_modif</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">pred_strokes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_feat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">x</span><span class="p">:</span> <span class="n">y</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_strokes</span><span class="p">()[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pred_strokes</span><span class="p">])</span>
+        <span class="p">}</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

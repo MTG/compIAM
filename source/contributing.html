@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contribution guidelines for compIAM &mdash; compiam 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=73862590" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Util functions" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            compiam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basic usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools and models</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="melody.html">Melodic analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm.html">Rhythm analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timbre.html">Timbre analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separation.html">Separation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Load IAM datasets using mirdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html#access-the-dunya-corpora">Access the Dunya corpora</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Miscellaneous</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Util functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution guidelines for compIAM</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-can-i-contribute">How can I contribute?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accepting-a-feature">Accepting a feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-step-1-setting-up-the-environment">Development step 1: setting up the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-step-2-write-your-feature">Development step 2: write your feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-step-3-test-your-feature">Development step 3: test your feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-step-4-creating-a-pull-request-pr">Development step 4: creating a pull request (PR)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#post-development">Post-development</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">compiam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contribution guidelines for compIAM</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contribution-guidelines-for-compiam">
+<span id="contributing-guidelines"></span><h1>Contribution guidelines for compIAM<a class="headerlink" href="#contribution-guidelines-for-compiam" title="Link to this heading"></a></h1>
+<p>Collaborators in the MTG will be able to contribute directly to the comIAM repo. It is important that you have write
+access to the compiam repo (<a class="reference external" href="mailto:genis&#46;plaja&#37;&#52;&#48;upf&#46;edu">speak to Genís Plaja</a> if this is not the case, requesting
+access to push into the repo).</p>
+<p>Please contact <a class="reference external" href="mailto:genis&#46;plaja&#37;&#52;&#48;upf&#46;edu">Genís Plaja</a> or <a class="reference external" href="mailto:thomas&#46;nuttall&#37;&#52;&#48;upf&#46;edu">Thomas Nuttall</a> for any
+questions or doubts.</p>
+<section id="how-can-i-contribute">
+<h2>How can I contribute?<a class="headerlink" href="#how-can-i-contribute" title="Link to this heading"></a></h2>
+<p>There are several ways to contribute to compiam. We will now try to list them all:</p>
+<ul class="simple">
+<li><p>Integrating a <strong>new tool/model</strong> (or an upgraded version of an existing model)</p></li>
+<li><p>Integrating <strong>access to a new dataset</strong> (or to a dataset that has already been around for some time but the access to it is not canonical and standardized)</p></li>
+<li><p><strong>Fixing a bug</strong></p></li>
+<li><p>Improving the library itself with <strong>new core features</strong> and <strong>structure improvements</strong></p></li>
+<li><p>Obviously, <strong>using it</strong> 🙂</p></li>
+</ul>
+</section>
+<section id="accepting-a-feature">
+<h2>Accepting a feature<a class="headerlink" href="#accepting-a-feature" title="Link to this heading"></a></h2>
+<p>We recommend that, if you want to contribute into compiam through one of the candidates in the list above,
+you let us know through the compIAM Slack workspace. If you are still not signed up in the compIAM Slack workspace,
+please email us and we will create a user for you. You can also interact with us by opening an issue in
+<a class="reference external" href="https://github.com/MTG/compIAM/issues">GitHub issues</a> of our repo, and we can even discuss in person/online call.
+Feel free to get in touch with us through email to organize an online meeting if necessary.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>We will try to also actively propose new features to include in  compiam, so stay tuned in case you are interested in
+working with some of these!</p>
+</div>
+<p>In the following sections, we provide a walkthrough of how one can contribute to compiam through our repository in GitHub.</p>
+</section>
+<section id="development-step-1-setting-up-the-environment">
+<h2>Development step 1: setting up the environment<a class="headerlink" href="#development-step-1-setting-up-the-environment" title="Link to this heading"></a></h2>
+<p>It is recommended that you set up a virtual environment and install compiam to this environment before beginning any development. Let’s see how this is done:</p>
+<ul>
+<li><p>You can create a virtual environment using <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">pyenv</span></code></p></li>
+<li><p>Clone the repository to your machine: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/MTG/compIAM.git</span></code></p></li>
+<li><p>Install the compiam package in the virtual environment from source code: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
+<li><p>During the development, you will need additional dependencies for testing and documenting. Install them as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.&quot;[tests]&quot;</span></code> to install the testing dependencies.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.&quot;[docs]&quot;</span></code> to install the dependencies for the online documentation.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>You are now ready to go!</p>
+</section>
+<section id="development-step-2-write-your-feature">
+<h2>Development step 2: write your feature<a class="headerlink" href="#development-step-2-write-your-feature" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Clone the repository to your machine:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Open a terminal and <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the <code class="docutils literal notranslate"><span class="pre">compIAM</span></code> main folder</p></li>
+<li><p>Create a branch from master named <code class="docutils literal notranslate"><span class="pre">yn-featname</span></code> where <code class="docutils literal notranslate"><span class="pre">yn</span></code> is replaced with your initials and <code class="docutils literal notranslate"><span class="pre">featname</span></code> with a short name of the feature you will implement</p></li>
+<li><p>This can be done through the terminal with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">yn-featname</span></code>, which will also move you to the branch.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Additional information about branches in git repositories can be <a class="reference external" href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">found in this link</a>.
+Make sure you understand how branching in GitHub works not only to properly contribute to  compiam  but also in other projects in the future!</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Implement new features:</p>
+<blockquote>
+<div><ul>
+<li><p>📓 <strong>Here are some best practices to follow when developing your feature:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Try to adhere to <a class="reference external" href="https://peps.python.org/pep-0008/">PEP-8 style guidelines</a>.</p></li>
+<li><p>Try and keep development strictly to the feature you are implementing (don’t mix with other tasks). If other problems arise while developing your new feature or fix, please <a class="reference external" href="https://github.com/MTG/compIAM/issues">open an issue</a>.</p></li>
+<li><p>Follow the compiam <a class="reference external" href="https://docs.google.com/document/d/13WcMtii0gLm_ocU3MTqFG59lbMYBduJEgypLlsbLDGQ/edit#">naming/structure conventionss</a>.</p></li>
+<li><p>Functions should include docstrings in the Sphinx format. You can see examples in other modules in compiam. Documentation is very important for users of compiam, so please spend time on it.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Commit regularly with relevant commit messages using:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>After making a substantial change in the code in your branch, it might be a good moment to commit the changes.</p></li>
+<li><p>Include files to your commit: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">.</span></code> (<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">.</span></code> will include all files in the repository in the commit. To include only some changes you made and commit other ones later, you can specify <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">file_1.py</span> <span class="pre">file_2.py</span></code>)</p></li>
+<li><p>Create and name a commit: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-m</span> <span class="pre">“short</span> <span class="pre">action</span> <span class="pre">name”</span></code></p></li>
+<li><p>Push changes online: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">yn-featname</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>If you are adding new tools:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Please add the proper citation of the work you are integrating, in order for users to properly cite such work in case they use it for their own research.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>If you are adding new models:</strong></p>
+<blockquote>
+<div><ul>
+<li><p>If you add a model that has pre-trained weights available, you may want to include these in compIAM as well. Then, your model will be loaded using the <code class="docutils literal notranslate"><span class="pre">.load_model()</span></code> wrapper. Here are some TODOs to add a pre-trained model to compIAM:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Write a model wrapper that has all util functions to download and load the weights, build the model, and run prediction/extraction. You may want to use one of the existing model classes as en example (e.g., FTANetCarnatic). <strong>We will publish a template soon :)</strong></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Do not hesitate to get in touch if you have any doubt/question on integrating the model to compIAM. We will be happy to
+assist you as soon as possible :)</p>
+</div>
+<ul class="simple">
+<li><p>Add your model to <code class="docutils literal notranslate"><span class="pre">models_dict</span></code> in compiam/data.py, adding all details about your model. There are instructions on the file itself.</p></li>
+<li><p>Upload your weights to Zenodo. You will need to download link and checksum for the model information in <code class="docutils literal notranslate"><span class="pre">models_dict</span></code>. You should upload a compressed folder containing the weights and additional files related to the pre-trained model (not code!).</p></li>
+<li><p>Make sure your model is properly initialized, built, and that the weights are properly downloaded and loaded. Using the example functions from another model in compIAM, all these actions can be executed.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since we support Machine and Deep Learning models, we are open to including dependencies such as torch, tensorflow,
+and others. These, however, are included as “optional dependencies”, so  you only install those if necessary. Check out
+examples such as <code class="docutils literal notranslate"><span class="pre">Melodia</span></code> or <code class="docutils literal notranslate"><span class="pre">FTANetCarnatic</span></code> to learn how that works!</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>If you are adding new datasets:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>To host dataset loaders in compiam, we inherit from <a class="reference external" href="https://github.com/mir-dataset-loaders/mirdata">mirdata</a>. In other words, to include a dataset in compiam, the dataset needs first to be present in <code class="docutils literal notranslate"><span class="pre">mirdata</span></code>.</p></li>
+<li><p>Including dataset loaders in mirdata is very beneficial for the community. Write a data loader for your dataset there!!</p></li>
+<li><p>Once you get your data loader in mirdata, open an issue in compiam letting us know and we can integrate it to compiam as well.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">mirdata</span></code> is now very mature, including several maintainers and contributors, and therefore, it is very much contributor
+friendly, <strong>as we intend to be!</strong></p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="development-step-3-test-your-feature">
+<h2>Development step 3: test your feature<a class="headerlink" href="#development-step-3-test-your-feature" title="Link to this heading"></a></h2>
+<p>When finished, if appropriate, add unit tests to the testing framework in <code class="docutils literal notranslate"><span class="pre">tests/</span></code> (using the Python testing package <a class="reference external" href="https://docs.pytest.org/en/7.1.x/">pytest</a>).</p>
+<ul class="simple">
+<li><p>Typical tests that you should write include checking that the tool is loaded with no unexpected bugs and that if running the tool on top of an example track, the output is as expected.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may include one or more short audio examples in <code class="docutils literal notranslate"><span class="pre">tests/resources/</span></code> to test that the output of your tool is correct.</p>
+</div>
+<ul>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">./tests/</span></code></p></li>
+<li><p>You can run specific tests depending on the dependencies of your work. For instance, if you are working on a TensorFlow model, you should run:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">./tests/</span> <span class="pre">--tensorflow</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">./tests/</span> <span class="pre">--full-ml</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>If you miss a particular test don’t worry. We automatically run the tests when you create the PR.</p>
+</section>
+<section id="development-step-4-creating-a-pull-request-pr">
+<h2>Development step 4: creating a pull request (PR)<a class="headerlink" href="#development-step-4-creating-a-pull-request-pr" title="Link to this heading"></a></h2>
+<p><strong>If all tests pass with the feature that you have implemented create a pull request (PR) to master and request at least one fellow collaborator to review.</strong></p>
+<ul class="simple">
+<li><p>Relevant resources are <a class="reference external" href="https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/working-with-your-remote-repository-on-github-or-github-enterprise/creating-an-issue-or-pull-request">found here</a>.</p></li>
+<li><p>To create a PR you can go to the repository of compiam on the GitHub website, go to your branch, and create a PR from there.</p></li>
+<li><p>Essentially, in a PR you are requesting the repository maintainers to merge your code updates to the master branch so that users can use your implementations.</p></li>
+</ul>
+<p><strong>A compiam maintainer will comment on your code and potentially request changes:</strong></p>
+<ul class="simple">
+<li><p>If one of their comments requires a change, you must either make that change or respond by explaining why you think it is not necessary.</p></li>
+<li><p>Once you and the reviewer have reached an agreement on the code they will tell you it is OK to merge.</p></li>
+</ul>
+<p><strong>Once you have received the OK from maintainers, you can merge the pull request to master!</strong> You can now delete the feature branch <code class="docutils literal notranslate"><span class="pre">yn-featname</span></code>.</p>
+</section>
+<section id="post-development">
+<h2>Post-development<a class="headerlink" href="#post-development" title="Link to this heading"></a></h2>
+<p>Cool!! Your tool is now merged in compiam, and will be published in <code class="docutils literal notranslate"><span class="pre">pypi</span></code> in the next release.
+Make sure you also take advantage of this feature, spread the word, and please keep being part of the compiam community.</p>
+<p>Some future PRs might involve your tool (change of inner structure of the library, updating dependencies, etc…).
+Also, there might be users finding bugs or having issues/difficulties using your tool. Please make sure you check
+regularly the Issues/Pull Requests tab of compiam, in case there is a user requesting your attention. Thank you
+for your cooperation!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utils.html" class="btn btn-neutral float-left" title="Util functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Music Technology Group, Universitat Pompeu Fabra     (Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
