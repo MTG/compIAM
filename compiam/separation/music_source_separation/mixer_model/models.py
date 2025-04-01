@@ -7,18 +7,18 @@ from compiam.separation.music_source_separation.mixer_model.modules import TFC_T
 class ConvTDFNet(nn.Module):
     def __init__(
         self,
-        hop_length,
-        num_blocks,
-        dim_t,
-        n_fft,
-        dim_c,
-        dim_f,
-        g,
-        k,
-        l,
-        bn,
-        bias,
-        scale,
+        hop_length=558,
+        dim_t=256,
+        n_fft=6144,
+        dim_c=2,
+        dim_f=2048,
+        num_blocks=11,
+        g=32,
+        k=3,
+        l=3,
+        bn=4,
+        bias=False,
+        scale=2,
     ):
         super(ConvTDFNet, self).__init__()
         self.hop_length = hop_length
