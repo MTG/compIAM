@@ -22,9 +22,7 @@ def _separate():
     convtdf_vocal = compiam.load_model("separation:convtdf-vocal-finetune", data_home=TESTDIR)
     audio_in, sr = np.array(np.ones([1, 44100]), dtype=np.float32), 44100
     separation = convtdf_vocal.separate(audio_in, input_sr=sr)
-    assert isinstance(separation, tuple)
-    assert isinstance(separation[0], np.ndarray)
-    assert isinstance(separation[1], np.ndarray)
+    assert isinstance(separation, np.ndarray)
     shutil.rmtree(os.path.join(TESTDIR, "models"))
 
 
