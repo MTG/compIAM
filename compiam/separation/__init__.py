@@ -12,6 +12,7 @@ TO_AVOID = [
 
 ### IMPORT HERE THE CONSIDERED TASKS
 from compiam.separation import singing_voice_extraction
+from compiam.separation import music_source_separation
 
 
 # Show user the available tasks

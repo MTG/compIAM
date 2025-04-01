@@ -234,6 +234,24 @@ models_dict = {
             },
         },
     },
+    "separation:convtdf-vocal-finetune": {
+        "module_name": "compiam.separation.singing_voice_separation.convtdf-vocal-finetune",
+        "class_name": "ConvTDFVocalFineTune",
+        "default_version": "v1",
+        "kwargs": {
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "separation",
+                    "convtdf-vocal-finetune",
+                    "vocals",
+                    "TODO",
+                ),
+                "download_link": "TODO",
+                "download_checksum": "TODO",
+            },
+        },
+    },
 }
 
 

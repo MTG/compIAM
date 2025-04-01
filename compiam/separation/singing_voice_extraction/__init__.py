@@ -7,6 +7,9 @@ from compiam.data import models_dict
 from compiam.separation.singing_voice_extraction.cold_diff_sep import (
     ColdDiffSep,
 )
+from compiam.separation.singing_voice_extraction.convtdf_vocal_finetune import (
+    ConvTDFVocalFineTune,
+)
 
 
 # Show user the available tools
