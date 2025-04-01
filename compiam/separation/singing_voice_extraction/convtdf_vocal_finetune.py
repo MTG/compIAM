@@ -88,7 +88,7 @@ class ConvTDFVocalFineTune(object):
             weights = torch.load(model_path, weights_only=True, map_location=self.device)
         except:
             weights = torch.load(model_path, map_location=self.device)
-        self.model.load_state_dict(weights)
+        self.model.load_state_dict(weights["model_state_dict"])
         self.model_path = model_path
         self.trained = True
 
