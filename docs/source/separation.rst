@@ -16,6 +16,16 @@ Leakage-aware Carnatic Singing Voice Separation
    :members:
 
 
+Leakage-aware Carnatic Singing Voice Separation
+-----------------------------------------------
+
+.. note::
+    REQUIRES: torch
+
+.. autoclass:: compiam.separation.singing_voice_extraction.convtdf_vocal_finetune.ConvTDFVocalFineTune
+   :members:
+
+
 Vocals and violin separation
 ++++++++++++++++++++++++++++
 
