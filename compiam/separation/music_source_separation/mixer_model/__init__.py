@@ -124,19 +124,19 @@ class MixerModel(object):
                 raise FileNotFoundError("Target audio not found.")
             audio, input_sr = torchaudio.load(input_data)
         elif isinstance(input_data, np.ndarray):
-            input_data = torch.from_numpy(input_data).to(torch.float32).to(self.device)
+            audio = torch.from_numpy(input_data).to(torch.float32).to(self.device)
         elif isinstance(input_data, torch.Tensor):
-            input_data = input_data.to(torch.float32).to(self.device)
+            audio = input_data.to(torch.float32).to(self.device)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
         
-        if len(input_data.shape) == 1:
-            input_data = input_data.unsqueeze(0)
+        if len(audio.shape) == 1:
+            audio = audio.unsqueeze(0)  # Add mono channel if no audio channels
 
-        if len(input_data.shape) == 3:
-            if input_data.shape[0] != 1:
+        if len(audio.shape) == 3:
+            if audio.shape[0] != 1:
                 raise ValueError("Batching is not supported. Please provide a single audio signal.")
-            input_data = input_data.squeeze(0)
+            audio = audio.squeeze(0)  # Remove batch size 1
         
         # resample audio
         if input_sr != self.sample_rate:
@@ -146,7 +146,7 @@ class MixerModel(object):
             )
             audio = torchaudio.transforms.Resample(
                 orig_freq=input_sr, new_freq=self.sample_rate
-            )(input_data)
+            )(audio)
 
         # downsampling to mono
         if audio.shape[0] == 2:
