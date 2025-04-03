@@ -68,6 +68,7 @@ class ConvTDFVocalFineTune(object):
             self.load_model(self.model_path)
 
         self.chunk_size = self.model.chunk_size
+        self.overlap = 0.25
 
     def forward(self, x):
         """Forward pass of the mixer model"""
@@ -155,25 +156,44 @@ class ConvTDFVocalFineTune(object):
                     and the model is trained on mono audio."
             )
 
-        # audio has shape B, 1, N
+        initial_length = audio.shape[-1]
         audio = audio.reshape(-1)
-        predictions = []
-        pad_length = self.chunk_size - (audio.shape[-1] % self.chunk_size)
+        pad_length = (self.chunk_size - (audio.shape[-1] % self.chunk_size)) % self.chunk_size
         audio = torch.nn.functional.pad(audio, (0, pad_length))
 
-        for i in range(0, audio.shape[-1], self.chunk_size):
-            audio_chunk = audio[i : i + self.chunk_size].reshape(
-                1, 1, -1
-            )  # TODO Batching
-            predictions.append(self.forward(audio_chunk))
+        chunk_size = audio.shape[-1] // ((audio.shape[-1] + self.chunk_size - 1) // self.chunk_size)
+        hop_size = int(chunk_size * (1 - self.overlap))
+        num_chunks = (audio.shape[-1] - chunk_size) // hop_size + 1
 
-        result = torch.cat(predictions, dim=-1)
-        result = result[:, :, :-pad_length]
+        window = torch.hann_window(chunk_size)
+        out = torch.zeros(audio.shape[-1])  # (Time,)
+        weight_sum = torch.zeros(audio.shape[-1])  # Weight accumulation for normalization
+
+        # Process chunks
+        for i in range(num_chunks):
+            start = i * hop_size
+            end = start + chunk_size
+
+            # Extract chunk (reshape for model input)
+            audio_chunk = audio[start:end].reshape(1, 1, -1)
+
+            # Apply model separation (now outputs 1-channel)
+            separated_chunk = self.forward(audio_chunk).reshape(-1)  # (chunk_size,)
+
+            # Apply windowing
+            separated_chunk *= window  # Smooth transition
+
+            # Overlap-Add to output
+            out[start:end] += separated_chunk
+            weight_sum[start:end] += window  # Accumulate weights
+
+        out /= weight_sum.clamp(min=1e-8)  # Avoid division by zero
+        out = out[:initial_length].unsqueeze(0)  # (1, N)
 
         vocal_separation = torchaudio.transforms.Resample(
             orig_freq=self.sample_rate, new_freq=input_sr
-        )(result)
-        
+        )(out)
+
         return vocal_separation.detach().cpu().numpy().reshape(-1)
 
     def download_model(self, model_path=None, force_overwrite=False):
