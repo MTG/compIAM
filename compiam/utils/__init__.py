@@ -180,7 +180,9 @@ def stereo_to_mono(audio):
         if audio.shape[0] > audio.shape[1]:
             audio = audio.T
             if audio.shape[0] > 2:
-                raise ValueError("Expected mono or stereo audio, got multi-channel audio")
+                raise ValueError(
+                    "Expected mono or stereo audio, got multi-channel audio"
+                )
         # If stereo, average the channels
         if audio.shape[0] == 2:
             audio = np.mean(audio, axis=0)

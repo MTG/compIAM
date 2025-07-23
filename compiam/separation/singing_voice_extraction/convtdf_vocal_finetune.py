@@ -1,6 +1,6 @@
 import os
 
-import numpy as np 
+import numpy as np
 
 from compiam.exceptions import ModelNotTrainedError
 from compiam.utils import get_logger, WORKDIR
@@ -86,7 +86,9 @@ class ConvTDFVocalFineTune(object):
         ## Ensuring we can load the model for different torch versions
         ## -- (weights only might be deprecated)
         try:
-            weights = torch.load(model_path, weights_only=True, map_location=self.device)
+            weights = torch.load(
+                model_path, weights_only=True, map_location=self.device
+            )
         except:
             weights = torch.load(model_path, map_location=self.device)
         self.model.load_state_dict(weights["model_state_dict"])
@@ -131,15 +133,17 @@ class ConvTDFVocalFineTune(object):
             audio = input_data.to(torch.float32).to(self.device)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
-        
+
         if len(audio.shape) == 1:
             audio = audio.unsqueeze(0)  # Adding mono channel if no audio channels
 
         if len(audio.shape) == 3:
             if audio.shape[0] != 1:
-                raise ValueError("Batching is not supported. Please provide a single audio signal.")
+                raise ValueError(
+                    "Batching is not supported. Please provide a single audio signal."
+                )
             audio = audio.squeeze(0)  # Removing batch dimension
-        
+
         # resample audio
         if input_sr != self.sample_rate:
             logger.warning(
@@ -150,7 +154,7 @@ class ConvTDFVocalFineTune(object):
                 orig_freq=input_sr, new_freq=self.sample_rate
             )(audio)
 
-        # downsampling to mono
+        # downsampling to mono
         if audio.shape[0] == 2:
             audio = audio.mean(dim=0, keepdim=True)
             logger.info(
@@ -162,16 +166,22 @@ class ConvTDFVocalFineTune(object):
             audio = audio / audio.max()
         initial_length = audio.shape[-1]
         audio = audio.reshape(-1)
-        pad_length = (self.chunk_size - (audio.shape[-1] % self.chunk_size)) % self.chunk_size
+        pad_length = (
+            self.chunk_size - (audio.shape[-1] % self.chunk_size)
+        ) % self.chunk_size
         audio = torch.nn.functional.pad(audio, (0, pad_length))
 
-        chunk_size = audio.shape[-1] // ((audio.shape[-1] + self.chunk_size - 1) // self.chunk_size)
+        chunk_size = audio.shape[-1] // (
+            (audio.shape[-1] + self.chunk_size - 1) // self.chunk_size
+        )
         hop_size = int(chunk_size * (1 - self.overlap))
         num_chunks = (audio.shape[-1] - chunk_size) // hop_size + 1
 
         window = torch.hann_window(chunk_size)
         out = torch.zeros(audio.shape[-1])  # (Time,)
-        weight_sum = torch.zeros(audio.shape[-1])  # Weight accumulation for normalization
+        weight_sum = torch.zeros(
+            audio.shape[-1]
+        )  # Weight accumulation for normalization
 
         # Process chunks
         for i in range(num_chunks):

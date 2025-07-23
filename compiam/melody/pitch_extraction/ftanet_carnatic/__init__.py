@@ -325,7 +325,7 @@ class FTANetCarnatic(object):
         xlist = []
         timestamps = []
 
-        # Applying loudness scaling 
+        # Applying loudness scaling
         audio = audio / audio.max()
         audio = audio * amplify_input
 

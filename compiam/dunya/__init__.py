@@ -25,9 +25,7 @@ class Corpora:
         dunya.set_token(self.token)
 
         if tradition not in ["carnatic", "hindustani"]:
-            raise ValueError(
-                "Please choose a valid tradition: carnatic or hindustani"
-            )
+            raise ValueError("Please choose a valid tradition: carnatic or hindustani")
         self.tradition = carnatic if tradition == "carnatic" else hindustani
 
         # Functions from the compmusic API are added as a method in the Corpora class
@@ -36,10 +34,12 @@ class Corpora:
             if callable(func):
                 setattr(self, name, func)
 
-        logger.warning("""
+        logger.warning(
+            """
             Note that a part of the collection is under restricted access.
             To access the full collection please request permission at https://dunya.compmusic.upf.edu/user/profile/
-        """)
+        """
+        )
 
     def get_collection(self, recording_detail=False):
         """Get the documents (recordings) in a collection.
@@ -54,7 +54,7 @@ class Corpora:
                 + "Please note that it might take a few moments..."
             )
         return self.tradition.get_recordings(recording_detail)
-    
+
     @staticmethod
     def list_available_types(recording_id):
         """Get the available source filetypes for a Musicbrainz recording.

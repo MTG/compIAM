@@ -94,11 +94,11 @@ def write_scalar_txt(data, output_path):
 
 def resolve_dottedname(dotted_name):
     """Resolve a dotted name to an actual object, similar to zope.dottedname.resolve
-    
+
     :param dotted_name: a dotted name
     :returns: the object the dotted name refers to
     """
-    module_name, _, attribute_name = dotted_name.rpartition('.')
+    module_name, _, attribute_name = dotted_name.rpartition(".")
     if not module_name:
         raise ImportError(f"Invalid dotted name: '{dotted_name}'")
     module = importlib.import_module(module_name)
@@ -111,6 +111,7 @@ def load_yaml(path):
     :param path: input file
     :returns: loaded yaml information
     """
+
     def constructor_dottedname(loader, node):
         value = loader.construct_scalar(node)
         return resolve_dottedname(value)

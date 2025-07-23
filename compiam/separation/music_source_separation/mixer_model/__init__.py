@@ -87,7 +87,9 @@ class MixerModel(object):
         ## Ensuring we can load the model for different torch versions
         ## -- (weights only might be deprecated)
         try:
-            weights = torch.load(model_path, weights_only=True, map_location=self.device)
+            weights = torch.load(
+                model_path, weights_only=True, map_location=self.device
+            )
         except:
             weights = torch.load(model_path, map_location=self.device)
         self.model.load_state_dict(weights)
@@ -132,15 +134,17 @@ class MixerModel(object):
             audio = input_data.to(torch.float32).to(self.device)
         else:
             raise ValueError("Input must be path to audio signal or an audio array")
-        
+
         if len(audio.shape) == 1:
-            audio = audio.unsqueeze(0)  # Add mono channel if no audio channels
+            audio = audio.unsqueeze(0)  # Add mono channel if no audio channels
 
         if len(audio.shape) == 3:
             if audio.shape[0] != 1:
-                raise ValueError("Batching is not supported. Please provide a single audio signal.")
+                raise ValueError(
+                    "Batching is not supported. Please provide a single audio signal."
+                )
             audio = audio.squeeze(0)  # Remove batch size 1
-        
+
         # resample audio
         if input_sr != self.sample_rate:
             logger.warning(
@@ -151,7 +155,7 @@ class MixerModel(object):
                 orig_freq=input_sr, new_freq=self.sample_rate
             )(audio)
 
-        # downsampling to mono
+        # downsampling to mono
         if audio.shape[0] == 2:
             audio = audio.mean(dim=0, keepdim=True)
             logger.info(
@@ -163,16 +167,22 @@ class MixerModel(object):
             audio = audio / audio.max()
         initial_length = audio.shape[-1]
         audio = audio.reshape(-1)
-        pad_length = (self.chunk_size - (audio.shape[-1] % self.chunk_size)) % self.chunk_size
+        pad_length = (
+            self.chunk_size - (audio.shape[-1] % self.chunk_size)
+        ) % self.chunk_size
         audio = torch.nn.functional.pad(audio, (0, pad_length))
 
-        chunk_size = audio.shape[-1] // ((audio.shape[-1] + self.chunk_size - 1) // self.chunk_size)
+        chunk_size = audio.shape[-1] // (
+            (audio.shape[-1] + self.chunk_size - 1) // self.chunk_size
+        )
         hop_size = int(chunk_size * (1 - self.overlap))
         num_chunks = (audio.shape[-1] - chunk_size) // hop_size + 1
 
         window = torch.hann_window(chunk_size)
         out = torch.zeros((2, audio.shape[-1]))  # (Channels=2, Time)
-        weight_sum = torch.zeros(audio.shape[-1])  # Weight accumulation for normalization
+        weight_sum = torch.zeros(
+            audio.shape[-1]
+        )  # Weight accumulation for normalization
 
         # Process chunks
         for i in range(num_chunks):
@@ -183,7 +193,9 @@ class MixerModel(object):
             audio_chunk = audio[start:end].reshape(1, 1, -1)
 
             # Apply model separation (assumes 2-channel output)
-            separated_chunk = self.forward(audio_chunk).reshape(2, -1)  # (2, chunk_size)
+            separated_chunk = self.forward(audio_chunk).reshape(
+                2, -1
+            )  # (2, chunk_size)
 
             # Apply windowing
             separated_chunk *= window  # Smooth transition
@@ -201,7 +213,7 @@ class MixerModel(object):
         violin_separation = torchaudio.transforms.Resample(
             orig_freq=self.sample_rate, new_freq=input_sr
         )(out[:, 1, :])
-        
+
         vocal_separation = vocal_separation.detach().cpu().numpy().reshape(-1)
         violin_separation = violin_separation.detach().cpu().numpy().reshape(-1)
         return (vocal_separation, violin_separation)

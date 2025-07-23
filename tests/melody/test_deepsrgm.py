@@ -44,7 +44,9 @@ def _get_features():
         feat = deepsrgm.get_features(
             os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav")
         )
-    audio = librosa.load(os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"), sr=44100)[0]
+    audio = librosa.load(
+        os.path.join(TESTDIR, "resources", "melody", "pitch_test.wav"), sr=44100
+    )[0]
     audio = np.tile(audio, 9)
     feat_1 = deepsrgm.get_features(audio)
     feat_2 = deepsrgm.get_features(np.stack([audio, audio]))

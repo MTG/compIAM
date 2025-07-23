@@ -10,7 +10,6 @@ from compiam.utils import get_logger
 logger = get_logger(__name__)
 
 
-
 def split_audios(save_dir=None, annotations_path=None, audios_path=None):
     """Split audio of Dhrupad dataset
 

@@ -124,7 +124,9 @@ class DEEPSRGM(object):
 
         self.model_path = model_path
         try:
-            weights = torch.load(model_path, weights_only=True, map_location=self.device)
+            weights = torch.load(
+                model_path, weights_only=True, map_location=self.device
+            )
         except:
             weights = torch.load(model_path, map_location=self.device)
         new_weights = weights.copy()
@@ -168,7 +170,7 @@ class DEEPSRGM(object):
             "compmusic_raga", data_home=data_home, version="default"
         )
         if download:
-            self.dataset.download()  # Downloads index and features
+            self.dataset.download()  # Downloads index and features
             logger.warning(
                 f"""
                 The features are downloaded, but the audio of this dataset is private. 
