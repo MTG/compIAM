@@ -167,7 +167,8 @@ class ColdDiffSep(object):
             # std = tf.math.reduce_std(mixture, keepdims=True)
             # mixture = (mixture - mean) / (1e-6 + std)
             # For now, divide by maximum value
-            mixture = mixture / mixture.max()
+            mixture = mixture / tf.reduce_max(mixture)
+
 
         output_voc = np.zeros(mixture.shape)
         hopsized_chunk = int((chunk_size * self.sample_rate) / 2)
