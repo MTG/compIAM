@@ -98,6 +98,7 @@ class MixerModel(object):
         self,
         input_data,
         input_sr=44100,
+        normalize_input=True,
         gpu="-1",
     ):
         """Separate singing voice and violin from mixture.
@@ -105,6 +106,7 @@ class MixerModel(object):
         :param input_data: Audio signal to separate.
         :param input_sr: sampling rate of the input array of data (if any). This variable is only
             relevant if the input is an array of data instead of a filepath.
+        :param normalize_input: Normalize the input audio signal.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :return: Singing voice and violin signals.
         """
@@ -157,6 +159,8 @@ class MixerModel(object):
                     and the model is trained on mono audio."
             )
 
+        if normalize_input:
+            audio = audio / audio.max()
         initial_length = audio.shape[-1]
         audio = audio.reshape(-1)
         pad_length = (self.chunk_size - (audio.shape[-1] % self.chunk_size)) % self.chunk_size

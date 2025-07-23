@@ -159,9 +159,11 @@ class ColdDiffSep(object):
 
         if normalize_input:
             # Normalizing audio for better performance overall
-            mean = tf.reduce_mean(mixture, keepdims=True)
-            std = tf.math.reduce_std(mixture, keepdims=True)
-            mixture = (mixture - mean) / (1e-6 + std)
+            #mean = tf.reduce_mean(mixture, keepdims=True)
+            #std = tf.math.reduce_std(mixture, keepdims=True)
+            #mixture = (mixture - mean) / (1e-6 + std)
+            # For now, divide by maximum vale
+            mixture = mixture / mixture.max()
             
         output_voc = np.zeros(mixture.shape)
         hopsized_chunk = int((chunk_size * self.sample_rate) / 2)

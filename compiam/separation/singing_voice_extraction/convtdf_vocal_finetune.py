@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 
 class ConvTDFVocalFineTune(object):
-    """ConvTDF net fine-tuned to separate clean Carnatic vocals training with Saraga (which has bleeding)."""
+    """ConvTDF Net fine-tuned to separate clean Carnatic vocals training with Saraga (which has bleeding)."""
 
     def __init__(
         self,
@@ -97,6 +97,7 @@ class ConvTDFVocalFineTune(object):
         self,
         input_data,
         input_sr=44100,
+        normalize_input=True,
         gpu="-1",
     ):
         """Separate Carnatic singing voice from mixture.
@@ -104,6 +105,7 @@ class ConvTDFVocalFineTune(object):
         :param input_data: Audio signal/path to separate.
         :param input_sr: sampling rate of the input array of data (if any). This variable is only
             relevant if the input is an array of data instead of a filepath.
+        :param normalize_input: Normalize the input audio signal.
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :return: Singing voice and violin signals.
         """
@@ -156,6 +158,8 @@ class ConvTDFVocalFineTune(object):
                     and the model is trained on mono audio."
             )
 
+        if normalize_input:
+            audio = audio / audio.max()
         initial_length = audio.shape[-1]
         audio = audio.reshape(-1)
         pad_length = (self.chunk_size - (audio.shape[-1] % self.chunk_size)) % self.chunk_size
