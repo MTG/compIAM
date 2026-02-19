@@ -250,6 +250,24 @@ models_dict = {
             },
         },
     },
+    "separation:convtdf-vocal-finetune": {
+        "module_name": "compiam.separation.singing_voice_extraction.convtdf_vocal_finetune",
+        "class_name": "ConvTDFVocalFineTune",
+        "default_version": "v1",
+        "kwargs": {
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "separation",
+                    "convtdf_vocal_finetune",
+                    "vocals",
+                    "checkpoint_finetuned.pt",
+                ),
+                "download_link": "https://zenodo.org/records/15121572/files/convtdf_vocal_finetune.zip?download=1",
+                "download_checksum": "170c7a25cb06911f2e4a9452ce943aed",
+            },
+        },
+    },
 }
 
 

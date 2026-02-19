@@ -139,10 +139,14 @@ class ColdDiffSep(object):
 
         if len(mixture.shape) == 3:
             if mixture.shape[0] != 1:
-                raise ValueError("Batching is not supported. Please provide a single audio signal.")
+                raise ValueError(
+                    "Batching is not supported. Please provide a single audio signal."
+                )
             else:
                 mixture = mixture.squeeze(0)
-                mixture = tf.reduce_mean(mixture, axis=0, keepdims=False)  # Removing dimension
+                mixture = tf.reduce_mean(
+                    mixture, axis=0, keepdims=False
+                )  # Removing dimension
                 logger.info(
                     f"Downsampling to mono... your audio is stereo, \
                         and the model is trained on mono audio."
@@ -159,10 +163,13 @@ class ColdDiffSep(object):
 
         if normalize_input:
             # Normalizing audio for better performance overall
-            mean = tf.reduce_mean(mixture, keepdims=True)
-            std = tf.math.reduce_std(mixture, keepdims=True)
-            mixture = (mixture - mean) / (1e-6 + std)
-            
+            # mean = tf.reduce_mean(mixture, keepdims=True)
+            # std = tf.math.reduce_std(mixture, keepdims=True)
+            # mixture = (mixture - mean) / (1e-6 + std)
+            # For now, divide by maximum value
+            mixture = mixture / tf.reduce_max(mixture)
+
+
         output_voc = np.zeros(mixture.shape)
         hopsized_chunk = int((chunk_size * self.sample_rate) / 2)
         runs = math.floor(mixture.shape[0] / hopsized_chunk)

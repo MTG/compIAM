@@ -270,6 +270,7 @@ class FTANetCarnatic(object):
         hop_size=80,
         batch_size=5,
         out_step=None,
+        amplify_input=1.0,
         gpu="-1",
     ):
         """Extract melody from input_data.
@@ -283,6 +284,7 @@ class FTANetCarnatic(object):
             (defaulted to 5, increase if enough computational power, reduce if
             needed).
         :param out_step: particular time-step duration if needed at output
+        :param amplify_input: for low volume inputs, we've found that overlouding it may provide better voicing detection (e.g. x10, x50)
         :param gpu: Id of the available GPU to use (-1 by default, to run on CPU), use string: '0', '1', etc.
         :returns: a 2-D list with time-stamps and pitch values per timestamp.
         """
@@ -322,6 +324,10 @@ class FTANetCarnatic(object):
 
         xlist = []
         timestamps = []
+
+        # Applying loudness scaling
+        audio = audio / audio.max()
+        audio = audio * amplify_input
 
         audio_len = len(audio)
         batch_min = self.sample_rate * 60 * batch_size

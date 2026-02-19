@@ -10,8 +10,8 @@ from compiam.utils.download import download_remote_model
 logger = get_logger(__name__)
 
 
-class MixerModel(object):
-    """Leakage-aware multi-source separation model for Carnatic Music."""
+class ConvTDFVocalFineTune(object):
+    """ConvTDF Net fine-tuned to separate clean Carnatic vocals training with Saraga (which has bleeding)."""
 
     def __init__(
         self,
@@ -40,9 +40,8 @@ class MixerModel(object):
             global torchaudio
             import torchaudio
 
-            global MDXModel, ConvTDFNet
+            global ConvTDFNet
             from compiam.separation.music_source_separation.mixer_model.models import (
-                MDXModel,
                 ConvTDFNet,
             )
 
@@ -77,9 +76,9 @@ class MixerModel(object):
 
     def _build_model(self):
         """Build the MDXNet mixer model."""
-        mdxnet = MDXModel().to(self.device)
-        mdxnet.eval()
-        return mdxnet
+        convtdfnet = ConvTDFNet().to(self.device)
+        convtdfnet.eval()
+        return convtdfnet
 
     def load_model(self, model_path):
         if not os.path.exists(model_path):
@@ -92,7 +91,7 @@ class MixerModel(object):
             )
         except:
             weights = torch.load(model_path, map_location=self.device)
-        self.model.load_state_dict(weights)
+        self.model.load_state_dict(weights["model_state_dict"])
         self.model_path = model_path
         self.trained = True
 
@@ -103,9 +102,9 @@ class MixerModel(object):
         normalize_input=True,
         gpu="-1",
     ):
-        """Separate singing voice and violin from mixture.
+        """Separate Carnatic singing voice from mixture.
 
-        :param input_data: Audio signal to separate.
+        :param input_data: Audio signal/path to separate.
         :param input_sr: sampling rate of the input array of data (if any). This variable is only
             relevant if the input is an array of data instead of a filepath.
         :param normalize_input: Normalize the input audio signal.
@@ -136,14 +135,14 @@ class MixerModel(object):
             raise ValueError("Input must be path to audio signal or an audio array")
 
         if len(audio.shape) == 1:
-            audio = audio.unsqueeze(0)  # Add mono channel if no audio channels
+            audio = audio.unsqueeze(0)  # Adding mono channel if no audio channels
 
         if len(audio.shape) == 3:
             if audio.shape[0] != 1:
                 raise ValueError(
                     "Batching is not supported. Please provide a single audio signal."
                 )
-            audio = audio.squeeze(0)  # Remove batch size 1
+            audio = audio.squeeze(0)  # Removing batch dimension
 
         # resample audio
         if input_sr != self.sample_rate:
@@ -179,7 +178,7 @@ class MixerModel(object):
         num_chunks = (audio.shape[-1] - chunk_size) // hop_size + 1
 
         window = torch.hann_window(chunk_size)
-        out = torch.zeros((2, audio.shape[-1]))  # (Channels=2, Time)
+        out = torch.zeros(audio.shape[-1])  # (Time,)
         weight_sum = torch.zeros(
             audio.shape[-1]
         )  # Weight accumulation for normalization
@@ -192,38 +191,31 @@ class MixerModel(object):
             # Extract chunk (reshape for model input)
             audio_chunk = audio[start:end].reshape(1, 1, -1)
 
-            # Apply model separation (assumes 2-channel output)
-            separated_chunk = self.forward(audio_chunk).reshape(
-                2, -1
-            )  # (2, chunk_size)
+            # Apply model separation (now outputs 1-channel)
+            separated_chunk = self.forward(audio_chunk).reshape(-1)  # (chunk_size,)
 
             # Apply windowing
             separated_chunk *= window  # Smooth transition
 
             # Overlap-Add to output
-            out[:, start:end] += separated_chunk
+            out[start:end] += separated_chunk
             weight_sum[start:end] += window  # Accumulate weights
 
-        out /= weight_sum.unsqueeze(0).clamp(min=1e-8)  # Avoid division by zero
-        out = out[..., :initial_length].unsqueeze(0)  # (1, 2, N)
+        out /= weight_sum.clamp(min=1e-8)  # Avoid division by zero
+        out = out[:initial_length].unsqueeze(0)  # (1, N)
 
         vocal_separation = torchaudio.transforms.Resample(
             orig_freq=self.sample_rate, new_freq=input_sr
-        )(out[:, 0, :])
-        violin_separation = torchaudio.transforms.Resample(
-            orig_freq=self.sample_rate, new_freq=input_sr
-        )(out[:, 1, :])
+        )(out)
 
-        vocal_separation = vocal_separation.detach().cpu().numpy().reshape(-1)
-        violin_separation = violin_separation.detach().cpu().numpy().reshape(-1)
-        return (vocal_separation, violin_separation)
+        return vocal_separation.detach().cpu().numpy().reshape(-1)
 
     def download_model(self, model_path=None, force_overwrite=False):
         """Download pre-trained model."""
         download_path = (
             os.sep + os.path.join(*model_path.split(os.sep)[:-2])
             if model_path is not None
-            else os.path.join(WORKDIR, "models", "separation", "mixer_model")
+            else os.path.join(WORKDIR, "models", "separation", "conv-tdf-finetune")
         )
         # Creating model folder to store the weights
         if not os.path.exists(download_path):

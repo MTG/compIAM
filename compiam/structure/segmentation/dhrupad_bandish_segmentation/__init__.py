@@ -183,9 +183,7 @@ class DhrupadBandishSegmentation:
                 torch.load(model_path, weights_only=True, map_location=self.device)
             )
         except:
-            self.model.load_state_dict(
-                torch.load(model_path, map_location=self.device)
-            )
+            self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         self.loaded_model_path = model_path
         self.trained = True
