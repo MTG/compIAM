@@ -6,7 +6,6 @@ OPTIONS = [
     "essentia",
     "full_ml",
     "all",
-    "madmom @ git+https://github.com/vivekvjyn/madmom.git"
 ]
 
 

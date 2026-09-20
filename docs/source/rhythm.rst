@@ -34,3 +34,12 @@ TCN Carnatic
 
 .. autoclass:: compiam.rhythm.meter.tcn_carnatic.TCNTracker
     :members:
+
+Beat This Carnatic
+------------------
+
+.. note::
+    REQUIRES: torch
+
+.. autoclass:: compiam.rhythm.meter.beat_this_carnatic.BeatThisCarnatic
+    :members:

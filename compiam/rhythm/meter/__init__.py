@@ -5,6 +5,7 @@ from compiam.data import models_dict
 
 from compiam.rhythm.meter.akshara_pulse_tracker import AksharaPulseTracker
 from compiam.rhythm.meter.tcn_carnatic import TCNTracker
+from compiam.rhythm.meter.beat_this_carnatic import BeatThisCarnatic
 
 # Show user the available tools
 def list_tools():
