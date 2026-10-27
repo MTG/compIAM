@@ -125,6 +125,22 @@ models_dict = {
             },
         },
     },
+    "rhythm:beat-this-carnatic": {
+        "module_name": "compiam.rhythm.meter.beat_this_carnatic",
+        "class_name": "BeatThisCarnatic",
+        "default_version": "v1",
+        "kwargs": {
+            "v1": {
+                "model_path": os.path.join(
+                    "models",
+                    "rhythm",
+                    "beat-this-carnatic"
+                ),
+                "download_link": "https://zenodo.org/records/22856741/files/compIAM-BeatThisCarnatic.zip?download=1",
+                "download_checksum": "9092da83307f1b0f62a7a85c8e87cf55",
+            },
+        },
+    },
     "rhythm:tcn-carnatic": {
         "module_name": "compiam.rhythm.meter.tcn_carnatic",
         "class_name": "TCNTracker",
